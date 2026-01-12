@@ -17,6 +17,12 @@ import {
   X,
   Download,
   Trash2,
+  Plus,
+  CheckCircle,
+  XCircle,
+  AlertTriangle,
+  FileText,
+  Edit,
 } from "lucide-react";
 
 import {
@@ -80,6 +86,7 @@ function Button({ className, variant = "default", size = "md", ...props }) {
     secondary: "bg-slate-100 text-slate-900 hover:bg-slate-200",
     ghost: "bg-transparent text-slate-700 hover:bg-slate-100",
     danger: "bg-rose-600 text-white hover:bg-rose-700",
+    outline: "bg-white ring-1 ring-slate-200 text-slate-900 hover:bg-slate-50",
   };
   const sizes = {
     sm: "h-9 px-3 text-sm",
@@ -141,6 +148,7 @@ function Badge({ children, tone = "default" }) {
     danger: "bg-rose-50 text-rose-700 ring-rose-200",
     warn: "bg-amber-50 text-amber-800 ring-amber-200",
     ok: "bg-emerald-50 text-emerald-700 ring-emerald-200",
+    info: "bg-blue-50 text-blue-700 ring-blue-200",
   };
   return (
     <span className={cn("inline-flex items-center rounded-full px-2 py-0.5 text-xs ring-1", tones[tone])}>
@@ -333,12 +341,23 @@ export default function App() {
               />
             )}
 
-            {activeKey !== "dashboard" && activeKey !== "vehicles" && activeKey !== "orders" && (
-              <PlaceholderPage
-                title={pageTitle}
-                description="MVP 범위에서는 리스트 조회, 상단 검색/필터, 우측 Drawer 기반 상세 및 정책 수정 흐름으로 정리하는 것이 효율적입니다."
-              />
-            )}
+            {activeKey === "agreements" && <AgreementsPage />}
+            {activeKey === "billing" && <BillingPage />}
+            {activeKey === "lostfound" && <LostFoundPage />}
+            {activeKey === "notices" && <NoticesPage />}
+
+            {activeKey !== "dashboard" &&
+              activeKey !== "vehicles" &&
+              activeKey !== "orders" &&
+              activeKey !== "agreements" &&
+              activeKey !== "billing" &&
+              activeKey !== "lostfound" &&
+              activeKey !== "notices" && (
+                <PlaceholderPage
+                  title={pageTitle}
+                  description="MVP 범위에서는 리스트 조회, 상단 검색/필터, 우측 Drawer 기반 상세 및 정책 수정 흐름으로 정리하는 것이 효율적입니다."
+                />
+              )}
           </main>
         </div>
       </div>
@@ -1117,6 +1136,388 @@ function OrdersPage({ quickStatus, onClearQuickStatus }) {
           </div>
         ) : null}
       </Drawer>
+    </div>
+  );
+}
+
+/**
+ * 합의 요청 관리
+ */
+function AgreementsPage() {
+  const [items, setItems] = useState([
+    { id: "A-1001", orderId: "O-90002", plate: "34나7890", model: "K5", zoneName: "잠실역 2번존", partner: "B협력사", requestedAt: "2026-01-12 10:30", status: "요청", cost: 15000, reason: "오염도 심각으로 인한 추가 요금", comment: "사진 확인 부탁드립니다.", washItems: ["내부세차", "특수오염제거"] },
+    { id: "A-1002", orderId: "O-90005", plate: "90마5566", model: "스포티지", zoneName: "수원역 2번존", partner: "B협력사", requestedAt: "2026-01-11 14:20", status: "수락", cost: 10000, reason: "카시트 분리 세척", comment: "승인 완료", washItems: ["카시트세척"] },
+    { id: "A-1003", orderId: "O-90010", plate: "55차5656", model: "EV6", zoneName: "광주 1번존", partner: "A협력사", requestedAt: "2026-01-10 09:15", status: "거절", cost: 20000, reason: "광택 작업 요청", comment: "정책상 불가", washItems: ["광택"] },
+  ]);
+
+  const [selected, setSelected] = useState(null);
+  const [rejectReason, setRejectReason] = useState("");
+  const [isRejecting, setIsRejecting] = useState(false);
+
+  const columns = [
+    { key: "orderId", header: "오더 ID" },
+    { key: "plate", header: "차량번호" },
+    { key: "model", header: "차종" },
+    { key: "zoneName", header: "쏘카존" },
+    { key: "partner", header: "파트너사" },
+    { key: "requestedAt", header: "요청 시간" },
+    {
+      key: "status",
+      header: "상태",
+      render: (r) => {
+        const tone = r.status === "요청" ? "warn" : r.status === "수락" ? "ok" : r.status === "거절" ? "danger" : "default";
+        return <Badge tone={tone}>{r.status}</Badge>;
+      },
+    },
+  ];
+
+  const handleUpdateStatus = (newStatus, reason = "") => {
+    if (!selected) return;
+    setItems((prev) =>
+      prev.map((it) => (it.id === selected.id ? { ...it, status: newStatus, comment: reason || it.comment } : it))
+    );
+    setSelected(null);
+    setIsRejecting(false);
+    setRejectReason("");
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <div>
+          <div className="text-base font-semibold">합의 요청 관리</div>
+          <div className="mt-1 text-sm text-slate-600">현장 추가 요금 및 특수 세차 합의 요청 건 처리</div>
+        </div>
+      </div>
+
+      <DataTable columns={columns} rows={items} rowKey={(r) => r.id} onRowClick={setSelected} />
+
+      <Drawer
+        open={!!selected}
+        title={selected ? `합의 요청 상세 - ${selected.id}` : ""}
+        onClose={() => { setSelected(null); setIsRejecting(false); }}
+        footer={
+          selected?.status === "요청" ? (
+            <>
+              <Button variant="secondary" onClick={() => setIsRejecting(true)}>반려</Button>
+              <Button onClick={() => handleUpdateStatus("수락")}>승인</Button>
+            </>
+          ) : (
+            <Button variant="secondary" onClick={() => setSelected(null)}>닫기</Button>
+          )
+        }
+      >
+        {selected && (
+          <div className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>요청 정보</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2 text-sm text-slate-800">
+                <Field label="오더 ID" value={selected.orderId} />
+                <Field label="차량" value={`${selected.plate} (${selected.model})`} />
+                <Field label="파트너사" value={selected.partner} />
+                <Field label="요청 사유" value={selected.reason} />
+                <Field label="세차 항목" value={selected.washItems.join(", ")} />
+                <div className="flex items-center justify-between gap-3">
+                  <div className="w-36 shrink-0 text-xs font-semibold text-slate-500">청구 금액</div>
+                  <Input
+                    type="number"
+                    className="h-8 w-32 text-right"
+                    defaultValue={selected.cost}
+                    disabled={selected.status !== "요청"}
+                  />
+                </div>
+                <Field label="코멘트" value={selected.comment} />
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>현장 사진</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex h-32 w-full items-center justify-center rounded-xl bg-slate-100 text-slate-400">
+                  <span className="text-xs">이미지 미리보기 (Placeholder)</span>
+                </div>
+              </CardContent>
+            </Card>
+
+            {isRejecting && (
+              <Card className="ring-rose-200">
+                <CardHeader>
+                  <CardTitle className="text-rose-700">반려 사유 입력</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <Input
+                    value={rejectReason}
+                    onChange={(e) => setRejectReason(e.target.value)}
+                    placeholder="반려 사유를 입력하세요"
+                  />
+                  <div className="flex justify-end gap-2">
+                    <Button variant="secondary" onClick={() => setIsRejecting(false)}>취소</Button>
+                    <Button variant="danger" onClick={() => handleUpdateStatus("거절", rejectReason)}>반려 확정</Button>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+          </div>
+        )}
+      </Drawer>
+    </div>
+  );
+}
+
+/**
+ * 청구 관리
+ */
+function BillingPage() {
+  const [view, setView] = useState("list"); // list | policy
+  const [period, setPeriod] = useState(toYmd(new Date()));
+
+  const billingData = [
+    { id: "B-1001", orderId: "O-90002", partner: "B협력사", amount: 25000, status: "청구완료", date: "2026-01-12" },
+    { id: "B-1002", orderId: "O-90005", partner: "B협력사", amount: 18000, status: "대기", date: "2026-01-12" },
+    { id: "B-1003", orderId: "O-90011", partner: "C협력사", amount: 22000, status: "청구완료", date: "2026-01-11" },
+  ];
+
+  const policyData = [
+    { id: "P-1", partner: "A협력사", baseAmount: 15000, missionAmount: 3000 },
+    { id: "P-2", partner: "B협력사", baseAmount: 16000, missionAmount: 2500 },
+    { id: "P-3", partner: "C협력사", baseAmount: 15500, missionAmount: 3000 },
+  ];
+
+  const [selected, setSelected] = useState(null);
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <div>
+          <div className="text-base font-semibold">청구 관리</div>
+          <div className="mt-1 text-sm text-slate-600">파트너사별 청구 내역 및 단가 정책 관리</div>
+        </div>
+        <div className="flex gap-2">
+          <Button variant={view === "list" ? "default" : "secondary"} onClick={() => setView("list")}>
+            <Receipt className="mr-2 h-4 w-4" /> 청구 내역
+          </Button>
+          <Button variant={view === "policy" ? "default" : "secondary"} onClick={() => setView("policy")}>
+            <Settings className="mr-2 h-4 w-4" /> 단가 정책
+          </Button>
+        </div>
+      </div>
+
+      {view === "list" ? (
+        <>
+          <Card>
+            <CardContent className="flex items-center gap-4">
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-medium text-slate-700">기간 조회</span>
+                <Input type="date" value={period} onChange={(e) => setPeriod(e.target.value)} className="w-40" />
+              </div>
+            </CardContent>
+          </Card>
+          <DataTable
+            columns={[
+              { key: "id", header: "청구 ID" },
+              { key: "orderId", header: "오더 ID" },
+              { key: "partner", header: "파트너사" },
+              { key: "amount", header: "금액", render: (r) => `${r.amount.toLocaleString()}원` },
+              { key: "status", header: "상태", render: (r) => <Badge tone={r.status === "청구완료" ? "ok" : "default"}>{r.status}</Badge> },
+              { key: "date", header: "청구일" },
+            ]}
+            rows={billingData}
+            rowKey={(r) => r.id}
+            onRowClick={setSelected}
+          />
+        </>
+      ) : (
+        <DataTable
+          columns={[
+            { key: "partner", header: "파트너사" },
+            { key: "baseAmount", header: "기본 단가", render: (r) => `${r.baseAmount.toLocaleString()}원` },
+            { key: "missionAmount", header: "미션 단가", render: (r) => `${r.missionAmount.toLocaleString()}원` },
+            {
+              key: "action",
+              header: "관리",
+              render: () => <Button variant="ghost" size="sm"><Edit className="h-4 w-4" /></Button>,
+            },
+          ]}
+          rows={policyData}
+          rowKey={(r) => r.id}
+        />
+      )}
+
+      <Drawer
+        open={!!selected}
+        title="청구 상세"
+        onClose={() => setSelected(null)}
+        footer={<Button variant="secondary" onClick={() => setSelected(null)}>닫기</Button>}
+      >
+        {selected && (
+          <Card>
+            <CardHeader>
+              <CardTitle>청구 정보</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2 text-sm text-slate-800">
+              <Field label="청구 ID" value={selected.id} />
+              <Field label="오더 ID" value={selected.orderId} />
+              <Field label="파트너사" value={selected.partner} />
+              <Field label="청구 금액" value={`${selected.amount.toLocaleString()}원`} />
+              <Field label="상태" value={selected.status} />
+              <Field label="청구일" value={selected.date} />
+            </CardContent>
+          </Card>
+        )}
+      </Drawer>
+    </div>
+  );
+}
+
+/**
+ * 분실물 관리
+ */
+function LostFoundPage() {
+  const [items, setItems] = useState([
+    { id: "L-1001", orderId: "O-90008", plate: "33아1212", item: "지갑", status: "보관중", foundAt: "2026-01-12", location: "대전역 1번존 보관함" },
+    { id: "L-1002", orderId: "O-90002", plate: "34나7890", item: "무선 이어폰", status: "찾는 중", foundAt: "2026-01-11", location: "-" },
+  ]);
+  const [selected, setSelected] = useState(null);
+  const [isRegistering, setIsRegistering] = useState(false);
+
+  const columns = [
+    { key: "id", header: "분실물 ID" },
+    { key: "item", header: "습득물" },
+    { key: "plate", header: "차량번호" },
+    {
+      key: "status",
+      header: "상태",
+      render: (r) => {
+        const tone = r.status === "보관중" ? "ok" : r.status === "찾는 중" ? "warn" : "default";
+        return <Badge tone={tone}>{r.status}</Badge>;
+      },
+    },
+    { key: "foundAt", header: "습득일" },
+  ];
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <div>
+          <div className="text-base font-semibold">분실물 관리</div>
+          <div className="mt-1 text-sm text-slate-600">세차 중 습득된 분실물 등록 및 처리 현황</div>
+        </div>
+        <Button onClick={() => setIsRegistering(true)}>
+          <Plus className="mr-2 h-4 w-4" /> 분실물 등록
+        </Button>
+      </div>
+
+      <DataTable columns={columns} rows={items} rowKey={(r) => r.id} onRowClick={setSelected} />
+
+      <Drawer
+        open={!!selected || isRegistering}
+        title={isRegistering ? "분실물 등록" : "분실물 상세"}
+        onClose={() => { setSelected(null); setIsRegistering(false); }}
+        footer={
+          isRegistering ? (
+            <Button onClick={() => { alert("등록되었습니다(프로토타입)"); setIsRegistering(false); }}>등록</Button>
+          ) : (
+            <Button onClick={() => { alert("수정되었습니다(프로토타입)"); setSelected(null); }}>저장</Button>
+          )
+        }
+      >
+        <div className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>기본 정보</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-1">
+                <label className="text-xs font-semibold text-slate-500">습득물 명</label>
+                <Input defaultValue={selected?.item} placeholder="예: 지갑, 차키 등" />
+              </div>
+              <div className="space-y-1">
+                <label className="text-xs font-semibold text-slate-500">차량번호</label>
+                <Input defaultValue={selected?.plate} placeholder="12가3456" />
+              </div>
+              <div className="space-y-1">
+                <label className="text-xs font-semibold text-slate-500">처리 상태</label>
+                <Select defaultValue={selected?.status || "찾는 중"}>
+                  <option>찾는 중</option>
+                  <option>보관중</option>
+                  <option>경찰서 인계</option>
+                  <option>택배 발송</option>
+                </Select>
+              </div>
+              <div className="space-y-1">
+                <label className="text-xs font-semibold text-slate-500">보관 장소</label>
+                <Input defaultValue={selected?.location} />
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle>사진</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex h-32 w-full items-center justify-center rounded-xl bg-slate-100 text-slate-400">
+                <span className="text-xs">사진 업로드 / 미리보기</span>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </Drawer>
+    </div>
+  );
+}
+
+/**
+ * 공지 관리 (External CMS)
+ */
+function NoticesPage() {
+  const notices = [
+    { id: 1, title: "[필독] 1월 세차 정책 변경 안내", targetPartner: "전체", targetRegion: "전체", createdAt: "2026-01-02", author: "운영팀" },
+    { id: 2, title: "설 연휴 기간 운영 가이드", targetPartner: "A협력사", targetRegion: "서울", createdAt: "2026-01-10", author: "운영팀" },
+    { id: 3, title: "시스템 점검 안내", targetPartner: "전체", targetRegion: "전체", createdAt: "2026-01-12", author: "개발팀" },
+  ];
+
+  const [filter, setFilter] = useState("전체");
+
+  const filtered = notices.filter((n) => filter === "전체" || n.targetPartner === filter);
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <div>
+          <div className="text-base font-semibold">공지 관리 (CMS 연동)</div>
+          <div className="mt-1 text-sm text-slate-600">외부 CMS 게시글 조회 (Read-only)</div>
+        </div>
+      </div>
+
+      <Card>
+        <CardContent className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-medium text-slate-700">대상 파트너</span>
+            <Select value={filter} onChange={(e) => setFilter(e.target.value)} className="w-40">
+              <option value="전체">전체</option>
+              <option value="A협력사">A협력사</option>
+              <option value="B협력사">B협력사</option>
+            </Select>
+          </div>
+        </CardContent>
+      </Card>
+
+      <DataTable
+        columns={[
+          { key: "id", header: "No" },
+          { key: "title", header: "제목", render: (r) => <span className="font-medium text-slate-900">{r.title}</span> },
+          { key: "targetPartner", header: "대상 파트너" },
+          { key: "targetRegion", header: "대상 지역" },
+          { key: "author", header: "작성자" },
+          { key: "createdAt", header: "작성일" },
+        ]}
+        rows={filtered}
+        rowKey={(r) => r.id}
+      />
     </div>
   );
 }
