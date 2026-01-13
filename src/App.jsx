@@ -73,6 +73,8 @@ function toYmd(d) {
 }
 
 const UPDATE_HISTORY = [
+  { id: 9, date: "2026-01-13 18:40", content: "미션 관리 리스트 필터 고도화 및 상세 Drawer 내 타임라인/삭제 기능 구현" },
+  { id: 8, date: "2026-01-13 18:25", content: "미션 관리 메뉴 독립 분리 및 오더-미션 상태 연동 로직 고도화" },
   { id: 7, date: "2026-01-13 18:15", content: "오더 관리 내 파트너유형 필터 추가 및 유형별 진행상태 옵션 동적 노출 로직 구현" },
   { id: 6, date: "2026-01-13 18:10", content: "차량 상세 내 모든 세차 이력 항목에 대해 오더 상세 Drawer 자동 연결 기능 보완" },
   { id: 5, date: "2026-01-13 17:55", content: "차량 상세 세차 이력 클릭 시 새 창에서 오더 상세 자동 연결 기능 구현" },
@@ -398,6 +400,7 @@ const NAV = [
     group: "업무 관리",
     items: [
       { key: "vehicles", label: "차량 관리", icon: Car },
+      { key: "missions", label: "미션 관리", icon: ClipboardList },
       { key: "orders", label: "오더 관리", icon: ClipboardList },
       { key: "settlement", label: "합의 요청 관리", icon: Handshake },
       { key: "billing", label: "청구 관리", icon: Receipt },
@@ -422,6 +425,7 @@ const PAGE_TITLES = {
   "zone-policy": "존 정책 관리",
   "region-policy": "지역 정책 관리",
   vehicles: "차량 관리",
+  missions: "미션 관리",
   orders: "오더 관리",
   settlement: "합의 요청 관리",
   billing: "청구 관리",
@@ -441,6 +445,28 @@ export default function App() {
   // 대시보드 KPI 카드 클릭 시 "오더 관리"로 이동하면서 필터를 “적용한 것처럼” 표시하는 상태
   const [orderQuickFilter, setOrderQuickFilter] = useState(null); // { status: '예약' | ... }
   const [initialOrderId, setInitialOrderId] = useState(null);
+
+  // Lifted State: Missions (전역 관리)
+  const [missions, setMissions] = useState([
+    { id: "M-1001", plate: "12가3456", content: "스티커 부착", status: "pending", zoneName: "강남역 1번존", createdAt: "2026-01-10", assignedAt: null, completedAt: null },
+    { id: "M-1002", plate: "34나7890", content: "내부 청소 집중", status: "completed", linkedOrderId: "O-90002", zoneName: "잠실역 2번존", createdAt: "2026-01-08", assignedAt: "2026-01-09 10:00", completedAt: "2026-01-09 14:00" },
+  ]);
+
+  // Lifted State: Orders (전역 관리)
+  const [orders, setOrders] = useState(() => [
+    { orderId: "O-90001", washType: "내부", orderGroup: "정규", orderType: "주기세차", carId: "C-1001", model: "아반떼 AD", plate: "12가3456", zone: "강남역 1번존", zoneId: "Z-1001", region1: "서울", region2: "강남", partner: "A파트너명", partnerType: "현장", status: "예약", elapsedDays: 2, worker: "수행원 김00", comment: "오염도 3, 내부 우선" , createdAt: toYmd(new Date())},
+    { orderId: "O-90002", washType: "내외부", orderGroup: "수시", orderType: "수시세차", carId: "C-1002", model: "K5", plate: "34나7890", zone: "잠실역 2번존", zoneId: "Z-1002", region1: "서울", region2: "송파", partner: "B파트너명", partnerType: "현장", status: "완료", elapsedDays: 4, worker: "수행원 이00", comment: "합의건, 추가요금 협의" , createdAt: toYmd(new Date())},
+    { orderId: "O-90003", washType: "외부", orderGroup: "정규", orderType: "주기세차", carId: "C-1003", model: "쏘나타", plate: "56다1122", zone: "홍대입구 3번존", zoneId: "Z-1003", region1: "서울", region2: "마포", partner: "A파트너명", partnerType: "현장", status: "미배정", elapsedDays: 7, worker: "-", comment: "미배정 상태, 수행원 부족" , createdAt: toYmd(new Date())},
+    { orderId: "O-90004", washType: "내부", orderGroup: "특별", orderType: "특수세차", carId: "C-2001", model: "아이오닉5", plate: "78라3344", zone: "판교 1번존", zoneId: "Z-2001", region1: "경기", region2: "성남", partner: "C파트너명", partnerType: "입고", status: "입고 중", elapsedDays: 3, worker: "수행원 박00", comment: "EV, 실내 매트 확인" , createdAt: toYmd(new Date())},
+    { orderId: "O-90005", washType: "내외부", orderGroup: "정규", orderType: "주기세차", carId: "C-2002", model: "스포티지", plate: "90마5566", zone: "수원역 2번존", zoneId: "Z-2002", region1: "경기", region2: "수원", partner: "B파트너명", partnerType: "현장", status: "완료", elapsedDays: 5, worker: "수행원 최00", comment: "점검 체크리스트 완료" , createdAt: toYmd(new Date())},
+    { orderId: "O-90006", washType: "외부", orderGroup: "정규", orderType: "주기세차", carId: "C-3001", model: "그랜저", plate: "11바7788", zone: "부산역 1번존", zoneId: "Z-3001", region1: "부산", region2: "동구", partner: "D파트너명", partnerType: "현장", status: "미배정", elapsedDays: 9, worker: "-", comment: "장기 미배정 리스크" , createdAt: toYmd(new Date())},
+    { orderId: "O-90007", washType: "내부", orderGroup: "수시", orderType: "수시세차", carId: "C-3002", model: "레이", plate: "22사9900", zone: "해운대 2번존", zoneId: "Z-3002", region1: "부산", region2: "해운대", partner: "D파트너명", partnerType: "현장", status: "예약", elapsedDays: 1, worker: "수행원 정00", comment: "오염도 2" , createdAt: toYmd(new Date())},
+    { orderId: "O-90008", washType: "내외부", orderGroup: "정규", orderType: "주기세차", carId: "C-4001", model: "카니발", plate: "33아1212", zone: "대전역 1번존", zoneId: "Z-4001", region1: "대전", region2: "동구", partner: "C파트너명", partnerType: "입고", status: "출고 중", elapsedDays: 6, worker: "수행원 한00", comment: "분실물 없음" , createdAt: toYmd(new Date())},
+    { orderId: "O-90009", washType: "외부", orderGroup: "정규", orderType: "주기세차", carId: "C-5002", model: "모닝", plate: "44자3434", zone: "청주 2번존", zoneId: "Z-5002", region1: "충북", region2: "청주", partner: "B파트너명", partnerType: "현장", status: "미배정", elapsedDays: 10, worker: "-", comment: "존 인력 수급 이슈" , createdAt: toYmd(new Date())},
+    { orderId: "O-90010", washType: "내부", orderGroup: "긴급", orderType: "위생장애", carId: "C-6001", model: "EV6", plate: "55차5656", zone: "광주 1번존", zoneId: "Z-6001", region1: "광주", region2: "서구", partner: "A파트너명", partnerType: "현장", status: "예약", elapsedDays: 3, worker: "수행원 오00", comment: "내부 먼지 제거 요청" , createdAt: toYmd(new Date())},
+    { orderId: "O-90011", washType: "내외부", orderGroup: "정규", orderType: "주기세차", carId: "C-7001", model: "티볼리", plate: "66카7878", zone: "인천공항 1번존", zoneId: "Z-7001", region1: "인천", region2: "중구", partner: "C파트너명", partnerType: "입고", status: "완료", elapsedDays: 4, worker: "수행원 유00", comment: "사진 업로드 완료" , createdAt: toYmd(new Date())},
+    { orderId: "O-90012", washType: "외부", orderGroup: "정규", orderType: "주기세차", carId: "C-8001", model: "셀토스", plate: "77타9090", zone: "제주공항 1번존", zoneId: "Z-8001", region1: "제주", region2: "제주시", partner: "D파트너명", partnerType: "현장", status: "미배정", elapsedDays: 11, worker: "-", comment: "장기 미배정, 알림 필요" , createdAt: toYmd(new Date())},
+  ]);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -480,12 +506,17 @@ export default function App() {
 
             {activeKey === "update-history" && <UpdateHistoryPage />}
             {activeKey === "vehicles" && <VehiclesPage />}
+            {activeKey === "missions" && <MissionsPage missions={missions} setMissions={setMissions} orders={orders} />}
 
             {activeKey === "orders" && (
               <OrdersPage
                 quickStatus={orderQuickFilter?.status ?? null}
                 onClearQuickStatus={() => setOrderQuickFilter(null)}
                 initialOrderId={initialOrderId}
+                orders={orders}
+                setOrders={setOrders}
+                missions={missions}
+                setMissions={setMissions}
               />
             )}
 
@@ -497,6 +528,7 @@ export default function App() {
             {activeKey !== "dashboard" &&
               activeKey !== "vehicles" &&
               activeKey !== "orders" &&
+              activeKey !== "missions" &&
               activeKey !== "update-history" &&
               activeKey !== "settlement" &&
               activeKey !== "billing" &&
@@ -1211,30 +1243,8 @@ function VehiclesPage() {
 /**
  * 오더 관리 (리스트 + 필터 + Drawer + Quick Filter)
  */
-function OrdersPage({ quickStatus, onClearQuickStatus, initialOrderId }) {
+function OrdersPage({ quickStatus, onClearQuickStatus, initialOrderId, orders, setOrders, missions, setMissions }) {
   const today = new Date();
-
-  // 미션 관리 상태 (Car ID 대신 편의상 plate를 키로 사용)
-  const [missions, setMissions] = useState([
-    { id: "M-1001", plate: "12가3456", content: "스티커 부착", status: "pending" },
-    { id: "M-1002", plate: "34나7890", content: "내부 청소 집중", status: "completed" },
-  ]);
-
-  // 오더 데이터 상태 관리
-  const [orders, setOrders] = useState(() => [
-      { orderId: "O-90001", washType: "내부", orderGroup: "정규", orderType: "주기세차", carId: "C-1001", model: "아반떼 AD", plate: "12가3456", zone: "강남역 1번존", zoneId: "Z-1001", region1: "서울", region2: "강남", partner: "A파트너명", partnerType: "현장", status: "예약", elapsedDays: 2, worker: "수행원 김00", comment: "오염도 3, 내부 우선" , createdAt: toYmd(today)},
-      { orderId: "O-90002", washType: "내외부", orderGroup: "수시", orderType: "수시세차", carId: "C-1002", model: "K5", plate: "34나7890", zone: "잠실역 2번존", zoneId: "Z-1002", region1: "서울", region2: "송파", partner: "B파트너명", partnerType: "현장", status: "완료", elapsedDays: 4, worker: "수행원 이00", comment: "합의건, 추가요금 협의" , createdAt: toYmd(today)},
-      { orderId: "O-90003", washType: "외부", orderGroup: "정규", orderType: "주기세차", carId: "C-1003", model: "쏘나타", plate: "56다1122", zone: "홍대입구 3번존", zoneId: "Z-1003", region1: "서울", region2: "마포", partner: "A파트너명", partnerType: "현장", status: "미배정", elapsedDays: 7, worker: "-", comment: "미배정 상태, 수행원 부족" , createdAt: toYmd(today)},
-      { orderId: "O-90004", washType: "내부", orderGroup: "특별", orderType: "특수세차", carId: "C-2001", model: "아이오닉5", plate: "78라3344", zone: "판교 1번존", zoneId: "Z-2001", region1: "경기", region2: "성남", partner: "C파트너명", partnerType: "입고", status: "입고 중", elapsedDays: 3, worker: "수행원 박00", comment: "EV, 실내 매트 확인" , createdAt: toYmd(today)},
-      { orderId: "O-90005", washType: "내외부", orderGroup: "정규", orderType: "주기세차", carId: "C-2002", model: "스포티지", plate: "90마5566", zone: "수원역 2번존", zoneId: "Z-2002", region1: "경기", region2: "수원", partner: "B파트너명", partnerType: "현장", status: "완료", elapsedDays: 5, worker: "수행원 최00", comment: "점검 체크리스트 완료" , createdAt: toYmd(today)},
-      { orderId: "O-90006", washType: "외부", orderGroup: "정규", orderType: "주기세차", carId: "C-3001", model: "그랜저", plate: "11바7788", zone: "부산역 1번존", zoneId: "Z-3001", region1: "부산", region2: "동구", partner: "D파트너명", partnerType: "현장", status: "미배정", elapsedDays: 9, worker: "-", comment: "장기 미배정 리스크" , createdAt: toYmd(today)},
-      { orderId: "O-90007", washType: "내부", orderGroup: "수시", orderType: "수시세차", carId: "C-3002", model: "레이", plate: "22사9900", zone: "해운대 2번존", zoneId: "Z-3002", region1: "부산", region2: "해운대", partner: "D파트너명", partnerType: "현장", status: "예약", elapsedDays: 1, worker: "수행원 정00", comment: "오염도 2" , createdAt: toYmd(today)},
-      { orderId: "O-90008", washType: "내외부", orderGroup: "정규", orderType: "주기세차", carId: "C-4001", model: "카니발", plate: "33아1212", zone: "대전역 1번존", zoneId: "Z-4001", region1: "대전", region2: "동구", partner: "C파트너명", partnerType: "입고", status: "출고 중", elapsedDays: 6, worker: "수행원 한00", comment: "분실물 없음" , createdAt: toYmd(today)},
-      { orderId: "O-90009", washType: "외부", orderGroup: "정규", orderType: "주기세차", carId: "C-5002", model: "모닝", plate: "44자3434", zone: "청주 2번존", zoneId: "Z-5002", region1: "충북", region2: "청주", partner: "B파트너명", partnerType: "현장", status: "미배정", elapsedDays: 10, worker: "-", comment: "존 인력 수급 이슈" , createdAt: toYmd(today)},
-      { orderId: "O-90010", washType: "내부", orderGroup: "긴급", orderType: "위생장애", carId: "C-6001", model: "EV6", plate: "55차5656", zone: "광주 1번존", zoneId: "Z-6001", region1: "광주", region2: "서구", partner: "A파트너명", partnerType: "현장", status: "예약", elapsedDays: 3, worker: "수행원 오00", comment: "내부 먼지 제거 요청" , createdAt: toYmd(today)},
-      { orderId: "O-90011", washType: "내외부", orderGroup: "정규", orderType: "주기세차", carId: "C-7001", model: "티볼리", plate: "66카7878", zone: "인천공항 1번존", zoneId: "Z-7001", region1: "인천", region2: "중구", partner: "C파트너명", partnerType: "입고", status: "완료", elapsedDays: 4, worker: "수행원 유00", comment: "사진 업로드 완료" , createdAt: toYmd(today)},
-      { orderId: "O-90012", washType: "외부", orderGroup: "정규", orderType: "주기세차", carId: "C-8001", model: "셀토스", plate: "77타9090", zone: "제주공항 1번존", zoneId: "Z-8001", region1: "제주", region2: "제주시", partner: "D파트너명", partnerType: "현장", status: "미배정", elapsedDays: 11, worker: "-", comment: "장기 미배정, 알림 필요" , createdAt: toYmd(today)},
-    ]);
 
   const [q, setQ] = useState("");
   const [periodFrom, setPeriodFrom] = useState(toYmd(new Date(today.getTime() - 7 * 86400000)));
@@ -1256,12 +1266,9 @@ function OrdersPage({ quickStatus, onClearQuickStatus, initialOrderId }) {
   
   // 신규 기능용 상태
   const [isCreateOpen, setIsCreateOpen] = useState(false);
-  const [isMissionOpen, setIsMissionOpen] = useState(false);
   
   // 오더 발행 폼 상태
   const [newOrderForm, setNewOrderForm] = useState({ plate: "", zone: "", washType: "외부", model: "" });
-  // 미션 등록 폼 상태
-  const [newMissionForm, setNewMissionForm] = useState({ plate: "", content: "" });
 
   useEffect(() => {
     if (initialOrderId) {
@@ -1288,6 +1295,7 @@ function OrdersPage({ quickStatus, onClearQuickStatus, initialOrderId }) {
     if (!newOrderForm.plate || !newOrderForm.zone) return alert("차량번호와 존 정보는 필수입니다.");
 
     // 해당 차량의 Pending 미션 조회
+    // 오더 발행 시 미션에 오더 ID 연결 (상태는 pending 유지)
     const pendingMissions = missions.filter(m => m.plate === newOrderForm.plate && m.status === "pending");
 
     const newOrder = {
@@ -1313,23 +1321,16 @@ function OrdersPage({ quickStatus, onClearQuickStatus, initialOrderId }) {
     };
 
     setOrders([newOrder, ...orders]);
+    
+    // 미션 상태 업데이트 (오더 연결)
+    if (pendingMissions.length > 0) {
+      const missionIds = pendingMissions.map(m => m.id);
+      setMissions(prev => prev.map(m => missionIds.includes(m.id) ? { ...m, linkedOrderId: newOrder.orderId, assignedAt: toYmd(new Date()) + " " + new Date().toLocaleTimeString() } : m));
+    }
+
     setIsCreateOpen(false);
     setNewOrderForm({ plate: "", zone: "", washType: "외부", model: "" });
     alert(`오더가 발행되었습니다. (포함된 미션: ${pendingMissions.length}건)`);
-  };
-
-  // 미션 등록 핸들러
-  const handleRegisterMission = () => {
-    if (!newMissionForm.plate || !newMissionForm.content) return alert("차량번호와 미션 내용은 필수입니다.");
-    const newMission = {
-      id: `M-${Date.now()}`,
-      plate: newMissionForm.plate,
-      content: newMissionForm.content,
-      status: "pending",
-    };
-    setMissions([...missions, newMission]);
-    setNewMissionForm({ plate: "", content: "" });
-    alert("미션이 등록되었습니다.");
   };
 
   // 파트너 유형에 따른 진행상태 옵션 동적화
@@ -1428,9 +1429,6 @@ function OrdersPage({ quickStatus, onClearQuickStatus, initialOrderId }) {
           <div className="mt-1 text-sm text-[#6B778C]">상단 필터 및 데이터 그리드, 행 클릭 Drawer 상세(프로토타입)</div>
         </div>
         <div className="flex items-center gap-2">
-          <Button onClick={() => setIsMissionOpen(true)} variant="outline">
-            <ClipboardList className="mr-2 h-4 w-4" /> 미션 등록
-          </Button>
           <Button onClick={() => setIsCreateOpen(true)}>
             <Plus className="mr-2 h-4 w-4" /> 오더 발행
           </Button>
@@ -1582,8 +1580,8 @@ function OrdersPage({ quickStatus, onClearQuickStatus, initialOrderId }) {
                   
                   // 미션 완료 처리 로직 (Global State Update)
                   if (selected.attachedMissions?.length > 0) {
-                    const missionIds = selected.attachedMissions.map(m => m.id);
-                    setMissions(prev => prev.map(m => missionIds.includes(m.id) ? { ...m, status: "completed" } : m));
+                    const missionIds = selected.attachedMissions.map(m => m.id); // 스냅샷 기준 ID
+                    setMissions(prev => prev.map(m => missionIds.includes(m.id) ? { ...m, status: "completed", completedAt: toYmd(new Date()) + " " + new Date().toLocaleTimeString() } : m));
                   }
                   
                   setSelected(null);
@@ -1900,54 +1898,6 @@ function OrdersPage({ quickStatus, onClearQuickStatus, initialOrderId }) {
                   <option value="내외부">내외부</option>
                 </Select>
               </div>
-            </CardContent>
-          </Card>
-        </div>
-      </Drawer>
-
-      {/* 미션 등록 Drawer */}
-      <Drawer
-        open={isMissionOpen}
-        title="미션 관리"
-        onClose={() => setIsMissionOpen(false)}
-        footer={
-          <Button onClick={handleRegisterMission} className="w-full">미션 등록</Button>
-        }
-      >
-        <div className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>신규 미션 등록</CardTitle>
-              <CardDescription>등록된 미션은 다음 오더 생성 시 1회 자동 반영됩니다.</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-1">
-                <label className="text-xs font-semibold text-[#6B778C]">대상 차량번호 *</label>
-                <Input value={newMissionForm.plate} onChange={e => setNewMissionForm({...newMissionForm, plate: e.target.value})} placeholder="예: 12가3456" />
-              </div>
-              <div className="space-y-1">
-                <label className="text-xs font-semibold text-[#6B778C]">미션 내용 *</label>
-                <Input value={newMissionForm.content} onChange={e => setNewMissionForm({...newMissionForm, content: e.target.value})} placeholder="예: 스티커 부착, 내부 집중 청소" />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>전체 미션 현황</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ul className="space-y-2 text-sm">
-                {missions.map(m => (
-                  <li key={m.id} className="flex justify-between border-b border-[#DFE1E6] pb-2 last:border-0">
-                    <div>
-                      <div className="font-medium text-[#172B4D]">{m.plate}</div>
-                      <div className="text-[#6B778C]">{m.content}</div>
-                    </div>
-                    <Badge tone={m.status === 'pending' ? 'warn' : 'ok'}>{m.status}</Badge>
-                  </li>
-                ))}
-              </ul>
             </CardContent>
           </Card>
         </div>
@@ -2281,6 +2231,275 @@ function LostFoundPage() {
             </CardContent>
           </Card>
         </div>
+      </Drawer>
+    </div>
+  );
+}
+
+/**
+ * 미션 관리
+ */
+function MissionsPage({ missions, setMissions, orders }) {
+  const today = new Date();
+  const [isRegisterOpen, setIsRegisterOpen] = useState(false);
+  const [newMissionForm, setNewMissionForm] = useState({ plate: "", content: "", zoneName: "" });
+
+  // 필터 상태
+  const [q, setQ] = useState("");
+  const [fStatus, setFStatus] = useState("");
+  const [periodFrom, setPeriodFrom] = useState(toYmd(new Date(today.getTime() - 30 * 86400000)));
+  const [periodTo, setPeriodTo] = useState(toYmd(today));
+
+  // 상세 Drawer 상태
+  const [selected, setSelected] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteReason, setDeleteReason] = useState("");
+
+  // 필터링 로직
+  const filtered = useMemo(() => {
+    const qq = q.trim().toLowerCase();
+    return missions.filter(m => {
+      const hitQ = !qq || m.plate.toLowerCase().includes(qq) || m.id.toLowerCase().includes(qq) || m.zoneName.toLowerCase().includes(qq);
+      const hitS = !fStatus || (fStatus === "대기" ? m.status === "pending" : m.status === "completed");
+      const hitP = (!periodFrom || m.createdAt >= periodFrom) && (!periodTo || m.createdAt <= periodTo);
+      return hitQ && hitS && hitP;
+    });
+  }, [missions, q, fStatus, periodFrom, periodTo]);
+
+  // 미션 등록
+  const handleRegisterMission = () => {
+    if (!newMissionForm.plate || !newMissionForm.content) return alert("차량번호와 미션 내용은 필수입니다.");
+    const newMission = {
+      id: `M-${Date.now()}`,
+      plate: newMissionForm.plate,
+      content: newMissionForm.content,
+      zoneName: newMissionForm.zoneName || "-",
+      status: "pending",
+      createdAt: toYmd(new Date()),
+    };
+    setMissions([newMission, ...missions]);
+    setNewMissionForm({ plate: "", content: "", zoneName: "" });
+    setIsRegisterOpen(false);
+    alert("미션이 등록되었습니다.");
+  };
+
+  // 미션 삭제
+  const handleDeleteMission = () => {
+    if (!selected) return;
+    setMissions(prev => prev.filter(m => m.id !== selected.id));
+    alert(`미션이 삭제되었습니다.\n사유: ${deleteReason}`);
+    setSelected(null);
+    setIsDeleting(false);
+    setDeleteReason("");
+  };
+
+  // 연결된 오더 정보 조회 (for Drawer)
+  const linkedOrder = selected?.linkedOrderId ? orders.find(o => o.orderId === selected.linkedOrderId) : null;
+
+  const columns = [
+    { key: "id", header: "미션 ID" },
+    { key: "plate", header: "차량번호" },
+    { key: "zoneName", header: "존이름" },
+    { key: "content", header: "미션 내용" },
+    { 
+      key: "status", 
+      header: "상태", 
+      render: (r) => {
+        const tone = r.status === 'completed' ? 'ok' : 'warn';
+        return <Badge tone={tone}>{r.status}</Badge>;
+      }
+    },
+    { 
+      key: "linkedOrderId", 
+      header: "연결된 오더",
+      render: (r) => r.linkedOrderId ? (
+        <Button variant="ghost" size="sm" className="h-6 px-2 text-xs text-[#0052CC]" onClick={() => window.open(`/?page=orders&orderId=${r.linkedOrderId}`, "_blank")}>
+          {r.linkedOrderId} <ExternalLink className="ml-1 h-3 w-3" />
+        </Button>
+      ) : <span className="text-[#B3BAC5] text-xs">-</span>
+    },
+    { key: "createdAt", header: "등록일" },
+  ];
+
+  return (
+    <div className="space-y-4">
+      <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+        <div>
+          <div className="text-base font-bold text-[#172B4D]">미션 관리</div>
+          <div className="mt-1 text-sm text-[#6B778C]">차량별 특수 과업 사전 등록 및 오더 연동 현황</div>
+        </div>
+        <div className="flex items-center gap-2">
+          <Button onClick={() => setIsRegisterOpen(true)}>
+            <Plus className="mr-2 h-4 w-4" /> 미션 등록
+          </Button>
+        </div>
+      </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>검색 및 필터</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-12">
+            <div className="md:col-span-4">
+              <div className="relative">
+                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#6B778C]" />
+                <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="차량번호/미션 ID/존이름 검색" className="pl-9" />
+              </div>
+            </div>
+            <div className="md:col-span-2">
+              <Select value={fStatus} onChange={(e) => setFStatus(e.target.value)}>
+                <option value="">상태 전체</option>
+                <option value="대기">대기</option>
+                <option value="수행완료">수행완료</option>
+              </Select>
+            </div>
+            <div className="md:col-span-3">
+              <div className="flex items-center gap-2">
+                <Input type="date" value={periodFrom} onChange={(e) => setPeriodFrom(e.target.value)} />
+                <span className="text-[#6B778C]">~</span>
+                <Input type="date" value={periodTo} onChange={(e) => setPeriodTo(e.target.value)} />
+              </div>
+            </div>
+            <div className="md:col-span-3 flex items-center justify-end gap-2">
+              <Button
+                variant="secondary"
+                onClick={() => { setQ(""); setFStatus(""); setPeriodFrom(""); setPeriodTo(""); }}
+              >
+                초기화
+              </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <DataTable
+          columns={columns}
+          rows={filtered}
+          rowKey={(r) => r.id}
+          onRowClick={setSelected}
+        />
+      </Card>
+
+      <Drawer
+        open={isRegisterOpen}
+        title="신규 미션 등록"
+        onClose={() => setIsRegisterOpen(false)}
+        footer={
+          <Button onClick={handleRegisterMission} className="w-full">등록하기</Button>
+        }
+      >
+        <div className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>미션 정보 입력</CardTitle>
+              <CardDescription>등록된 미션은 해당 차량의 다음 오더 생성 시 자동으로 할당됩니다.</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-1">
+                <label className="text-xs font-semibold text-[#6B778C]">대상 차량번호 *</label>
+                <Input value={newMissionForm.plate} onChange={e => setNewMissionForm({...newMissionForm, plate: e.target.value})} placeholder="예: 12가3456" />
+              </div>
+              <div className="space-y-1">
+                <label className="text-xs font-semibold text-[#6B778C]">존이름</label>
+                <Input value={newMissionForm.zoneName} onChange={e => setNewMissionForm({...newMissionForm, zoneName: e.target.value})} placeholder="예: 강남역 1번존" />
+              </div>
+              <div className="space-y-1">
+                <label className="text-xs font-semibold text-[#6B778C]">미션 내용 *</label>
+                <Input value={newMissionForm.content} onChange={e => setNewMissionForm({...newMissionForm, content: e.target.value})} placeholder="예: 스티커 부착, 내부 집중 청소" />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </Drawer>
+
+      {/* 미션 상세 Drawer */}
+      <Drawer
+        open={!!selected}
+        title={selected ? `미션 상세 - ${selected.id}` : "미션 상세"}
+        onClose={() => { setSelected(null); setIsDeleting(false); setDeleteReason(""); }}
+        footer={
+          <>
+            <Button variant="secondary" onClick={() => setSelected(null)}>닫기</Button>
+            <Button variant="danger" onClick={() => setIsDeleting(true)}>
+              <Trash2 className="mr-2 h-4 w-4" /> 미션 삭제
+            </Button>
+          </>
+        }
+      >
+        {selected && (
+          <div className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>기본 정보</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2 text-sm text-[#172B4D]">
+                <Field label="미션 ID" value={selected.id} />
+                <Field label="차량번호" value={selected.plate} />
+                <Field label="존이름" value={selected.zoneName} />
+                <Field label="미션 내용" value={selected.content} />
+                <Field label="상태" value={<Badge tone={selected.status === 'completed' ? 'ok' : 'warn'}>{selected.status}</Badge>} />
+                <Field label="등록일" value={selected.createdAt} />
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>오더 연동 정보</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2 text-sm text-[#172B4D]">
+                <Field label="연결된 오더" value={selected.linkedOrderId || "-"} />
+                <Field label="담당 수행원" value={linkedOrder?.worker || "-"} />
+                <Field label="오더 상태" value={linkedOrder ? <Badge tone="info">{linkedOrder.status}</Badge> : "-"} />
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>이력 (Timeline)</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="relative space-y-6 pl-2 before:absolute before:left-[19px] before:top-2 before:h-[calc(100%-16px)] before:w-0.5 before:bg-[#DFE1E6]">
+                  {[
+                    { label: "미션 등록", time: selected.createdAt, active: true },
+                    { label: "오더 할당", time: selected.assignedAt || "-", active: !!selected.assignedAt },
+                    { label: "수행 시작", time: selected.assignedAt ? "수행원 도착 시" : "-", active: !!selected.assignedAt && linkedOrder?.status === "수행 중" },
+                    { label: "수행 완료", time: selected.completedAt || "-", active: !!selected.completedAt },
+                  ].map((step, idx) => (
+                    <div key={idx} className="relative flex items-start gap-3">
+                      <div className={cn("z-10 flex h-3.5 w-3.5 shrink-0 items-center justify-center rounded-full ring-4 ring-white", step.active ? "bg-[#0052CC]" : "bg-[#DFE1E6]")} />
+                      <div className="flex flex-col">
+                        <span className="text-xs font-medium text-[#172B4D]">{step.label}</span>
+                        <span className="text-[10px] text-[#6B778C]">{step.time}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            {isDeleting && (
+              <Card className="ring-rose-200">
+                <CardHeader>
+                  <CardTitle className="text-rose-700">미션 삭제</CardTitle>
+                  <CardDescription>삭제 시 복구할 수 없습니다. 사유를 입력해주세요.</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <Input
+                    value={deleteReason}
+                    onChange={(e) => setDeleteReason(e.target.value)}
+                    placeholder="삭제 사유 입력"
+                  />
+                  <div className="flex justify-end gap-2">
+                    <Button variant="secondary" onClick={() => { setIsDeleting(false); setDeleteReason(""); }}>취소</Button>
+                    <Button variant="danger" disabled={!deleteReason.trim()} onClick={handleDeleteMission}>삭제 확정</Button>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+          </div>
+        )}
       </Drawer>
     </div>
   );
