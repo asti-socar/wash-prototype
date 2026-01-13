@@ -30,12 +30,20 @@ import {
   Maximize2,
   Camera,
   ListChecks,
+  ArrowRight,
 } from "lucide-react";
 
 import {
   ResponsiveContainer,
   LineChart,
   Line,
+  BarChart,
+  Bar,
+  AreaChart,
+  Area,
+  PieChart,
+  Pie,
+  Cell,
   XAxis,
   YAxis,
   Tooltip,
@@ -294,6 +302,29 @@ function TabsContent({ value, currentValue, children, className }) {
 }
 
 /**
+ * Constants & Enums
+ */
+const ORDER_GROUPS = ["긴급", "정규", "변경", "수시", "특별"];
+const ORDER_TYPES = [
+  "위생장애",
+  "고객 피드백(ML)_긴급",
+  "초장기 미세차",
+  "주기세차",
+  "고객 피드백(ML)",
+  "반납 사진(ML)",
+  "미션핸들",
+  "특수세차",
+  "협의세차",
+  "재세차",
+  "수시세차",
+  "BMW",
+  "랜지로버",
+  "포르쉐",
+  "캠핑카",
+];
+const WASH_TYPES = ["내외부", "특수", "라이트", "내부", "외부", "물세차", "협의"];
+
+/**
  * Navigation model (IA)
  */
 const NAV = [
@@ -490,136 +521,188 @@ function Header({ title }) {
  * Pages
  */
 function Dashboard({ onClickKpi }) {
-  const [period, setPeriod] = useState("day");
+  // Mock Data for Charts
+  const dailyData = [
+    { day: "월", orders: 320 },
+    { day: "화", orders: 350 },
+    { day: "수", orders: 300 },
+    { day: "목", orders: 380 },
+    { day: "금", orders: 420 },
+    { day: "토", orders: 450 },
+    { day: "일", orders: 400 },
+  ];
 
-  const kpis = useMemo(() => {
-    const total = 248;
-    const reserved = 164;
-    const completed = 58;
-    const unassigned = 21;
-    const agreementPending = 5;
-    return { total, reserved, completed, unassigned, agreementPending };
-  }, []);
+  const partnerData = [
+    { name: "A협력사", rate: 95 },
+    { name: "B협력사", rate: 88 },
+    { name: "C협력사", rate: 92 },
+    { name: "D협력사", rate: 85 },
+  ];
 
-  const trendData = useMemo(() => {
-    if (period === "month") {
-      return [
-        { label: "8월", issued: 4200, reservedRate: 0.71, completedRate: 0.62 },
-        { label: "9월", issued: 4580, reservedRate: 0.73, completedRate: 0.64 },
-        { label: "10월", issued: 4860, reservedRate: 0.74, completedRate: 0.65 },
-        { label: "11월", issued: 4720, reservedRate: 0.72, completedRate: 0.63 },
-        { label: "12월", issued: 5100, reservedRate: 0.75, completedRate: 0.66 },
-      ];
-    }
-    if (period === "week") {
-      return [
-        { label: "W-4", issued: 980, reservedRate: 0.70, completedRate: 0.61 },
-        { label: "W-3", issued: 1040, reservedRate: 0.72, completedRate: 0.62 },
-        { label: "W-2", issued: 1100, reservedRate: 0.73, completedRate: 0.64 },
-        { label: "W-1", issued: 1075, reservedRate: 0.71, completedRate: 0.63 },
-        { label: "W", issued: 1160, reservedRate: 0.74, completedRate: 0.65 },
-      ];
-    }
-    return [
-      { label: "D-6", issued: 210, reservedRate: 0.68, completedRate: 0.57 },
-      { label: "D-5", issued: 232, reservedRate: 0.70, completedRate: 0.59 },
-      { label: "D-4", issued: 245, reservedRate: 0.72, completedRate: 0.61 },
-      { label: "D-3", issued: 238, reservedRate: 0.71, completedRate: 0.60 },
-      { label: "D-2", issued: 251, reservedRate: 0.73, completedRate: 0.62 },
-      { label: "D-1", issued: 240, reservedRate: 0.72, completedRate: 0.63 },
-      { label: "Today", issued: 248, reservedRate: 0.74, completedRate: 0.64 },
-    ];
-  }, [period]);
+  const hourlyData = [
+    { time: "00", value: 10 }, { time: "04", value: 5 },
+    { time: "08", value: 20 }, { time: "12", value: 50 },
+    { time: "16", value: 40 }, { time: "20", value: 80 },
+    { time: "24", value: 30 },
+  ];
+
+  const issueData = [
+    { name: "완료", value: 85 },
+    { name: "미처리", value: 15 },
+  ];
+  const COLORS = ["#0052CC", "#DFE1E6"];
+
+  // KPI Data
+  const performanceFlow = [
+    { label: "발행", value: 248, color: "text-[#172B4D]" },
+    { label: "예약 완료", value: 164, color: "text-[#0052CC]" },
+    { label: "수행 완료", value: 58, color: "text-[#0052CC]" },
+    { label: "취소", value: 5, color: "text-rose-600" },
+  ];
+
+  const emergencyMetrics = [
+    { label: "위생 장애 인입", value: "12건" },
+    { label: "긴급 오더 발행", value: "12건" },
+    { label: "적시 수행", value: "10건" },
+    { label: "평균 리드타임", value: "45분" },
+  ];
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
-        <div>
-          <div className="text-sm font-bold text-[#172B4D]">오늘 운영 KPI</div>
-          <div className="mt-1 text-xs text-[#6B778C]">
-            합의대기 <b>{kpis.agreementPending}</b>건은 KPI 카드 외 항목으로 별도 표기합니다.
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          <Badge tone="warn">실시간</Badge>
-          <span className="text-xs text-[#6B778C]">데이터는 프로토타입 더미 값입니다</span>
-        </div>
+      {/* KPI Section */}
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        {/* Car Wash Performance Status */}
+        <Card>
+          <CardHeader>
+            <CardTitle>세차 수행 현황 (Today)</CardTitle>
+            <CardDescription>실시간 오더 라이프사이클</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center justify-between">
+              {performanceFlow.map((item, idx) => (
+                <React.Fragment key={item.label}>
+                  <div className="flex flex-col items-center gap-1">
+                    <span className="text-xs font-medium text-[#6B778C]">{item.label}</span>
+                    <span className={cn("text-2xl font-bold", item.color)}>{item.value}</span>
+                  </div>
+                  {idx < performanceFlow.length - 1 && (
+                    <div className="h-px w-8 bg-[#DFE1E6] md:w-16" />
+                  )}
+                </React.Fragment>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Emergency Wash Status */}
+        <Card>
+          <CardHeader>
+            <CardTitle>긴급 세차 처리 현황 (최근 1주일)</CardTitle>
+            <CardDescription>위생 이슈 대응 지표</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-4 gap-4 text-center">
+              {emergencyMetrics.map((item) => (
+                <div key={item.label} className="flex flex-col gap-1">
+                  <span className="text-xs font-medium text-[#6B778C]">{item.label}</span>
+                  <span className="text-xl font-bold text-[#172B4D]">{item.value}</span>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
-      <div className="grid grid-cols-1 gap-3 md:grid-cols-4">
-        <KpiCard
-          title="당일 오더 총건수"
-          value={kpis.total}
-          hint="카드 클릭 시 오더 관리로 이동(필터 적용)"
-          onClick={() => onClickKpi("전체")}
-        />
-        <KpiCard title="예약" value={kpis.reserved} hint="진행상태=예약" onClick={() => onClickKpi("예약")} />
-        <KpiCard title="완료" value={kpis.completed} hint="진행상태=완료" onClick={() => onClickKpi("완료")} />
-        <KpiCard title="미배정" value={kpis.unassigned} hint="진행상태=미배정" onClick={() => onClickKpi("미배정")} />
+      {/* Charts Section */}
+      <div>
+        <h3 className="mb-4 text-lg font-bold text-[#172B4D]">요약 그래프</h3>
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+          
+          {/* Daily Orders */}
+          <Card>
+            <CardHeader><CardTitle>일자별 오더</CardTitle></CardHeader>
+            <CardContent className="h-64">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={dailyData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#DFE1E6" />
+                  <XAxis dataKey="day" tickLine={false} axisLine={false} tick={{ fontSize: 12, fill: "#6B778C" }} />
+                  <YAxis tickLine={false} axisLine={false} tick={{ fontSize: 12, fill: "#6B778C" }} />
+                  <Tooltip cursor={{ fill: "#F4F5F7" }} />
+                  <Bar dataKey="orders" fill="#0052CC" radius={[4, 4, 0, 0]} barSize={30} />
+                </BarChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+
+          {/* Partner Performance */}
+          <Card>
+            <CardHeader><CardTitle>파트너별 수행률</CardTitle></CardHeader>
+            <CardContent className="h-64">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart layout="vertical" data={partnerData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#DFE1E6" />
+                  <XAxis type="number" domain={[0, 100]} hide />
+                  <YAxis dataKey="name" type="category" tickLine={false} axisLine={false} width={80} tick={{ fontSize: 12, fill: "#6B778C" }} />
+                  <Tooltip cursor={{ fill: "#F4F5F7" }} />
+                  <Bar dataKey="rate" fill="#0052CC" radius={[0, 4, 4, 0]} barSize={20} label={{ position: "right", fill: "#172B4D", fontSize: 12 }} />
+                </BarChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+
+          {/* Hourly Concentration */}
+          <Card>
+            <CardHeader><CardTitle>시간대별 세차 집중도</CardTitle></CardHeader>
+            <CardContent className="h-64">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={hourlyData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#0052CC" stopOpacity={0.3}/>
+                      <stop offset="95%" stopColor="#0052CC" stopOpacity={0}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#DFE1E6" />
+                  <XAxis dataKey="time" tickLine={false} axisLine={false} tick={{ fontSize: 12, fill: "#6B778C" }} />
+                  <YAxis tickLine={false} axisLine={false} tick={{ fontSize: 12, fill: "#6B778C" }} />
+                  <Tooltip />
+                  <Area type="monotone" dataKey="value" stroke="#0052CC" fillOpacity={1} fill="url(#colorValue)" strokeWidth={2} />
+                </AreaChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+
+          {/* Issue Resolution Rate */}
+          <Card>
+            <CardHeader><CardTitle>장애 처리율</CardTitle></CardHeader>
+            <CardContent className="h-64 flex items-center justify-center">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={issueData}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={60}
+                    outerRadius={80}
+                    paddingAngle={5}
+                    dataKey="value"
+                  >
+                    {issueData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                  <Legend verticalAlign="bottom" height={36} iconType="circle" />
+                  <text x="50%" y="50%" textAnchor="middle" dominantBaseline="middle" className="text-2xl font-bold fill-[#172B4D]">
+                    85%
+                  </text>
+                </PieChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+
+        </div>
       </div>
-
-      <Card>
-        <CardHeader className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-          <div>
-            <CardTitle>트렌드</CardTitle>
-            <CardDescription>전체 발행량 대비 예약률, 완료율 멀티 라인 차트</CardDescription>
-          </div>
-          <PillTabs
-            value={period}
-            onChange={setPeriod}
-            items={[
-              { value: "day", label: "일" },
-              { value: "week", label: "주" },
-              { value: "month", label: "월" },
-            ]}
-          />
-        </CardHeader>
-        <CardContent>
-          <div className="h-80 w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={trendData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="label" tickMargin={8} />
-                <YAxis yAxisId="left" tickMargin={8} width={45} domain={[0, (max) => Math.ceil((max ?? 0) * 1.2)]} />
-                <YAxis
-                  yAxisId="right"
-                  orientation="right"
-                  tickMargin={8}
-                  width={45}
-                  domain={[0, 1]}
-                  tickFormatter={(v) => `${Math.round(v * 100)}%`}
-                />
-                <Tooltip
-                  formatter={(value, name) => {
-                    if (name === "예약률" || name === "완료율") return [formatPercent(value), name];
-                    return [value, name];
-                  }}
-                />
-                <Legend />
-                <Line yAxisId="left" type="monotone" dataKey="issued" name="발행량" strokeWidth={2} dot={false} />
-                <Line yAxisId="right" type="monotone" dataKey="reservedRate" name="예약률" strokeWidth={2} dot={false} />
-                <Line yAxisId="right" type="monotone" dataKey="completedRate" name="완료율" strokeWidth={2} dot={false} />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>실시간 Slack 알림</CardTitle>
-          <CardDescription>긴급 오더 및 세차 유형 변경 요청 발생 시 Slack 알림(어드민 UI 외 구성)</CardDescription>
-        </CardHeader>
-        <CardContent className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-          <div className="text-sm text-[#172B4D]">
-            현재는 UI에서 상태만 표시합니다. 실제 연동은 Webhook, 이벤트 라우팅, 알림 템플릿 표준화가 필요합니다.
-          </div>
-          <div className="flex items-center gap-2">
-            <Badge tone="ok">ON</Badge>
-            <Button variant="secondary">설정 보기(프로토타입)</Button>
-          </div>
-        </CardContent>
-      </Card>
     </div>
   );
 }
@@ -649,19 +732,20 @@ function KpiCard({ title, value, hint, onClick }) {
 function VehiclesPage() {
   const data = useMemo(() => {
     // 12건 더미 데이터
+    // activeOrderId가 있으면 현재 진행중인 오더가 있다는 의미
     return [
-      { plate: "12가3456", zoneName: "강남역 1번존", zoneId: "Z-1001", region1: "서울", region2: "강남", partner: "A협력사", status: "예약", lastWash: "2026-01-10", elapsedDays: 2, model: "아반떼 AD", fuel: "가솔린" },
-      { plate: "34나7890", zoneName: "잠실역 2번존", zoneId: "Z-1002", region1: "서울", region2: "송파", partner: "B협력사", status: "완료", lastWash: "2026-01-08", elapsedDays: 4, model: "K5", fuel: "가솔린" },
-      { plate: "56다1122", zoneName: "홍대입구 3번존", zoneId: "Z-1003", region1: "서울", region2: "마포", partner: "A협력사", status: "미배정", lastWash: "2026-01-05", elapsedDays: 7, model: "쏘나타", fuel: "하이브리드" },
-      { plate: "78라3344", zoneName: "판교 1번존", zoneId: "Z-2001", region1: "경기", region2: "성남", partner: "C협력사", status: "예약", lastWash: "2026-01-09", elapsedDays: 3, model: "아이오닉5", fuel: "EV" },
-      { plate: "90마5566", zoneName: "수원역 2번존", zoneId: "Z-2002", region1: "경기", region2: "수원", partner: "B협력사", status: "완료", lastWash: "2026-01-07", elapsedDays: 5, model: "스포티지", fuel: "디젤" },
-      { plate: "11바7788", zoneName: "부산역 1번존", zoneId: "Z-3001", region1: "부산", region2: "동구", partner: "D협력사", status: "미배정", lastWash: "2026-01-03", elapsedDays: 9, model: "그랜저", fuel: "가솔린" },
-      { plate: "22사9900", zoneName: "해운대 2번존", zoneId: "Z-3002", region1: "부산", region2: "해운대", partner: "D협력사", status: "예약", lastWash: "2026-01-11", elapsedDays: 1, model: "레이", fuel: "가솔린" },
-      { plate: "33아1212", zoneName: "대전역 1번존", zoneId: "Z-4001", region1: "대전", region2: "동구", partner: "C협력사", status: "완료", lastWash: "2026-01-06", elapsedDays: 6, model: "카니발", fuel: "디젤" },
-      { plate: "44자3434", zoneName: "청주 2번존", zoneId: "Z-5002", region1: "충북", region2: "청주", partner: "B협력사", status: "미배정", lastWash: "2026-01-02", elapsedDays: 10, model: "모닝", fuel: "가솔린" },
-      { plate: "55차5656", zoneName: "광주 1번존", zoneId: "Z-6001", region1: "광주", region2: "서구", partner: "A협력사", status: "예약", lastWash: "2026-01-09", elapsedDays: 3, model: "EV6", fuel: "EV" },
-      { plate: "66카7878", zoneName: "인천공항 1번존", zoneId: "Z-7001", region1: "인천", region2: "중구", partner: "C협력사", status: "완료", lastWash: "2026-01-08", elapsedDays: 4, model: "티볼리", fuel: "가솔린" },
-      { plate: "77타9090", zoneName: "제주공항 1번존", zoneId: "Z-8001", region1: "제주", region2: "제주시", partner: "D협력사", status: "미배정", lastWash: "2026-01-01", elapsedDays: 11, model: "셀토스", fuel: "가솔린" },
+      { plate: "12가3456", zoneName: "강남역 1번존", zoneId: "Z-1001", region1: "서울", region2: "강남", partner: "A협력사", activeOrderId: "O-90001", lastWash: "2026-01-10", model: "아반떼 AD", fuel: "가솔린" },
+      { plate: "34나7890", zoneName: "잠실역 2번존", zoneId: "Z-1002", region1: "서울", region2: "송파", partner: "B협력사", activeOrderId: null, lastWash: "2026-01-08", model: "K5", fuel: "가솔린" },
+      { plate: "56다1122", zoneName: "홍대입구 3번존", zoneId: "Z-1003", region1: "서울", region2: "마포", partner: "A협력사", activeOrderId: "O-90003", lastWash: "2026-01-05", model: "쏘나타", fuel: "하이브리드" },
+      { plate: "78라3344", zoneName: "판교 1번존", zoneId: "Z-2001", region1: "경기", region2: "성남", partner: "C협력사", activeOrderId: "O-90004", lastWash: "2026-01-09", model: "아이오닉5", fuel: "EV" },
+      { plate: "90마5566", zoneName: "수원역 2번존", zoneId: "Z-2002", region1: "경기", region2: "수원", partner: "B협력사", activeOrderId: null, lastWash: "2026-01-07", model: "스포티지", fuel: "디젤" },
+      { plate: "11바7788", zoneName: "부산역 1번존", zoneId: "Z-3001", region1: "부산", region2: "동구", partner: "D협력사", activeOrderId: "O-90006", lastWash: "2026-01-03", model: "그랜저", fuel: "가솔린" },
+      { plate: "22사9900", zoneName: "해운대 2번존", zoneId: "Z-3002", region1: "부산", region2: "해운대", partner: "D협력사", activeOrderId: "O-90007", lastWash: "2026-01-11", model: "레이", fuel: "가솔린" },
+      { plate: "33아1212", zoneName: "대전역 1번존", zoneId: "Z-4001", region1: "대전", region2: "동구", partner: "C협력사", activeOrderId: null, lastWash: "2026-01-06", model: "카니발", fuel: "디젤" },
+      { plate: "44자3434", zoneName: "청주 2번존", zoneId: "Z-5002", region1: "충북", region2: "청주", partner: "B협력사", activeOrderId: "O-90009", lastWash: "2026-01-02", model: "모닝", fuel: "가솔린" },
+      { plate: "55차5656", zoneName: "광주 1번존", zoneId: "Z-6001", region1: "광주", region2: "서구", partner: "A협력사", activeOrderId: "O-90010", lastWash: "2026-01-09", model: "EV6", fuel: "EV" },
+      { plate: "66카7878", zoneName: "인천공항 1번존", zoneId: "Z-7001", region1: "인천", region2: "중구", partner: "C협력사", activeOrderId: null, lastWash: "2026-01-08", model: "티볼리", fuel: "가솔린" },
+      { plate: "77타9090", zoneName: "제주공항 1번존", zoneId: "Z-8001", region1: "제주", region2: "제주시", partner: "D협력사", activeOrderId: "O-90012", lastWash: "2026-01-01", model: "셀토스", fuel: "가솔린" },
     ];
   }, []);
 
@@ -669,13 +753,18 @@ function VehiclesPage() {
   const [fRegion1, setFRegion1] = useState("");
   const [fRegion2, setFRegion2] = useState("");
   const [fPartner, setFPartner] = useState("");
-  const [fStatus, setFStatus] = useState("");
   const [selected, setSelected] = useState(null);
+
+  // 날짜 계산 유틸
+  const getElapsedDays = (dateStr) => {
+    if (!dateStr) return "-";
+    const diff = new Date().getTime() - new Date(dateStr).getTime();
+    return Math.floor(diff / (1000 * 60 * 60 * 24));
+  };
 
   const regions1 = useMemo(() => Array.from(new Set(data.map((d) => d.region1))), [data]);
   const regions2 = useMemo(() => Array.from(new Set(data.filter((d) => (fRegion1 ? d.region1 === fRegion1 : true)).map((d) => d.region2))), [data, fRegion1]);
   const partners = useMemo(() => Array.from(new Set(data.map((d) => d.partner))), [data]);
-  const statuses = ["예약", "완료", "미배정"];
 
   const filtered = useMemo(() => {
     const qq = q.trim().toLowerCase();
@@ -689,11 +778,10 @@ function VehiclesPage() {
       const hitR1 = !fRegion1 || d.region1 === fRegion1;
       const hitR2 = !fRegion2 || d.region2 === fRegion2;
       const hitP = !fPartner || d.partner === fPartner;
-      const hitS = !fStatus || d.status === fStatus;
 
-      return hitQ && hitR1 && hitR2 && hitP && hitS;
+      return hitQ && hitR1 && hitR2 && hitP;
     });
-  }, [data, q, fRegion1, fRegion2, fPartner, fStatus]);
+  }, [data, q, fRegion1, fRegion2, fPartner]);
 
   const columns = [
     { key: "plate", header: "차량번호" },
@@ -703,12 +791,18 @@ function VehiclesPage() {
     { key: "region2", header: "지역2" },
     { key: "partner", header: "협력사" },
     {
-      key: "status",
-      header: "진행상태",
-      render: (r) => <Badge tone={r.status === "미배정" ? "danger" : r.status === "예약" ? "warn" : "ok"}>{r.status}</Badge>,
+      key: "activeOrderId",
+      header: "진행중 오더",
+      render: (r) => r.activeOrderId ? (
+        <Button variant="ghost" size="sm" className="h-6 px-2 text-xs text-[#0052CC]">
+          {r.activeOrderId} <ArrowRight className="ml-1 h-3 w-3" />
+        </Button>
+      ) : (
+        <span className="text-[#B3BAC5] text-xs">-</span>
+      ),
     },
     { key: "lastWash", header: "마지막 세차일" },
-    { key: "elapsedDays", header: "세차 경과일" },
+    { key: "elapsedDays", header: "세차 경과일", render: (r) => <span className="font-medium">{getElapsedDays(r.lastWash)}일</span> },
   ];
 
   return (
@@ -729,7 +823,7 @@ function VehiclesPage() {
       <Card>
         <CardHeader>
           <CardTitle>검색 및 필터</CardTitle>
-          <CardDescription>검색: 차량번호, 존이름, 존 ID / 필터: 지역1, 지역2, 협력사, 진행상태</CardDescription>
+          <CardDescription>검색: 차량번호, 존이름, 존 ID / 필터: 지역1, 지역2, 협력사</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 gap-3 md:grid-cols-12">
@@ -757,12 +851,6 @@ function VehiclesPage() {
                 {partners.map((v) => <option key={v} value={v}>{v}</option>)}
               </Select>
             </div>
-            <div className="md:col-span-2">
-              <Select value={fStatus} onChange={(e) => setFStatus(e.target.value)}>
-                <option value="">진행상태 전체</option>
-                {statuses.map((v) => <option key={v} value={v}>{v}</option>)}
-              </Select>
-            </div>
 
             <div className="md:col-span-12 flex flex-wrap items-center justify-between gap-2 pt-1">
               <div className="flex flex-wrap gap-2">
@@ -770,12 +858,11 @@ function VehiclesPage() {
                 {fRegion1 ? <Chip onRemove={() => { setFRegion1(""); setFRegion2(""); }}>지역1: {fRegion1}</Chip> : null}
                 {fRegion2 ? <Chip onRemove={() => setFRegion2("")}>지역2: {fRegion2}</Chip> : null}
                 {fPartner ? <Chip onRemove={() => setFPartner("")}>협력사: {fPartner}</Chip> : null}
-                {fStatus ? <Chip onRemove={() => setFStatus("")}>상태: {fStatus}</Chip> : null}
               </div>
               <Button
                 variant="secondary"
                 onClick={() => {
-                  setQ(""); setFRegion1(""); setFRegion2(""); setFPartner(""); setFStatus("");
+                  setQ(""); setFRegion1(""); setFRegion2(""); setFPartner("");
                 }}
               >
                 필터 초기화
@@ -820,9 +907,9 @@ function VehiclesPage() {
                 <Field label="존" value={`${selected.zoneName} (${selected.zoneId})`} />
                 <Field label="지역" value={`${selected.region1} / ${selected.region2}`} />
                 <Field label="협력사" value={selected.partner} />
-                <Field label="진행상태(Active 오더 기준)" value={selected.status} />
+                <Field label="진행중 오더" value={selected.activeOrderId || "없음"} />
                 <Field label="마지막 세차일" value={selected.lastWash} />
-                <Field label="세차 경과일" value={`${selected.elapsedDays}일`} />
+                <Field label="세차 경과일" value={`${getElapsedDays(selected.lastWash)}일`} />
               </CardContent>
             </Card>
 
@@ -860,18 +947,18 @@ function OrdersPage({ quickStatus, onClearQuickStatus }) {
 
   // 오더 데이터 상태 관리
   const [orders, setOrders] = useState(() => [
-      { orderId: "O-90001", washType: "내부", orderGroup: "주기세차", orderType: "자동", carId: "C-1001", model: "아반떼 AD", plate: "12가3456", zone: "강남역 1번존", zoneId: "Z-1001", region1: "서울", region2: "강남", partner: "A협력사", status: "예약", elapsedDays: 2, worker: "수행원 김00", comment: "오염도 3, 내부 우선" , createdAt: toYmd(today)},
-      { orderId: "O-90002", washType: "내외부", orderGroup: "현장세차", orderType: "수동", carId: "C-1002", model: "K5", plate: "34나7890", zone: "잠실역 2번존", zoneId: "Z-1002", region1: "서울", region2: "송파", partner: "B협력사", status: "완료", elapsedDays: 4, worker: "수행원 이00", comment: "합의건, 추가요금 협의" , createdAt: toYmd(today)},
-      { orderId: "O-90003", washType: "외부", orderGroup: "주기세차", orderType: "자동", carId: "C-1003", model: "쏘나타", plate: "56다1122", zone: "홍대입구 3번존", zoneId: "Z-1003", region1: "서울", region2: "마포", partner: "A협력사", status: "미배정", elapsedDays: 7, worker: "-", comment: "미배정 상태, 수행원 부족" , createdAt: toYmd(today)},
-      { orderId: "O-90004", washType: "내부", orderGroup: "현장세차", orderType: "자동", carId: "C-2001", model: "아이오닉5", plate: "78라3344", zone: "판교 1번존", zoneId: "Z-2001", region1: "경기", region2: "성남", partner: "C협력사", status: "예약", elapsedDays: 3, worker: "수행원 박00", comment: "EV, 실내 매트 확인" , createdAt: toYmd(today)},
-      { orderId: "O-90005", washType: "내외부", orderGroup: "주기세차", orderType: "자동", carId: "C-2002", model: "스포티지", plate: "90마5566", zone: "수원역 2번존", zoneId: "Z-2002", region1: "경기", region2: "수원", partner: "B협력사", status: "완료", elapsedDays: 5, worker: "수행원 최00", comment: "점검 체크리스트 완료" , createdAt: toYmd(today)},
-      { orderId: "O-90006", washType: "외부", orderGroup: "주기세차", orderType: "자동", carId: "C-3001", model: "그랜저", plate: "11바7788", zone: "부산역 1번존", zoneId: "Z-3001", region1: "부산", region2: "동구", partner: "D협력사", status: "미배정", elapsedDays: 9, worker: "-", comment: "장기 미배정 리스크" , createdAt: toYmd(today)},
-      { orderId: "O-90007", washType: "내부", orderGroup: "현장세차", orderType: "수동", carId: "C-3002", model: "레이", plate: "22사9900", zone: "해운대 2번존", zoneId: "Z-3002", region1: "부산", region2: "해운대", partner: "D협력사", status: "예약", elapsedDays: 1, worker: "수행원 정00", comment: "오염도 2" , createdAt: toYmd(today)},
-      { orderId: "O-90008", washType: "내외부", orderGroup: "주기세차", orderType: "자동", carId: "C-4001", model: "카니발", plate: "33아1212", zone: "대전역 1번존", zoneId: "Z-4001", region1: "대전", region2: "동구", partner: "C협력사", status: "완료", elapsedDays: 6, worker: "수행원 한00", comment: "분실물 없음" , createdAt: toYmd(today)},
-      { orderId: "O-90009", washType: "외부", orderGroup: "주기세차", orderType: "자동", carId: "C-5002", model: "모닝", plate: "44자3434", zone: "청주 2번존", zoneId: "Z-5002", region1: "충북", region2: "청주", partner: "B협력사", status: "미배정", elapsedDays: 10, worker: "-", comment: "존 인력 수급 이슈" , createdAt: toYmd(today)},
-      { orderId: "O-90010", washType: "내부", orderGroup: "현장세차", orderType: "수동", carId: "C-6001", model: "EV6", plate: "55차5656", zone: "광주 1번존", zoneId: "Z-6001", region1: "광주", region2: "서구", partner: "A협력사", status: "예약", elapsedDays: 3, worker: "수행원 오00", comment: "내부 먼지 제거 요청" , createdAt: toYmd(today)},
-      { orderId: "O-90011", washType: "내외부", orderGroup: "주기세차", orderType: "자동", carId: "C-7001", model: "티볼리", plate: "66카7878", zone: "인천공항 1번존", zoneId: "Z-7001", region1: "인천", region2: "중구", partner: "C협력사", status: "완료", elapsedDays: 4, worker: "수행원 유00", comment: "사진 업로드 완료" , createdAt: toYmd(today)},
-      { orderId: "O-90012", washType: "외부", orderGroup: "주기세차", orderType: "자동", carId: "C-8001", model: "셀토스", plate: "77타9090", zone: "제주공항 1번존", zoneId: "Z-8001", region1: "제주", region2: "제주시", partner: "D협력사", status: "미배정", elapsedDays: 11, worker: "-", comment: "장기 미배정, 알림 필요" , createdAt: toYmd(today)},
+      { orderId: "O-90001", washType: "내부", orderGroup: "정규", orderType: "주기세차", carId: "C-1001", model: "아반떼 AD", plate: "12가3456", zone: "강남역 1번존", zoneId: "Z-1001", region1: "서울", region2: "강남", partner: "A협력사", partnerType: "현장", status: "예약", elapsedDays: 2, worker: "수행원 김00", comment: "오염도 3, 내부 우선" , createdAt: toYmd(today)},
+      { orderId: "O-90002", washType: "내외부", orderGroup: "수시", orderType: "수시세차", carId: "C-1002", model: "K5", plate: "34나7890", zone: "잠실역 2번존", zoneId: "Z-1002", region1: "서울", region2: "송파", partner: "B협력사", partnerType: "현장", status: "완료", elapsedDays: 4, worker: "수행원 이00", comment: "합의건, 추가요금 협의" , createdAt: toYmd(today)},
+      { orderId: "O-90003", washType: "외부", orderGroup: "정규", orderType: "주기세차", carId: "C-1003", model: "쏘나타", plate: "56다1122", zone: "홍대입구 3번존", zoneId: "Z-1003", region1: "서울", region2: "마포", partner: "A협력사", partnerType: "현장", status: "미배정", elapsedDays: 7, worker: "-", comment: "미배정 상태, 수행원 부족" , createdAt: toYmd(today)},
+      { orderId: "O-90004", washType: "내부", orderGroup: "특별", orderType: "특수세차", carId: "C-2001", model: "아이오닉5", plate: "78라3344", zone: "판교 1번존", zoneId: "Z-2001", region1: "경기", region2: "성남", partner: "C협력사", partnerType: "입고", status: "입고 중", elapsedDays: 3, worker: "수행원 박00", comment: "EV, 실내 매트 확인" , createdAt: toYmd(today)},
+      { orderId: "O-90005", washType: "내외부", orderGroup: "정규", orderType: "주기세차", carId: "C-2002", model: "스포티지", plate: "90마5566", zone: "수원역 2번존", zoneId: "Z-2002", region1: "경기", region2: "수원", partner: "B협력사", partnerType: "현장", status: "완료", elapsedDays: 5, worker: "수행원 최00", comment: "점검 체크리스트 완료" , createdAt: toYmd(today)},
+      { orderId: "O-90006", washType: "외부", orderGroup: "정규", orderType: "주기세차", carId: "C-3001", model: "그랜저", plate: "11바7788", zone: "부산역 1번존", zoneId: "Z-3001", region1: "부산", region2: "동구", partner: "D협력사", partnerType: "현장", status: "미배정", elapsedDays: 9, worker: "-", comment: "장기 미배정 리스크" , createdAt: toYmd(today)},
+      { orderId: "O-90007", washType: "내부", orderGroup: "수시", orderType: "수시세차", carId: "C-3002", model: "레이", plate: "22사9900", zone: "해운대 2번존", zoneId: "Z-3002", region1: "부산", region2: "해운대", partner: "D협력사", partnerType: "현장", status: "예약", elapsedDays: 1, worker: "수행원 정00", comment: "오염도 2" , createdAt: toYmd(today)},
+      { orderId: "O-90008", washType: "내외부", orderGroup: "정규", orderType: "주기세차", carId: "C-4001", model: "카니발", plate: "33아1212", zone: "대전역 1번존", zoneId: "Z-4001", region1: "대전", region2: "동구", partner: "C협력사", partnerType: "입고", status: "출고 중", elapsedDays: 6, worker: "수행원 한00", comment: "분실물 없음" , createdAt: toYmd(today)},
+      { orderId: "O-90009", washType: "외부", orderGroup: "정규", orderType: "주기세차", carId: "C-5002", model: "모닝", plate: "44자3434", zone: "청주 2번존", zoneId: "Z-5002", region1: "충북", region2: "청주", partner: "B협력사", partnerType: "현장", status: "미배정", elapsedDays: 10, worker: "-", comment: "존 인력 수급 이슈" , createdAt: toYmd(today)},
+      { orderId: "O-90010", washType: "내부", orderGroup: "긴급", orderType: "위생장애", carId: "C-6001", model: "EV6", plate: "55차5656", zone: "광주 1번존", zoneId: "Z-6001", region1: "광주", region2: "서구", partner: "A협력사", partnerType: "현장", status: "예약", elapsedDays: 3, worker: "수행원 오00", comment: "내부 먼지 제거 요청" , createdAt: toYmd(today)},
+      { orderId: "O-90011", washType: "내외부", orderGroup: "정규", orderType: "주기세차", carId: "C-7001", model: "티볼리", plate: "66카7878", zone: "인천공항 1번존", zoneId: "Z-7001", region1: "인천", region2: "중구", partner: "C협력사", partnerType: "입고", status: "완료", elapsedDays: 4, worker: "수행원 유00", comment: "사진 업로드 완료" , createdAt: toYmd(today)},
+      { orderId: "O-90012", washType: "외부", orderGroup: "정규", orderType: "주기세차", carId: "C-8001", model: "셀토스", plate: "77타9090", zone: "제주공항 1번존", zoneId: "Z-8001", region1: "제주", region2: "제주시", partner: "D협력사", partnerType: "현장", status: "미배정", elapsedDays: 11, worker: "-", comment: "장기 미배정, 알림 필요" , createdAt: toYmd(today)},
     ]);
 
   const [q, setQ] = useState("");
@@ -906,10 +993,10 @@ function OrdersPage({ quickStatus, onClearQuickStatus }) {
     [orders, fRegion1]
   );
   const partners = useMemo(() => Array.from(new Set(orders.map((d) => d.partner))), [orders]);
-  const statuses = ["예약", "완료", "미배정"];
-  const orderGroups = useMemo(() => Array.from(new Set(orders.map((d) => d.orderGroup))), [orders]);
-  const orderTypes = useMemo(() => Array.from(new Set(orders.map((d) => d.orderType))), [orders]);
-  const washTypes = useMemo(() => Array.from(new Set(orders.map((d) => d.washType))), [orders]);
+  const statuses = ["미배정", "파트너 배정", "예약", "입고 중", "수행 중", "세차 완료", "출고 중", "완료", "취소"];
+  const orderGroups = ORDER_GROUPS;
+  const orderTypes = ORDER_TYPES;
+  const washTypes = WASH_TYPES;
 
   // 오더 발행 핸들러
   const handleCreateOrder = () => {
@@ -921,8 +1008,8 @@ function OrdersPage({ quickStatus, onClearQuickStatus }) {
     const newOrder = {
       orderId: `O-${Date.now()}`,
       washType: newOrderForm.washType,
-      orderGroup: "현장세차",
-      orderType: "수동",
+      orderGroup: "수시",
+      orderType: "수시세차",
       carId: `C-${Math.floor(Math.random() * 10000)}`,
       model: newOrderForm.model || "미상",
       plate: newOrderForm.plate,
@@ -931,6 +1018,7 @@ function OrdersPage({ quickStatus, onClearQuickStatus }) {
       region1: "서울", // 더미
       region2: "기타", // 더미
       partner: "A협력사", // 더미
+      partnerType: "현장", // 기본값
       status: "예약",
       elapsedDays: 0,
       worker: "-",
@@ -984,6 +1072,16 @@ function OrdersPage({ quickStatus, onClearQuickStatus }) {
     });
   }, [orders, q, periodFrom, periodTo, fRegion1, fRegion2, fOrderGroup, fOrderType, fWashType, fPartner, fStatus]);
 
+  // 상태 배지 색상 로직
+  const getStatusBadgeTone = (status) => {
+    if (status === "완료") return "ok";
+    if (status === "취소") return "default";
+    if (status === "미배정") return "danger";
+    if (["예약", "파트너 배정"].includes(status)) return "warn";
+    if (["입고 중", "수행 중", "세차 완료", "출고 중"].includes(status)) return "info";
+    return "default";
+  };
+
   const columns = [
     { key: "orderId", header: "오더 ID" },
     {
@@ -999,10 +1097,11 @@ function OrdersPage({ quickStatus, onClearQuickStatus }) {
     { key: "zone", header: "존" },
     { key: "elapsedDays", header: "세차경과일" },
     { key: "partner", header: "협력사명" },
+    { key: "partnerType", header: "파트너유형" },
     {
       key: "status",
       header: "진행상태",
-      render: (r) => <Badge tone={r.status === "미배정" ? "danger" : r.status === "예약" ? "warn" : "ok"}>{r.status}</Badge>,
+      render: (r) => <Badge tone={getStatusBadgeTone(r.status)}>{r.status}</Badge>,
     },
   ];
 
@@ -1200,8 +1299,8 @@ function OrdersPage({ quickStatus, onClearQuickStatus }) {
                 <CardContent className="grid grid-cols-2 gap-x-4 gap-y-4 text-sm text-[#172B4D]">
                   <div className="col-span-2 flex items-center gap-2">
                     <span className="font-bold text-[#0052CC]">{selected.orderId}</span>
-                    <Badge tone={selected.orderType === "수동" ? "warn" : "default"}>
-                      {selected.orderType === "수동" ? "수동 발행" : "자동 발행"}
+                    <Badge tone={selected.orderGroup === "긴급" ? "danger" : "default"}>
+                      {selected.orderGroup}
                     </Badge>
                   </div>
                   
@@ -1216,12 +1315,16 @@ function OrdersPage({ quickStatus, onClearQuickStatus }) {
                     <div className="font-medium">{selected.zone}</div>
                   </div>
                   <div className="space-y-1">
-                    <div className="text-xs text-[#6B778C]">오더 구분</div>
-                    <div>{selected.orderGroup}</div>
+                    <div className="text-xs text-[#6B778C]">오더 유형</div>
+                    <div>{selected.orderType}</div>
                   </div>
                   <div className="space-y-1">
                     <div className="text-xs text-[#6B778C]">세차 타입</div>
                     <div>{selected.washType}</div>
+                  </div>
+                  <div className="space-y-1">
+                    <div className="text-xs text-[#6B778C]">파트너 유형</div>
+                    <div>{selected.partnerType}</div>
                   </div>
                   <div className="space-y-1">
                     <div className="text-xs text-[#6B778C]">수행원</div>
@@ -1229,7 +1332,7 @@ function OrdersPage({ quickStatus, onClearQuickStatus }) {
                   </div>
                   <div className="space-y-1">
                     <div className="text-xs text-[#6B778C]">진행 상태</div>
-                    <Badge tone={selected.status === "미배정" ? "danger" : selected.status === "예약" ? "warn" : "ok"}>{selected.status}</Badge>
+                    <Badge tone={getStatusBadgeTone(selected.status)}>{selected.status}</Badge>
                   </div>
                   <div className="col-span-2 space-y-1">
                     <div className="text-xs text-[#6B778C]">메모</div>
@@ -1269,12 +1372,22 @@ function OrdersPage({ quickStatus, onClearQuickStatus }) {
                 <CardHeader><CardTitle>진행 이력</CardTitle></CardHeader>
                 <CardContent>
                   <div className="relative space-y-4 pl-2 before:absolute before:left-[19px] before:top-2 before:h-[calc(100%-16px)] before:w-0.5 before:bg-[#DFE1E6]">
-                    {[
-                      { time: "2026-01-12 10:00", label: "예약 생성 (System)", active: true },
-                      { time: "2026-01-12 10:10", label: `배정 완료 (${selected.worker})`, active: true },
-                      { time: "2026-01-12 11:00", label: "수행 시작", active: selected.status === "완료" },
-                      { time: "2026-01-12 11:45", label: "수행 완료", active: selected.status === "완료" },
-                    ].map((item, idx) => (
+                    {(selected.partnerType === "입고" 
+                      ? [
+                          { time: "2026-01-12 10:00", label: "미배정", active: true },
+                          { time: "2026-01-12 10:05", label: "파트너 배정", active: true },
+                          { time: "2026-01-12 10:10", label: "예약", active: true },
+                          { time: "2026-01-12 10:30", label: "입고 중", active: true },
+                          { time: "2026-01-12 11:00", label: "수행 중", active: selected.status === "완료" },
+                          { time: "2026-01-12 11:45", label: "출고 중", active: selected.status === "완료" },
+                          { time: "2026-01-12 12:00", label: "완료", active: selected.status === "완료" },
+                        ]
+                      : [
+                          { time: "2026-01-12 10:00", label: "미배정", active: true },
+                          { time: "2026-01-12 10:10", label: "예약", active: true },
+                          { time: "2026-01-12 11:00", label: "수행 중", active: selected.status === "완료" },
+                          { time: "2026-01-12 11:45", label: "완료", active: selected.status === "완료" },
+                        ]).map((item, idx) => (
                       <div key={idx} className="relative flex items-start gap-3">
                         <div className={cn("z-10 flex h-3.5 w-3.5 shrink-0 items-center justify-center rounded-full ring-4 ring-white", item.active ? "bg-[#0052CC]" : "bg-[#DFE1E6]")} />
                         <div className="flex flex-col">
