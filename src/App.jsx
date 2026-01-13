@@ -607,7 +607,8 @@ function SimpleMarkdownRenderer({ content }) {
   };
 
   for (let i = 0; i < lines.length; i++) {
-    const line = lines[i].trim();
+    const rawLine = lines[i];
+    const line = rawLine.trim();
 
     if (line.startsWith('|') && line.endsWith('|')) {
       tableBuffer.push(line);
@@ -627,9 +628,23 @@ function SimpleMarkdownRenderer({ content }) {
     } else if (line.startsWith('#### ')) {
       elements.push(<h4 key={i} className="text-sm font-bold mt-3 mb-1 text-[#172B4D]">{parseInline(line.slice(5))}</h4>);
     } else if (line.startsWith('- ')) {
+      const leadingSpaces = rawLine.match(/^ */)[0].length;
+      const indentLevel = Math.floor(leadingSpaces / 2);
+
+      let indentClass = "pl-1";
+      if (indentLevel === 1) indentClass = "pl-6";
+      if (indentLevel >= 2) indentClass = "pl-11";
+
+      let bullet = <span className="shrink-0 w-1.5 h-1.5 rounded-full bg-[#6B778C] mt-[0.6rem]" />;
+      if (indentLevel === 1) {
+        bullet = <span className="shrink-0 w-1.5 h-1.5 rounded-full border border-[#6B778C] bg-white mt-[0.6rem]" />;
+      } else if (indentLevel >= 2) {
+        bullet = <span className="shrink-0 w-1.5 h-1.5 bg-[#6B778C] mt-[0.6rem] rounded-sm" />;
+      }
+
       elements.push(
-        <div key={i} className="flex items-start gap-2 mb-1 ml-1">
-          <span className="text-[#6B778C] mt-1.5">•</span>
+        <div key={i} className={`flex items-start gap-2.5 mb-1 ${indentClass}`}>
+          {bullet}
           <span className="text-sm text-[#172B4D] leading-relaxed">{parseInline(line.slice(2))}</span>
         </div>
       );
