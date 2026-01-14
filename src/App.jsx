@@ -73,6 +73,10 @@ function toYmd(d) {
 }
 
 const UPDATE_HISTORY = [
+  { id: 23, date: "2026-01-14 18:10", content: "미션 상세 화면 내 수행 증빙 사진 필수 여부 정보 노출", isPolicyChange: false, links: [{ label: "미션 관리", page: "missions" }] },
+  { id: 22, date: "2026-01-14 18:00", content: "[정책] 미션 등록 시 차량번호 일괄 입력(최대 1,000건) 및 수행 증빙 사진 촬영 옵션 도입", isPolicyChange: true, links: [{ label: "미션 관리", page: "missions" }] },
+  { id: 21, date: "2026-01-14 17:40", content: "[정책] 미션 관리 내 차량 상세 정보(차종/지역) 연동 및 다차원 필터링 기능 강화", isPolicyChange: true, links: [{ label: "미션 관리", page: "missions" }] },
+  { id: 20, date: "2026-01-14 16:30", content: "[정책] 세차유형 옵션 정렬 기준 변경(내외부 우선) 및 미사용 옵션(물세차) 제거", isPolicyChange: true, links: [{ label: "오더 관리", page: "orders" }] },
   { id: 19, date: "2026-01-14 16:25", content: "[정책] LNB 메뉴 순서 변경(미션 관리 하향 조정) 및 수행완료 미션 삭제 제한 정책 적용", isPolicyChange: true, links: [{ label: "미션 관리", page: "missions" }] },
   { id: 18, date: "2026-01-14 16:16", content: "[정책] 필드 순서 표준화(오더구분/유형/세차유형) 및 미션-오더 연동 상세 로직 고도화", isPolicyChange: true, links: [{ label: "미션 관리", page: "missions" }, { label: "오더 관리", page: "orders" }] },
   { id: 17, date: "2026-01-14 16:01", content: "업데이트 이력 시간 기록 규칙 확정 (KST 16:01 기준) 및 기존 이력 시간 교정", isPolicyChange: false, links: [{ label: "업데이트 이력", page: "update-history" }] },
@@ -384,7 +388,23 @@ const ORDER_TYPES = [
   "포르쉐",
   "캠핑카",
 ];
-const WASH_TYPES = ["내외부", "특수", "라이트", "내부", "외부", "물세차", "협의"];
+const WASH_TYPES = ["내외부", "내부", "외부", "특수", "협의", "라이트"];
+
+// Mock Data for Vehicles (Shared)
+const MOCK_VEHICLES = [
+  { plate: "12가3456", zoneName: "강남역 1번존", zoneId: "Z-1001", region1: "서울", region2: "강남", partner: "A파트너명", activeOrderId: "O-90001", activeOrderStatus: "예약", lastWash: "2026-01-10", model: "아반떼 AD", isRechargeGuaranteed: false },
+  { plate: "34나7890", zoneName: "잠실역 2번존", zoneId: "Z-1002", region1: "서울", region2: "송파", partner: "B파트너명", activeOrderId: null, activeOrderStatus: null, lastWash: "2026-01-08", model: "K5", isRechargeGuaranteed: false },
+  { plate: "56다1122", zoneName: "홍대입구 3번존", zoneId: "Z-1003", region1: "서울", region2: "마포", partner: "A파트너명", activeOrderId: "O-90003", activeOrderStatus: "미배정", lastWash: "2026-01-05", model: "쏘나타", isRechargeGuaranteed: false },
+  { plate: "78라3344", zoneName: "판교 1번존", zoneId: "Z-2001", region1: "경기", region2: "성남", partner: "C파트너명", activeOrderId: "O-90004", activeOrderStatus: "입고 중", lastWash: "2026-01-09", model: "아이오닉5", isRechargeGuaranteed: true },
+  { plate: "90마5566", zoneName: "수원역 2번존", zoneId: "Z-2002", region1: "경기", region2: "수원", partner: "B파트너명", activeOrderId: null, activeOrderStatus: null, lastWash: "2026-01-07", model: "스포티지", isRechargeGuaranteed: false },
+  { plate: "11바7788", zoneName: "부산역 1번존", zoneId: "Z-3001", region1: "부산", region2: "동구", partner: "D파트너명", activeOrderId: "O-90006", activeOrderStatus: "미배정", lastWash: "2026-01-03", model: "그랜저", isRechargeGuaranteed: false },
+  { plate: "22사9900", zoneName: "해운대 2번존", zoneId: "Z-3002", region1: "부산", region2: "해운대", partner: "D파트너명", activeOrderId: "O-90007", activeOrderStatus: "예약", lastWash: "2026-01-11", model: "레이", isRechargeGuaranteed: false },
+  { plate: "33아1212", zoneName: "대전역 1번존", zoneId: "Z-4001", region1: "대전", region2: "동구", partner: "C파트너명", activeOrderId: null, activeOrderStatus: null, lastWash: "2026-01-06", model: "카니발", isRechargeGuaranteed: false },
+  { plate: "44자3434", zoneName: "청주 2번존", zoneId: "Z-5002", region1: "충북", region2: "청주", partner: "B파트너명", activeOrderId: "O-90009", activeOrderStatus: "미배정", lastWash: "2026-01-02", model: "모닝", isRechargeGuaranteed: false },
+  { plate: "55차5656", zoneName: "광주 1번존", zoneId: "Z-6001", region1: "광주", region2: "서구", partner: "A파트너명", activeOrderId: "O-90010", activeOrderStatus: "예약", lastWash: "2026-01-09", model: "EV6", isRechargeGuaranteed: false },
+  { plate: "66카7878", zoneName: "인천공항 1번존", zoneId: "Z-7001", region1: "인천", region2: "중구", partner: "C파트너명", activeOrderId: null, activeOrderStatus: null, lastWash: "2026-01-08", model: "티볼리", isRechargeGuaranteed: false },
+  { plate: "77타9090", zoneName: "제주공항 1번존", zoneId: "Z-8001", region1: "제주", region2: "제주시", partner: "D파트너명", activeOrderId: "O-90012", activeOrderStatus: "미배정", lastWash: "2026-01-01", model: "셀토스", isRechargeGuaranteed: false },
+];
 
 /**
  * Navigation model (IA)
@@ -1032,24 +1052,7 @@ function KpiCard({ title, value, hint, onClick }) {
  * 차량 관리 (리스트 + 필터 + Drawer)
  */
 function VehiclesPage() {
-  const data = useMemo(() => {
-    // 12건 더미 데이터
-    // activeOrderId가 있으면 현재 진행중인 오더가 있다는 의미
-    return [
-      { plate: "12가3456", zoneName: "강남역 1번존", zoneId: "Z-1001", region1: "서울", region2: "강남", partner: "A파트너명", activeOrderId: "O-90001", activeOrderStatus: "예약", lastWash: "2026-01-10", model: "아반떼 AD", isRechargeGuaranteed: false },
-      { plate: "34나7890", zoneName: "잠실역 2번존", zoneId: "Z-1002", region1: "서울", region2: "송파", partner: "B파트너명", activeOrderId: null, activeOrderStatus: null, lastWash: "2026-01-08", model: "K5", isRechargeGuaranteed: false },
-      { plate: "56다1122", zoneName: "홍대입구 3번존", zoneId: "Z-1003", region1: "서울", region2: "마포", partner: "A파트너명", activeOrderId: "O-90003", activeOrderStatus: "미배정", lastWash: "2026-01-05", model: "쏘나타", isRechargeGuaranteed: false },
-      { plate: "78라3344", zoneName: "판교 1번존", zoneId: "Z-2001", region1: "경기", region2: "성남", partner: "C파트너명", activeOrderId: "O-90004", activeOrderStatus: "입고 중", lastWash: "2026-01-09", model: "아이오닉5", isRechargeGuaranteed: true },
-      { plate: "90마5566", zoneName: "수원역 2번존", zoneId: "Z-2002", region1: "경기", region2: "수원", partner: "B파트너명", activeOrderId: null, activeOrderStatus: null, lastWash: "2026-01-07", model: "스포티지", isRechargeGuaranteed: false },
-      { plate: "11바7788", zoneName: "부산역 1번존", zoneId: "Z-3001", region1: "부산", region2: "동구", partner: "D파트너명", activeOrderId: "O-90006", activeOrderStatus: "미배정", lastWash: "2026-01-03", model: "그랜저", isRechargeGuaranteed: false },
-      { plate: "22사9900", zoneName: "해운대 2번존", zoneId: "Z-3002", region1: "부산", region2: "해운대", partner: "D파트너명", activeOrderId: "O-90007", activeOrderStatus: "예약", lastWash: "2026-01-11", model: "레이", isRechargeGuaranteed: false },
-      { plate: "33아1212", zoneName: "대전역 1번존", zoneId: "Z-4001", region1: "대전", region2: "동구", partner: "C파트너명", activeOrderId: null, activeOrderStatus: null, lastWash: "2026-01-06", model: "카니발", isRechargeGuaranteed: false },
-      { plate: "44자3434", zoneName: "청주 2번존", zoneId: "Z-5002", region1: "충북", region2: "청주", partner: "B파트너명", activeOrderId: "O-90009", activeOrderStatus: "미배정", lastWash: "2026-01-02", model: "모닝", isRechargeGuaranteed: false },
-      { plate: "55차5656", zoneName: "광주 1번존", zoneId: "Z-6001", region1: "광주", region2: "서구", partner: "A파트너명", activeOrderId: "O-90010", activeOrderStatus: "예약", lastWash: "2026-01-09", model: "EV6", isRechargeGuaranteed: false },
-      { plate: "66카7878", zoneName: "인천공항 1번존", zoneId: "Z-7001", region1: "인천", region2: "중구", partner: "C파트너명", activeOrderId: null, activeOrderStatus: null, lastWash: "2026-01-08", model: "티볼리", isRechargeGuaranteed: false },
-      { plate: "77타9090", zoneName: "제주공항 1번존", zoneId: "Z-8001", region1: "제주", region2: "제주시", partner: "D파트너명", activeOrderId: "O-90012", activeOrderStatus: "미배정", lastWash: "2026-01-01", model: "셀토스", isRechargeGuaranteed: false },
-    ];
-  }, []);
+  const data = MOCK_VEHICLES;
 
   const [q, setQ] = useState("");
   const [fRegion1, setFRegion1] = useState("");
@@ -1903,9 +1906,9 @@ function OrdersPage({ quickStatus, onClearQuickStatus, initialOrderId, orders, s
               <div className="space-y-1">
                 <label className="text-xs font-semibold text-[#6B778C]">세차유형</label>
                 <Select value={newOrderForm.washType} onChange={e => setNewOrderForm({...newOrderForm, washType: e.target.value})}>
-                  <option value="외부">외부</option>
-                  <option value="내부">내부</option>
-                  <option value="내외부">내외부</option>
+                  {washTypes.map((t) => (
+                    <option key={t} value={t}>{t}</option>
+                  ))}
                 </Select>
               </div>
             </CardContent>
@@ -2252,11 +2255,14 @@ function LostFoundPage() {
 function MissionsPage({ missions, setMissions, orders }) {
   const today = new Date();
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
-  const [newMissionForm, setNewMissionForm] = useState({ plate: "", content: "", zoneName: "" });
+  const [newMissionForm, setNewMissionForm] = useState({ plates: "", content: "", requiresPhoto: false });
 
   // 필터 상태
   const [q, setQ] = useState("");
   const [fStatus, setFStatus] = useState("");
+  const [fModel, setFModel] = useState("");
+  const [fRegion1, setFRegion1] = useState("");
+  const [fRegion2, setFRegion2] = useState("");
   const [periodFrom, setPeriodFrom] = useState(toYmd(new Date(today.getTime() - 30 * 86400000)));
   const [periodTo, setPeriodTo] = useState(toYmd(today));
 
@@ -2265,30 +2271,65 @@ function MissionsPage({ missions, setMissions, orders }) {
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteReason, setDeleteReason] = useState("");
 
+  // 차량 정보 연동
+  const enrichedMissions = useMemo(() => {
+    return missions.map(m => {
+      const vehicle = MOCK_VEHICLES.find(v => v.plate === m.plate);
+      return {
+        ...m,
+        model: vehicle?.model || "-",
+        region1: vehicle?.region1 || "-",
+        region2: vehicle?.region2 || "-",
+      };
+    });
+  }, [missions]);
+
   // 필터링 로직
   const filtered = useMemo(() => {
     const qq = q.trim().toLowerCase();
-    return missions.filter(m => {
+    return enrichedMissions.filter(m => {
       const hitQ = !qq || m.plate.toLowerCase().includes(qq) || m.id.toLowerCase().includes(qq) || m.zoneName.toLowerCase().includes(qq);
       const hitS = !fStatus || (fStatus === "대기" ? m.status === "pending" : m.status === "completed");
+      const hitM = !fModel || m.model === fModel;
+      const hitR1 = !fRegion1 || m.region1 === fRegion1;
+      const hitR2 = !fRegion2 || m.region2 === fRegion2;
       const hitP = (!periodFrom || m.createdAt >= periodFrom) && (!periodTo || m.createdAt <= periodTo);
-      return hitQ && hitS && hitP;
+      return hitQ && hitS && hitM && hitR1 && hitR2 && hitP;
     });
-  }, [missions, q, fStatus, periodFrom, periodTo]);
+  }, [enrichedMissions, q, fStatus, fModel, fRegion1, fRegion2, periodFrom, periodTo]);
+
+  // 필터 옵션 추출
+  const models = useMemo(() => Array.from(new Set(enrichedMissions.map(m => m.model))), [enrichedMissions]);
+  const regions1 = useMemo(() => Array.from(new Set(enrichedMissions.map(m => m.region1))), [enrichedMissions]);
+  const regions2 = useMemo(() => Array.from(new Set(enrichedMissions.filter(m => !fRegion1 || m.region1 === fRegion1).map(m => m.region2))), [enrichedMissions, fRegion1]);
 
   // 미션 등록
   const handleRegisterMission = () => {
-    if (!newMissionForm.plate || !newMissionForm.content) return alert("차량번호와 미션 내용은 필수입니다.");
-    const newMission = {
-      id: `M-${Date.now()}`,
-      plate: newMissionForm.plate,
-      content: newMissionForm.content,
-      zoneName: newMissionForm.zoneName || "-",
-      status: "pending",
-      createdAt: toYmd(new Date()),
-    };
-    setMissions([newMission, ...missions]);
-    setNewMissionForm({ plate: "", content: "", zoneName: "" });
+    if (!newMissionForm.plates || !newMissionForm.content) return alert("차량번호와 미션 내용은 필수입니다.");
+
+    // 차량번호 파싱 (개행 또는 콤마로 분리)
+    const plates = newMissionForm.plates.split(/[\n,]+/).map(p => p.trim()).filter(p => p);
+
+    if (plates.length === 0) return alert("유효한 차량번호가 없습니다.");
+    if (plates.length > 1000) return alert(`최대 1,000건까지 등록 가능합니다. (현재 ${plates.length}건)`);
+
+    const newMissions = plates.map((plate, idx) => {
+      const vehicle = MOCK_VEHICLES.find(v => v.plate === plate);
+      return {
+        id: `M-${Date.now()}-${idx}`,
+        plate: plate,
+        content: newMissionForm.content,
+        zoneName: vehicle?.zoneName || "-", // 차량 정보에서 자동 조회, 없으면 '-'
+        status: "pending",
+        createdAt: toYmd(new Date()),
+        requiresPhoto: newMissionForm.requiresPhoto,
+        assignedAt: null,
+        completedAt: null
+      };
+    });
+
+    setMissions([...newMissions, ...missions]);
+    setNewMissionForm({ plates: "", content: "", requiresPhoto: false });
     setIsRegisterOpen(false);
     alert("미션이 등록되었습니다.");
   };
@@ -2309,6 +2350,9 @@ function MissionsPage({ missions, setMissions, orders }) {
   const columns = [
     { key: "id", header: "미션 ID" },
     { key: "plate", header: "차량번호" },
+    { key: "model", header: "차종" },
+    { key: "region1", header: "지역1" },
+    { key: "region2", header: "지역2" },
     { key: "zoneName", header: "존이름" },
     { key: "content", header: "미션 내용" },
     { 
@@ -2365,6 +2409,24 @@ function MissionsPage({ missions, setMissions, orders }) {
                 <option value="수행완료">수행완료 (completed)</option>
               </Select>
             </div>
+            <div className="md:col-span-2">
+              <Select value={fModel} onChange={(e) => setFModel(e.target.value)}>
+                <option value="">차종 전체</option>
+                {models.map(v => <option key={v} value={v}>{v}</option>)}
+              </Select>
+            </div>
+            <div className="md:col-span-2">
+              <Select value={fRegion1} onChange={(e) => { setFRegion1(e.target.value); setFRegion2(""); }}>
+                <option value="">지역1 전체</option>
+                {regions1.map(v => <option key={v} value={v}>{v}</option>)}
+              </Select>
+            </div>
+            <div className="md:col-span-2">
+              <Select value={fRegion2} onChange={(e) => setFRegion2(e.target.value)}>
+                <option value="">지역2 전체</option>
+                {regions2.map(v => <option key={v} value={v}>{v}</option>)}
+              </Select>
+            </div>
             <div className="md:col-span-3">
               <div className="flex items-center gap-2">
                 <Input type="date" value={periodFrom} onChange={(e) => setPeriodFrom(e.target.value)} />
@@ -2375,7 +2437,7 @@ function MissionsPage({ missions, setMissions, orders }) {
             <div className="md:col-span-3 flex items-center justify-end gap-2">
               <Button
                 variant="secondary"
-                onClick={() => { setQ(""); setFStatus(""); setPeriodFrom(""); setPeriodTo(""); }}
+                onClick={() => { setQ(""); setFStatus(""); setFModel(""); setFRegion1(""); setFRegion2(""); setPeriodFrom(""); setPeriodTo(""); }}
               >
                 초기화
               </Button>
@@ -2409,16 +2471,27 @@ function MissionsPage({ missions, setMissions, orders }) {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-1">
-                <label className="text-xs font-semibold text-[#6B778C]">대상 차량번호 *</label>
-                <Input value={newMissionForm.plate} onChange={e => setNewMissionForm({...newMissionForm, plate: e.target.value})} placeholder="예: 12가3456" />
-              </div>
-              <div className="space-y-1">
-                <label className="text-xs font-semibold text-[#6B778C]">존이름</label>
-                <Input value={newMissionForm.zoneName} onChange={e => setNewMissionForm({...newMissionForm, zoneName: e.target.value})} placeholder="예: 강남역 1번존" />
+                <div className="flex justify-between">
+                  <label className="text-xs font-semibold text-[#6B778C]">대상 차량번호 (일괄 입력) *</label>
+                  <span className="text-xs text-[#6B778C]">{newMissionForm.plates ? newMissionForm.plates.split(/[\n,]+/).filter(p=>p.trim()).length : 0} / 1000</span>
+                </div>
+                <textarea 
+                  className="w-full rounded-lg border border-[#E2E8F0] bg-white px-3 py-2 text-sm text-[#172B4D] outline-none transition placeholder:text-[#94A3B8] focus:border-[#0052CC] focus:ring-1 focus:ring-[#0052CC] min-h-[120px]"
+                  value={newMissionForm.plates} 
+                  onChange={e => setNewMissionForm({...newMissionForm, plates: e.target.value})} 
+                  placeholder="차량번호를 입력하세요. (엔터 또는 콤마로 구분)" 
+                />
               </div>
               <div className="space-y-1">
                 <label className="text-xs font-semibold text-[#6B778C]">미션 내용 *</label>
                 <Input value={newMissionForm.content} onChange={e => setNewMissionForm({...newMissionForm, content: e.target.value})} placeholder="예: 스티커 부착, 내부 집중 청소" />
+                <div className="flex items-center gap-2 pt-2">
+                  <input 
+                    type="checkbox" id="reqPhoto" className="h-4 w-4 rounded border-gray-300 text-[#0052CC] focus:ring-[#0052CC]"
+                    checked={newMissionForm.requiresPhoto} onChange={e => setNewMissionForm({...newMissionForm, requiresPhoto: e.target.checked})} 
+                  />
+                  <label htmlFor="reqPhoto" className="text-sm text-[#172B4D]">수행 시 증빙 사진 필수</label>
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -2448,8 +2521,12 @@ function MissionsPage({ missions, setMissions, orders }) {
               <CardContent className="space-y-2 text-sm text-[#172B4D]">
                 <Field label="미션 ID" value={selected.id} />
                 <Field label="차량번호" value={selected.plate} />
+                <Field label="차종" value={selected.model} />
+                <Field label="지역1" value={selected.region1} />
+                <Field label="지역2" value={selected.region2} />
                 <Field label="존이름" value={selected.zoneName} />
                 <Field label="미션 내용" value={selected.content} />
+                <Field label="증빙 사진 필수" value={selected.requiresPhoto ? <Badge tone="warn">필수</Badge> : "-"} />
                 <Field label="상태" value={<Badge tone={selected.status === 'completed' ? 'ok' : 'warn'}>{selected.status === 'completed' ? '수행완료' : '대기'}</Badge>} />
                 <Field label="등록일" value={selected.createdAt} />
               </CardContent>
