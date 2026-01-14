@@ -73,15 +73,16 @@ function toYmd(d) {
 }
 
 const UPDATE_HISTORY = [
-  { id: 9, date: "2026-01-13 18:40", content: "미션 관리 리스트 필터 고도화 및 상세 Drawer 내 타임라인/삭제 기능 구현" },
-  { id: 8, date: "2026-01-13 18:25", content: "미션 관리 메뉴 독립 분리 및 오더-미션 상태 연동 로직 고도화" },
-  { id: 7, date: "2026-01-13 18:15", content: "오더 관리 내 파트너유형 필터 추가 및 유형별 진행상태 옵션 동적 노출 로직 구현" },
-  { id: 6, date: "2026-01-13 18:10", content: "차량 상세 내 모든 세차 이력 항목에 대해 오더 상세 Drawer 자동 연결 기능 보완" },
-  { id: 5, date: "2026-01-13 17:55", content: "차량 상세 세차 이력 클릭 시 새 창에서 오더 상세 자동 연결 기능 구현" },
-  { id: 4, date: "2026-01-13 17:37", content: "업데이트 이력 페이지 UI 개선 (헤더 명칭 변경) 및 자동 기록 규칙 적용" },
-  { id: 3, date: "2026-01-13 17:25", content: "업데이트 이력 ID 컬럼 추가 및 정렬, 사이드바 스크롤바 숨김 처리" },
-  { id: 2, date: "2026-01-13 16:57", content: "전체 용어 및 데이터 표기 형식 표준화 (차량번호, 존이름, 파트너명 등)" },
-  { id: 1, date: "2026-01-13 15:53", content: "기능 명세(Markdown) Drawer 연동 및 렌더러 구현" },  
+  { id: 10, date: "2026-01-13 18:50", content: "업데이트 이력 데이터 구조 개선(링크 추가) 및 UI 컬럼 반영", links: [{ label: "업데이트 이력", page: "update-history" }] },
+  { id: 9, date: "2026-01-13 18:40", content: "미션 관리 리스트 필터 고도화 및 상세 Drawer 내 타임라인/삭제 기능 구현", links: [{ label: "미션 관리", page: "missions" }, { label: "오더 관리", page: "orders" }] },
+  { id: 8, date: "2026-01-13 18:25", content: "미션 관리 메뉴 독립 분리 및 오더-미션 상태 연동 로직 고도화", links: [{ label: "미션 관리", page: "missions" }, { label: "오더 관리", page: "orders" }] },
+  { id: 7, date: "2026-01-13 18:15", content: "오더 관리 내 파트너유형 필터 추가 및 유형별 진행상태 옵션 동적 노출 로직 구현", links: [{ label: "오더 관리", page: "orders" }] },
+  { id: 6, date: "2026-01-13 18:10", content: "차량 상세 내 모든 세차 이력 항목에 대해 오더 상세 Drawer 자동 연결 기능 보완", links: [{ label: "차량 관리", page: "vehicles" }, { label: "오더 관리", page: "orders" }] },
+  { id: 5, date: "2026-01-13 17:55", content: "차량 상세 세차 이력 클릭 시 새 창에서 오더 상세 자동 연결 기능 구현", links: [{ label: "차량 관리", page: "vehicles" }, { label: "오더 관리", page: "orders" }] },
+  { id: 4, date: "2026-01-13 17:37", content: "업데이트 이력 페이지 UI 개선 (헤더 명칭 변경) 및 자동 기록 규칙 적용", links: [] },
+  { id: 3, date: "2026-01-13 17:25", content: "업데이트 이력 ID 컬럼 추가 및 정렬, 사이드바 스크롤바 숨김 처리", links: [] },
+  { id: 2, date: "2026-01-13 16:57", content: "전체 용어 및 데이터 표기 형식 표준화 (차량번호, 존이름, 파트너명 등)", links: [] },
+  { id: 1, date: "2026-01-13 15:53", content: "기능 명세(Markdown) Drawer 연동 및 렌더러 구현", links: [] },
 ];
 
 /**
@@ -381,7 +382,7 @@ const WASH_TYPES = ["내외부", "특수", "라이트", "내부", "외부", "물
  */
 const NAV = [
   {
-    group: "시스템",
+    group: "제품 기획 관리",
     items: [{ key: "update-history", label: "업데이트 이력", icon: History }],
   },
   {
@@ -2565,7 +2566,7 @@ function UpdateHistoryPage() {
       <div className="flex items-center justify-between">
         <div>
           <div className="text-base font-bold text-[#172B4D]">업데이트 이력</div>
-          <div className="mt-1 text-sm text-[#6B778C]">시스템 주요 변경 사항 및 배포 내역</div>
+          <div className="mt-1 text-sm text-[#6B778C]">제품 기획 변경 및 배포 내역</div>
         </div>
       </div>
 
@@ -2575,6 +2576,28 @@ function UpdateHistoryPage() {
             { key: "id", header: "ID" },
             { key: "date", header: "일시", render: (r) => <span className="font-medium text-[#172B4D]">{r.date}</span> },
             { key: "content", header: "변경내용" },
+            {
+              key: "links",
+              header: "링크",
+              render: (r) => (
+                <div className="flex gap-2">
+                  {r.links && r.links.map((link, idx) => (
+                    <Button
+                      key={idx}
+                      variant="ghost"
+                      size="sm"
+                      className="h-6 px-2 text-xs text-[#0052CC]"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        window.open(`/?page=${link.page}`, "_blank");
+                      }}
+                    >
+                      {link.label} <ExternalLink className="ml-1 h-3 w-3" />
+                    </Button>
+                  ))}
+                </div>
+              ),
+            },
           ]}
           rows={sortedHistory}
           rowKey={(r) => r.id}
