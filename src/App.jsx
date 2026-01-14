@@ -73,8 +73,11 @@ function toYmd(d) {
 }
 
 const UPDATE_HISTORY = [
-  { id: 16, date: "2026-01-14 15:50", content: "[정책] 관리자-수행원 간 정보 관심사 분리 정책에 따라 인터널 어드민 내 충전보장형 정보 제거", isPolicyChange: true, links: [{ label: "차량 관리", page: "vehicles" }] },
-  { id: 15, date: "2026-01-14 15:40", content: "[정책] 세차 업무 무관 정보(유종) 제거 및 충전보장형 차량 여부 노출 정책 적용", isPolicyChange: true, links: [{ label: "차량 관리", page: "vehicles" }] },
+  { id: 19, date: "2026-01-14 16:25", content: "[정책] LNB 메뉴 순서 변경(미션 관리 하향 조정) 및 수행완료 미션 삭제 제한 정책 적용", isPolicyChange: true, links: [{ label: "미션 관리", page: "missions" }] },
+  { id: 18, date: "2026-01-14 16:16", content: "[정책] 필드 순서 표준화(오더구분/유형/세차유형) 및 미션-오더 연동 상세 로직 고도화", isPolicyChange: true, links: [{ label: "미션 관리", page: "missions" }, { label: "오더 관리", page: "orders" }] },
+  { id: 17, date: "2026-01-14 16:01", content: "업데이트 이력 시간 기록 규칙 확정 (KST 16:01 기준) 및 기존 이력 시간 교정", isPolicyChange: false, links: [{ label: "업데이트 이력", page: "update-history" }] },
+  { id: 16, date: "2026-01-14 15:50", content: "[정책] 관리자-수행원 간 정보 관심사 분리 정책에 따라 어드민 내 현장 가이드 및 유종 정보 전면 제거", isPolicyChange: true, links: [{ label: "차량 관리", page: "vehicles" }] },
+  { id: 15, date: "2026-01-14 15:40", content: "[정책] 세차 업무 무관 정보(유종) 제거 및 충전보장형 차량 대상 특수 반납 가이드 노출 정책 적용", isPolicyChange: true, links: [{ label: "차량 관리", page: "vehicles" }] },
   { id: 14, date: "2026-01-14 15:25", content: "[정책] 세차 대상 차량 기준(sharing_type) 정의 및 진행중 오더의 실시간 상태 노출 로직 적용", isPolicyChange: true, links: [{ label: "차량 관리", page: "vehicles" }] },
   { id: 13, date: "2026-01-14 15:10", content: "[정책] 업데이트 이력 관리 체계 개편: 제품 정책 변경 여부 식별 및 기록 의무화", isPolicyChange: true, links: [{ label: "업데이트 이력", page: "update-history" }] },
   { id: 12, date: "2026-01-14 14:50", content: "디자인 가이드(PNG) 분석 기반 UI 컴포넌트 스타일 고도화 및 디자인 토큰 반영", isPolicyChange: false, links: [{ label: "차량 관리", page: "vehicles" }, { label: "오더 관리", page: "orders" }] },
@@ -407,8 +410,8 @@ const NAV = [
     group: "업무 관리",
     items: [
       { key: "vehicles", label: "차량 관리", icon: Car },
-      { key: "missions", label: "미션 관리", icon: ClipboardList },
       { key: "orders", label: "오더 관리", icon: ClipboardList },
+      { key: "missions", label: "미션 관리", icon: ClipboardList },
       { key: "settlement", label: "합의 요청 관리", icon: Handshake },
       { key: "billing", label: "청구 관리", icon: Receipt },
       { key: "lostfound", label: "분실물 관리", icon: PackageSearch },
@@ -1387,13 +1390,13 @@ function OrdersPage({ quickStatus, onClearQuickStatus, initialOrderId, orders, s
 
   const columns = [
     { key: "orderId", header: "오더 ID" },
-    {
-      key: "washType",
-      header: "세차타입",
-      render: (r) => <span className="text-[#172B4D]">{r.washType}</span>,
-    },
     { key: "orderGroup", header: "오더구분" },
     { key: "orderType", header: "오더유형" },
+    {
+      key: "washType",
+      header: "세차유형",
+      render: (r) => <span className="text-[#172B4D]">{r.washType}</span>,
+    },
     { key: "carId", header: "차량 ID" },
     { key: "model", header: "차종" },
     { key: "plate", header: "차량번호" },
@@ -1421,7 +1424,7 @@ function OrdersPage({ quickStatus, onClearQuickStatus, initialOrderId, orders, s
       {fRegion2 ? <Chip onRemove={() => setFRegion2("")}>지역2: {fRegion2}</Chip> : null}
       {fOrderGroup ? <Chip onRemove={() => setFOrderGroup("")}>오더구분: {fOrderGroup}</Chip> : null}
       {fOrderType ? <Chip onRemove={() => setFOrderType("")}>오더유형: {fOrderType}</Chip> : null}
-      {fWashType ? <Chip onRemove={() => setFWashType("")}>세차타입: {fWashType}</Chip> : null}
+      {fWashType ? <Chip onRemove={() => setFWashType("")}>세차유형: {fWashType}</Chip> : null}
       {fPartner ? <Chip onRemove={() => setFPartner("")}>파트너명: {fPartner}</Chip> : null}
       {fPartnerType ? <Chip onRemove={() => setFPartnerType("")}>파트너유형: {fPartnerType}</Chip> : null}
       {fStatus ? <Chip onRemove={() => { setFStatus(""); onClearQuickStatus(); }}>상태: {fStatus}</Chip> : null}
@@ -1450,7 +1453,7 @@ function OrdersPage({ quickStatus, onClearQuickStatus, initialOrderId, orders, s
         <CardHeader>
           <CardTitle>검색 및 필터</CardTitle>
           <CardDescription>
-            검색: 차량번호, 오더 ID, 존 ID, 존이름, 수행원, 코멘트 요약 / 필터: 기간, 지역1/2, 오더구분/유형, 세차타입, 파트너명, 진행상태
+            검색: 차량번호, 오더 ID, 존 ID, 존이름, 수행원, 코멘트 요약 / 필터: 기간, 지역1/2, 오더구분/유형, 세차유형, 파트너명, 진행상태
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -1496,7 +1499,7 @@ function OrdersPage({ quickStatus, onClearQuickStatus, initialOrderId, orders, s
             </div>
             <div className="md:col-span-2">
               <Select value={fWashType} onChange={(e) => setFWashType(e.target.value)}>
-                <option value="">세차타입 전체</option>
+                <option value="">세차유형 전체</option>
                 {washTypes.map((v) => <option key={v} value={v}>{v}</option>)}
               </Select>
             </div>
@@ -1644,7 +1647,7 @@ function OrdersPage({ quickStatus, onClearQuickStatus, initialOrderId, orders, s
                     <div>{selected.orderType}</div>
                   </div>
                   <div className="space-y-1">
-                    <div className="text-xs text-[#6B778C]">세차 타입</div>
+                    <div className="text-xs text-[#6B778C]">세차유형</div>
                     <div>{selected.washType}</div>
                   </div>
                   <div className="space-y-1">
@@ -1898,7 +1901,7 @@ function OrdersPage({ quickStatus, onClearQuickStatus, initialOrderId, orders, s
                 <Input value={newOrderForm.zone} onChange={e => setNewOrderForm({...newOrderForm, zone: e.target.value})} placeholder="예: 강남역 1번존" />
               </div>
               <div className="space-y-1">
-                <label className="text-xs font-semibold text-[#6B778C]">세차 타입</label>
+                <label className="text-xs font-semibold text-[#6B778C]">세차유형</label>
                 <Select value={newOrderForm.washType} onChange={e => setNewOrderForm({...newOrderForm, washType: e.target.value})}>
                   <option value="외부">외부</option>
                   <option value="내부">내부</option>
@@ -2313,7 +2316,8 @@ function MissionsPage({ missions, setMissions, orders }) {
       header: "상태", 
       render: (r) => {
         const tone = r.status === 'completed' ? 'ok' : 'warn';
-        return <Badge tone={tone}>{r.status}</Badge>;
+        const label = r.status === 'completed' ? '수행완료' : '대기';
+        return <Badge tone={tone}>{label}</Badge>;
       }
     },
     { 
@@ -2357,8 +2361,8 @@ function MissionsPage({ missions, setMissions, orders }) {
             <div className="md:col-span-2">
               <Select value={fStatus} onChange={(e) => setFStatus(e.target.value)}>
                 <option value="">상태 전체</option>
-                <option value="대기">대기</option>
-                <option value="수행완료">수행완료</option>
+                <option value="대기">대기 (pending)</option>
+                <option value="수행완료">수행완료 (completed)</option>
               </Select>
             </div>
             <div className="md:col-span-3">
@@ -2429,7 +2433,7 @@ function MissionsPage({ missions, setMissions, orders }) {
         footer={
           <>
             <Button variant="secondary" onClick={() => setSelected(null)}>닫기</Button>
-            <Button variant="danger" onClick={() => setIsDeleting(true)}>
+            <Button variant="danger" onClick={() => setIsDeleting(true)} disabled={selected?.status === 'completed'}>
               <Trash2 className="mr-2 h-4 w-4" /> 미션 삭제
             </Button>
           </>
@@ -2446,45 +2450,35 @@ function MissionsPage({ missions, setMissions, orders }) {
                 <Field label="차량번호" value={selected.plate} />
                 <Field label="존이름" value={selected.zoneName} />
                 <Field label="미션 내용" value={selected.content} />
-                <Field label="상태" value={<Badge tone={selected.status === 'completed' ? 'ok' : 'warn'}>{selected.status}</Badge>} />
+                <Field label="상태" value={<Badge tone={selected.status === 'completed' ? 'ok' : 'warn'}>{selected.status === 'completed' ? '수행완료' : '대기'}</Badge>} />
                 <Field label="등록일" value={selected.createdAt} />
               </CardContent>
             </Card>
 
-            <Card>
-              <CardHeader>
-                <CardTitle>오더 연동 정보</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2 text-sm text-[#172B4D]">
-                <Field label="연결된 오더" value={selected.linkedOrderId || "-"} />
-                <Field label="담당 수행원" value={linkedOrder?.worker || "-"} />
-                <Field label="오더 상태" value={linkedOrder ? <Badge tone="info">{linkedOrder.status}</Badge> : "-"} />
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>이력 (Timeline)</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="relative space-y-6 pl-2 before:absolute before:left-[19px] before:top-2 before:h-[calc(100%-16px)] before:w-0.5 before:bg-[#DFE1E6]">
-                  {[
-                    { label: "미션 등록", time: selected.createdAt, active: true },
-                    { label: "오더 할당", time: selected.assignedAt || "-", active: !!selected.assignedAt },
-                    { label: "수행 시작", time: selected.assignedAt ? "수행원 도착 시" : "-", active: !!selected.assignedAt && linkedOrder?.status === "수행 중" },
-                    { label: "수행 완료", time: selected.completedAt || "-", active: !!selected.completedAt },
-                  ].map((step, idx) => (
-                    <div key={idx} className="relative flex items-start gap-3">
-                      <div className={cn("z-10 flex h-3.5 w-3.5 shrink-0 items-center justify-center rounded-full ring-4 ring-white", step.active ? "bg-[#0052CC]" : "bg-[#DFE1E6]")} />
-                      <div className="flex flex-col">
-                        <span className="text-xs font-medium text-[#172B4D]">{step.label}</span>
-                        <span className="text-[10px] text-[#6B778C]">{step.time}</span>
-                      </div>
+            {selected.status === 'completed' && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>오더 연동 정보</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-2 text-sm text-[#172B4D]">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="w-36 shrink-0 text-xs font-semibold text-[#6B778C]">연결된 오더</div>
+                    <div className="min-w-0 flex-1 text-sm text-[#172B4D]">
+                      {selected.linkedOrderId ? (
+                        <button 
+                          className="text-[#0052CC] hover:underline flex items-center" 
+                          onClick={() => window.open(`/?page=orders&orderId=${selected.linkedOrderId}`, '_blank')}
+                        >
+                          {selected.linkedOrderId} <ExternalLink className="ml-1 h-3 w-3" />
+                        </button>
+                      ) : "-"}
                     </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+                  </div>
+                  <Field label="담당 수행원" value={linkedOrder?.worker || "-"} />
+                  <Field label="오더 상태" value={linkedOrder ? <Badge tone="info">{linkedOrder.status}</Badge> : "-"} />
+                </CardContent>
+              </Card>
+            )}
 
             {isDeleting && (
               <Card className="ring-rose-200">
