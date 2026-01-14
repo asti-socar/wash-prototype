@@ -73,11 +73,13 @@ function toYmd(d) {
 }
 
 const UPDATE_HISTORY = [
-  { id: 14, date: "2026-01-14 10:20", content: "[정책] 세차 대상 차량 기준(sharing_type) 정의 및 진행중 오더의 실시간 상태 노출 로직 적용", isPolicyChange: true, links: [{ label: "차량 관리", page: "vehicles" }] },
-  { id: 13, date: "2026-01-14 10:05", content: "[정책] 업데이트 이력 관리 체계 개편: 제품 정책 변경 여부 식별 및 기록 의무화", isPolicyChange: true, links: [{ label: "업데이트 이력", page: "update-history" }] },
-  { id: 12, date: "2026-01-14 09:37", content: "디자인 가이드(PNG) 분석 기반 UI 컴포넌트 스타일 고도화 및 디자인 토큰 반영", isPolicyChange: false, links: [{ label: "차량 관리", page: "vehicles" }, { label: "오더 관리", page: "orders" }] },
-  { id: 11, date: "2026-01-14 09:09", content: "업데이트 이력 자동 기록 규칙 최종 수정 (실시간 KST 반영) 및 UI 점검", isPolicyChange: false, links: [{ label: "업데이트 이력", page: "update-history" }] },
-  { id: 10, date: "2026-01-14 09:07", content: "업데이트 이력 데이터 구조 개선(링크 추가) 및 UI 컬럼 반영", isPolicyChange: false, links: [{ label: "업데이트 이력", page: "update-history" }] },
+  { id: 16, date: "2026-01-14 15:50", content: "[정책] 관리자-수행원 간 정보 관심사 분리 정책에 따라 인터널 어드민 내 충전보장형 정보 제거", isPolicyChange: true, links: [{ label: "차량 관리", page: "vehicles" }] },
+  { id: 15, date: "2026-01-14 15:40", content: "[정책] 세차 업무 무관 정보(유종) 제거 및 충전보장형 차량 여부 노출 정책 적용", isPolicyChange: true, links: [{ label: "차량 관리", page: "vehicles" }] },
+  { id: 14, date: "2026-01-14 15:25", content: "[정책] 세차 대상 차량 기준(sharing_type) 정의 및 진행중 오더의 실시간 상태 노출 로직 적용", isPolicyChange: true, links: [{ label: "차량 관리", page: "vehicles" }] },
+  { id: 13, date: "2026-01-14 15:10", content: "[정책] 업데이트 이력 관리 체계 개편: 제품 정책 변경 여부 식별 및 기록 의무화", isPolicyChange: true, links: [{ label: "업데이트 이력", page: "update-history" }] },
+  { id: 12, date: "2026-01-14 14:50", content: "디자인 가이드(PNG) 분석 기반 UI 컴포넌트 스타일 고도화 및 디자인 토큰 반영", isPolicyChange: false, links: [{ label: "차량 관리", page: "vehicles" }, { label: "오더 관리", page: "orders" }] },
+  { id: 11, date: "2026-01-14 14:35", content: "업데이트 이력 자동 기록 규칙 최종 수정 (실시간 KST 반영) 및 UI 점검", isPolicyChange: false, links: [{ label: "업데이트 이력", page: "update-history" }] },
+  { id: 10, date: "2026-01-14 14:30", content: "업데이트 이력 데이터 구조 개선(링크 추가) 및 UI 컬럼 반영", isPolicyChange: false, links: [{ label: "업데이트 이력", page: "update-history" }] },
   { id: 9, date: "2026-01-13 18:40", content: "[정책] 미션 삭제 시 사유 입력 강제 및 감사 로그 기록 정책 적용", isPolicyChange: true, links: [{ label: "미션 관리", page: "missions" }, { label: "오더 관리", page: "orders" }] },
   { id: 8, date: "2026-01-13 18:25", content: "[정책] 세차 오더-미션 간 상태 라이프사이클 동기화 로직 정의", isPolicyChange: true, links: [{ label: "미션 관리", page: "missions" }, { label: "오더 관리", page: "orders" }] },
   { id: 7, date: "2026-01-13 18:15", content: "[정책] 파트너 유형별(현장/입고) 프로세스 분리에 따른 진행상태 선택값 제한 규칙 적용", isPolicyChange: true, links: [{ label: "오더 관리", page: "orders" }] },
@@ -1031,18 +1033,18 @@ function VehiclesPage() {
     // 12건 더미 데이터
     // activeOrderId가 있으면 현재 진행중인 오더가 있다는 의미
     return [
-      { plate: "12가3456", zoneName: "강남역 1번존", zoneId: "Z-1001", region1: "서울", region2: "강남", partner: "A파트너명", activeOrderId: "O-90001", activeOrderStatus: "예약", lastWash: "2026-01-10", model: "아반떼 AD", fuel: "가솔린" },
-      { plate: "34나7890", zoneName: "잠실역 2번존", zoneId: "Z-1002", region1: "서울", region2: "송파", partner: "B파트너명", activeOrderId: null, activeOrderStatus: null, lastWash: "2026-01-08", model: "K5", fuel: "가솔린" },
-      { plate: "56다1122", zoneName: "홍대입구 3번존", zoneId: "Z-1003", region1: "서울", region2: "마포", partner: "A파트너명", activeOrderId: "O-90003", activeOrderStatus: "미배정", lastWash: "2026-01-05", model: "쏘나타", fuel: "하이브리드" },
-      { plate: "78라3344", zoneName: "판교 1번존", zoneId: "Z-2001", region1: "경기", region2: "성남", partner: "C파트너명", activeOrderId: "O-90004", activeOrderStatus: "입고 중", lastWash: "2026-01-09", model: "아이오닉5", fuel: "EV" },
-      { plate: "90마5566", zoneName: "수원역 2번존", zoneId: "Z-2002", region1: "경기", region2: "수원", partner: "B파트너명", activeOrderId: null, activeOrderStatus: null, lastWash: "2026-01-07", model: "스포티지", fuel: "디젤" },
-      { plate: "11바7788", zoneName: "부산역 1번존", zoneId: "Z-3001", region1: "부산", region2: "동구", partner: "D파트너명", activeOrderId: "O-90006", activeOrderStatus: "미배정", lastWash: "2026-01-03", model: "그랜저", fuel: "가솔린" },
-      { plate: "22사9900", zoneName: "해운대 2번존", zoneId: "Z-3002", region1: "부산", region2: "해운대", partner: "D파트너명", activeOrderId: "O-90007", activeOrderStatus: "예약", lastWash: "2026-01-11", model: "레이", fuel: "가솔린" },
-      { plate: "33아1212", zoneName: "대전역 1번존", zoneId: "Z-4001", region1: "대전", region2: "동구", partner: "C파트너명", activeOrderId: null, activeOrderStatus: null, lastWash: "2026-01-06", model: "카니발", fuel: "디젤" },
-      { plate: "44자3434", zoneName: "청주 2번존", zoneId: "Z-5002", region1: "충북", region2: "청주", partner: "B파트너명", activeOrderId: "O-90009", activeOrderStatus: "미배정", lastWash: "2026-01-02", model: "모닝", fuel: "가솔린" },
-      { plate: "55차5656", zoneName: "광주 1번존", zoneId: "Z-6001", region1: "광주", region2: "서구", partner: "A파트너명", activeOrderId: "O-90010", activeOrderStatus: "예약", lastWash: "2026-01-09", model: "EV6", fuel: "EV" },
-      { plate: "66카7878", zoneName: "인천공항 1번존", zoneId: "Z-7001", region1: "인천", region2: "중구", partner: "C파트너명", activeOrderId: null, activeOrderStatus: null, lastWash: "2026-01-08", model: "티볼리", fuel: "가솔린" },
-      { plate: "77타9090", zoneName: "제주공항 1번존", zoneId: "Z-8001", region1: "제주", region2: "제주시", partner: "D파트너명", activeOrderId: "O-90012", activeOrderStatus: "미배정", lastWash: "2026-01-01", model: "셀토스", fuel: "가솔린" },
+      { plate: "12가3456", zoneName: "강남역 1번존", zoneId: "Z-1001", region1: "서울", region2: "강남", partner: "A파트너명", activeOrderId: "O-90001", activeOrderStatus: "예약", lastWash: "2026-01-10", model: "아반떼 AD", isRechargeGuaranteed: false },
+      { plate: "34나7890", zoneName: "잠실역 2번존", zoneId: "Z-1002", region1: "서울", region2: "송파", partner: "B파트너명", activeOrderId: null, activeOrderStatus: null, lastWash: "2026-01-08", model: "K5", isRechargeGuaranteed: false },
+      { plate: "56다1122", zoneName: "홍대입구 3번존", zoneId: "Z-1003", region1: "서울", region2: "마포", partner: "A파트너명", activeOrderId: "O-90003", activeOrderStatus: "미배정", lastWash: "2026-01-05", model: "쏘나타", isRechargeGuaranteed: false },
+      { plate: "78라3344", zoneName: "판교 1번존", zoneId: "Z-2001", region1: "경기", region2: "성남", partner: "C파트너명", activeOrderId: "O-90004", activeOrderStatus: "입고 중", lastWash: "2026-01-09", model: "아이오닉5", isRechargeGuaranteed: true },
+      { plate: "90마5566", zoneName: "수원역 2번존", zoneId: "Z-2002", region1: "경기", region2: "수원", partner: "B파트너명", activeOrderId: null, activeOrderStatus: null, lastWash: "2026-01-07", model: "스포티지", isRechargeGuaranteed: false },
+      { plate: "11바7788", zoneName: "부산역 1번존", zoneId: "Z-3001", region1: "부산", region2: "동구", partner: "D파트너명", activeOrderId: "O-90006", activeOrderStatus: "미배정", lastWash: "2026-01-03", model: "그랜저", isRechargeGuaranteed: false },
+      { plate: "22사9900", zoneName: "해운대 2번존", zoneId: "Z-3002", region1: "부산", region2: "해운대", partner: "D파트너명", activeOrderId: "O-90007", activeOrderStatus: "예약", lastWash: "2026-01-11", model: "레이", isRechargeGuaranteed: false },
+      { plate: "33아1212", zoneName: "대전역 1번존", zoneId: "Z-4001", region1: "대전", region2: "동구", partner: "C파트너명", activeOrderId: null, activeOrderStatus: null, lastWash: "2026-01-06", model: "카니발", isRechargeGuaranteed: false },
+      { plate: "44자3434", zoneName: "청주 2번존", zoneId: "Z-5002", region1: "충북", region2: "청주", partner: "B파트너명", activeOrderId: "O-90009", activeOrderStatus: "미배정", lastWash: "2026-01-02", model: "모닝", isRechargeGuaranteed: false },
+      { plate: "55차5656", zoneName: "광주 1번존", zoneId: "Z-6001", region1: "광주", region2: "서구", partner: "A파트너명", activeOrderId: "O-90010", activeOrderStatus: "예약", lastWash: "2026-01-09", model: "EV6", isRechargeGuaranteed: false },
+      { plate: "66카7878", zoneName: "인천공항 1번존", zoneId: "Z-7001", region1: "인천", region2: "중구", partner: "C파트너명", activeOrderId: null, activeOrderStatus: null, lastWash: "2026-01-08", model: "티볼리", isRechargeGuaranteed: false },
+      { plate: "77타9090", zoneName: "제주공항 1번존", zoneId: "Z-8001", region1: "제주", region2: "제주시", partner: "D파트너명", activeOrderId: "O-90012", activeOrderStatus: "미배정", lastWash: "2026-01-01", model: "셀토스", isRechargeGuaranteed: false },
     ];
   }, []);
 
@@ -1196,12 +1198,11 @@ function VehiclesPage() {
             <Card>
               <CardHeader>
                 <CardTitle>기본 정보</CardTitle>
-                <CardDescription>리스트 필드 + 차종, 연료유형(프로토타입)</CardDescription>
+                <CardDescription>리스트 필드 + 차종</CardDescription>
               </CardHeader>
               <CardContent className="space-y-2 text-sm text-[#172B4D]">
                 <Field label="차량번호" value={selected.plate} />
                 <Field label="차종" value={selected.model} />
-                <Field label="연료유형" value={selected.fuel} />
                 <Field label="존이름" value={`${selected.zoneName} (${selected.zoneId})`} />
                 <Field label="지역1" value={selected.region1} />
                 <Field label="지역2" value={selected.region2} />
