@@ -73,17 +73,19 @@ function toYmd(d) {
 }
 
 const UPDATE_HISTORY = [
-  { id: 11, date: "2026-01-14 09:09", content: "업데이트 이력 자동 기록 규칙 최종 수정 (실시간 KST 반영) 및 UI 점검", links: [{ label: "업데이트 이력", page: "update-history" }] },
-  { id: 10, date: "2026-01-14 09:07", content: "업데이트 이력 데이터 구조 개선(링크 추가) 및 UI 컬럼 반영", links: [{ label: "업데이트 이력", page: "update-history" }] },
-  { id: 9, date: "2026-01-13 18:40", content: "미션 관리 리스트 필터 고도화 및 상세 Drawer 내 타임라인/삭제 기능 구현", links: [{ label: "미션 관리", page: "missions" }, { label: "오더 관리", page: "orders" }] },
-  { id: 8, date: "2026-01-13 18:25", content: "미션 관리 메뉴 독립 분리 및 오더-미션 상태 연동 로직 고도화", links: [{ label: "미션 관리", page: "missions" }, { label: "오더 관리", page: "orders" }] },
-  { id: 7, date: "2026-01-13 18:15", content: "오더 관리 내 파트너유형 필터 추가 및 유형별 진행상태 옵션 동적 노출 로직 구현", links: [{ label: "오더 관리", page: "orders" }] },
-  { id: 6, date: "2026-01-13 18:10", content: "차량 상세 내 모든 세차 이력 항목에 대해 오더 상세 Drawer 자동 연결 기능 보완", links: [{ label: "차량 관리", page: "vehicles" }, { label: "오더 관리", page: "orders" }] },
-  { id: 5, date: "2026-01-13 17:55", content: "차량 상세 세차 이력 클릭 시 새 창에서 오더 상세 자동 연결 기능 구현", links: [{ label: "차량 관리", page: "vehicles" }, { label: "오더 관리", page: "orders" }] },
-  { id: 4, date: "2026-01-13 17:37", content: "업데이트 이력 페이지 UI 개선 (헤더 명칭 변경) 및 자동 기록 규칙 적용", links: [] },
-  { id: 3, date: "2026-01-13 17:25", content: "업데이트 이력 ID 컬럼 추가 및 정렬, 사이드바 스크롤바 숨김 처리", links: [] },
-  { id: 2, date: "2026-01-13 16:57", content: "전체 용어 및 데이터 표기 형식 표준화 (차량번호, 존이름, 파트너명 등)", links: [] },
-  { id: 1, date: "2026-01-13 15:53", content: "기능 명세(Markdown) Drawer 연동 및 렌더러 구현", links: [] },
+  { id: 13, date: "2026-01-14 10:05", content: "[정책] 업데이트 이력 관리 체계 개편: 제품 정책 변경 여부 식별 및 기록 의무화", isPolicyChange: true, links: [{ label: "업데이트 이력", page: "update-history" }] },
+  { id: 12, date: "2026-01-14 09:37", content: "디자인 가이드(PNG) 분석 기반 UI 컴포넌트 스타일 고도화 및 디자인 토큰 반영", isPolicyChange: false, links: [{ label: "차량 관리", page: "vehicles" }, { label: "오더 관리", page: "orders" }] },
+  { id: 11, date: "2026-01-14 09:09", content: "업데이트 이력 자동 기록 규칙 최종 수정 (실시간 KST 반영) 및 UI 점검", isPolicyChange: false, links: [{ label: "업데이트 이력", page: "update-history" }] },
+  { id: 10, date: "2026-01-14 09:07", content: "업데이트 이력 데이터 구조 개선(링크 추가) 및 UI 컬럼 반영", isPolicyChange: false, links: [{ label: "업데이트 이력", page: "update-history" }] },
+  { id: 9, date: "2026-01-13 18:40", content: "[정책] 미션 삭제 시 사유 입력 강제 및 감사 로그 기록 정책 적용", isPolicyChange: true, links: [{ label: "미션 관리", page: "missions" }, { label: "오더 관리", page: "orders" }] },
+  { id: 8, date: "2026-01-13 18:25", content: "[정책] 세차 오더-미션 간 상태 라이프사이클 동기화 로직 정의", isPolicyChange: true, links: [{ label: "미션 관리", page: "missions" }, { label: "오더 관리", page: "orders" }] },
+  { id: 7, date: "2026-01-13 18:15", content: "[정책] 파트너 유형별(현장/입고) 프로세스 분리에 따른 진행상태 선택값 제한 규칙 적용", isPolicyChange: true, links: [{ label: "오더 관리", page: "orders" }] },
+  { id: 6, date: "2026-01-13 18:10", content: "차량 상세 내 모든 세차 이력 항목에 대해 오더 상세 Drawer 자동 연결 기능 보완", isPolicyChange: false, links: [{ label: "차량 관리", page: "vehicles" }, { label: "오더 관리", page: "orders" }] },
+  { id: 5, date: "2026-01-13 17:55", content: "차량 상세 세차 이력 클릭 시 새 창에서 오더 상세 자동 연결 기능 구현", isPolicyChange: false, links: [{ label: "차량 관리", page: "vehicles" }, { label: "오더 관리", page: "orders" }] },
+  { id: 4, date: "2026-01-13 17:37", content: "업데이트 이력 페이지 UI 개선 (헤더 명칭 변경) 및 자동 기록 규칙 적용", isPolicyChange: false, links: [] },
+  { id: 3, date: "2026-01-13 17:25", content: "업데이트 이력 ID 컬럼 추가 및 정렬, 사이드바 스크롤바 숨김 처리", isPolicyChange: false, links: [] },
+  { id: 2, date: "2026-01-13 16:57", content: "전체 용어 및 데이터 표기 형식 표준화 (차량번호, 존이름, 파트너명 등)", isPolicyChange: false, links: [] },
+  { id: 1, date: "2026-01-13 15:53", content: "기능 명세(Markdown) Drawer 연동 및 렌더러 구현", isPolicyChange: false, links: [] },
 ];
 
 /**
@@ -91,7 +93,7 @@ const UPDATE_HISTORY = [
  */
 function Card({ className, children }) {
   return (
-    <div className={cn("rounded-lg bg-white border border-[#DFE1E6] shadow-sm", className)}>
+    <div className={cn("rounded-xl bg-white border border-[#E2E8F0] shadow-[0_2px_4px_rgba(0,0,0,0.02)]", className)}>
       {children}
     </div>
   );
@@ -110,10 +112,10 @@ function CardContent({ className, children }) {
 }
 function Button({ className, variant = "default", size = "md", ...props }) {
   const base =
-    "inline-flex items-center justify-center rounded-lg font-medium transition focus:outline-none focus:ring-2 focus:ring-[#0052CC] focus:ring-offset-1 disabled:opacity-50 disabled:pointer-events-none";
+    "inline-flex items-center justify-center rounded-lg font-semibold transition-all focus:outline-none focus:ring-2 focus:ring-[#0052CC] focus:ring-offset-1 disabled:opacity-50 disabled:pointer-events-none active:scale-[0.98]";
   const variants = {
     default: "bg-[#0052CC] text-white hover:bg-[#0047B3] shadow-sm",
-    secondary: "bg-white text-[#172B4D] border border-[#DFE1E6] hover:bg-[#F4F5F7] shadow-sm",
+    secondary: "bg-white text-[#172B4D] border border-[#E2E8F0] hover:bg-[#F8FAFC] shadow-sm text-[#334155]",
     ghost: "bg-transparent text-[#172B4D] hover:bg-[#F4F5F7]",
     danger: "bg-rose-600 text-white hover:bg-rose-700",
     outline: "bg-white border border-[#DFE1E6] text-[#172B4D] hover:bg-[#F4F5F7]",
@@ -129,7 +131,7 @@ function Input({ className, ...props }) {
   return (
     <input
       className={cn(
-        "h-10 w-full rounded-lg border border-[#DFE1E6] bg-white px-3 text-sm text-[#172B4D] outline-none transition",
+        "h-10 w-full rounded-lg border border-[#E2E8F0] bg-white px-3 text-sm text-[#172B4D] outline-none transition placeholder:text-[#94A3B8]",
         "focus:border-[#0052CC] focus:ring-1 focus:ring-[#0052CC]",
         className
       )}
@@ -141,7 +143,7 @@ function Select({ className, children, ...props }) {
   return (
     <select
       className={cn(
-        "h-10 w-full rounded-lg border border-[#DFE1E6] bg-white px-3 text-sm text-[#172B4D] outline-none transition",
+        "h-10 w-full rounded-lg border border-[#E2E8F0] bg-white px-3 text-sm text-[#172B4D] outline-none transition",
         "focus:border-[#0052CC] focus:ring-1 focus:ring-[#0052CC]",
         className
       )}
@@ -274,18 +276,18 @@ function Drawer({ open, title, onClose, children, footer }) {
  */
 function DataTable({ columns, rows, onRowClick, rowKey }) {
   return (
-    <div className="overflow-x-auto rounded-lg border border-[#DFE1E6]">
+    <div className="overflow-x-auto rounded-xl border border-[#E2E8F0]">
       <table className="min-w-full bg-white text-left text-sm">
-        <thead className="bg-[#F4F5F7]">
+        <thead className="bg-[#F8FAFC] border-b border-[#E2E8F0]">
           <tr>
             {columns.map((c) => (
-              <th key={c.key} className="whitespace-nowrap px-4 py-3 text-xs font-bold text-[#172B4D]">
+              <th key={c.key} className="whitespace-nowrap px-4 py-3.5 text-[13px] font-semibold text-[#475569]">
                 {c.header}
               </th>
             ))}
           </tr>
         </thead>
-        <tbody className="divide-y divide-[#DFE1E6]">
+        <tbody className="divide-y divide-[#E2E8F0]">
           {rows.length === 0 ? (
             <tr>
               <td colSpan={columns.length} className="px-4 py-10 text-center text-sm text-[#6B778C]">
@@ -297,12 +299,12 @@ function DataTable({ columns, rows, onRowClick, rowKey }) {
               <tr
                 key={rowKey(r)}
                 className={cn(
-                  onRowClick ? "cursor-pointer hover:bg-[#E6F0FF]" : ""
+                  onRowClick ? "cursor-pointer hover:bg-[#F1F5F9]" : "hover:bg-[#F8FAFC]"
                 )}
                 onClick={() => onRowClick?.(r)}
               >
                 {columns.map((c) => (
-                  <td key={c.key} className="whitespace-nowrap px-4 py-3 text-sm text-[#172B4D]">
+                  <td key={c.key} className="whitespace-nowrap px-4 py-3.5 text-sm text-[#1E293B]">
                     {typeof c.render === "function" ? c.render(r) : r[c.key]}
                   </td>
                 ))}
@@ -496,7 +498,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F4F5F7] text-[#172B4D]">
+    <div className="min-h-screen bg-[#F8FAFC] text-[#172B4D]">
       <div className="flex">
         <Sidebar activeKey={activeKey} onSelect={onNavSelect} />
 
@@ -553,7 +555,7 @@ export default function App() {
  */
 function Sidebar({ activeKey, onSelect }) {
   return (
-    <aside className="sticky top-0 hidden h-screen w-64 shrink-0 bg-[#091E42] text-white md:block">
+    <aside className="sticky top-0 hidden h-screen w-64 shrink-0 bg-[#0F172A] text-white md:block">
       <div className="flex h-16 items-center gap-3 px-6">
         <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#0052CC] text-white shadow-sm">
           <span className="text-sm font-bold">W</span>
@@ -791,7 +793,7 @@ function PageHeaderWithSpec({ title, pageKey }) {
 
 function Header({ title, activeKey }) {
   return (
-    <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b border-[#DFE1E6] bg-white px-6 md:px-8 shadow-sm">
+    <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b border-[#E2E8F0] bg-white px-6 md:px-8 shadow-[0_1px_3px_rgba(0,0,0,0.05)]">
       <div className="min-w-0 flex-1">
         <PageHeaderWithSpec title={title} pageKey={activeKey} />
       </div>
@@ -2577,6 +2579,11 @@ function UpdateHistoryPage() {
             { key: "id", header: "ID" },
             { key: "date", header: "일시", render: (r) => <span className="font-medium text-[#172B4D]">{r.date}</span> },
             { key: "content", header: "변경내용" },
+            {
+              key: "isPolicyChange",
+              header: "제품 정책 변경",
+              render: (r) => r.isPolicyChange ? <span className="font-bold text-[#0052CC]">해당</span> : null
+            },
             {
               key: "links",
               header: "링크",
