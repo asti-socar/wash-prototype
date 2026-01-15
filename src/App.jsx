@@ -2844,10 +2844,19 @@ function NoticesPage() {
 
 function UpdateHistoryPage() {
   const [activeTab, setActiveTab] = useState("brown");
-  const historyData = activeTab === "brown" ? BROWN_HISTORY : ASTI_HISTORY;
-  const sortedHistory = [...historyData].sort((a, b) => b.id - a.id);
+  const [showPolicyOnly, setShowPolicyOnly] = useState(false);
 
-  const { currentData, currentPage, totalPages, setCurrentPage, totalItems } = usePagination(sortedHistory, 40);
+  const historyData = activeTab === "brown" ? BROWN_HISTORY : ASTI_HISTORY;
+  
+  const filteredHistory = useMemo(() => {
+    let data = [...historyData].sort((a, b) => b.id - a.id);
+    if (showPolicyOnly) {
+      data = data.filter((item) => item.isPolicyChange);
+    }
+    return data;
+  }, [historyData, showPolicyOnly]);
+
+  const { currentData, currentPage, totalPages, setCurrentPage, totalItems } = usePagination(filteredHistory, 40);
 
   return (
     <div className="space-y-4">
@@ -2864,6 +2873,19 @@ function UpdateHistoryPage() {
           <TabsTrigger value="asti" currentValue={activeTab} onClick={setActiveTab}>아스티 (Asti)</TabsTrigger>
         </TabsList>
       </Tabs>
+
+      <div className="flex items-center gap-2 py-2">
+        <input 
+          type="checkbox" 
+          id="policyFilter" 
+          className="h-4 w-4 rounded border-gray-300 text-[#0052CC] focus:ring-[#0052CC]"
+          checked={showPolicyOnly}
+          onChange={(e) => setShowPolicyOnly(e.target.checked)}
+        />
+        <label htmlFor="policyFilter" className="text-sm text-[#172B4D] cursor-pointer select-none">
+          제품 정책 변경 건만 보기
+        </label>
+      </div>
 
       <div className="flex items-center justify-between mb-2">
         <div className="text-sm text-[#6B778C]">전체 건수 <b className="text-[#172B4D]">{totalItems.toLocaleString()}</b>건</div>

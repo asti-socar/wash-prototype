@@ -1,4 +1,6 @@
 export const BROWN_HISTORY = [
+  { id: 31, date: "2026-01-15 13:25", content: "[UI] 업데이트 이력 내 '제품 정책 변경' 건 선별 필터 기능 추가", isPolicyChange: false, links: [{ label: "업데이트 이력", page: "update-history" }] },
+  { id: 30, date: "2026-01-15 13:20", content: "[시스템] 빌드 파이프라인 최적화: prebuild 스크립트를 통한 version.json 자동 갱신 로직 적용", isPolicyChange: false, links: [] },
   { id: 29, date: "2026-01-15 13:10", content: "[시스템] 전사 리스트 화면 페이지네이션(40개 단위) 도입 및 데이터 로딩 최적화", isPolicyChange: false, links: [] },
   { id: 28, date: "2026-01-15 13:05", content: "[정책] 미션별 금액 산정 기능 도입 및 수행 증빙 사진 필수 옵션 기본값 적용", isPolicyChange: true, links: [{ label: "미션 관리", page: "missions" }] },
   { id: 27, date: "2026-01-15 12:15", content: "[시스템] 업데이트 이력 관리 이원화(브라운/아스티) 및 외부 파일 연동, 버전 체크 로직 최적화", isPolicyChange: true, links: [{ label: "업데이트 이력", page: "update-history" }] },
