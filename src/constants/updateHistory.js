@@ -1,4 +1,6 @@
 export const BROWN_HISTORY = [
+  { id: 29, date: "2026-01-15 13:10", content: "[시스템] 전사 리스트 화면 페이지네이션(40개 단위) 도입 및 데이터 로딩 최적화", isPolicyChange: false, links: [] },
+  { id: 28, date: "2026-01-15 13:05", content: "[정책] 미션별 금액 산정 기능 도입 및 수행 증빙 사진 필수 옵션 기본값 적용", isPolicyChange: true, links: [{ label: "미션 관리", page: "missions" }] },
   { id: 27, date: "2026-01-15 12:15", content: "[시스템] 업데이트 이력 관리 이원화(브라운/아스티) 및 외부 파일 연동, 버전 체크 로직 최적화", isPolicyChange: true, links: [{ label: "업데이트 이력", page: "update-history" }] },
   { id: 26, date: "2026-01-15 09:15", content: "[시스템] 모바일 반응형 레이아웃 대응: 햄버거 메뉴 및 사이드바 드로어 구현", isPolicyChange: false, links: [] },
   { id: 25, date: "2026-01-15 09:10", content: "[시스템] Vercel 트랜잭션 최적화: 업무시간 외 체크 제한 및 활동 기반 버전 업데이트 로직 고도화", isPolicyChange: false, links: [] },

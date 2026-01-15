@@ -32,6 +32,10 @@ import {
   ArrowRight,
   History,
   Menu,
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
 } from "lucide-react";
 
 import {
@@ -253,6 +257,65 @@ function Drawer({ open, title, onClose, children, footer }) {
           {footer}
         </div>
       </div>
+    </div>
+  );
+}
+
+/**
+ * Pagination Components & Hooks
+ */
+function usePagination(data, itemsPerPage = 40) {
+  const [currentPage, setCurrentPage] = useState(1);
+
+  // 데이터(필터 결과 등)가 변경되면 1페이지로 초기화
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [data]);
+
+  const totalItems = data.length;
+  const totalPages = Math.max(1, Math.ceil(totalItems / itemsPerPage));
+
+  const currentData = useMemo(() => {
+    const start = (currentPage - 1) * itemsPerPage;
+    return data.slice(start, start + itemsPerPage);
+  }, [data, currentPage, itemsPerPage]);
+
+  return { currentPage, setCurrentPage, totalPages, currentData, totalItems };
+}
+
+function Pagination({ currentPage, totalPages, onPageChange }) {
+  if (totalPages <= 0) return null;
+
+  // 간단한 페이지 번호 리스트 (데이터가 많아지면 windowing 필요)
+  const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
+
+  return (
+    <div className="flex items-center justify-center gap-1 py-4">
+      <Button variant="ghost" size="sm" onClick={() => onPageChange(1)} disabled={currentPage === 1}>
+        <ChevronsLeft className="h-4 w-4" />
+      </Button>
+      <Button variant="ghost" size="sm" onClick={() => onPageChange(currentPage - 1)} disabled={currentPage === 1}>
+        <ChevronLeft className="h-4 w-4" />
+      </Button>
+      
+      {pages.map(p => (
+        <Button
+          key={p}
+          variant={p === currentPage ? "default" : "ghost"}
+          size="sm"
+          className={cn("w-8 h-8 p-0", p === currentPage ? "" : "font-normal text-[#6B778C]")}
+          onClick={() => onPageChange(p)}
+        >
+          {p}
+        </Button>
+      ))}
+
+      <Button variant="ghost" size="sm" onClick={() => onPageChange(currentPage + 1)} disabled={currentPage === totalPages}>
+        <ChevronRight className="h-4 w-4" />
+      </Button>
+      <Button variant="ghost" size="sm" onClick={() => onPageChange(totalPages)} disabled={currentPage === totalPages}>
+        <ChevronsRight className="h-4 w-4" />
+      </Button>
     </div>
   );
 }
@@ -506,8 +569,8 @@ export default function App() {
 
   // Lifted State: Missions (전역 관리)
   const [missions, setMissions] = useState([
-    { id: "M-1001", plate: "12가3456", content: "스티커 부착", status: "pending", zoneName: "강남역 1번존", createdAt: "2026-01-10", assignedAt: null, completedAt: null },
-    { id: "M-1002", plate: "34나7890", content: "내부 청소 집중", status: "completed", linkedOrderId: "O-90002", zoneName: "잠실역 2번존", createdAt: "2026-01-08", assignedAt: "2026-01-09 10:00", completedAt: "2026-01-09 14:00" },
+    { id: "M-1001", plate: "12가3456", content: "스티커 부착", status: "pending", zoneName: "강남역 1번존", createdAt: "2026-01-10", assignedAt: null, completedAt: null, amount: 0, requiresPhoto: true },
+    { id: "M-1002", plate: "34나7890", content: "내부 청소 집중", status: "completed", linkedOrderId: "O-90002", zoneName: "잠실역 2번존", createdAt: "2026-01-08", assignedAt: "2026-01-09 10:00", completedAt: "2026-01-09 14:00", amount: 5000, requiresPhoto: true },
   ]);
 
   // Lifted State: Orders (전역 관리)
@@ -1132,6 +1195,8 @@ function VehiclesPage() {
   const [fPartner, setFPartner] = useState("");
   const [selected, setSelected] = useState(null);
 
+  
+
   // 날짜 계산 유틸
   const getElapsedDays = (dateStr) => {
     if (!dateStr) return "-";
@@ -1159,6 +1224,8 @@ function VehiclesPage() {
       return hitQ && hitR1 && hitR2 && hitP;
     });
   }, [data, q, fRegion1, fRegion2, fPartner]);
+
+  const { currentData, currentPage, totalPages, setCurrentPage, totalItems } = usePagination(filtered, 40);
 
   const columns = [
     { key: "plate", header: "차량번호" },
@@ -1250,16 +1317,18 @@ function VehiclesPage() {
         </CardContent>
       </Card>
 
-      <div className="flex items-center justify-between">
-        <div className="text-sm text-[#6B778C]">검색 결과: <b className="text-[#172B4D]">{filtered.length}</b>건</div>
+      <div className="flex items-center justify-between mb-2">
+        <div className="text-sm text-[#6B778C]">전체 건수 <b className="text-[#172B4D]">{totalItems.toLocaleString()}</b>건</div>
+        <div className="text-xs text-[#6B778C]">현재 페이지 ({currentPage}/{totalPages})</div>
       </div>
 
       <DataTable
         columns={columns}
-        rows={filtered}
+        rows={currentData}
         rowKey={(r) => `${r.zoneId}-${r.plate}`}
         onRowClick={(r) => setSelected(r)}
       />
+      <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
 
       <Drawer
         open={!!selected}
@@ -1453,6 +1522,8 @@ function OrdersPage({ quickStatus, onClearQuickStatus, initialOrderId, orders, s
     });
   }, [orders, q, periodFrom, periodTo, fRegion1, fRegion2, fOrderGroup, fOrderType, fWashType, fPartner, fPartnerType, fStatus]);
 
+  const { currentData, currentPage, totalPages, setCurrentPage, totalItems } = usePagination(filtered, 40);
+
   // 상태 배지 색상 로직
   const getStatusBadgeTone = (status) => {
     if (status === "완료") return "ok";
@@ -1637,16 +1708,18 @@ function OrdersPage({ quickStatus, onClearQuickStatus, initialOrderId, orders, s
         </CardContent>
       </Card>
 
-      <div className="flex items-center justify-between">
-        <div className="text-sm text-[#6B778C]">검색 결과: <b className="text-[#172B4D]">{filtered.length}</b>건</div>
+      <div className="flex items-center justify-between mb-2">
+        <div className="text-sm text-[#6B778C]">전체 건수 <b className="text-[#172B4D]">{totalItems.toLocaleString()}</b>건</div>
+        <div className="text-xs text-[#6B778C]">현재 페이지 ({currentPage}/{totalPages})</div>
       </div>
 
       <DataTable
         columns={columns}
-        rows={filtered}
+        rows={currentData}
         rowKey={(r) => r.orderId}
         onRowClick={(r) => setSelected(r)}
       />
+      <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
 
       {/* 오더 상세 Drawer */}
       <Drawer
@@ -2032,6 +2105,8 @@ function AgreementsPage() {
     setRejectReason("");
   };
 
+  const { currentData, currentPage, totalPages, setCurrentPage, totalItems } = usePagination(items, 40);
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -2041,7 +2116,13 @@ function AgreementsPage() {
         </div>
       </div>
 
-      <DataTable columns={columns} rows={items} rowKey={(r) => r.id} onRowClick={setSelected} />
+      <div className="flex items-center justify-between mb-2">
+        <div className="text-sm text-[#6B778C]">전체 건수 <b className="text-[#172B4D]">{totalItems.toLocaleString()}</b>건</div>
+        <div className="text-xs text-[#6B778C]">현재 페이지 ({currentPage}/{totalPages})</div>
+      </div>
+
+      <DataTable columns={columns} rows={currentData} rowKey={(r) => r.id} onRowClick={setSelected} />
+      <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
 
       <Drawer
         open={!!selected}
@@ -2140,6 +2221,9 @@ function BillingPage() {
 
   const [selected, setSelected] = useState(null);
 
+  const { currentData: billingList, currentPage: billingPage, totalPages: billingTotalPages, setCurrentPage: setBillingPage, totalItems: billingTotal } = usePagination(billingData, 40);
+  const { currentData: policyList, currentPage: policyPage, totalPages: policyTotalPages, setCurrentPage: setPolicyPage, totalItems: policyTotal } = usePagination(policyData, 40);
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -2167,6 +2251,10 @@ function BillingPage() {
               </div>
             </CardContent>
           </Card>
+          <div className="flex items-center justify-between mb-2">
+            <div className="text-sm text-[#6B778C]">전체 건수 <b className="text-[#172B4D]">{billingTotal.toLocaleString()}</b>건</div>
+            <div className="text-xs text-[#6B778C]">현재 페이지 ({billingPage}/{billingTotalPages})</div>
+          </div>
           <DataTable
             columns={[
               { key: "id", header: "청구 ID" },
@@ -2176,26 +2264,34 @@ function BillingPage() {
               { key: "status", header: "상태", render: (r) => <Badge tone={r.status === "청구완료" ? "ok" : "default"}>{r.status}</Badge> },
               { key: "date", header: "청구일" },
             ]}
-            rows={billingData}
+            rows={billingList}
             rowKey={(r) => r.id}
             onRowClick={setSelected}
           />
+          <Pagination currentPage={billingPage} totalPages={billingTotalPages} onPageChange={setBillingPage} />
         </>
       ) : (
-        <DataTable
-          columns={[
-            { key: "partner", header: "파트너명" },
-            { key: "baseAmount", header: "기본 단가", render: (r) => `${r.baseAmount.toLocaleString()}원` },
-            { key: "missionAmount", header: "미션 단가", render: (r) => `${r.missionAmount.toLocaleString()}원` },
-            {
-              key: "action",
-              header: "관리",
-              render: () => <Button variant="ghost" size="sm"><Edit className="h-4 w-4" /></Button>,
-            },
-          ]}
-          rows={policyData}
-          rowKey={(r) => r.id}
-        />
+        <>
+          <div className="flex items-center justify-between mb-2">
+            <div className="text-sm text-[#6B778C]">전체 건수 <b className="text-[#172B4D]">{policyTotal.toLocaleString()}</b>건</div>
+            <div className="text-xs text-[#6B778C]">현재 페이지 ({policyPage}/{policyTotalPages})</div>
+          </div>
+          <DataTable
+            columns={[
+              { key: "partner", header: "파트너명" },
+              { key: "baseAmount", header: "기본 단가", render: (r) => `${r.baseAmount.toLocaleString()}원` },
+              { key: "missionAmount", header: "미션 단가", render: (r) => `${r.missionAmount.toLocaleString()}원` },
+              {
+                key: "action",
+                header: "관리",
+                render: () => <Button variant="ghost" size="sm"><Edit className="h-4 w-4" /></Button>,
+              },
+            ]}
+            rows={policyList}
+            rowKey={(r) => r.id}
+          />
+          <Pagination currentPage={policyPage} totalPages={policyTotalPages} onPageChange={setPolicyPage} />
+        </>
       )}
 
       <Drawer
@@ -2250,6 +2346,8 @@ function LostFoundPage() {
     { key: "foundAt", header: "습득일" },
   ];
 
+  const { currentData, currentPage, totalPages, setCurrentPage, totalItems } = usePagination(items, 40);
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -2262,7 +2360,13 @@ function LostFoundPage() {
         </Button>
       </div>
 
-      <DataTable columns={columns} rows={items} rowKey={(r) => r.id} onRowClick={setSelected} />
+      <div className="flex items-center justify-between mb-2">
+        <div className="text-sm text-[#6B778C]">전체 건수 <b className="text-[#172B4D]">{totalItems.toLocaleString()}</b>건</div>
+        <div className="text-xs text-[#6B778C]">현재 페이지 ({currentPage}/{totalPages})</div>
+      </div>
+
+      <DataTable columns={columns} rows={currentData} rowKey={(r) => r.id} onRowClick={setSelected} />
+      <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
 
       <Drawer
         open={!!selected || isRegistering}
@@ -2327,7 +2431,7 @@ function LostFoundPage() {
 function MissionsPage({ missions, setMissions, orders }) {
   const today = new Date();
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
-  const [newMissionForm, setNewMissionForm] = useState({ plates: "", content: "", requiresPhoto: false });
+  const [newMissionForm, setNewMissionForm] = useState({ plates: "", content: "", amount: 0, requiresPhoto: true });
 
   // 필터 상태
   const [q, setQ] = useState("");
@@ -2375,6 +2479,8 @@ function MissionsPage({ missions, setMissions, orders }) {
   const regions1 = useMemo(() => Array.from(new Set(enrichedMissions.map(m => m.region1))), [enrichedMissions]);
   const regions2 = useMemo(() => Array.from(new Set(enrichedMissions.filter(m => !fRegion1 || m.region1 === fRegion1).map(m => m.region2))), [enrichedMissions, fRegion1]);
 
+  const { currentData, currentPage, totalPages, setCurrentPage, totalItems } = usePagination(filtered, 40);
+
   // 미션 등록
   const handleRegisterMission = () => {
     if (!newMissionForm.plates || !newMissionForm.content) return alert("차량번호와 미션 내용은 필수입니다.");
@@ -2391,17 +2497,18 @@ function MissionsPage({ missions, setMissions, orders }) {
         id: `M-${Date.now()}-${idx}`,
         plate: plate,
         content: newMissionForm.content,
+        amount: Number(newMissionForm.amount) || 0,
         zoneName: vehicle?.zoneName || "-", // 차량 정보에서 자동 조회, 없으면 '-'
         status: "pending",
         createdAt: toYmd(new Date()),
         requiresPhoto: newMissionForm.requiresPhoto,
         assignedAt: null,
-        completedAt: null
+        completedAt: null,
       };
     });
 
     setMissions([...newMissions, ...missions]);
-    setNewMissionForm({ plates: "", content: "", requiresPhoto: false });
+    setNewMissionForm({ plates: "", content: "", amount: 0, requiresPhoto: true });
     setIsRegisterOpen(false);
     alert("미션이 등록되었습니다.");
   };
@@ -2427,6 +2534,7 @@ function MissionsPage({ missions, setMissions, orders }) {
     { key: "region2", header: "지역2" },
     { key: "zoneName", header: "존이름" },
     { key: "content", header: "미션 내용" },
+    { key: "amount", header: "금액", render: (r) => `${(r.amount || 0).toLocaleString()}원` },
     { 
       key: "status", 
       header: "상태", 
@@ -2518,13 +2626,19 @@ function MissionsPage({ missions, setMissions, orders }) {
         </CardContent>
       </Card>
 
+      <div className="flex items-center justify-between mb-2">
+        <div className="text-sm text-[#6B778C]">전체 건수 <b className="text-[#172B4D]">{totalItems.toLocaleString()}</b>건</div>
+        <div className="text-xs text-[#6B778C]">현재 페이지 ({currentPage}/{totalPages})</div>
+      </div>
+
       <Card>
         <DataTable
           columns={columns}
-          rows={filtered}
+          rows={currentData}
           rowKey={(r) => r.id}
           onRowClick={setSelected}
         />
+        <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
       </Card>
 
       <Drawer
@@ -2557,6 +2671,18 @@ function MissionsPage({ missions, setMissions, orders }) {
               <div className="space-y-1">
                 <label className="text-xs font-semibold text-[#6B778C]">미션 내용 *</label>
                 <Input value={newMissionForm.content} onChange={e => setNewMissionForm({...newMissionForm, content: e.target.value})} placeholder="예: 스티커 부착, 내부 집중 청소" />
+                
+                <div className="pt-2 space-y-1">
+                  <label className="text-xs font-semibold text-[#6B778C]">미션 금액</label>
+                  <Input 
+                    type="number" 
+                    min="0"
+                    value={newMissionForm.amount} 
+                    onChange={e => setNewMissionForm({...newMissionForm, amount: e.target.value})} 
+                    placeholder="0" 
+                  />
+                </div>
+
                 <div className="flex items-center gap-2 pt-2">
                   <input 
                     type="checkbox" id="reqPhoto" className="h-4 w-4 rounded border-gray-300 text-[#0052CC] focus:ring-[#0052CC]"
@@ -2598,6 +2724,7 @@ function MissionsPage({ missions, setMissions, orders }) {
                 <Field label="지역2" value={selected.region2} />
                 <Field label="존이름" value={selected.zoneName} />
                 <Field label="미션 내용" value={selected.content} />
+                <Field label="금액" value={`${(selected.amount || 0).toLocaleString()}원`} />
                 <Field label="증빙 사진 필수" value={selected.requiresPhoto ? <Badge tone="warn">필수</Badge> : "-"} />
                 <Field label="상태" value={<Badge tone={selected.status === 'completed' ? 'ok' : 'warn'}>{selected.status === 'completed' ? '수행완료' : '대기'}</Badge>} />
                 <Field label="등록일" value={selected.createdAt} />
@@ -2669,6 +2796,8 @@ function NoticesPage() {
 
   const filtered = notices.filter((n) => filter === "전체" || n.targetPartner === filter);
 
+  const { currentData, currentPage, totalPages, setCurrentPage, totalItems } = usePagination(filtered, 40);
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -2691,6 +2820,11 @@ function NoticesPage() {
         </CardContent>
       </Card>
 
+      <div className="flex items-center justify-between mb-2">
+        <div className="text-sm text-[#6B778C]">전체 건수 <b className="text-[#172B4D]">{totalItems.toLocaleString()}</b>건</div>
+        <div className="text-xs text-[#6B778C]">현재 페이지 ({currentPage}/{totalPages})</div>
+      </div>
+
       <DataTable
         columns={[
           { key: "id", header: "No" },
@@ -2700,9 +2834,10 @@ function NoticesPage() {
           { key: "author", header: "작성자" },
           { key: "createdAt", header: "작성일" },
         ]}
-        rows={filtered}
+        rows={currentData}
         rowKey={(r) => r.id}
       />
+      <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
     </div>
   );
 }
@@ -2711,6 +2846,8 @@ function UpdateHistoryPage() {
   const [activeTab, setActiveTab] = useState("brown");
   const historyData = activeTab === "brown" ? BROWN_HISTORY : ASTI_HISTORY;
   const sortedHistory = [...historyData].sort((a, b) => b.id - a.id);
+
+  const { currentData, currentPage, totalPages, setCurrentPage, totalItems } = usePagination(sortedHistory, 40);
 
   return (
     <div className="space-y-4">
@@ -2727,6 +2864,11 @@ function UpdateHistoryPage() {
           <TabsTrigger value="asti" currentValue={activeTab} onClick={setActiveTab}>아스티 (Asti)</TabsTrigger>
         </TabsList>
       </Tabs>
+
+      <div className="flex items-center justify-between mb-2">
+        <div className="text-sm text-[#6B778C]">전체 건수 <b className="text-[#172B4D]">{totalItems.toLocaleString()}</b>건</div>
+        <div className="text-xs text-[#6B778C]">현재 페이지 ({currentPage}/{totalPages})</div>
+      </div>
 
       <Card>
         <DataTable
@@ -2762,9 +2904,10 @@ function UpdateHistoryPage() {
               ),
             },
           ]}
-          rows={sortedHistory}
+          rows={currentData}
           rowKey={(r) => r.id}
         />
+        <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
       </Card>
     </div>
   );
