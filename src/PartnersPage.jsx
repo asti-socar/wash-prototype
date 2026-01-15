@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { 
-  Plus, X, Search, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Copy
+  Plus, X, Search, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Copy, ArrowUpDown, Trash2
 } from 'lucide-react';
 
 /**
@@ -129,13 +129,22 @@ function Pagination({ currentPage, totalPages, onPageChange }) {
 }
 
 // DataTable Component
-function DataTable({ columns, rows, onRowClick, rowKey }) {
+function DataTable({ columns, rows, onRowClick, rowKey, sortConfig, onSort }) {
   return (
     <div className="overflow-x-auto rounded-xl border border-[#E2E8F0]">
       <table className="min-w-full bg-white text-left text-sm">
         <thead className="bg-[#F8FAFC] border-b border-[#E2E8F0]">
           <tr>
-            {columns.map(c => <th key={c.key} className="whitespace-nowrap px-4 py-3.5 text-[13px] font-semibold text-[#475569]">{c.header}</th>)}
+            {columns.map(c => (
+              <th key={c.key} className="whitespace-nowrap px-4 py-3.5 text-[13px] font-semibold text-[#475569] cursor-pointer hover:bg-slate-100" onClick={() => onSort && onSort(c.key)}>
+                <div className="flex items-center gap-1">
+                  {c.header}
+                  {sortConfig?.key === c.key && (
+                    <ArrowUpDown className={cn("h-3 w-3", sortConfig.direction === 'asc' ? "text-[#0052CC]" : "text-[#0052CC] rotate-180")} />
+                  )}
+                </div>
+              </th>
+            ))}
           </tr>
         </thead>
         <tbody className="divide-y divide-[#E2E8F0]">
@@ -200,6 +209,7 @@ const MOCK_PARTNERS_V2 = [
     createdAt: '2025-01-01',
     updatedAt: '2026-01-10',
     assignedZoneIds: MOCK_ALL_ZONES.slice(0, 60).map(z => z.zoneId), // 60 zones (>50)
+    unitPrices: [{ id: 1, orderGroup: '정규', washType: '내외부', price: 15000 }, { id: 2, orderGroup: '수시', washType: '외부', price: 12000 }],
   },
   {
     partnerId: 'P-002',
@@ -219,6 +229,7 @@ const MOCK_PARTNERS_V2 = [
     createdAt: '2024-06-01',
     updatedAt: '2025-06-01',
     assignedZoneIds: MOCK_ALL_ZONES.slice(60, 120).map(z => z.zoneId), // 60 zones (>50)
+    unitPrices: [{ id: 1, orderGroup: '정규', washType: '내외부', price: 16000 }],
   },
 ];
 
@@ -229,19 +240,39 @@ export default function PartnersPage() {
   const [partners, setPartners] = useState(MOCK_PARTNERS_V2);
   const [selectedPartner, setSelectedPartner] = useState(null);
   const [q, setQ] = useState("");
+  const [searchField, setSearchField] = useState("partnerName");
   const [fStatus, setFStatus] = useState("");
+  const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
 
   const statuses = ['운영중', '종료'];
 
   const filteredData = useMemo(() => {
     return partners.filter(p => {
-      const matchQ = !q || p.partnerName.toLowerCase().includes(q.toLowerCase());
+      const matchQ = !q || String(p[searchField] || "").toLowerCase().includes(q.toLowerCase());
       const matchStatus = !fStatus || p.contractStatus === fStatus;
       return matchQ && matchStatus;
     });
-  }, [partners, q, fStatus]);
+  }, [partners, q, searchField, fStatus]);
 
-  const { currentData, currentPage, totalPages, setCurrentPage, totalItems } = usePagination(filteredData, 40);
+  const sortedData = useMemo(() => {
+    if (!sortConfig.key) return filteredData;
+    return [...filteredData].sort((a, b) => {
+      const aVal = a[sortConfig.key] || "";
+      const bVal = b[sortConfig.key] || "";
+      if (aVal < bVal) return sortConfig.direction === 'asc' ? -1 : 1;
+      if (aVal > bVal) return sortConfig.direction === 'asc' ? 1 : -1;
+      return 0;
+    });
+  }, [filteredData, sortConfig]);
+
+  const { currentData, currentPage, totalPages, setCurrentPage, totalItems } = usePagination(sortedData, 40);
+
+  const handleSort = (key) => {
+    setSortConfig(prev => ({
+      key,
+      direction: prev.key === key && prev.direction === 'asc' ? 'desc' : 'asc',
+    }));
+  };
 
   const getStatusTone = (status) => {
     if (status === '운영중') return 'info';
@@ -270,6 +301,7 @@ export default function PartnersPage() {
       contractStatus: '운영중',
       assignedZoneIds: [],
       createdAt: new Date().toISOString().split('T')[0],
+      unitPrices: [],
     };
     setSelectedPartner(newPartner);
   };
@@ -290,9 +322,23 @@ export default function PartnersPage() {
         </CardHeader>
         <CardContent className="flex flex-col md:flex-row gap-3">
           <div className="flex-1">
-            <div className="relative">
-              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#6B778C]" />
-              <Input value={q} onChange={e => setQ(e.target.value)} placeholder="파트너명으로 검색" className="pl-9" />
+            <div className="flex items-center gap-2">
+              <Select className="!w-40 shrink-0" value={searchField} onChange={e => setSearchField(e.target.value)}>
+                <option value="partnerName">파트너명</option>
+                <option value="ceoName">대표자</option>
+                <option value="phone">연락처</option>
+              </Select>
+              <div className="relative flex-1">
+                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#6B778C]" />
+                <Input 
+                  value={q} 
+                  onChange={e => setQ(e.target.value)} 
+                  placeholder={`${
+                    searchField === 'partnerName' ? '파트너명' : searchField === 'ceoName' ? '대표자' : '연락처'
+                  } 검색`} 
+                  className="pl-9" 
+                />
+              </div>
             </div>
           </div>
           <div className="w-full md:w-48">
@@ -308,7 +354,7 @@ export default function PartnersPage() {
         <div className="text-sm text-[#6B778C]">전체 건수 <b className="text-[#172B4D]">{totalItems.toLocaleString()}</b>건</div>
         <div className="text-xs text-[#6B778C]">현재 페이지 ({currentPage}/{totalPages})</div>
       </div>
-      <DataTable columns={columns} rows={currentData} rowKey={r => r.partnerId} onRowClick={setSelectedPartner} />
+      <DataTable columns={columns} rows={currentData} rowKey={r => r.partnerId} onRowClick={setSelectedPartner} sortConfig={sortConfig} onSort={handleSort} />
       <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
 
       {selectedPartner && (
@@ -345,6 +391,7 @@ function PartnerDetailDrawer({ partner, onClose, onSave }) {
         <TabsList>
           <TabsTrigger value="info" currentValue={activeTab} onClick={setActiveTab}>기본 정보</TabsTrigger>
           <TabsTrigger value="zones" currentValue={activeTab} onClick={setActiveTab}>존 배정 관리</TabsTrigger>
+          <TabsTrigger value="prices" currentValue={activeTab} onClick={setActiveTab}>단가 정책 관리</TabsTrigger>
         </TabsList>
 
         <TabsContent value="info" currentValue={activeTab} className="pt-4">
@@ -368,6 +415,10 @@ function PartnerDetailDrawer({ partner, onClose, onSave }) {
 
         <TabsContent value="zones" currentValue={activeTab} className="pt-4">
           <ZoneAssignmentTab formData={formData} setFormData={setFormData} />
+        </TabsContent>
+
+        <TabsContent value="prices" currentValue={activeTab} className="pt-4">
+          <PricePolicyTab formData={formData} setFormData={setFormData} />
         </TabsContent>
       </Tabs>
     </Drawer>
@@ -501,6 +552,73 @@ function ZoneAssignmentTab({ formData, setFormData }) {
             <Plus className="mr-2 h-4 w-4" />
             추가하기
           </Button>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
+function PricePolicyTab({ formData, setFormData }) {
+  const [newPrice, setNewPrice] = useState({ orderGroup: '정규', washType: '내외부', price: 0 });
+
+  const handleAdd = () => {
+    if (newPrice.price <= 0) return alert("금액을 입력해주세요.");
+    const nextId = (formData.unitPrices?.length || 0) > 0 
+      ? Math.max(...formData.unitPrices.map(p => p.id)) + 1 
+      : 1;
+    const newItem = { ...newPrice, id: nextId };
+    setFormData(prev => ({
+      ...prev,
+      unitPrices: [...(prev.unitPrices || []), newItem]
+    }));
+    setNewPrice({ orderGroup: '정규', washType: '내외부', price: 0 });
+  };
+
+  const handleRemove = (id) => {
+    setFormData(prev => ({
+      ...prev,
+      unitPrices: prev.unitPrices.filter(p => p.id !== id)
+    }));
+  };
+
+  return (
+    <div className="space-y-6">
+      <Card>
+        <CardHeader><CardTitle>단가 정책 목록</CardTitle></CardHeader>
+        <CardContent>
+          <div className="rounded-lg border border-[#E2E8F0] overflow-hidden">
+            <table className="min-w-full text-sm text-left">
+              <thead className="bg-[#F8FAFC] border-b border-[#E2E8F0]">
+                <tr>
+                  <th className="px-4 py-2 font-semibold text-[#475569]">오더구분</th>
+                  <th className="px-4 py-2 font-semibold text-[#475569]">세차유형</th>
+                  <th className="px-4 py-2 font-semibold text-[#475569]">단가</th>
+                  <th className="px-4 py-2 font-semibold text-[#475569]">관리</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-[#E2E8F0]">
+                {formData.unitPrices?.map(p => (
+                  <tr key={p.id}>
+                    <td className="px-4 py-2">{p.orderGroup}</td>
+                    <td className="px-4 py-2">{p.washType}</td>
+                    <td className="px-4 py-2">{p.price.toLocaleString()}원</td>
+                    <td className="px-4 py-2"><button onClick={() => handleRemove(p.id)} className="text-rose-600 hover:underline"><Trash2 className="h-4 w-4" /></button></td>
+                  </tr>
+                ))}
+                {(!formData.unitPrices || formData.unitPrices.length === 0) && <tr><td colSpan={4} className="px-4 py-4 text-center text-[#6B778C]">등록된 정책이 없습니다.</td></tr>}
+              </tbody>
+            </table>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader><CardTitle>정책 추가</CardTitle></CardHeader>
+        <CardContent className="flex gap-2 items-end">
+          <div className="flex-1 space-y-1"><label className="text-xs font-semibold text-[#6B778C]">오더구분</label><Select value={newPrice.orderGroup} onChange={e => setNewPrice({...newPrice, orderGroup: e.target.value})}><option>정규</option><option>수시</option><option>긴급</option></Select></div>
+          <div className="flex-1 space-y-1"><label className="text-xs font-semibold text-[#6B778C]">세차유형</label><Select value={newPrice.washType} onChange={e => setNewPrice({...newPrice, washType: e.target.value})}><option>내외부</option><option>내부</option><option>외부</option><option>특수</option></Select></div>
+          <div className="flex-1 space-y-1"><label className="text-xs font-semibold text-[#6B778C]">단가</label><Input type="number" value={newPrice.price} onChange={e => setNewPrice({...newPrice, price: Number(e.target.value)})} /></div>
+          <Button onClick={handleAdd}><Plus className="h-4 w-4" /></Button>
         </CardContent>
       </Card>
     </div>

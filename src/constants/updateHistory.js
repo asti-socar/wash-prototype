@@ -1,4 +1,12 @@
 export const BROWN_HISTORY = [
+  { id: 48, date: "2026-01-15 22:00", content: "[Hotfix] 검색 필터 UI 스타일 충돌 수정: Select/Input 너비 강제 적용 (!important)", isPolicyChange: false, links: [] },
+  { id: 47, date: "2026-01-15 21:30", content: "[UI/버그수정] 검색 필터 레이아웃 중첩 문제 해결 및 카테고리별 검색 UI 정교화", isPolicyChange: false, links: [] },
+  { id: 46, date: "2026-01-15 18:23", content: "[시스템] 담당자 정보 간소화(상태 제거/삭제 추가), CMS 외부 링크 연동 및 청구서 엑셀 다운로드 기능 추가", isPolicyChange: false, links: [{ label: "담당자 조회", page: "partner-managers" }, { label: "청구 관리", page: "billing" }] },
+  { id: 45, date: "2026-01-15 18:20", content: "[정책] 단가 관리 기능을 파트너 상세 정보로 통합 및 CRUD 기능 구현", isPolicyChange: true, links: [{ label: "파트너 관리", page: "partners" }] },
+  { id: 44, date: "2026-01-15 18:17", content: "[고도화] 미션 관리: 일괄 삭제 시 사유 입력 모달 적용 (Audit Log 강화)", isPolicyChange: true, links: [{ label: "미션 관리", page: "missions" }] },
+  { id: 43, date: "2026-01-15 18:14", content: "[기능] 미션 관리: 미션 일괄 선택 삭제 기능 도입", isPolicyChange: true, links: [{ label: "미션 관리", page: "missions" }] },
+  { id: 42, date: "2026-01-15 18:10", content: "[UI] 검색 카테고리 필터 도입 및 테이블 정렬 기능 전사 적용", isPolicyChange: false, links: [] },
+  { id: 41, date: "2026-01-15 18:09", content: "[고도화] 검색 UI 표준화, 단가 정책 파트너 통합 및 미션 벌크 삭제 기능 도입", isPolicyChange: false, links: [] },
   { id: 40, date: "2026-01-15 15:20", content: "[Hotfix] 파트너 관리 페이지 파일 누락 수정 (PartnersPage.jsx 생성)", isPolicyChange: false, links: [{ label: "파트너 관리", page: "partners" }] },
   { id: 39, date: "2026-01-15 15:15", content: "[버그수정] 파트너 관리 컴포넌트 경로 정상화 및 신규 재구현 기능 UI 연동 완료", isPolicyChange: false, links: [{ label: "파트너 관리", page: "partners" }] },
   { id: 38, date: "2026-01-15 15:06", content: "[기능] 파트너 관리 고도화: 필드 명칭 표준화(파트너명) 및 신규 등록/수정 기능 구현, UI 불필요 항목 제거", isPolicyChange: false, links: [{ label: "파트너 관리", page: "partners" }] },

@@ -37,6 +37,8 @@ import {
   ChevronRight,
   ChevronsLeft,
   ChevronsRight,
+  ArrowUpDown,
+  FileSpreadsheet,
 } from "lucide-react";
 
 import {
@@ -369,15 +371,20 @@ function Pagination({ currentPage, totalPages, onPageChange }) {
 /**
  * Table (simple)
  */
-function DataTable({ columns, rows, onRowClick, rowKey }) {
+function DataTable({ columns, rows, onRowClick, rowKey, sortConfig, onSort }) {
   return (
     <div className="overflow-x-auto rounded-xl border border-[#E2E8F0]">
       <table className="min-w-full bg-white text-left text-sm">
         <thead className="bg-[#F8FAFC] border-b border-[#E2E8F0]">
           <tr>
             {columns.map((c) => (
-              <th key={c.key} className="whitespace-nowrap px-4 py-3.5 text-[13px] font-semibold text-[#475569]">
-                {c.header}
+              <th key={c.key} className="whitespace-nowrap px-4 py-3.5 text-[13px] font-semibold text-[#475569] cursor-pointer hover:bg-slate-100" onClick={() => onSort && onSort(c.key)}>
+                <div className="flex items-center gap-1">
+                  {c.header}
+                  {sortConfig?.key === c.key && (
+                    <ArrowUpDown className={cn("h-3 w-3", sortConfig.direction === 'asc' ? "text-[#0052CC]" : "text-[#0052CC] rotate-180")} />
+                  )}
+                </div>
               </th>
             ))}
           </tr>
@@ -669,6 +676,13 @@ export default function App() {
   };
 
   const onNavSelect = (key) => {
+    if (key === "notices") {
+      const w = window.open("", "_blank");
+      if (w) {
+        w.document.write("CMS Link 필요");
+      }
+      return;
+    }
     setActiveKey(key);
     const parentGroup = NAV.find(g => g.items?.some(it => it.key === key));
     if (parentGroup && parentGroup.type === 'group') {
@@ -1281,6 +1295,8 @@ function VehiclesPage() {
   const data = MOCK_VEHICLES;
 
   const [q, setQ] = useState("");
+  const [searchField, setSearchField] = useState("plate");
+  const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
   const [fRegion1, setFRegion1] = useState("");
   const [fRegion2, setFRegion2] = useState("");
   const [fPartner, setFPartner] = useState("");
@@ -1302,11 +1318,8 @@ function VehiclesPage() {
   const filtered = useMemo(() => {
     const qq = q.trim().toLowerCase();
     return data.filter((d) => {
-      const hitQ =
-        !qq ||
-        d.plate.toLowerCase().includes(qq) ||
-        d.zoneName.toLowerCase().includes(qq) ||
-        d.zoneId.toLowerCase().includes(qq);
+      const targetVal = String(d[searchField] || "").toLowerCase();
+      const hitQ = !qq || targetVal.includes(qq);
 
       const hitR1 = !fRegion1 || d.region1 === fRegion1;
       const hitR2 = !fRegion2 || d.region2 === fRegion2;
@@ -1314,9 +1327,27 @@ function VehiclesPage() {
 
       return hitQ && hitR1 && hitR2 && hitP;
     });
-  }, [data, q, fRegion1, fRegion2, fPartner]);
+  }, [data, q, searchField, fRegion1, fRegion2, fPartner]);
 
-  const { currentData, currentPage, totalPages, setCurrentPage, totalItems } = usePagination(filtered, 40);
+  const sortedData = useMemo(() => {
+    if (!sortConfig.key) return filtered;
+    return [...filtered].sort((a, b) => {
+      const aVal = a[sortConfig.key] || "";
+      const bVal = b[sortConfig.key] || "";
+      if (aVal < bVal) return sortConfig.direction === 'asc' ? -1 : 1;
+      if (aVal > bVal) return sortConfig.direction === 'asc' ? 1 : -1;
+      return 0;
+    });
+  }, [filtered, sortConfig]);
+
+  const handleSort = (key) => {
+    setSortConfig(prev => ({
+      key,
+      direction: prev.key === key && prev.direction === 'asc' ? 'desc' : 'asc',
+    }));
+  };
+
+  const { currentData, currentPage, totalPages, setCurrentPage, totalItems } = usePagination(sortedData, 40);
 
   const columns = [
     { key: "plate", header: "차량번호" },
@@ -1364,9 +1395,23 @@ function VehiclesPage() {
         <CardContent>
           <div className="grid grid-cols-1 gap-3 md:grid-cols-12">
             <div className="md:col-span-4">
-              <div className="relative">
-                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#6B778C]" />
-                <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="차량번호/존이름/존 ID 검색" className="pl-9" />
+              <div className="flex items-center gap-2">
+                <Select className="!w-40 shrink-0" value={searchField} onChange={e => setSearchField(e.target.value)}>
+                  <option value="plate">차량번호</option>
+                  <option value="zoneName">존이름</option>
+                  <option value="zoneId">존 ID</option>
+                </Select>
+                <div className="relative flex-1">
+                  <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#6B778C]" />
+                  <Input 
+                    value={q} 
+                    onChange={(e) => setQ(e.target.value)} 
+                    placeholder={`${
+                      searchField === 'plate' ? '차량번호' : searchField === 'zoneName' ? '존이름' : '존 ID'
+                    } 검색`} 
+                    className="pl-9" 
+                  />
+                </div>
               </div>
             </div>
             <div className="md:col-span-2">
@@ -1418,6 +1463,8 @@ function VehiclesPage() {
         rows={currentData}
         rowKey={(r) => `${r.zoneId}-${r.plate}`}
         onRowClick={(r) => setSelected(r)}
+        sortConfig={sortConfig}
+        onSort={handleSort}
       />
       <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
 
@@ -1492,6 +1539,8 @@ function OrdersPage({ quickStatus, onClearQuickStatus, initialOrderId, orders, s
   const today = new Date();
 
   const [q, setQ] = useState("");
+  const [searchField, setSearchField] = useState("plate");
+  const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
   const [periodFrom, setPeriodFrom] = useState(toYmd(new Date(today.getTime() - 7 * 86400000)));
   const [periodTo, setPeriodTo] = useState(toYmd(today));
   const [fRegion1, setFRegion1] = useState("");
@@ -1590,14 +1639,8 @@ function OrdersPage({ quickStatus, onClearQuickStatus, initialOrderId, orders, s
   const filtered = useMemo(() => {
     const qq = q.trim().toLowerCase();
     return orders.filter((d) => {
-      const hitQ =
-        !qq ||
-        d.plate.toLowerCase().includes(qq) ||
-        d.orderId.toLowerCase().includes(qq) ||
-        d.zoneId.toLowerCase().includes(qq) ||
-        d.zone.toLowerCase().includes(qq) ||
-        d.worker.toLowerCase().includes(qq) ||
-        d.comment.toLowerCase().includes(qq);
+      const targetVal = String(d[searchField] || "").toLowerCase();
+      const hitQ = !qq || targetVal.includes(qq);
 
       const hitPeriod = (!periodFrom || d.createdAt >= periodFrom) && (!periodTo || d.createdAt <= periodTo);
       const hitR1 = !fRegion1 || d.region1 === fRegion1;
@@ -1611,9 +1654,27 @@ function OrdersPage({ quickStatus, onClearQuickStatus, initialOrderId, orders, s
 
       return hitQ && hitPeriod && hitR1 && hitR2 && hitOG && hitOT && hitWT && hitP && hitPT && hitS;
     });
-  }, [orders, q, periodFrom, periodTo, fRegion1, fRegion2, fOrderGroup, fOrderType, fWashType, fPartner, fPartnerType, fStatus]);
+  }, [orders, q, searchField, periodFrom, periodTo, fRegion1, fRegion2, fOrderGroup, fOrderType, fWashType, fPartner, fPartnerType, fStatus]);
 
-  const { currentData, currentPage, totalPages, setCurrentPage, totalItems } = usePagination(filtered, 40);
+  const sortedData = useMemo(() => {
+    if (!sortConfig.key) return filtered;
+    return [...filtered].sort((a, b) => {
+      const aVal = a[sortConfig.key] || "";
+      const bVal = b[sortConfig.key] || "";
+      if (aVal < bVal) return sortConfig.direction === 'asc' ? -1 : 1;
+      if (aVal > bVal) return sortConfig.direction === 'asc' ? 1 : -1;
+      return 0;
+    });
+  }, [filtered, sortConfig]);
+
+  const handleSort = (key) => {
+    setSortConfig(prev => ({
+      key,
+      direction: prev.key === key && prev.direction === 'asc' ? 'desc' : 'asc',
+    }));
+  };
+
+  const { currentData, currentPage, totalPages, setCurrentPage, totalItems } = usePagination(sortedData, 40);
 
   // 상태 배지 색상 로직
   const getStatusBadgeTone = (status) => {
@@ -1646,6 +1707,7 @@ function OrdersPage({ quickStatus, onClearQuickStatus, initialOrderId, orders, s
       header: "진행상태",
       render: (r) => <Badge tone={getStatusBadgeTone(r.status)}>{r.status}</Badge>,
     },
+    { key: "worker", header: "수행원" },
   ];
 
   const chips = (
@@ -1696,9 +1758,25 @@ function OrdersPage({ quickStatus, onClearQuickStatus, initialOrderId, orders, s
         <CardContent>
           <div className="grid grid-cols-1 gap-3 md:grid-cols-12">
             <div className="md:col-span-4">
-              <div className="relative">
-                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#6B778C]" />
-                <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="검색(차량번호/오더 ID/존이름/수행원/코멘트)" className="pl-9" />
+              <div className="flex items-center gap-2">
+                <Select className="!w-40 shrink-0" value={searchField} onChange={e => setSearchField(e.target.value)}>
+                  <option value="plate">차량번호</option>
+                  <option value="orderId">오더 ID</option>
+                  <option value="zone">존이름</option>
+                  <option value="worker">수행원</option>
+                  <option value="comment">코멘트</option>
+                </Select>
+                <div className="relative flex-1">
+                  <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#6B778C]" />
+                  <Input 
+                    value={q} 
+                    onChange={(e) => setQ(e.target.value)} 
+                    placeholder={`${
+                      searchField === 'plate' ? '차량번호' : searchField === 'orderId' ? '오더 ID' : searchField === 'zone' ? '존이름' : searchField === 'worker' ? '수행원' : '코멘트'
+                    } 검색`} 
+                    className="pl-9" 
+                  />
+                </div>
               </div>
             </div>
 
@@ -1809,6 +1887,8 @@ function OrdersPage({ quickStatus, onClearQuickStatus, initialOrderId, orders, s
         rows={currentData}
         rowKey={(r) => r.orderId}
         onRowClick={(r) => setSelected(r)}
+        sortConfig={sortConfig}
+        onSort={handleSort}
       />
       <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
 
@@ -2166,6 +2246,7 @@ function AgreementsPage() {
   ]);
 
   const [selected, setSelected] = useState(null);
+  const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
   const [rejectReason, setRejectReason] = useState("");
   const [isRejecting, setIsRejecting] = useState(false);
 
@@ -2196,7 +2277,25 @@ function AgreementsPage() {
     setRejectReason("");
   };
 
-  const { currentData, currentPage, totalPages, setCurrentPage, totalItems } = usePagination(items, 40);
+  const sortedData = useMemo(() => {
+    if (!sortConfig.key) return items;
+    return [...items].sort((a, b) => {
+      const aVal = a[sortConfig.key] || "";
+      const bVal = b[sortConfig.key] || "";
+      if (aVal < bVal) return sortConfig.direction === 'asc' ? -1 : 1;
+      if (aVal > bVal) return sortConfig.direction === 'asc' ? 1 : -1;
+      return 0;
+    });
+  }, [items, sortConfig]);
+
+  const handleSort = (key) => {
+    setSortConfig(prev => ({
+      key,
+      direction: prev.key === key && prev.direction === 'asc' ? 'desc' : 'asc',
+    }));
+  };
+
+  const { currentData, currentPage, totalPages, setCurrentPage, totalItems } = usePagination(sortedData, 40);
 
   return (
     <div className="space-y-4">
@@ -2212,7 +2311,7 @@ function AgreementsPage() {
         <div className="text-xs text-[#6B778C]">현재 페이지 ({currentPage}/{totalPages})</div>
       </div>
 
-      <DataTable columns={columns} rows={currentData} rowKey={(r) => r.id} onRowClick={setSelected} />
+      <DataTable columns={columns} rows={currentData} rowKey={(r) => r.id} onRowClick={setSelected} sortConfig={sortConfig} onSort={handleSort} />
       <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
 
       <Drawer
@@ -2295,7 +2394,6 @@ function AgreementsPage() {
  * 청구 관리
  */
 function BillingPage() {
-  const [view, setView] = useState("list"); // list | policy
   const [period, setPeriod] = useState(toYmd(new Date()));
 
   const billingData = [
@@ -2304,86 +2402,74 @@ function BillingPage() {
     { id: "B-1003", orderId: "O-90011", partner: "C파트너명", amount: 22000, status: "청구완료", date: "2026-01-11" },
   ];
 
-  const policyData = [
-    { id: "P-1", partner: "A파트너명", baseAmount: 15000, missionAmount: 3000 },
-    { id: "P-2", partner: "B파트너명", baseAmount: 16000, missionAmount: 2500 },
-    { id: "P-3", partner: "C파트너명", baseAmount: 15500, missionAmount: 3000 },
-  ];
-
   const [selected, setSelected] = useState(null);
 
-  const { currentData: billingList, currentPage: billingPage, totalPages: billingTotalPages, setCurrentPage: setBillingPage, totalItems: billingTotal } = usePagination(billingData, 40);
-  const { currentData: policyList, currentPage: policyPage, totalPages: policyTotalPages, setCurrentPage: setPolicyPage, totalItems: policyTotal } = usePagination(policyData, 40);
+  const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
 
+  const getSortedData = (data) => {
+    if (!sortConfig.key) return data;
+    return [...data].sort((a, b) => {
+      const aVal = a[sortConfig.key] || "";
+      const bVal = b[sortConfig.key] || "";
+      if (aVal < bVal) return sortConfig.direction === 'asc' ? -1 : 1;
+      if (aVal > bVal) return sortConfig.direction === 'asc' ? 1 : -1;
+      return 0;
+    });
+  };
+
+  const handleSort = (key) => {
+    setSortConfig(prev => ({
+      key,
+      direction: prev.key === key && prev.direction === 'asc' ? 'desc' : 'asc',
+    }));
+  };
+
+  const { currentData: billingList, currentPage: billingPage, totalPages: billingTotalPages, setCurrentPage: setBillingPage, totalItems: billingTotal } = usePagination(getSortedData(billingData), 40);
+  
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
           <div className="text-base font-bold text-[#172B4D]">청구 관리</div>
-          <div className="mt-1 text-sm text-[#6B778C]">파트너사별 청구 내역 및 단가 정책 관리</div>
+          <div className="mt-1 text-sm text-[#6B778C]">파트너사별 청구 내역 조회</div>
         </div>
-        <div className="flex gap-2">
-          <Button variant={view === "list" ? "default" : "secondary"} onClick={() => setView("list")}>
-            <Receipt className="mr-2 h-4 w-4" /> 청구 내역
-          </Button>
-          <Button variant={view === "policy" ? "default" : "secondary"} onClick={() => setView("policy")}>
-            <Settings className="mr-2 h-4 w-4" /> 단가 정책
-          </Button>
-        </div>
+        <Button 
+          variant="outline" 
+          onClick={() => console.log("SAP 엑셀 추출 중...")}
+        >
+          <FileSpreadsheet className="mr-2 h-4 w-4 text-green-600" />
+          SAP 양식 엑셀 다운로드
+        </Button>
       </div>
 
-      {view === "list" ? (
-        <>
-          <Card>
-            <CardContent className="flex items-center gap-4">
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-medium text-[#172B4D]">기간 조회</span>
-                <Input type="date" value={period} onChange={(e) => setPeriod(e.target.value)} className="w-40" />
-              </div>
-            </CardContent>
-          </Card>
-          <div className="flex items-center justify-between mb-2">
-            <div className="text-sm text-[#6B778C]">전체 건수 <b className="text-[#172B4D]">{billingTotal.toLocaleString()}</b>건</div>
-            <div className="text-xs text-[#6B778C]">현재 페이지 ({billingPage}/{billingTotalPages})</div>
+      <Card>
+        <CardContent className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-medium text-[#172B4D]">기간 조회</span>
+            <Input type="date" value={period} onChange={(e) => setPeriod(e.target.value)} className="!w-40" />
           </div>
-          <DataTable
-            columns={[
-              { key: "id", header: "청구 ID" },
-              { key: "orderId", header: "오더 ID" },
-              { key: "partner", header: "파트너명" },
-              { key: "amount", header: "금액", render: (r) => `${r.amount.toLocaleString()}원` },
-              { key: "status", header: "상태", render: (r) => <Badge tone={r.status === "청구완료" ? "ok" : "default"}>{r.status}</Badge> },
-              { key: "date", header: "청구일" },
-            ]}
-            rows={billingList}
-            rowKey={(r) => r.id}
-            onRowClick={setSelected}
-          />
-          <Pagination currentPage={billingPage} totalPages={billingTotalPages} onPageChange={setBillingPage} />
-        </>
-      ) : (
-        <>
-          <div className="flex items-center justify-between mb-2">
-            <div className="text-sm text-[#6B778C]">전체 건수 <b className="text-[#172B4D]">{policyTotal.toLocaleString()}</b>건</div>
-            <div className="text-xs text-[#6B778C]">현재 페이지 ({policyPage}/{policyTotalPages})</div>
-          </div>
-          <DataTable
-            columns={[
-              { key: "partner", header: "파트너명" },
-              { key: "baseAmount", header: "기본 단가", render: (r) => `${r.baseAmount.toLocaleString()}원` },
-              { key: "missionAmount", header: "미션 단가", render: (r) => `${r.missionAmount.toLocaleString()}원` },
-              {
-                key: "action",
-                header: "관리",
-                render: () => <Button variant="ghost" size="sm"><Edit className="h-4 w-4" /></Button>,
-              },
-            ]}
-            rows={policyList}
-            rowKey={(r) => r.id}
-          />
-          <Pagination currentPage={policyPage} totalPages={policyTotalPages} onPageChange={setPolicyPage} />
-        </>
-      )}
+        </CardContent>
+      </Card>
+      <div className="flex items-center justify-between mb-2">
+        <div className="text-sm text-[#6B778C]">전체 건수 <b className="text-[#172B4D]">{billingTotal.toLocaleString()}</b>건</div>
+        <div className="text-xs text-[#6B778C]">현재 페이지 ({billingPage}/{billingTotalPages})</div>
+      </div>
+      <DataTable
+        columns={[
+          { key: "id", header: "청구 ID" },
+          { key: "orderId", header: "오더 ID" },
+          { key: "partner", header: "파트너명" },
+          { key: "amount", header: "금액", render: (r) => `${r.amount.toLocaleString()}원` },
+          { key: "status", header: "상태", render: (r) => <Badge tone={r.status === "청구완료" ? "ok" : "default"}>{r.status}</Badge> },
+          { key: "date", header: "청구일" },
+        ]}
+        rows={billingList}
+        rowKey={(r) => r.id}
+        onRowClick={setSelected}
+        sortConfig={sortConfig}
+        onSort={handleSort}
+      />
+      <Pagination currentPage={billingPage} totalPages={billingTotalPages} onPageChange={setBillingPage} />
 
       <Drawer
         open={!!selected}
@@ -2421,6 +2507,7 @@ function LostFoundPage() {
   ]);
   const [selected, setSelected] = useState(null);
   const [isRegistering, setIsRegistering] = useState(false);
+  const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
 
   const columns = [
     { key: "id", header: "분실물 ID" },
@@ -2437,7 +2524,25 @@ function LostFoundPage() {
     { key: "foundAt", header: "습득일" },
   ];
 
-  const { currentData, currentPage, totalPages, setCurrentPage, totalItems } = usePagination(items, 40);
+  const sortedData = useMemo(() => {
+    if (!sortConfig.key) return items;
+    return [...items].sort((a, b) => {
+      const aVal = a[sortConfig.key] || "";
+      const bVal = b[sortConfig.key] || "";
+      if (aVal < bVal) return sortConfig.direction === 'asc' ? -1 : 1;
+      if (aVal > bVal) return sortConfig.direction === 'asc' ? 1 : -1;
+      return 0;
+    });
+  }, [items, sortConfig]);
+
+  const handleSort = (key) => {
+    setSortConfig(prev => ({
+      key,
+      direction: prev.key === key && prev.direction === 'asc' ? 'desc' : 'asc',
+    }));
+  };
+
+  const { currentData, currentPage, totalPages, setCurrentPage, totalItems } = usePagination(sortedData, 40);
 
   return (
     <div className="space-y-4">
@@ -2456,7 +2561,7 @@ function LostFoundPage() {
         <div className="text-xs text-[#6B778C]">현재 페이지 ({currentPage}/{totalPages})</div>
       </div>
 
-      <DataTable columns={columns} rows={currentData} rowKey={(r) => r.id} onRowClick={setSelected} />
+      <DataTable columns={columns} rows={currentData} rowKey={(r) => r.id} onRowClick={setSelected} sortConfig={sortConfig} onSort={handleSort} />
       <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
 
       <Drawer
@@ -2526,6 +2631,8 @@ function MissionsPage({ missions, setMissions, orders }) {
 
   // 필터 상태
   const [q, setQ] = useState("");
+  const [searchField, setSearchField] = useState("plate");
+  const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
   const [fStatus, setFStatus] = useState("");
   const [fModel, setFModel] = useState("");
   const [fRegion1, setFRegion1] = useState("");
@@ -2537,6 +2644,9 @@ function MissionsPage({ missions, setMissions, orders }) {
   const [selected, setSelected] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteReason, setDeleteReason] = useState("");
+  const [selectedIds, setSelectedIds] = useState(new Set());
+  const [bulkDeleteModalOpen, setBulkDeleteModalOpen] = useState(false);
+  const [bulkDeleteReason, setBulkDeleteReason] = useState("");
 
   // 차량 정보 연동
   const enrichedMissions = useMemo(() => {
@@ -2555,7 +2665,8 @@ function MissionsPage({ missions, setMissions, orders }) {
   const filtered = useMemo(() => {
     const qq = q.trim().toLowerCase();
     return enrichedMissions.filter(m => {
-      const hitQ = !qq || m.plate.toLowerCase().includes(qq) || m.id.toLowerCase().includes(qq) || m.zoneName.toLowerCase().includes(qq);
+      const targetVal = String(m[searchField] || "").toLowerCase();
+      const hitQ = !qq || targetVal.includes(qq);
       const hitS = !fStatus || (fStatus === "대기" ? m.status === "pending" : m.status === "completed");
       const hitM = !fModel || m.model === fModel;
       const hitR1 = !fRegion1 || m.region1 === fRegion1;
@@ -2563,14 +2674,70 @@ function MissionsPage({ missions, setMissions, orders }) {
       const hitP = (!periodFrom || m.createdAt >= periodFrom) && (!periodTo || m.createdAt <= periodTo);
       return hitQ && hitS && hitM && hitR1 && hitR2 && hitP;
     });
-  }, [enrichedMissions, q, fStatus, fModel, fRegion1, fRegion2, periodFrom, periodTo]);
+  }, [enrichedMissions, q, searchField, fStatus, fModel, fRegion1, fRegion2, periodFrom, periodTo]);
+
+  const sortedData = useMemo(() => {
+    if (!sortConfig.key) return filtered;
+    return [...filtered].sort((a, b) => {
+      const aVal = a[sortConfig.key] || "";
+      const bVal = b[sortConfig.key] || "";
+      if (aVal < bVal) return sortConfig.direction === 'asc' ? -1 : 1;
+      if (aVal > bVal) return sortConfig.direction === 'asc' ? 1 : -1;
+      return 0;
+    });
+  }, [filtered, sortConfig]);
+
+  const handleSort = (key) => {
+    if (key === 'selection') return;
+    setSortConfig(prev => ({
+      key,
+      direction: prev.key === key && prev.direction === 'asc' ? 'desc' : 'asc',
+    }));
+  };
 
   // 필터 옵션 추출
   const models = useMemo(() => Array.from(new Set(enrichedMissions.map(m => m.model))), [enrichedMissions]);
   const regions1 = useMemo(() => Array.from(new Set(enrichedMissions.map(m => m.region1))), [enrichedMissions]);
   const regions2 = useMemo(() => Array.from(new Set(enrichedMissions.filter(m => !fRegion1 || m.region1 === fRegion1).map(m => m.region2))), [enrichedMissions, fRegion1]);
 
-  const { currentData, currentPage, totalPages, setCurrentPage, totalItems } = usePagination(filtered, 40);
+  const { currentData, currentPage, totalPages, setCurrentPage, totalItems } = usePagination(sortedData, 40);
+
+  // 체크박스 핸들러
+  const toggleSelectAll = () => {
+    const currentIds = currentData.map(r => r.id);
+    const allSelected = currentIds.length > 0 && currentIds.every(id => selectedIds.has(id));
+    
+    const newSelected = new Set(selectedIds);
+    if (allSelected) {
+      currentIds.forEach(id => newSelected.delete(id));
+    } else {
+      currentIds.forEach(id => newSelected.add(id));
+    }
+    setSelectedIds(newSelected);
+  };
+
+  const toggleSelect = (id) => {
+    const newSelected = new Set(selectedIds);
+    if (newSelected.has(id)) {
+      newSelected.delete(id);
+    } else {
+      newSelected.add(id);
+    }
+    setSelectedIds(newSelected);
+  };
+
+  const handleBulkDelete = () => {
+    if (selectedIds.size === 0) return;
+    setBulkDeleteModalOpen(true);
+  };
+
+  const confirmBulkDelete = () => {
+    setMissions(prev => prev.filter(m => !selectedIds.has(m.id)));
+    setSelectedIds(new Set());
+    setBulkDeleteModalOpen(false);
+    setBulkDeleteReason("");
+    alert(`${selectedIds.size}건의 미션이 삭제되었습니다.\n사유: ${bulkDeleteReason}`);
+  };
 
   // 미션 등록
   const handleRegisterMission = () => {
@@ -2618,6 +2785,28 @@ function MissionsPage({ missions, setMissions, orders }) {
   const linkedOrder = selected?.linkedOrderId ? orders.find(o => o.orderId === selected.linkedOrderId) : null;
 
   const columns = [
+    {
+      key: "selection",
+      header: (
+        <input
+          type="checkbox"
+          checked={currentData.length > 0 && currentData.every((r) => selectedIds.has(r.id))}
+          onChange={toggleSelectAll}
+          onClick={(e) => e.stopPropagation()}
+          className="h-4 w-4 rounded border-gray-300 text-[#0052CC] focus:ring-[#0052CC]"
+        />
+      ),
+      render: (r) => (
+        <div onClick={(e) => e.stopPropagation()} className="flex items-center">
+          <input
+            type="checkbox"
+            checked={selectedIds.has(r.id)}
+            onChange={() => toggleSelect(r.id)}
+            className="h-4 w-4 rounded border-gray-300 text-[#0052CC] focus:ring-[#0052CC]"
+          />
+        </div>
+      ),
+    },
     { key: "id", header: "미션 ID" },
     { key: "plate", header: "차량번호" },
     { key: "model", header: "차종" },
@@ -2655,6 +2844,11 @@ function MissionsPage({ missions, setMissions, orders }) {
           <div className="mt-1 text-sm text-[#6B778C]">차량별 특수 과업 사전 등록 및 오더 연동 현황</div>
         </div>
         <div className="flex items-center gap-2">
+          {selectedIds.size > 0 && (
+            <Button variant="danger" onClick={handleBulkDelete}>
+              <Trash2 className="mr-2 h-4 w-4" /> 선택 삭제 ({selectedIds.size})
+            </Button>
+          )}
           <Button onClick={() => setIsRegisterOpen(true)}>
             <Plus className="mr-2 h-4 w-4" /> 미션 등록
           </Button>
@@ -2668,9 +2862,23 @@ function MissionsPage({ missions, setMissions, orders }) {
         <CardContent>
           <div className="grid grid-cols-1 gap-3 md:grid-cols-12">
             <div className="md:col-span-4">
-              <div className="relative">
-                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#6B778C]" />
-                <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="차량번호/미션 ID/존이름 검색" className="pl-9" />
+              <div className="flex items-center gap-2">
+                <Select className="!w-40 shrink-0" value={searchField} onChange={e => setSearchField(e.target.value)}>
+                  <option value="plate">차량번호</option>
+                  <option value="id">미션 ID</option>
+                  <option value="zoneName">존이름</option>
+                </Select>
+                <div className="relative flex-1">
+                  <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#6B778C]" />
+                  <Input 
+                    value={q} 
+                    onChange={(e) => setQ(e.target.value)} 
+                    placeholder={`${
+                      searchField === 'plate' ? '차량번호' : searchField === 'id' ? '미션 ID' : '존이름'
+                    } 검색`} 
+                    className="pl-9" 
+                  />
+                </div>
               </div>
             </div>
             <div className="md:col-span-2">
@@ -2728,9 +2936,38 @@ function MissionsPage({ missions, setMissions, orders }) {
           rows={currentData}
           rowKey={(r) => r.id}
           onRowClick={setSelected}
+          sortConfig={sortConfig}
+          onSort={handleSort}
         />
         <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
       </Card>
+
+      {/* 일괄 삭제 모달 */}
+      {bulkDeleteModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <Card className="w-[400px] shadow-xl ring-rose-200">
+            <CardHeader>
+              <CardTitle className="text-rose-700">미션 일괄 삭제</CardTitle>
+              <CardDescription>선택한 {selectedIds.size}건의 미션을 삭제하시겠습니까?</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <div className="space-y-1">
+                <label className="text-xs font-semibold text-[#6B778C]">삭제 사유 *</label>
+                <Input
+                  value={bulkDeleteReason}
+                  onChange={(e) => setBulkDeleteReason(e.target.value)}
+                  placeholder="삭제 사유를 입력하세요"
+                  autoFocus
+                />
+              </div>
+              <div className="flex justify-end gap-2">
+                <Button variant="secondary" onClick={() => { setBulkDeleteModalOpen(false); setBulkDeleteReason(""); }}>취소</Button>
+                <Button variant="danger" disabled={!bulkDeleteReason.trim()} onClick={confirmBulkDelete}>삭제 확정</Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
 
       <Drawer
         open={isRegisterOpen}
@@ -2878,37 +3115,59 @@ function MissionsPage({ missions, setMissions, orders }) {
  */
 function PartnerManagersPage() {
   const [managers, setManagers] = useState([
-    { id: 'PM-001', name: '김담당', partner: 'A파트너명', type: '관리자', status: '활성', lastLogin: '2026-01-14', assignedZones: ['Z-1001', 'Z-1003', 'Z-6001'] },
-    { id: 'PM-002', name: '이담당', partner: 'B파트너명', type: '관리자', status: '활성', lastLogin: '2026-01-15', assignedZones: ['Z-1002', 'Z-2002', 'Z-5002'] },
-    { id: 'PM-003', name: '박수행', partner: 'A파트너명', type: '수행원', status: '활성', lastLogin: '2026-01-13', assignedZones: ['Z-1001'] },
-    { id: 'PM-004', name: '최매니저', partner: 'C파트너명', type: '관리자', status: '정지', lastLogin: '2025-12-20', assignedZones: ['Z-2001', 'Z-4001', 'Z-7001'] },
+    { id: 'PM-001', name: '김담당', partner: 'A파트너명', type: '관리자', lastLogin: '2026-01-14', assignedZones: ['Z-1001', 'Z-1003', 'Z-6001'] },
+    { id: 'PM-002', name: '이담당', partner: 'B파트너명', type: '관리자', lastLogin: '2026-01-15', assignedZones: ['Z-1002', 'Z-2002', 'Z-5002'] },
+    { id: 'PM-003', name: '박수행', partner: 'A파트너명', type: '수행원', lastLogin: '2026-01-13', assignedZones: ['Z-1001'] },
+    { id: 'PM-004', name: '최매니저', partner: 'C파트너명', type: '관리자', lastLogin: '2025-12-20', assignedZones: ['Z-2001', 'Z-4001', 'Z-7001'] },
   ]);
 
   const [selected, setSelected] = useState(null);
   const [fPartner, setFPartner] = useState("");
   const [fType, setFType] = useState("");
-  const [fStatus, setFStatus] = useState("");
+  const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
 
   const partners = useMemo(() => Array.from(new Set(managers.map(m => m.partner))), [managers]);
   const types = ['관리자', '수행원'];
-  const statuses = ['활성', '정지'];
 
   const filteredData = useMemo(() => {
     return managers.filter(m => {
       const matchPartner = !fPartner || m.partner === fPartner;
       const matchType = !fType || m.type === fType;
-      const matchStatus = !fStatus || m.status === fStatus;
-      return matchPartner && matchType && matchStatus;
+      return matchPartner && matchType;
     });
-  }, [managers, fPartner, fType, fStatus]);
+  }, [managers, fPartner, fType]);
 
-  const { currentData, currentPage, totalPages, setCurrentPage, totalItems } = usePagination(filteredData, 40);
+  const sortedData = useMemo(() => {
+    if (!sortConfig.key) return filteredData;
+    return [...filteredData].sort((a, b) => {
+      const aVal = a[sortConfig.key] || "";
+      const bVal = b[sortConfig.key] || "";
+      if (aVal < bVal) return sortConfig.direction === 'asc' ? -1 : 1;
+      if (aVal > bVal) return sortConfig.direction === 'asc' ? 1 : -1;
+      return 0;
+    });
+  }, [filteredData, sortConfig]);
+
+  const handleSort = (key) => {
+    setSortConfig(prev => ({
+      key,
+      direction: prev.key === key && prev.direction === 'asc' ? 'desc' : 'asc',
+    }));
+  };
+
+  const handleDelete = () => {
+    if (!selected) return;
+    if (!window.confirm(`${selected.name} 담당자를 삭제하시겠습니까?`)) return;
+    setManagers(prev => prev.filter(m => m.id !== selected.id));
+    setSelected(null);
+  };
+
+  const { currentData, currentPage, totalPages, setCurrentPage, totalItems } = usePagination(sortedData, 40);
 
   const columns = [
     { key: 'name', header: '성명' },
     { key: 'partner', header: '소속 파트너사' },
     { key: 'type', header: '유형' },
-    { key: 'status', header: '계정 상태', render: r => <Badge tone={r.status === '활성' ? 'ok' : 'danger'}>{r.status}</Badge> },
     { key: 'assignedZones', header: '배정된 쏘카존', render: r => `${r.assignedZones.length}개` },
     { key: 'lastLogin', header: '마지막 접속일' },
   ];
@@ -2923,26 +3182,20 @@ function PartnerManagersPage() {
       <Card>
         <CardHeader><CardTitle>필터</CardTitle></CardHeader>
         <CardContent className="grid grid-cols-1 gap-3 md:grid-cols-12">
-          <div className="md:col-span-4">
+          <div className="md:col-span-5">
             <Select value={fPartner} onChange={e => setFPartner(e.target.value)}>
               <option value="">소속 파트너사 전체</option>
               {partners.map(p => <option key={p} value={p}>{p}</option>)}
             </Select>
           </div>
-          <div className="md:col-span-3">
+          <div className="md:col-span-5">
             <Select value={fType} onChange={e => setFType(e.target.value)}>
               <option value="">계정 유형 전체</option>
               {types.map(t => <option key={t} value={t}>{t}</option>)}
             </Select>
           </div>
-          <div className="md:col-span-3">
-            <Select value={fStatus} onChange={e => setFStatus(e.target.value)}>
-              <option value="">계정 상태 전체</option>
-              {statuses.map(s => <option key={s} value={s}>{s}</option>)}
-            </Select>
-          </div>
           <div className="md:col-span-2 flex justify-end">
-            <Button variant="secondary" onClick={() => { setFPartner(""); setFType(""); setFStatus(""); }}>초기화</Button>
+            <Button variant="secondary" onClick={() => { setFPartner(""); setFType(""); }}>초기화</Button>
           </div>
         </CardContent>
       </Card>
@@ -2951,10 +3204,20 @@ function PartnerManagersPage() {
         <div className="text-sm text-[#6B778C]">전체 건수 <b className="text-[#172B4D]">{totalItems.toLocaleString()}</b>건</div>
         <div className="text-xs text-[#6B778C]">현재 페이지 ({currentPage}/{totalPages})</div>
       </div>
-      <DataTable columns={columns} rows={currentData} rowKey={r => r.id} onRowClick={setSelected} />
+      <DataTable columns={columns} rows={currentData} rowKey={r => r.id} onRowClick={setSelected} sortConfig={sortConfig} onSort={handleSort} />
       <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
 
-      <Drawer open={!!selected} title="담당자 상세" onClose={() => setSelected(null)} footer={<Button variant="secondary" onClick={() => setSelected(null)}>닫기</Button>}>
+      <Drawer 
+        open={!!selected} 
+        title="담당자 상세" 
+        onClose={() => setSelected(null)} 
+        footer={
+          <>
+            <Button variant="secondary" onClick={() => setSelected(null)}>닫기</Button>
+            <Button variant="danger" onClick={handleDelete}><Trash2 className="mr-2 h-4 w-4" />삭제</Button>
+          </>
+        }
+      >
         {selected && (
           <div className="space-y-4">
             <Card>
@@ -2963,7 +3226,6 @@ function PartnerManagersPage() {
                 <Field label="성명" value={selected.name} />
                 <Field label="소속" value={selected.partner} />
                 <Field label="유형" value={selected.type} />
-                <Field label="계정 상태" value={<Badge tone={selected.status === '활성' ? 'ok' : 'danger'}>{selected.status}</Badge>} />
                 <Field label="마지막 접속" value={selected.lastLogin} />
               </CardContent>
             </Card>
@@ -3007,6 +3269,7 @@ function WorkersPage() {
   const [selected, setSelected] = useState(null);
   const [fRegion, setFRegion] = useState("");
   const [fPartner, setFPartner] = useState("");
+  const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
 
   const regions = useMemo(() => Array.from(new Set(workers.map(w => w.region))), [workers]);
   const partners = useMemo(() => Array.from(new Set(workers.map(w => w.partner))), [workers]);
@@ -3019,7 +3282,25 @@ function WorkersPage() {
     });
   }, [workers, fRegion, fPartner]);
 
-  const { currentData, currentPage, totalPages, setCurrentPage, totalItems } = usePagination(filteredData, 40);
+  const sortedData = useMemo(() => {
+    if (!sortConfig.key) return filteredData;
+    return [...filteredData].sort((a, b) => {
+      const aVal = a[sortConfig.key] || "";
+      const bVal = b[sortConfig.key] || "";
+      if (aVal < bVal) return sortConfig.direction === 'asc' ? -1 : 1;
+      if (aVal > bVal) return sortConfig.direction === 'asc' ? 1 : -1;
+      return 0;
+    });
+  }, [filteredData, sortConfig]);
+
+  const handleSort = (key) => {
+    setSortConfig(prev => ({
+      key,
+      direction: prev.key === key && prev.direction === 'asc' ? 'desc' : 'asc',
+    }));
+  };
+
+  const { currentData, currentPage, totalPages, setCurrentPage, totalItems } = usePagination(sortedData, 40);
 
   const columns = [
     { key: 'name', header: '수행원 성명' },
@@ -3060,7 +3341,7 @@ function WorkersPage() {
         <div className="text-sm text-[#6B778C]">전체 건수 <b className="text-[#172B4D]">{totalItems.toLocaleString()}</b>건</div>
         <div className="text-xs text-[#6B778C]">현재 페이지 ({currentPage}/{totalPages})</div>
       </div>
-      <DataTable columns={columns} rows={currentData} rowKey={r => r.id} onRowClick={setSelected} />
+      <DataTable columns={columns} rows={currentData} rowKey={r => r.id} onRowClick={setSelected} sortConfig={sortConfig} onSort={handleSort} />
       <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
 
       <Drawer open={!!selected} title="수행원 상세 (View Only)" onClose={() => setSelected(null)} footer={<Button variant="secondary" onClick={() => setSelected(null)}>닫기</Button>}>
@@ -3098,10 +3379,29 @@ function NoticesPage() {
   ];
 
   const [filter, setFilter] = useState("전체");
+  const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
 
   const filtered = notices.filter((n) => filter === "전체" || n.targetPartner === filter);
 
-  const { currentData, currentPage, totalPages, setCurrentPage, totalItems } = usePagination(filtered, 40);
+  const sortedData = useMemo(() => {
+    if (!sortConfig.key) return filtered;
+    return [...filtered].sort((a, b) => {
+      const aVal = a[sortConfig.key] || "";
+      const bVal = b[sortConfig.key] || "";
+      if (aVal < bVal) return sortConfig.direction === 'asc' ? -1 : 1;
+      if (aVal > bVal) return sortConfig.direction === 'asc' ? 1 : -1;
+      return 0;
+    });
+  }, [filtered, sortConfig]);
+
+  const handleSort = (key) => {
+    setSortConfig(prev => ({
+      key,
+      direction: prev.key === key && prev.direction === 'asc' ? 'desc' : 'asc',
+    }));
+  };
+
+  const { currentData, currentPage, totalPages, setCurrentPage, totalItems } = usePagination(sortedData, 40);
 
   return (
     <div className="space-y-4">
@@ -3116,7 +3416,7 @@ function NoticesPage() {
         <CardContent className="flex items-center gap-4">
           <div className="flex items-center gap-2">
             <span className="text-sm font-medium text-[#172B4D]">파트너명</span>
-            <Select value={filter} onChange={(e) => setFilter(e.target.value)} className="w-40">
+            <Select value={filter} onChange={(e) => setFilter(e.target.value)} className="!w-40">
               <option value="전체">전체</option>
               <option value="A파트너명">A파트너명</option>
               <option value="B파트너명">B파트너명</option>
@@ -3141,6 +3441,8 @@ function NoticesPage() {
         ]}
         rows={currentData}
         rowKey={(r) => r.id}
+        sortConfig={sortConfig}
+        onSort={handleSort}
       />
       <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
     </div>
@@ -3150,6 +3452,7 @@ function NoticesPage() {
 function UpdateHistoryPage() {
   const [activeTab, setActiveTab] = useState("brown");
   const [showPolicyOnly, setShowPolicyOnly] = useState(false);
+  const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
 
   const historyData = activeTab === "brown" ? BROWN_HISTORY : ASTI_HISTORY;
   
@@ -3161,7 +3464,25 @@ function UpdateHistoryPage() {
     return data;
   }, [historyData, showPolicyOnly]);
 
-  const { currentData, currentPage, totalPages, setCurrentPage, totalItems } = usePagination(filteredHistory, 40);
+  const sortedData = useMemo(() => {
+    if (!sortConfig.key) return filteredHistory;
+    return [...filteredHistory].sort((a, b) => {
+      const aVal = a[sortConfig.key] || "";
+      const bVal = b[sortConfig.key] || "";
+      if (aVal < bVal) return sortConfig.direction === 'asc' ? -1 : 1;
+      if (aVal > bVal) return sortConfig.direction === 'asc' ? 1 : -1;
+      return 0;
+    });
+  }, [filteredHistory, sortConfig]);
+
+  const handleSort = (key) => {
+    setSortConfig(prev => ({
+      key,
+      direction: prev.key === key && prev.direction === 'asc' ? 'desc' : 'asc',
+    }));
+  };
+
+  const { currentData, currentPage, totalPages, setCurrentPage, totalItems } = usePagination(sortedData, 40);
 
   return (
     <div className="space-y-4">
@@ -3233,6 +3554,8 @@ function UpdateHistoryPage() {
           ]}
           rows={currentData}
           rowKey={(r) => r.id}
+          sortConfig={sortConfig}
+          onSort={handleSort}
         />
         <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
       </Card>
