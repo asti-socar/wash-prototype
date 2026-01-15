@@ -82,6 +82,21 @@ function toYmd(d) {
   return `${y}-${m}-${day}`;
 }
 
+// Custom hook to detect mobile screen size
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768); // Tailwind's 'md' breakpoint
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+  return isMobile;
+}
+
 /**
  * shadcn-ish minimal UI (Tailwind only)
  */
@@ -202,6 +217,20 @@ function Drawer({ open, title, onClose, children, footer }) {
   const [width, setWidth] = useState(600);
   const [isResizing, setIsResizing] = useState(false);
 
+  // 3. 바디 스크롤 방지 로직 보완: Drawer가 활성화된 상태에서 배경(Body) 스크롤 방지
+  useEffect(() => {
+    if (open) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'auto';
+    }
+    // Cleanup function
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, [open]);
+
+  // Resizing logic
   useEffect(() => {
     const handleMouseMove = (e) => {
       if (!isResizing) return;
@@ -229,15 +258,18 @@ function Drawer({ open, title, onClose, children, footer }) {
   }, [isResizing]);
 
   if (!open) return null;
+
   return (
-    <div className="fixed inset-0 z-50">
+    <>
+      {/* Drawer Backdrop (DIM) */}
       <div
-        className="absolute inset-0 bg-black/30"
+        className="fixed inset-0 bg-black/30 z-40" // z-index 40: 메인 콘텐츠보다 높지만 Drawer 컴포넌트보다는 낮게
         onClick={onClose}
         aria-hidden="true"
       />
+      {/* Drawer Panel */}
       <div
-        className="absolute right-0 top-0 h-full bg-white shadow-2xl flex flex-col"
+        className="fixed top-0 right-0 h-full bg-white shadow-2xl flex flex-col z-50" // z-index 50: Drawer 컴포넌트
         style={{ width, maxWidth: "100vw" }}
       >
         <div
@@ -265,7 +297,7 @@ function Drawer({ open, title, onClose, children, footer }) {
           {footer}
         </div>
       </div>
-    </div>
+    </>
   );
 }
 
@@ -575,6 +607,7 @@ const PAGE_TITLES = {
  */
 export default function App() {
   const [activeKey, setActiveKey] = useState("dashboard");
+  const isMobile = useIsMobile(); // 1. useIsMobile 훅 사용
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [openAccordion, setOpenAccordion] = useState(() => NAV.find(g => g.items?.some(it => it.key === activeKey))?.key || "");
 
@@ -629,14 +662,46 @@ export default function App() {
     };
   }, [checkVersion]);
 
+  // 3. 바디 스크롤 방지 로직 보완: 모바일 사이드바 활성화 시 배경(Body) 스크롤 방지
+  useEffect(() => {
+    if (isMobileMenuOpen && isMobile) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'auto';
+    }
+    // Cleanup function
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, [isMobileMenuOpen, isMobile]);
+
+
   // 대시보드 KPI 카드 클릭 시 "오더 관리"로 이동하면서 필터를 “적용한 것처럼” 표시하는 상태
   const [orderQuickFilter, setOrderQuickFilter] = useState(null); // { status: '예약' | ... }
   const [initialOrderId, setInitialOrderId] = useState(null);
 
   // Lifted State: Missions (전역 관리)
   const [missions, setMissions] = useState([
-    { id: "M-1001", plate: "12가3456", content: "스티커 부착", status: "pending", zoneName: "강남역 1번존", createdAt: "2026-01-10", assignedAt: null, completedAt: null, amount: 0, requiresPhoto: true },
+    // 1. Pending (policy compliant)
+    { id: "M-1001", plate: "12가3456", content: "스티커 부착", status: "pending", createdAt: "2026-01-10", amount: 0, requiresPhoto: true, zoneName: null, assignedAt: null, completedAt: null, linkedOrderId: null },
+    // 2. Completed
     { id: "M-1002", plate: "34나7890", content: "내부 청소 집중", status: "completed", linkedOrderId: "O-90002", zoneName: "잠실역 2번존", createdAt: "2026-01-08", assignedAt: "2026-01-09 10:00", completedAt: "2026-01-09 14:00", amount: 5000, requiresPhoto: true },
+    // 3. Completed
+    { id: "M-1003", plate: "78라3344", content: "블랙박스 점검", status: "completed", linkedOrderId: "O-90004", zoneName: "판교 1번존", createdAt: "2026-01-07", assignedAt: "2026-01-08 11:00", completedAt: "2026-01-08 15:00", amount: 3000, requiresPhoto: false },
+    // 4. Pending
+    { id: "M-1004", plate: "56다1122", content: "광고물 제거", status: "pending", createdAt: "2026-01-11", amount: 2000, requiresPhoto: true, zoneName: null, assignedAt: null, completedAt: null, linkedOrderId: null },
+    // 5. Pending
+    { id: "M-1005", plate: "90마5566", content: "타이어 공기압 체크", status: "pending", createdAt: "2026-01-12", amount: 0, requiresPhoto: false, zoneName: null, assignedAt: null, completedAt: null, linkedOrderId: null },
+    // 6. Completed
+    { id: "M-1006", plate: "11바7788", content: "엔진룸 클리닝", status: "completed", linkedOrderId: "O-90006", zoneName: "부산역 1번존", createdAt: "2026-01-05", assignedAt: "2026-01-06 09:00", completedAt: "2026-01-06 13:00", amount: 15000, requiresPhoto: true },
+    // 7. Pending
+    { id: "M-1007", plate: "22사9900", content: "유리 발수 코팅", status: "pending", createdAt: "2026-01-13", amount: 8000, requiresPhoto: true, zoneName: null, assignedAt: null, completedAt: null, linkedOrderId: null },
+    // 8. Completed
+    { id: "M-1008", plate: "33아1212", content: "실내 탈취", status: "completed", linkedOrderId: "O-90008", zoneName: "대전역 1번존", createdAt: "2026-01-09", assignedAt: "2026-01-10 12:00", completedAt: "2026-01-10 16:00", amount: 5000, requiresPhoto: false },
+    // 9. Pending
+    { id: "M-1009", plate: "44자3434", content: "와이퍼 교체", status: "pending", createdAt: "2026-01-14", amount: 1000, requiresPhoto: false, zoneName: null, assignedAt: null, completedAt: null, linkedOrderId: null },
+    // 10. Completed
+    { id: "M-1010", plate: "55차5656", content: "가죽 시트 케어", status: "completed", linkedOrderId: "O-90010", zoneName: "광주 1번존", createdAt: "2026-01-10", assignedAt: "2026-01-11 13:00", completedAt: "2026-01-11 17:00", amount: 12000, requiresPhoto: true },
   ]);
 
   // Lifted State: Orders (전역 관리)
@@ -693,14 +758,26 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] text-[#172B4D]">
-      {/* Mobile Sidebar Drawer */}
-      <div className={cn("fixed inset-0 z-50 flex md:hidden", isMobileMenuOpen ? "pointer-events-auto" : "pointer-events-none")}>
-        <div className="fixed inset-0 bg-black/50 transition-opacity" onClick={() => setIsMobileMenuOpen(false)} />
-        <div className={cn("relative flex h-full w-64 flex-col bg-[#0F172A] text-white shadow-xl transition-transform duration-300 ease-in-out", isMobileMenuOpen ? "translate-x-0" : "-translate-x-full")}>
+      {/* 1. 모바일 사이드바 Backdrop 로직 수정 */}
+      {/* 2. 조건부 렌더링: 사이드바 배경 DIM(Overlay) 요소는 반드시 isSidebarOpen && isMobile 조건이 모두 참일 때만 화면에 그려지도록 수정 */}
+      {/* 2. Z-Index 및 스택 순서 정돈: DIM 우선순위: 사이드바용 DIM 요소의 z-index를 점검하여, 메인 콘텐츠보다는 높지만 Drawer 컴포넌트보다는 낮게 설정 (예: 콘텐츠 0 < DIM 40 < Drawer 50) */}
+      {isMobile && isMobileMenuOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-40 transition-opacity" // z-index 40
+          onClick={() => setIsMobileMenuOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+
+      {/* Mobile Sidebar Panel */}
+      {isMobile && (
+        <div
+          className={cn("fixed inset-y-0 left-0 z-50 flex h-full w-64 flex-col bg-[#0F172A] text-white shadow-xl transition-transform duration-300 ease-in-out",
+            isMobileMenuOpen ? "translate-x-0" : "-translate-x-full")} // z-index 50
+        >
           <SidebarContent activeKey={activeKey} onSelect={(key) => { onNavSelect(key); setIsMobileMenuOpen(false); }} openAccordion={openAccordion} setOpenAccordion={setOpenAccordion} />
         </div>
-      </div>
-
+      )}
       <div className="flex">
         <Sidebar activeKey={activeKey} onSelect={onNavSelect} openAccordion={openAccordion} setOpenAccordion={setOpenAccordion} />
 
@@ -1562,7 +1639,18 @@ function OrdersPage({ quickStatus, onClearQuickStatus, initialOrderId, orders, s
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   
   // 오더 발행 폼 상태
-  const [newOrderForm, setNewOrderForm] = useState({ plate: "", zone: "", washType: "외부", model: "" });
+  const [newOrderForm, setNewOrderForm] = useState({ plate: "", orderGroup: "수시", orderType: "수시세차", washType: "외부" });
+
+  const [foundVehicle, setFoundVehicle] = useState(null);
+
+  useEffect(() => {
+    if (newOrderForm.plate.trim()) {
+      const vehicle = MOCK_VEHICLES.find(v => v.plate === newOrderForm.plate.trim());
+      setFoundVehicle(vehicle || null);
+    } else {
+      setFoundVehicle(null);
+    }
+  }, [newOrderForm.plate]);
 
   useEffect(() => {
     if (initialOrderId) {
@@ -1586,25 +1674,26 @@ function OrdersPage({ quickStatus, onClearQuickStatus, initialOrderId, orders, s
 
   // 오더 발행 핸들러
   const handleCreateOrder = () => {
-    if (!newOrderForm.plate || !newOrderForm.zone) return alert("차량번호와 존 정보는 필수입니다.");
+    if (!foundVehicle) {
+      alert("등록되지 않은 차량번호입니다. 차량 관리에서 먼저 확인해주세요.");
+      return;
+    }
 
-    // 해당 차량의 Pending 미션 조회
-    // 오더 발행 시 미션에 오더 ID 연결 (상태는 pending 유지)
-    const pendingMissions = missions.filter(m => m.plate === newOrderForm.plate && m.status === "pending");
+    const pendingMissions = missions.filter(m => m.plate === foundVehicle.plate && m.status === "pending");
 
     const newOrder = {
       orderId: `O-${Date.now()}`,
       washType: newOrderForm.washType,
-      orderGroup: "수시",
-      orderType: "수시세차",
+      orderGroup: newOrderForm.orderGroup,
+      orderType: newOrderForm.orderType,
       carId: `C-${Math.floor(Math.random() * 10000)}`,
-      model: newOrderForm.model || "미상",
-      plate: newOrderForm.plate,
-      zone: newOrderForm.zone,
-      zoneId: "Z-Temp",
-      region1: "서울", // 더미
-      region2: "기타", // 더미
-      partner: "A파트너명", // 더미
+      model: foundVehicle.model,
+      plate: foundVehicle.plate,
+      zone: foundVehicle.zoneName,
+      zoneId: foundVehicle.zoneId,
+      region1: foundVehicle.region1,
+      region2: foundVehicle.region2,
+      partner: foundVehicle.partner,
       partnerType: "현장", // 기본값
       status: "예약",
       elapsedDays: 0,
@@ -1623,7 +1712,8 @@ function OrdersPage({ quickStatus, onClearQuickStatus, initialOrderId, orders, s
     }
 
     setIsCreateOpen(false);
-    setNewOrderForm({ plate: "", zone: "", washType: "외부", model: "" });
+    setNewOrderForm({ plate: "", orderGroup: "수시", orderType: "수시세차", washType: "외부" });
+    setFoundVehicle(null);
     alert(`오더가 발행되었습니다. (포함된 미션: ${pendingMissions.length}건)`);
   };
 
@@ -1699,7 +1789,6 @@ function OrdersPage({ quickStatus, onClearQuickStatus, initialOrderId, orders, s
     { key: "model", header: "차종" },
     { key: "plate", header: "차량번호" },
     { key: "zone", header: "존이름" },
-    { key: "elapsedDays", header: "세차경과일", render: (r) => `${r.elapsedDays}일` },
     { key: "partner", header: "파트너명" },
     { key: "partnerType", header: "파트너유형" },
     {
@@ -2003,12 +2092,14 @@ function OrdersPage({ quickStatus, onClearQuickStatus, initialOrderId, orders, s
                       </Button>
                     </div>
                   </div>
-                  <div className="flex items-center justify-between border-t border-[#DFE1E6] pt-3">
-                    <span className="text-sm text-[#6B778C]">연계 오더 (Parent)</span>
-                    <Button variant="ghost" size="sm" className="h-6 px-2 text-xs text-[#0052CC]">
-                      O-89999 <ExternalLink className="ml-1 h-3 w-3" />
-                    </Button>
-                  </div>
+                  {selected.partnerType === '입고' && (
+                    <div className="flex items-center justify-between border-t border-[#DFE1E6] pt-3">
+                      <span className="text-sm text-[#6B778C]">연계 오더 (Parent)</span>
+                      <Button variant="ghost" size="sm" className="h-6 px-2 text-xs text-[#0052CC]">
+                        O-89999 <ExternalLink className="ml-1 h-3 w-3" />
+                      </Button>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             </TabsContent>
@@ -2195,9 +2286,13 @@ function OrdersPage({ quickStatus, onClearQuickStatus, initialOrderId, orders, s
       <Drawer
         open={isCreateOpen}
         title="오더 수동 발행"
-        onClose={() => setIsCreateOpen(false)}
+        onClose={() => {
+          setIsCreateOpen(false);
+          setNewOrderForm({ plate: "", orderGroup: "수시", orderType: "수시세차", washType: "외부" });
+          setFoundVehicle(null);
+        }}
         footer={
-          <Button onClick={handleCreateOrder} className="w-full">발행하기</Button>
+          <Button onClick={handleCreateOrder} className="w-full" disabled={!foundVehicle}>발행하기</Button>
         }
       >
         <div className="space-y-4">
@@ -2211,13 +2306,46 @@ function OrdersPage({ quickStatus, onClearQuickStatus, initialOrderId, orders, s
                 <label className="text-xs font-semibold text-[#6B778C]">차량번호 *</label>
                 <Input value={newOrderForm.plate} onChange={e => setNewOrderForm({...newOrderForm, plate: e.target.value})} placeholder="예: 12가3456" />
               </div>
+              
+              {foundVehicle ? (
+                <div className="space-y-3 rounded-lg border border-blue-200 bg-blue-50 p-4 animate-in fade-in-50">
+                  <div className="text-xs font-bold text-blue-800">조회된 차량 정보</div>
+                  <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+                    <div>
+                      <div className="text-xs text-blue-700">차종</div>
+                      <div className="font-medium text-blue-900">{foundVehicle.model}</div>
+                    </div>
+                    <div>
+                      <div className="text-xs text-blue-700">존이름</div>
+                      <div className="font-medium text-blue-900">{foundVehicle.zoneName}</div>
+                    </div>
+                    <div className="col-span-2">
+                      <div className="text-xs text-blue-700">담당 파트너</div>
+                      <div className="font-medium text-blue-900">{foundVehicle.partner}</div>
+                    </div>
+                  </div>
+                </div>
+              ) : newOrderForm.plate.trim() ? (
+                 <div className="rounded-lg border border-rose-200 bg-rose-50 p-3 text-center text-xs font-medium text-rose-700 animate-in fade-in-50">
+                   일치하는 차량 정보가 없습니다.
+                 </div>
+              ) : null}
+
               <div className="space-y-1">
-                <label className="text-xs font-semibold text-[#6B778C]">차종</label>
-                <Input value={newOrderForm.model} onChange={e => setNewOrderForm({...newOrderForm, model: e.target.value})} placeholder="예: 아반떼" />
+                <label className="text-xs font-semibold text-[#6B778C]">오더구분</label>
+                <Select value={newOrderForm.orderGroup} onChange={e => setNewOrderForm({...newOrderForm, orderGroup: e.target.value})}>
+                  {orderGroups.map((g) => (
+                    <option key={g} value={g}>{g}</option>
+                  ))}
+                </Select>
               </div>
               <div className="space-y-1">
-                <label className="text-xs font-semibold text-[#6B778C]">존이름 *</label>
-                <Input value={newOrderForm.zone} onChange={e => setNewOrderForm({...newOrderForm, zone: e.target.value})} placeholder="예: 강남역 1번존" />
+                <label className="text-xs font-semibold text-[#6B778C]">오더유형</label>
+                <Select value={newOrderForm.orderType} onChange={e => setNewOrderForm({...newOrderForm, orderType: e.target.value})}>
+                  {orderTypes.map((t) => (
+                    <option key={t} value={t}>{t}</option>
+                  ))}
+                </Select>
               </div>
               <div className="space-y-1">
                 <label className="text-xs font-semibold text-[#6B778C]">세차유형</label>
@@ -2809,10 +2937,10 @@ function MissionsPage({ missions, setMissions, orders }) {
     },
     { key: "id", header: "미션 ID" },
     { key: "plate", header: "차량번호" },
-    { key: "model", header: "차종" },
-    { key: "region1", header: "지역1" },
-    { key: "region2", header: "지역2" },
-    { key: "zoneName", header: "존이름" },
+    { key: "model", header: "차종", render: (r) => r.status === 'pending' ? <span className="text-slate-400">-</span> : r.model },
+    { key: "region1", header: "지역1", render: (r) => r.status === 'pending' ? <span className="text-slate-400">-</span> : r.region1 },
+    { key: "region2", header: "지역2", render: (r) => r.status === 'pending' ? <span className="text-slate-400">-</span> : r.region2 },
+    { key: "zoneName", header: "존이름", render: (r) => r.status === 'pending' ? <span className="text-slate-400">-</span> : r.zoneName },
     { key: "content", header: "미션 내용" },
     { key: "amount", header: "금액", render: (r) => `${(r.amount || 0).toLocaleString()}원` },
     { 
@@ -2827,13 +2955,13 @@ function MissionsPage({ missions, setMissions, orders }) {
     { 
       key: "linkedOrderId", 
       header: "연결된 오더",
-      render: (r) => r.linkedOrderId ? (
+      render: (r) => r.status === 'pending' ? <span className="text-slate-400">-</span> : r.linkedOrderId ? (
         <Button variant="ghost" size="sm" className="h-6 px-2 text-xs text-[#0052CC]" onClick={() => window.open(`/?page=orders&orderId=${r.linkedOrderId}`, "_blank")}>
           {r.linkedOrderId} <ExternalLink className="ml-1 h-3 w-3" />
         </Button>
       ) : <span className="text-[#B3BAC5] text-xs">-</span>
     },
-    { key: "createdAt", header: "등록일" },
+    { key: "createdAt", header: "등록일", render: (r) => r.status === 'pending' ? <span className="text-slate-400">-</span> : r.createdAt },
   ];
 
   return (
@@ -3058,6 +3186,30 @@ function MissionsPage({ missions, setMissions, orders }) {
                 <Field label="등록일" value={selected.createdAt} />
               </CardContent>
             </Card>
+
+            {/* Photo Section */}
+            {selected.requiresPhoto && selected.status === 'completed' && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>사진 정보</CardTitle>
+                  <CardDescription>미션 수행 증빙 사진</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-3 gap-2">
+                    {[1, 2, 3].map((i) => (
+                      <button key={i} className="group relative aspect-square overflow-hidden rounded-lg bg-[#F4F5F7] border border-[#DFE1E6]">
+                        <div className="flex h-full w-full items-center justify-center text-[#B3BAC5]">
+                          <ImageIcon className="h-6 w-6" />
+                        </div>
+                        <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
+                          <Maximize2 className="h-5 w-5 text-white" />
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
 
             {selected.status === 'completed' && (
               <Card>

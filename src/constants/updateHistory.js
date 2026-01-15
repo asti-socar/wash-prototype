@@ -1,4 +1,6 @@
 export const BROWN_HISTORY = [
+  { id: 51, date: "2026-01-15 22:14", content: "[기능] 오더 수동 발행 기능 고도화: 차량번호 유효성 체크 및 차량 기본정보 조회", isPolicyChange: true, links:  [{ label: "오더 관리", page: "orders" }] },
+  { id: 50, date: "2026-01-15 21:59", content: "[기능] 오더 수동 발행 기능 고도화: 발행 옵션(오더구분/유형) 선택 기능 추가", isPolicyChange: true, links:  [{ label: "오더 관리", page: "orders" }] },
   { id: 49, date: "2026-01-15 21:20", content: "[버그수정] 모바일 브라우저 초기 DIM 중첩 현상 해결 및 레이아웃 z-index 최적화", isPolicyChange: false, links: [] },
   { id: 48, date: "2026-01-15 18:27", content: "[Hotfix] 검색 필터 UI 스타일 충돌 수정: Select/Input 너비 강제 적용 (!important)", isPolicyChange: false, links: [] },
   { id: 47, date: "2026-01-15 18:25", content: "[UI/버그수정] 검색 필터 레이아웃 중첩 문제 해결 및 카테고리별 검색 UI 정교화", isPolicyChange: false, links: [] },
