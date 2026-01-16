@@ -42,11 +42,13 @@ import {
 } from "lucide-react";
 
 import { BROWN_HISTORY, ASTI_HISTORY } from "./constants/updateHistory";
-import PartnersPage from "./PartnersPage";
 import Dashboard from "./pages/Dashboard";
 import OrdersPage from "./pages/OrdersPage";
 import MissionsPage from "./pages/MissionsPage";
 import CarsPage from "./pages/CarsPage";
+import PartnersPage from './pages/PartnersPage';
+import PartnerManagersPage from './pages/PartnerManagersPage';
+import WorkersPage from './pages/WorkersPage';
 
 /**
  * util
@@ -481,22 +483,6 @@ function TabsContent({ value, currentValue, children, className }) {
  * Constants & Enums
  */
 
-// Mock Data for Vehicles (Shared)
-const MOCK_VEHICLES = [
-  { plate: "12가3456", zoneName: "강남역 1번존", zoneId: "Z-1001", region1: "서울", region2: "강남", partner: "A파트너명", activeOrderId: "O-90001", activeOrderStatus: "예약", lastWash: "2026-01-10", model: "아반떼 AD", isRechargeGuaranteed: false },
-  { plate: "34나7890", zoneName: "잠실역 2번존", zoneId: "Z-1002", region1: "서울", region2: "송파", partner: "B파트너명", activeOrderId: null, activeOrderStatus: null, lastWash: "2026-01-08", model: "K5", isRechargeGuaranteed: false },
-  { plate: "56다1122", zoneName: "홍대입구 3번존", zoneId: "Z-1003", region1: "서울", region2: "마포", partner: "A파트너명", activeOrderId: "O-90003", activeOrderStatus: "미배정", lastWash: "2026-01-05", model: "쏘나타", isRechargeGuaranteed: false },
-  { plate: "78라3344", zoneName: "판교 1번존", zoneId: "Z-2001", region1: "경기", region2: "성남", partner: "C파트너명", activeOrderId: "O-90004", activeOrderStatus: "입고 중", lastWash: "2026-01-09", model: "아이오닉5", isRechargeGuaranteed: true },
-  { plate: "90마5566", zoneName: "수원역 2번존", zoneId: "Z-2002", region1: "경기", region2: "수원", partner: "B파트너명", activeOrderId: null, activeOrderStatus: null, lastWash: "2026-01-07", model: "스포티지", isRechargeGuaranteed: false },
-  { plate: "11바7788", zoneName: "부산역 1번존", zoneId: "Z-3001", region1: "부산", region2: "동구", partner: "D파트너명", activeOrderId: "O-90006", activeOrderStatus: "미배정", lastWash: "2026-01-03", model: "그랜저", isRechargeGuaranteed: false },
-  { plate: "22사9900", zoneName: "해운대 2번존", zoneId: "Z-3002", region1: "부산", region2: "해운대", partner: "D파트너명", activeOrderId: "O-90007", activeOrderStatus: "예약", lastWash: "2026-01-11", model: "레이", isRechargeGuaranteed: false },
-  { plate: "33아1212", zoneName: "대전역 1번존", zoneId: "Z-4001", region1: "대전", region2: "동구", partner: "C파트너명", activeOrderId: null, activeOrderStatus: null, lastWash: "2026-01-06", model: "카니발", isRechargeGuaranteed: false },
-  { plate: "44자3434", zoneName: "청주 2번존", zoneId: "Z-5002", region1: "충북", region2: "청주", partner: "B파트너명", activeOrderId: "O-90009", activeOrderStatus: "미배정", lastWash: "2026-01-02", model: "모닝", isRechargeGuaranteed: false },
-  { plate: "55차5656", zoneName: "광주 1번존", zoneId: "Z-6001", region1: "광주", region2: "서구", partner: "A파트너명", activeOrderId: "O-90010", activeOrderStatus: "예약", lastWash: "2026-01-09", model: "EV6", isRechargeGuaranteed: false },
-  { plate: "66카7878", zoneName: "인천공항 1번존", zoneId: "Z-7001", region1: "인천", region2: "중구", partner: "C파트너명", activeOrderId: null, activeOrderStatus: null, lastWash: "2026-01-08", model: "티볼리", isRechargeGuaranteed: false },
-  { plate: "77타9090", zoneName: "제주공항 1번존", zoneId: "Z-8001", region1: "제주", region2: "제주시", partner: "D파트너명", activeOrderId: "O-90012", activeOrderStatus: "미배정", lastWash: "2026-01-01", model: "셀토스", isRechargeGuaranteed: false },
-];
-
 /**
  * Navigation model (IA)
  */
@@ -545,7 +531,7 @@ const NAV = [
     icon: Folder,
     items: [
       { key: "partners", label: "파트너 관리", icon: Building2, parentKey: 'info-management' },
-      { key: "partner-managers", label: "파트너 담당자 조회", icon: Users, parentKey: 'info-management' },
+      { key: "partner-managers", label: "파트너 담당자 관리", icon: Users, parentKey: 'info-management' },
       { key: "workers", label: "수행원 조회", icon: UserCog, parentKey: 'info-management' },
     ]
   },
@@ -565,7 +551,7 @@ const PAGE_TITLES = {
   lostfound: "분실물 관리",
   notices: "공지 관리(CMS)",
   partners: "파트너 관리",
-  "partner-managers": "파트너 담당자 조회",
+  "partner-managers": "파트너 담당자 관리",
   workers: "수행원 조회",
 };
 
@@ -1505,264 +1491,6 @@ function LostFoundPage() {
             </CardContent>
           </Card>
         </div>
-      </Drawer>
-    </div>
-  );
-}
-
-/**
- * 파트너 담당자 조회
- */
-function PartnerManagersPage() {
-  const [managers, setManagers] = useState([
-    { id: 'PM-001', name: '김담당', partner: 'A파트너명', type: '관리자', lastLogin: '2026-01-14', assignedZones: ['Z-1001', 'Z-1003', 'Z-6001'] },
-    { id: 'PM-002', name: '이담당', partner: 'B파트너명', type: '관리자', lastLogin: '2026-01-15', assignedZones: ['Z-1002', 'Z-2002', 'Z-5002'] },
-    { id: 'PM-003', name: '박수행', partner: 'A파트너명', type: '수행원', lastLogin: '2026-01-13', assignedZones: ['Z-1001'] },
-    { id: 'PM-004', name: '최매니저', partner: 'C파트너명', type: '관리자', lastLogin: '2025-12-20', assignedZones: ['Z-2001', 'Z-4001', 'Z-7001'] },
-  ]);
-
-  const [selected, setSelected] = useState(null);
-  const [fPartner, setFPartner] = useState("");
-  const [fType, setFType] = useState("");
-  const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
-
-  const partners = useMemo(() => Array.from(new Set(managers.map(m => m.partner))), [managers]);
-  const types = ['관리자', '수행원'];
-
-  const filteredData = useMemo(() => {
-    return managers.filter(m => {
-      const matchPartner = !fPartner || m.partner === fPartner;
-      const matchType = !fType || m.type === fType;
-      return matchPartner && matchType;
-    });
-  }, [managers, fPartner, fType]);
-
-  const sortedData = useMemo(() => {
-    if (!sortConfig.key) return filteredData;
-    return [...filteredData].sort((a, b) => {
-      const aVal = a[sortConfig.key] || "";
-      const bVal = b[sortConfig.key] || "";
-      if (aVal < bVal) return sortConfig.direction === 'asc' ? -1 : 1;
-      if (aVal > bVal) return sortConfig.direction === 'asc' ? 1 : -1;
-      return 0;
-    });
-  }, [filteredData, sortConfig]);
-
-  const handleSort = (key) => {
-    setSortConfig(prev => ({
-      key,
-      direction: prev.key === key && prev.direction === 'asc' ? 'desc' : 'asc',
-    }));
-  };
-
-  const handleDelete = () => {
-    if (!selected) return;
-    if (!window.confirm(`${selected.name} 담당자를 삭제하시겠습니까?`)) return;
-    setManagers(prev => prev.filter(m => m.id !== selected.id));
-    setSelected(null);
-  };
-
-  const { currentData, currentPage, totalPages, setCurrentPage, totalItems } = usePagination(sortedData, 40);
-
-  const columns = [
-    { key: 'name', header: '성명' },
-    { key: 'partner', header: '소속 파트너사' },
-    { key: 'type', header: '유형' },
-    { key: 'assignedZones', header: '배정된 쏘카존', render: r => `${r.assignedZones.length}개` },
-    { key: 'lastLogin', header: '마지막 접속일' },
-  ];
-
-  return (
-    <div className="space-y-4">
-      <div>
-        <div className="text-base font-bold text-[#172B4D]">파트너 담당자 조회</div>
-        <div className="mt-1 text-sm text-[#6B778C]">파트너사에 소속된 인력 규모와 조직 구조를 파악합니다.</div>
-      </div>
-
-      <Card>
-        <CardHeader><CardTitle>필터</CardTitle></CardHeader>
-        <CardContent className="grid grid-cols-1 gap-3 md:grid-cols-12">
-          <div className="md:col-span-5">
-            <Select value={fPartner} onChange={e => setFPartner(e.target.value)}>
-              <option value="">소속 파트너사 전체</option>
-              {partners.map(p => <option key={p} value={p}>{p}</option>)}
-            </Select>
-          </div>
-          <div className="md:col-span-5">
-            <Select value={fType} onChange={e => setFType(e.target.value)}>
-              <option value="">계정 유형 전체</option>
-              {types.map(t => <option key={t} value={t}>{t}</option>)}
-            </Select>
-          </div>
-          <div className="md:col-span-2 flex justify-end">
-            <Button variant="secondary" onClick={() => { setFPartner(""); setFType(""); }}>초기화</Button>
-          </div>
-        </CardContent>
-      </Card>
-
-      <div className="flex items-center justify-between mb-2">
-        <div className="text-sm text-[#6B778C]">전체 건수 <b className="text-[#172B4D]">{totalItems.toLocaleString()}</b>건</div>
-        <div className="text-xs text-[#6B778C]">현재 페이지 ({currentPage}/{totalPages})</div>
-      </div>
-      <DataTable columns={columns} rows={currentData} rowKey={r => r.id} onRowClick={setSelected} sortConfig={sortConfig} onSort={handleSort} />
-      <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
-
-      <Drawer 
-        open={!!selected} 
-        title="담당자 상세" 
-        onClose={() => setSelected(null)} 
-        footer={
-          <>
-            <Button variant="secondary" onClick={() => setSelected(null)}>닫기</Button>
-            <Button variant="danger" onClick={handleDelete}><Trash2 className="mr-2 h-4 w-4" />삭제</Button>
-          </>
-        }
-      >
-        {selected && (
-          <div className="space-y-4">
-            <Card>
-              <CardHeader><CardTitle>프로필 정보</CardTitle></CardHeader>
-              <CardContent className="space-y-2 text-sm">
-                <Field label="성명" value={selected.name} />
-                <Field label="소속" value={selected.partner} />
-                <Field label="유형" value={selected.type} />
-                <Field label="마지막 접속" value={selected.lastLogin} />
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader><CardTitle>배정된 쏘카존 목록 ({selected.assignedZones.length}개)</CardTitle></CardHeader>
-              <CardContent>
-                {selected.assignedZones.length > 0 ? (
-                  <ul className="max-h-96 overflow-y-auto space-y-1 rounded-lg border border-[#E2E8F0] p-2 bg-slate-50">
-                    {selected.assignedZones.map(zoneId => {
-                      const zone = MOCK_VEHICLES.find(v => v.zoneId === zoneId);
-                      return (
-                        <li key={zoneId} className="px-2 py-1.5 text-sm text-[#172B4D]">
-                          {zone ? `${zone.zoneName} (${zoneId})` : zoneId}
-                        </li>
-                      );
-                    })}
-                  </ul>
-                ) : (
-                  <div className="text-center text-sm text-[#6B778C] py-4">배정된 쏘카존이 없습니다.</div>
-                )}
-              </CardContent>
-            </Card>
-          </div>
-        )}
-      </Drawer>
-    </div>
-  );
-}
-
-/**
- * 수행원 조회
- */
-function WorkersPage() {
-  const [workers, setWorkers] = useState([
-    { id: 'W-001', name: '최수행', partner: 'A파트너명', zoneName: '강남역 1번존', zoneId: 'Z-1001', region: '서울', score: 95 },
-    { id: 'W-002', name: '강수행', partner: 'B파트너명', zoneName: '잠실역 2번존', zoneId: 'Z-1002', region: '서울', score: 88 },
-    { id: 'W-003', name: '한수행', partner: 'C파트너명', zoneName: '판교 1번존', zoneId: 'Z-2001', region: '경기', score: 92 },
-    { id: 'W-004', name: '오수행', partner: 'D파트너명', zoneName: '해운대 2번존', zoneId: 'Z-3002', region: '부산', score: 98 },
-  ]);
-
-  const [selected, setSelected] = useState(null);
-  const [fRegion, setFRegion] = useState("");
-  const [fPartner, setFPartner] = useState("");
-  const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
-
-  const regions = useMemo(() => Array.from(new Set(workers.map(w => w.region))), [workers]);
-  const partners = useMemo(() => Array.from(new Set(workers.map(w => w.partner))), [workers]);
-
-  const filteredData = useMemo(() => {
-    return workers.filter(w => {
-      const matchRegion = !fRegion || w.region === fRegion;
-      const matchPartner = !fPartner || w.partner === fPartner;
-      return matchRegion && matchPartner;
-    });
-  }, [workers, fRegion, fPartner]);
-
-  const sortedData = useMemo(() => {
-    if (!sortConfig.key) return filteredData;
-    return [...filteredData].sort((a, b) => {
-      const aVal = a[sortConfig.key] || "";
-      const bVal = b[sortConfig.key] || "";
-      if (aVal < bVal) return sortConfig.direction === 'asc' ? -1 : 1;
-      if (aVal > bVal) return sortConfig.direction === 'asc' ? 1 : -1;
-      return 0;
-    });
-  }, [filteredData, sortConfig]);
-
-  const handleSort = (key) => {
-    setSortConfig(prev => ({
-      key,
-      direction: prev.key === key && prev.direction === 'asc' ? 'desc' : 'asc',
-    }));
-  };
-
-  const { currentData, currentPage, totalPages, setCurrentPage, totalItems } = usePagination(sortedData, 40);
-
-  const columns = [
-    { key: 'name', header: '수행원 성명' },
-    { key: 'partner', header: '소속 파트너사' },
-    { key: 'zoneName', header: '배정된 쏘카존' },
-    { key: 'score', header: '수행 점수' },
-  ];
-
-  return (
-    <div className="space-y-4">
-      <div>
-        <div className="text-base font-bold text-[#172B4D]">수행원 조회 (View Only)</div>
-        <div className="mt-1 text-sm text-[#6B778C]">현장 수행원의 배치 현황을 모니터링하고 품질 이슈 발생 시 피드백 근거로 활용합니다.</div>
-      </div>
-
-      <Card>
-        <CardHeader><CardTitle>필터</CardTitle></CardHeader>
-        <CardContent className="grid grid-cols-1 gap-3 md:grid-cols-12">
-          <div className="md:col-span-5">
-            <Select value={fRegion} onChange={e => setFRegion(e.target.value)}>
-              <option value="">지역별 조회 전체</option>
-              {regions.map(r => <option key={r} value={r}>{r}</option>)}
-            </Select>
-          </div>
-          <div className="md:col-span-5">
-            <Select value={fPartner} onChange={e => setFPartner(e.target.value)}>
-              <option value="">소속 파트너사 전체</option>
-              {partners.map(p => <option key={p} value={p}>{p}</option>)}
-            </Select>
-          </div>
-          <div className="md:col-span-2 flex justify-end">
-            <Button variant="secondary" onClick={() => { setFRegion(""); setFPartner(""); }}>초기화</Button>
-          </div>
-        </CardContent>
-      </Card>
-
-      <div className="flex items-center justify-between mb-2">
-        <div className="text-sm text-[#6B778C]">전체 건수 <b className="text-[#172B4D]">{totalItems.toLocaleString()}</b>건</div>
-        <div className="text-xs text-[#6B778C]">현재 페이지 ({currentPage}/{totalPages})</div>
-      </div>
-      <DataTable columns={columns} rows={currentData} rowKey={r => r.id} onRowClick={setSelected} sortConfig={sortConfig} onSort={handleSort} />
-      <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
-
-      <Drawer open={!!selected} title="수행원 상세 (View Only)" onClose={() => setSelected(null)} footer={<Button variant="secondary" onClick={() => setSelected(null)}>닫기</Button>}>
-        {selected && (
-          <div className="space-y-4">
-            <Card>
-              <CardHeader><CardTitle>기본 정보</CardTitle></CardHeader>
-              <CardContent className="space-y-2 text-sm">
-                <Field label="수행원 성명" value={selected.name} />
-                <Field label="소속 파트너사" value={selected.partner} />
-                <Field label="수행 점수" value={`${selected.score}점`} />
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader><CardTitle>배정된 쏘카존</CardTitle></CardHeader>
-              <CardContent>
-                <div className="rounded-lg bg-slate-50 p-3 text-sm text-[#172B4D]">{selected.zoneName} ({selected.zoneId})</div>
-              </CardContent>
-            </Card>
-          </div>
-        )}
       </Drawer>
     </div>
   );
