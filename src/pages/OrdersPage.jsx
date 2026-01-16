@@ -34,6 +34,16 @@ function toYmd(d) {
   return `${y}-${m}-${day}`;
 }
 
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 640);
+  useEffect(() => {
+    const checkIsMobile = () => setIsMobile(window.innerWidth < 640);
+    window.addEventListener('resize', checkIsMobile);
+    return () => window.removeEventListener('resize', checkIsMobile);
+  }, []);
+  return isMobile;
+}
+
 /**
  * shadcn-ish minimal UI (Tailwind only)
  */
@@ -130,29 +140,22 @@ function Chip({ children, onRemove }) {
  * Drawer
  */
 function Drawer({ open, title, onClose, children, footer }) {
+  const isMobile = useIsMobile();
   const [width, setWidth] = useState(600);
   const [isResizing, setIsResizing] = useState(false);
 
   useEffect(() => {
-    if (open) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'auto';
-    }
-    return () => {
-      document.body.style.overflow = 'auto';
-    };
+    if (open) document.body.style.overflow = 'hidden';
+    else document.body.style.overflow = 'auto';
+    return () => { document.body.style.overflow = 'auto'; };
   }, [open]);
 
   useEffect(() => {
+    if (isMobile) return;
     const handleMouseMove = (e) => {
       if (!isResizing) return;
       const newWidth = window.innerWidth - e.clientX;
-      const minWidth = window.innerWidth * 0.3;
-      const maxWidth = window.innerWidth * 0.9;
-      if (newWidth >= minWidth && newWidth <= maxWidth) {
-        setWidth(newWidth);
-      }
+      if (newWidth >= 400 && newWidth <= 1200) setWidth(newWidth);
     };
     const handleMouseUp = () => {
       setIsResizing(false);
@@ -168,47 +171,28 @@ function Drawer({ open, title, onClose, children, footer }) {
       document.removeEventListener("mouseup", handleMouseUp);
       document.body.style.cursor = "default";
     };
-  }, [isResizing]);
+  }, [isResizing, isMobile]);
 
   if (!open) return null;
 
   return (
-    <>
-      <div
-        className="fixed inset-0 bg-black/30 z-40"
-        onClick={onClose}
-        aria-hidden="true"
-      />
-      <div
-        className="fixed top-0 right-0 h-full bg-white shadow-2xl flex flex-col z-50"
-        style={{ width, maxWidth: "100vw" }}
-      >
-        <div
-          className="absolute left-0 top-0 bottom-0 w-1.5 cursor-col-resize hover:bg-[#0052CC] transition-colors z-50"
-          onMouseDown={(e) => {
-            e.preventDefault();
-            setIsResizing(true);
-          }}
-        />
-        <div className="flex h-16 items-center justify-between border-b border-[#DFE1E6] px-6 shrink-0">
-          <div className="min-w-0">
+    <div className="fixed inset-0 z-40">
+      <div className="absolute inset-0 bg-black/30" onClick={onClose} />
+      <div className="fixed top-0 right-0 z-50 h-full w-full bg-white shadow-2xl flex flex-col sm:w-auto" style={!isMobile ? { width } : {}}>
+        {!isMobile && (
+          <div className="absolute left-0 top-0 bottom-0 w-1.5 cursor-col-resize hover:bg-[#0052CC] transition-colors z-50" onMouseDown={(e) => { e.preventDefault(); setIsResizing(true); }} />
+        )}
+        <div className="flex h-16 items-center justify-between border-b border-[#DFE1E6] px-4 sm:px-6 shrink-0">
+          <div className="min-w-0 flex-1 pr-4">
             <div className="truncate text-sm font-bold text-[#0052CC]">{title}</div>
             <div className="truncate text-xs text-[#6B778C]">우측 Drawer 상세</div>
           </div>
-          <button
-            className="p-2 text-gray-500 rounded-full hover:bg-gray-100 focus:outline-none transition-colors"
-            onClick={onClose}
-            aria-label="Close"
-          >
-            <X className="h-6 w-6" />
-          </button>
+          <button className="p-2 text-gray-500 rounded-full hover:bg-gray-100" onClick={onClose}><X className="h-6 w-6" /></button>
         </div>
-        <div className="flex-1 overflow-y-auto p-6">{children}</div>
-        <div className="flex h-[72px] items-center justify-end gap-2 border-t border-[#DFE1E6] px-6 bg-[#F4F5F7] shrink-0">
-          {footer}
-        </div>
+        <div className="flex-1 overflow-y-auto p-4 sm:p-6">{children}</div>
+        <div className="shrink-0 border-t border-[#DFE1E6] bg-gray-50 p-4 sm:px-6 sm:py-4">{footer}</div>
       </div>
-    </>
+    </div>
   );
 }
 
@@ -648,8 +632,8 @@ function OrdersPage({ quickStatus, onClearQuickStatus, initialOrderId, orders, s
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 gap-3 md:grid-cols-12">
-            <div className="md:col-span-4">
+          <div className="flex flex-wrap gap-4">
+            <div className="w-full lg:flex-1 lg:min-w-[320px]">
               <div className="flex items-center gap-2">
                 <Select className="!w-40 shrink-0" value={searchField} onChange={e => setSearchField(e.target.value)}>
                   <option value="plate">차량번호</option>
@@ -671,51 +655,53 @@ function OrdersPage({ quickStatus, onClearQuickStatus, initialOrderId, orders, s
               </div>
             </div>
 
-            <div className="md:col-span-4 flex items-center gap-2">
+            <div className="w-full lg:flex-1 lg:min-w-[320px] flex flex-wrap items-center gap-x-4 gap-y-2">
               <label htmlFor="periodFrom" className="text-sm font-medium text-[#475569] shrink-0">발행일</label>
-              <Input id="periodFrom" type="date" value={periodFrom} onChange={(e) => setPeriodFrom(e.target.value)} />
-              <span className="text-[#6B778C]">~</span>
-              <Input type="date" value={periodTo} onChange={(e) => setPeriodTo(e.target.value)} />
+              <div className="flex items-center gap-2 w-full sm:w-auto flex-1">
+                <Input id="periodFrom" type="date" value={periodFrom} onChange={(e) => setPeriodFrom(e.target.value)} className="min-w-0"/>
+                <span className="text-gray-500">~</span>
+                <Input type="date" value={periodTo} onChange={(e) => setPeriodTo(e.target.value)} className="min-w-0"/>
+              </div>
             </div>
 
-            <div className="md:col-span-2">
+            <div className="w-full sm:w-auto sm:flex-1 lg:min-w-[160px]">
               <Select value={fRegion1} onChange={(e) => { setFRegion1(e.target.value); setFRegion2(""); }}>
                 <option value="">지역1 전체</option>
                 {regions1.map((v) => <option key={v} value={v}>{v}</option>)}
               </Select>
             </div>
-            <div className="md:col-span-2">
+            <div className="w-full sm:w-auto sm:flex-1 lg:min-w-[160px]">
               <Select value={fRegion2} onChange={(e) => setFRegion2(e.target.value)}>
                 <option value="">지역2 전체</option>
                 {regions2.map((v) => <option key={v} value={v}>{v}</option>)}
               </Select>
             </div>
 
-            <div className="md:col-span-2">
+            <div className="w-full sm:w-auto sm:flex-1 lg:min-w-[160px]">
               <Select value={fOrderGroup} onChange={(e) => setFOrderGroup(e.target.value)}>
                 <option value="">오더구분 전체</option>
                 {orderGroups.map((v) => <option key={v} value={v}>{v}</option>)}
               </Select>
             </div>
-            <div className="md:col-span-2">
+            <div className="w-full sm:w-auto sm:flex-1 lg:min-w-[160px]">
               <Select value={fOrderType} onChange={(e) => setFOrderType(e.target.value)}>
                 <option value="">오더유형 전체</option>
                 {orderTypes.map((v) => <option key={v} value={v}>{v}</option>)}
               </Select>
             </div>
-            <div className="md:col-span-2">
+            <div className="w-full sm:w-auto sm:flex-1 lg:min-w-[160px]">
               <Select value={fWashType} onChange={(e) => setFWashType(e.target.value)}>
                 <option value="">세차유형 전체</option>
                 {washTypes.map((v) => <option key={v} value={v}>{v}</option>)}
               </Select>
             </div>
-            <div className="md:col-span-2">
+            <div className="w-full sm:w-auto sm:flex-1 lg:min-w-[160px]">
               <Select value={fPartner} onChange={(e) => setFPartner(e.target.value)}>
                 <option value="">파트너명 전체</option>
                 {partners.map((v) => <option key={v} value={v}>{v}</option>)}
               </Select>
             </div>
-            <div className="md:col-span-2">
+            <div className="w-full sm:w-auto sm:flex-1 lg:min-w-[160px]">
               <Select value={fPartnerType} onChange={(e) => {
                 const newType = e.target.value;
                 setFPartnerType(newType);
@@ -738,14 +724,14 @@ function OrdersPage({ quickStatus, onClearQuickStatus, initialOrderId, orders, s
                 <option value="입고">입고</option>
               </Select>
             </div>
-            <div className="md:col-span-2">
+            <div className="w-full sm:w-auto sm:flex-1 lg:min-w-[160px]">
               <Select value={fStatus} onChange={(e) => { setFStatus(e.target.value); onClearQuickStatus(); }}>
                 <option value="">진행상태 전체</option>
                 {currentStatuses.map((v) => <option key={v} value={v}>{v}</option>)}
               </Select>
             </div>
 
-            <div className="md:col-span-12 flex flex-wrap items-center justify-between gap-2 pt-1">
+            <div className="w-full flex flex-wrap items-center justify-between gap-2 pt-1">
               {chips}
               <Button
                 variant="secondary"
@@ -789,10 +775,11 @@ function OrdersPage({ quickStatus, onClearQuickStatus, initialOrderId, orders, s
         title={selected ? `오더 상세 - ${selected.orderId}` : "오더 상세"}
         onClose={() => { setSelected(null); setDeleteModalOpen(false); setDeleteReason(""); setDrawerTab("info"); }}
         footer={
-          <>
-            <Button variant="secondary" onClick={() => setSelected(null)}>닫기</Button>
+          <div className="flex w-full flex-col-reverse sm:flex-row sm:justify-end gap-2">
+            <Button variant="secondary" onClick={() => setSelected(null)} className="w-full sm:w-auto">닫기</Button>
             {selected?.status !== "완료" && selected?.status !== "취소" && drawerTab === "info" && (
               <Button
+                className="w-full sm:w-auto"
                 onClick={() => {
                   // 오더 완료 처리 로직
                   const updatedOrders = orders.map(o => o.orderId === selected.orderId ? { ...o, status: "완료", completedAt: new Date().toISOString().substring(0, 16).replace('T', ' ') } : o);
@@ -811,11 +798,11 @@ function OrdersPage({ quickStatus, onClearQuickStatus, initialOrderId, orders, s
                 <CheckCircle className="mr-2 h-4 w-4" /> 수행 완료
               </Button>
             )}
-            <Button variant="danger" onClick={() => setDeleteModalOpen(true)}>
+            <Button variant="danger" onClick={() => setDeleteModalOpen(true)} className="w-full sm:w-auto">
               <Trash2 className="mr-2 h-4 w-4" />
               오더 삭제
             </Button>
-          </>
+          </div>
         }
       >
         {selected ? (

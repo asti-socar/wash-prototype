@@ -335,10 +335,10 @@ function PartnerDetailDrawer({ partner, onClose, onSave }) {
   return (
     <Drawer open={!!partner} title={partner.partnerName ? `파트너 상세 - ${partner.partnerName}` : "신규 파트너 등록"} onClose={onClose}
       footer={
-        <>
-          <Button variant="secondary" onClick={onClose}>닫기</Button>
-          <Button onClick={() => onSave(formData)}>{isEditing ? '수정하기' : '등록하기'}</Button>
-        </>
+        <div className="flex w-full flex-col-reverse sm:flex-row sm:justify-end gap-2">
+          <Button variant="secondary" onClick={onClose} className="w-full sm:w-auto">닫기</Button>
+          <Button onClick={() => onSave(formData)} className="w-full sm:w-auto">{isEditing ? '수정하기' : '등록하기'}</Button>
+        </div>
       }
     >
       <Tabs value={activeTab}>

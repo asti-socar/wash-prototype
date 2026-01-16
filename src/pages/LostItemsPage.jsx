@@ -6,6 +6,19 @@ import {
 /**
  * Utility & UI Components
  */
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 640);
+  useEffect(() => {
+    const checkIsMobile = () => setIsMobile(window.innerWidth < 640);
+    window.addEventListener('resize', checkIsMobile);
+    return () => window.removeEventListener('resize', checkIsMobile);
+  }, []);
+  return isMobile;
+}
+
+/**
+ * Utility & UI Components
+ */
 function cn(...classes) { return classes.filter(Boolean).join(" "); }
 
 function Card({ className, children }) {
@@ -219,9 +232,13 @@ export default function LostItemsPage() {
         onClose={() => { setSelected(null); setIsRegistering(false); }}
         footer={
           isRegistering ? (
-            <Button onClick={() => { alert("등록되었습니다(프로토타입)"); setIsRegistering(false); }}>등록</Button>
+            <div className="flex w-full justify-end">
+              <Button className="w-full sm:w-auto" onClick={() => { alert("등록되었습니다(프로토타입)"); setIsRegistering(false); }}>등록하기</Button>
+            </div>
           ) : (
-            <Button onClick={() => { alert("수정되었습니다(프로토타입)"); setSelected(null); }}>저장</Button>
+            <div className="flex w-full justify-end">
+              <Button className="w-full sm:w-auto" onClick={() => { alert("수정되었습니다(프로토타입)"); setSelected(null); }}>수정하기</Button>
+            </div>
           )
         }
       >

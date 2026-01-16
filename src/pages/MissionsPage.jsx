@@ -29,6 +29,16 @@ function toYmd(d) {
   return `${y}-${m}-${day}`;
 }
 
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 640);
+  useEffect(() => {
+    const checkIsMobile = () => setIsMobile(window.innerWidth < 640);
+    window.addEventListener('resize', checkIsMobile);
+    return () => window.removeEventListener('resize', checkIsMobile);
+  }, []);
+  return isMobile;
+}
+
 /**
  * shadcn-ish minimal UI (Tailwind only)
  */
@@ -113,29 +123,22 @@ function Badge({ children, tone = "default" }) {
  * Drawer
  */
 function Drawer({ open, title, onClose, children, footer }) {
+  const isMobile = useIsMobile();
   const [width, setWidth] = useState(600);
   const [isResizing, setIsResizing] = useState(false);
 
   useEffect(() => {
-    if (open) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'auto';
-    }
-    return () => {
-      document.body.style.overflow = 'auto';
-    };
+    if (open) document.body.style.overflow = 'hidden';
+    else document.body.style.overflow = 'auto';
+    return () => { document.body.style.overflow = 'auto'; };
   }, [open]);
 
   useEffect(() => {
+    if (isMobile) return;
     const handleMouseMove = (e) => {
       if (!isResizing) return;
       const newWidth = window.innerWidth - e.clientX;
-      const minWidth = window.innerWidth * 0.3;
-      const maxWidth = window.innerWidth * 0.9;
-      if (newWidth >= minWidth && newWidth <= maxWidth) {
-        setWidth(newWidth);
-      }
+      if (newWidth >= 400 && newWidth <= 1200) setWidth(newWidth);
     };
     const handleMouseUp = () => {
       setIsResizing(false);
@@ -151,47 +154,28 @@ function Drawer({ open, title, onClose, children, footer }) {
       document.removeEventListener("mouseup", handleMouseUp);
       document.body.style.cursor = "default";
     };
-  }, [isResizing]);
+  }, [isResizing, isMobile]);
 
   if (!open) return null;
 
   return (
-    <>
-      <div
-        className="fixed inset-0 bg-black/30 z-40"
-        onClick={onClose}
-        aria-hidden="true"
-      />
-      <div
-        className="fixed top-0 right-0 h-full bg-white shadow-2xl flex flex-col z-50"
-        style={{ width, maxWidth: "100vw" }}
-      >
-        <div
-          className="absolute left-0 top-0 bottom-0 w-1.5 cursor-col-resize hover:bg-[#0052CC] transition-colors z-50"
-          onMouseDown={(e) => {
-            e.preventDefault();
-            setIsResizing(true);
-          }}
-        />
-        <div className="flex h-16 items-center justify-between border-b border-[#DFE1E6] px-6 shrink-0">
-          <div className="min-w-0">
+    <div className="fixed inset-0 z-40">
+      <div className="absolute inset-0 bg-black/30" onClick={onClose} />
+      <div className="fixed top-0 right-0 z-50 h-full w-full bg-white shadow-2xl flex flex-col sm:w-auto" style={!isMobile ? { width } : {}}>
+        {!isMobile && (
+          <div className="absolute left-0 top-0 bottom-0 w-1.5 cursor-col-resize hover:bg-[#0052CC] transition-colors z-50" onMouseDown={(e) => { e.preventDefault(); setIsResizing(true); }} />
+        )}
+        <div className="flex h-16 items-center justify-between border-b border-[#DFE1E6] px-4 sm:px-6 shrink-0">
+          <div className="min-w-0 flex-1 pr-4">
             <div className="truncate text-sm font-bold text-[#0052CC]">{title}</div>
             <div className="truncate text-xs text-[#6B778C]">우측 Drawer 상세</div>
           </div>
-          <button
-            className="p-2 text-gray-500 rounded-full hover:bg-gray-100 focus:outline-none transition-colors"
-            onClick={onClose}
-            aria-label="Close"
-          >
-            <X className="h-6 w-6" />
-          </button>
+          <button className="p-2 text-gray-500 rounded-full hover:bg-gray-100" onClick={onClose}><X className="h-6 w-6" /></button>
         </div>
-        <div className="flex-1 overflow-y-auto p-6">{children}</div>
-        <div className="flex h-[72px] items-center justify-end gap-2 border-t border-[#DFE1E6] px-6 bg-[#F4F5F7] shrink-0">
-          {footer}
-        </div>
+        <div className="flex-1 overflow-y-auto p-4 sm:p-6">{children}</div>
+        <div className="shrink-0 border-t border-[#DFE1E6] bg-gray-50 p-4 sm:px-6 sm:py-4">{footer}</div>
       </div>
-    </>
+    </div>
   );
 }
 
@@ -734,12 +718,12 @@ function MissionsPage({ missions, setMissions, orders }) {
         title={selected ? `미션 상세 - ${selected.id}` : "미션 상세"}
         onClose={() => { setSelected(null); setIsDeleting(false); setDeleteReason(""); }}
         footer={
-          <>
-            <Button variant="secondary" onClick={() => setSelected(null)}>닫기</Button>
-            <Button variant="danger" onClick={() => setIsDeleting(true)} disabled={selected?.status === 'completed'}>
+          <div className="flex w-full flex-col-reverse sm:flex-row sm:justify-end gap-2">
+            <Button variant="secondary" onClick={() => setSelected(null)} className="w-full sm:w-auto">닫기</Button>
+            <Button variant="danger" onClick={() => setIsDeleting(true)} disabled={selected?.status === 'completed'} className="w-full sm:w-auto">
               <Trash2 className="mr-2 h-4 w-4" /> 미션 삭제
             </Button>
-          </>
+          </div>
         }
       >
         {selected && (
