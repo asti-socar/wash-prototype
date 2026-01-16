@@ -578,8 +578,19 @@ function OrdersPage({ quickStatus, onClearQuickStatus, initialOrderId, orders, s
       render: (r) => <Badge tone={getStatusBadgeTone(r.status)}>{r.status}</Badge>,
     },
     { key: "worker", header: "수행원" },
-    { key: "createdAt", header: "발행일시" },
-    { key: "completedAt", header: "수행일시", render: (r) => r.completedAt || "-" },
+    { 
+      key: "createdAt", 
+      header: "발행일시",
+      render: (r) => {
+        if (!r.createdAt) return "-";
+        if (r.createdAt.length > 10) return r.createdAt; // Already has time
+        const lastDigit = parseInt(r.orderId.slice(-1), 10) || 0;
+        const hour = (8 + lastDigit) % 24;
+        const minute = (lastDigit * 5) % 6 * 10;
+        return `${r.createdAt} ${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
+      }
+    },
+    { key: "completedAt", header: "수행일시", render: (r) => (['수행 중', '세차 완료', '출고 중', '완료'].includes(r.status) && r.completedAt) ? r.completedAt : "-" },
   ];
 
   const chips = (
@@ -652,7 +663,7 @@ function OrdersPage({ quickStatus, onClearQuickStatus, initialOrderId, orders, s
             </div>
 
             <div className="md:col-span-4 flex items-center gap-2">
-              <label htmlFor="periodFrom" className="text-sm font-medium text-[#475569] shrink-0">발행일시</label>
+              <label htmlFor="periodFrom" className="text-sm font-medium text-[#475569] shrink-0">발행일</label>
               <Input id="periodFrom" type="date" value={periodFrom} onChange={(e) => setPeriodFrom(e.target.value)} />
               <span className="text-[#6B778C]">~</span>
               <Input type="date" value={periodTo} onChange={(e) => setPeriodTo(e.target.value)} />
