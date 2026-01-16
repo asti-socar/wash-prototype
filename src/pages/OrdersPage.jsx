@@ -567,6 +567,8 @@ function OrdersPage({ quickStatus, onClearQuickStatus, initialOrderId, orders, s
     { key: "carId", header: "차량 ID" },
     { key: "model", header: "차종" },
     { key: "plate", header: "차량번호" },
+    { key: "region1", header: "지역1" },
+    { key: "region2", header: "지역2" },
     { key: "zone", header: "존이름" },
     { key: "partner", header: "파트너명" },
     { key: "partnerType", header: "파트너유형" },
@@ -576,6 +578,8 @@ function OrdersPage({ quickStatus, onClearQuickStatus, initialOrderId, orders, s
       render: (r) => <Badge tone={getStatusBadgeTone(r.status)}>{r.status}</Badge>,
     },
     { key: "worker", header: "수행원" },
+    { key: "createdAt", header: "발행일시" },
+    { key: "completedAt", header: "수행일시", render: (r) => r.completedAt || "-" },
   ];
 
   const chips = (
@@ -632,7 +636,6 @@ function OrdersPage({ quickStatus, onClearQuickStatus, initialOrderId, orders, s
                   <option value="orderId">오더 ID</option>
                   <option value="zone">존이름</option>
                   <option value="worker">수행원</option>
-                  <option value="comment">코멘트</option>
                 </Select>
                 <div className="relative flex-1">
                   <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#6B778C]" />
@@ -640,7 +643,7 @@ function OrdersPage({ quickStatus, onClearQuickStatus, initialOrderId, orders, s
                     value={q} 
                     onChange={(e) => setQ(e.target.value)} 
                     placeholder={`${
-                      searchField === 'plate' ? '차량번호' : searchField === 'orderId' ? '오더 ID' : searchField === 'zone' ? '존이름' : searchField === 'worker' ? '수행원' : '코멘트'
+                      searchField === 'plate' ? '차량번호' : searchField === 'orderId' ? '오더 ID' : searchField === 'zone' ? '존이름' : '수행원'
                     } 검색`} 
                     className="pl-9" 
                   />
@@ -648,10 +651,10 @@ function OrdersPage({ quickStatus, onClearQuickStatus, initialOrderId, orders, s
               </div>
             </div>
 
-            <div className="md:col-span-2">
-              <Input type="date" value={periodFrom} onChange={(e) => setPeriodFrom(e.target.value)} />
-            </div>
-            <div className="md:col-span-2">
+            <div className="md:col-span-4 flex items-center gap-2">
+              <label htmlFor="periodFrom" className="text-sm font-medium text-[#475569] shrink-0">발행일시</label>
+              <Input id="periodFrom" type="date" value={periodFrom} onChange={(e) => setPeriodFrom(e.target.value)} />
+              <span className="text-[#6B778C]">~</span>
               <Input type="date" value={periodTo} onChange={(e) => setPeriodTo(e.target.value)} />
             </div>
 
@@ -768,11 +771,11 @@ function OrdersPage({ quickStatus, onClearQuickStatus, initialOrderId, orders, s
         footer={
           <>
             <Button variant="secondary" onClick={() => setSelected(null)}>닫기</Button>
-            {selected?.status !== "완료" && drawerTab === "info" && (
+            {selected?.status !== "완료" && selected?.status !== "취소" && drawerTab === "info" && (
               <Button
                 onClick={() => {
                   // 오더 완료 처리 로직
-                  const updatedOrders = orders.map(o => o.orderId === selected.orderId ? { ...o, status: "완료" } : o);
+                  const updatedOrders = orders.map(o => o.orderId === selected.orderId ? { ...o, status: "완료", completedAt: new Date().toISOString().substring(0, 16).replace('T', ' ') } : o);
                   setOrders(updatedOrders);
                   
                   // 미션 완료 처리 로직 (Global State Update)
@@ -835,7 +838,7 @@ function OrdersPage({ quickStatus, onClearQuickStatus, initialOrderId, orders, s
                   </div>
                   <div className="space-y-1">
                     <div className="text-xs text-[#6B778C]">세차유형</div>
-                    <div>{selected.washType}</div>
+                    <div className="font-medium">{selected.washType}</div>
                   </div>
                   <div className="space-y-1">
                     <div className="text-xs text-[#6B778C]">파트너 유형</div>
