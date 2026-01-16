@@ -1,4 +1,5 @@
 export const BROWN_HISTORY = [
+  { id: 53, date: "2026-01-16 12:10", content: "[UI/UX] 오더 관리: 상세 Drawer 내 지역(지역1, 2) 및 일시(발행, 수행) 정보 추가", isPolicyChange: true, links: [{ label: "오더 관리", page: "orders" }] },
   { id: 52, date: "2026-01-16 11:45", content: "[기능/UI] 오더 관리: 검색 필터 레이블 개선 및 테이블 컬럼 확장 (지역, 일시 정보 추가)", isPolicyChange: true, links: [{ label: "오더 관리", page: "orders" }] },
   { id: 51, date: "2026-01-15 22:14", content: "[기능] 오더 수동 발행 기능 고도화: 차량번호 유효성 체크 및 차량 기본정보 조회", isPolicyChange: true, links:  [{ label: "오더 관리", page: "orders" }] },
   { id: 50, date: "2026-01-15 21:59", content: "[기능] 오더 수동 발행 기능 고도화: 발행 옵션(오더구분/유형) 선택 기능 추가", isPolicyChange: true, links:  [{ label: "오더 관리", page: "orders" }] },

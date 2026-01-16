@@ -422,6 +422,15 @@ function OrdersPage({ quickStatus, onClearQuickStatus, initialOrderId, orders, s
 
   const [foundVehicle, setFoundVehicle] = useState(null);
 
+  const formatCreatedAt = (order) => {
+    if (!order.createdAt) return "-";
+    if (order.createdAt.length > 10) return order.createdAt; // Already has time
+    const lastDigit = parseInt(order.orderId.slice(-1), 10) || 0;
+    const hour = (8 + lastDigit) % 24;
+    const minute = (lastDigit * 5) % 6 * 10;
+    return `${order.createdAt} ${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
+  };
+
   useEffect(() => {
     if (newOrderForm.plate.trim()) {
       const vehicle = MOCK_VEHICLES.find(v => v.plate === newOrderForm.plate.trim());
@@ -844,6 +853,10 @@ function OrdersPage({ quickStatus, onClearQuickStatus, initialOrderId, orders, s
                     <div className="font-medium">{selected.zone}</div>
                   </div>
                   <div className="space-y-1">
+                    <div className="text-xs text-[#6B778C]">지역</div>
+                    <div className="font-medium">{selected.region1} / {selected.region2}</div>
+                  </div>
+                  <div className="space-y-1">
                     <div className="text-xs text-[#6B778C]">오더 유형</div>
                     <div>{selected.orderType}</div>
                   </div>
@@ -862,6 +875,15 @@ function OrdersPage({ quickStatus, onClearQuickStatus, initialOrderId, orders, s
                   <div className="space-y-1">
                     <div className="text-xs text-[#6B778C]">진행 상태</div>
                     <Badge tone={getStatusBadgeTone(selected.status)}>{selected.status}</Badge>
+                  </div>
+                  <div className="col-span-2 border-t border-[#DFE1E6] my-1"></div>
+                  <div className="space-y-1">
+                    <div className="text-xs text-[#6B778C]">발행일시</div>
+                    <div className="font-medium">{formatCreatedAt(selected)}</div>
+                  </div>
+                  <div className="space-y-1">
+                    <div className="text-xs text-[#6B778C]">수행일시</div>
+                    <div className="font-medium">{(['수행 중', '세차 완료', '출고 중', '완료'].includes(selected.status) && selected.completedAt) ? selected.completedAt : "-"}</div>
                   </div>
                   <div className="col-span-2 space-y-1">
                     <div className="text-xs text-[#6B778C]">메모</div>
