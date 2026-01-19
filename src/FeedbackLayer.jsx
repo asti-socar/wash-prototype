@@ -80,6 +80,11 @@ export default function FeedbackLayer({ isModeActive, pageId, isHideComments }) 
     e.preventDefault();
     e.stopPropagation();
 
+    // 해결(완료) 컨펌 로직 추가
+    if (!window.confirm("피드백을 정말 완료 처리할까요?")) {
+      return;
+    }
+
     if (resolvingId) return;
     setResolvingId(id);
 
@@ -182,6 +187,8 @@ export default function FeedbackLayer({ isModeActive, pageId, isHideComments }) 
           const isLocked = lockedPinId === fb.id;
           // 💡 스마트 포지셔닝: y좌표가 상단 25% 미만이면 팝업을 아래로 보냄
           const isNearTop = fb.y_percent < 0.25;
+          const createdDate = new Date(fb.created_at);
+          const formattedDate = `${String(createdDate.getMonth() + 1).padStart(2, '0')}.${String(createdDate.getDate()).padStart(2, '0')}`;
           return (
             <div
               key={fb.id}
@@ -204,6 +211,18 @@ export default function FeedbackLayer({ isModeActive, pageId, isHideComments }) 
                 )}
               >
                 {index + 1}
+              </div>
+
+              {/* 작성자 및 날짜 라벨 */}
+              <div className={cn(
+                "absolute left-1/2 -translate-x-1/2 w-max text-center pointer-events-none transition-opacity",
+                isNearTop ? "top-full pt-2" : "bottom-full pb-2",
+                isLocked && "opacity-0"
+              )}>
+                <div className="text-[10px] font-bold text-slate-700 bg-white/60 backdrop-blur-sm px-1.5 py-0.5 rounded-full shadow-sm">
+                  {fb.author}
+                  <span className="font-medium text-slate-500"> · {formattedDate}</span>
+                </div>
               </div>
 
               {/* 팝업 창 */}

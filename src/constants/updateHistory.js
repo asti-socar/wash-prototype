@@ -1,4 +1,5 @@
 export const BROWN_HISTORY = [
+  { id: 57, date: "2026-01-19 17:30", content: "[고도화] 피드백 작성자 정보 상시 노출, 해결 컨펌 추가", isPolicyChange: false, links: [] },
   { id: 56, date: "2026-01-19 12:28", content: "[기능] QnA 댓글(피드백) 입력 기능 추가", isPolicyChange: true, links: [] },
   { id: 55, date: "2026-01-16 13:04", content: "[UI/UX] 주요 Drawer 하이브리드 레이아웃 적용: 데스크톱 너비 조절 기능 복구 및 모바일 반응형 최적화", isPolicyChange: false, links: [] },
   { id: 54, date: "2026-01-16 12:23", content: "[리팩토링] App.jsx 비대화 해결 완료: 모든 페이지 분리", isPolicyChange: false, links: [] },
