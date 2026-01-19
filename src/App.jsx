@@ -53,6 +53,8 @@ import SettlementPage from './pages/SettlementPage';
 import LostItemsPage from './pages/LostItemsPage';
 import UpdateHistoryPage from './pages/UpdateHistoryPage';
 
+import FeedbackLayer from './FeedbackLayer';
+
 /**
  * util
  */
@@ -563,6 +565,8 @@ const PAGE_TITLES = {
  */
 export default function App() {
   const [activeKey, setActiveKey] = useState("update-history");
+  const [isHideComments, setIsHideComments] = useState(false);
+  const [isFeedbackMode, setIsFeedbackMode] = useState(false);
   const isMobile = useIsMobile(); // 1. useIsMobile 훅 사용
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [openAccordion, setOpenAccordion] = useState(() => NAV.find(g => g.items?.some(it => it.key === activeKey))?.key || "");
@@ -750,8 +754,9 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] text-[#172B4D]">
-      {/* 1. 모바일 사이드바 Backdrop 로직 수정 */}
+    <>
+      <div className="relative min-h-screen bg-[#F8FAFC] text-[#172B4D]">
+        {/* 1. 모바일 사이드바 Backdrop 로직 수정 */}
       {/* 2. 조건부 렌더링: 사이드바 배경 DIM(Overlay) 요소는 반드시 isSidebarOpen && isMobile 조건이 모두 참일 때만 화면에 그려지도록 수정 */}
       {/* 2. Z-Index 및 스택 순서 정돈: DIM 우선순위: 사이드바용 DIM 요소의 z-index를 점검하여, 메인 콘텐츠보다는 높지만 Drawer 컴포넌트보다는 낮게 설정 (예: 콘텐츠 0 < DIM 40 < Drawer 50) */}
       {isMobile && isMobileMenuOpen && (
@@ -809,7 +814,28 @@ export default function App() {
           </div>
         </div>
       )}
-    </div>
+      <FeedbackLayer isModeActive={isFeedbackMode} pageId={activeKey} isHideComments={isHideComments} />
+      </div>
+
+      <div className="fixed bottom-5 right-5 z-[10000] flex items-center gap-2">
+        <button
+          onClick={() => setIsHideComments(prev => !prev)}
+          className={`flex h-12 w-auto items-center justify-center rounded-full px-5 font-bold text-white shadow-lg transition-colors duration-200
+            ${isHideComments ? 'bg-gray-500 hover:bg-gray-600' : 'bg-slate-700 hover:bg-slate-800'}
+          `}
+        >
+          QnA 숨기기 {isHideComments ? 'ON' : 'OFF'}
+        </button>
+        <button
+          onClick={() => setIsFeedbackMode(prev => !prev)}
+          className={`flex h-12 w-auto items-center justify-center rounded-full px-5 font-bold text-white shadow-lg transition-colors duration-200
+            ${isFeedbackMode ? 'bg-blue-600 hover:bg-blue-700' : 'bg-slate-700 hover:bg-slate-800'}
+          `}
+        >
+          QnA 입력모드 {isFeedbackMode ? 'ON' : 'OFF'}
+        </button>
+      </div>
+    </>
   );
 }
 
