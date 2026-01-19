@@ -13,6 +13,7 @@ import {
   Tooltip,
   CartesianGrid,
   Legend,
+  ComposedChart,
 } from "recharts";
 
 function cn(...classes) {
@@ -42,20 +43,20 @@ function CardContent({ className, children }) {
 function Dashboard() {
   // Mock Data for Charts
   const dailyData = [
-    { day: "월", orders: 320 },
-    { day: "화", orders: 350 },
-    { day: "수", orders: 300 },
-    { day: "목", orders: 380 },
-    { day: "금", orders: 420 },
-    { day: "토", orders: 450 },
-    { day: "일", orders: 400 },
+    { day: "월", prevWeek: 300, currWeek: 320 },
+    { day: "화", prevWeek: 330, currWeek: 350 },
+    { day: "수", prevWeek: 310, currWeek: 300 },
+    { day: "목", prevWeek: 360, currWeek: 0 },
+    { day: "금", prevWeek: 400, currWeek: 0 },
+    { day: "토", prevWeek: 0, currWeek: 0 },
+    { day: "일", prevWeek: 0, currWeek: 0 },
   ];
 
   const partnerData = [
-    { name: "A파트너명", rate: 95 },
-    { name: "B파트너명", rate: 88 },
-    { name: "C파트너명", rate: 92 },
-    { name: "D파트너명", rate: 85 },
+    { name: "A파트너", timely: 45, undone: 10, delayed: 5 },
+    { name: "B파트너", timely: 38, undone: 5, delayed: 12 },
+    { name: "C파트너", timely: 52, undone: 8, delayed: 2 },
+    { name: "D파트너", timely: 40, undone: 15, delayed: 8 },
   ];
 
   const hourlyData = [
@@ -136,31 +137,36 @@ function Dashboard() {
           
           {/* Daily Orders */}
           <Card>
-            <CardHeader><CardTitle>일자별 오더</CardTitle></CardHeader>
+            <CardHeader><CardTitle>전주 대비 일자별 오더</CardTitle></CardHeader>
             <CardContent className="h-64">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={dailyData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                <ComposedChart data={dailyData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#DFE1E6" />
                   <XAxis dataKey="day" tickLine={false} axisLine={false} tick={{ fontSize: 12, fill: "#6B778C" }} />
                   <YAxis tickLine={false} axisLine={false} tick={{ fontSize: 12, fill: "#6B778C" }} />
                   <Tooltip cursor={{ fill: "#F4F5F7" }} />
-                  <Bar dataKey="orders" fill="#0052CC" radius={[4, 4, 0, 0]} barSize={30} />
-                </BarChart>
+                  <Legend verticalAlign="top" align="right" wrapperStyle={{ top: -10 }} iconType="circle" />
+                  <Area type="monotone" dataKey="prevWeek" name="전주" fill="#F1F5F9" stroke="#E2E8F0" />
+                  <Bar dataKey="currWeek" name="금주" fill="#0052CC" radius={[4, 4, 0, 0]} barSize={30} />
+                </ComposedChart>
               </ResponsiveContainer>
             </CardContent>
           </Card>
 
           {/* Partner Performance */}
           <Card>
-            <CardHeader><CardTitle>파트너별 수행률 (최근 1주일)</CardTitle></CardHeader>
+            <CardHeader><CardTitle>파트너별 수행 현황 (최근 1주일)</CardTitle></CardHeader>
             <CardContent className="h-64">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart layout="vertical" data={partnerData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#DFE1E6" />
-                  <XAxis type="number" domain={[0, 100]} hide />
-                  <YAxis dataKey="name" type="category" tickLine={false} axisLine={false} width={80} tick={{ fontSize: 12, fill: "#6B778C" }} />
+                <BarChart data={partnerData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#DFE1E6" />
+                  <XAxis dataKey="name" tickLine={false} axisLine={false} tick={{ fontSize: 12, fill: "#6B778C" }} />
+                  <YAxis tickLine={false} axisLine={false} tick={{ fontSize: 12, fill: "#6B778C" }} />
                   <Tooltip cursor={{ fill: "#F4F5F7" }} />
-                  <Bar dataKey="rate" fill="#0052CC" radius={[0, 4, 4, 0]} barSize={20} label={{ position: "right", fill: "#172B4D", fontSize: 12 }} />
+                  <Legend verticalAlign="top" align="right" wrapperStyle={{ top: -10 }} iconType="circle" />
+                  <Bar dataKey="timely" name="적시수행" fill="#0052CC" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="undone" name="미수행" fill="#DFE1E6" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="delayed" name="지연" fill="#ef4444" radius={[4, 4, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </CardContent>
