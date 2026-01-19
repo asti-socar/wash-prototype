@@ -180,6 +180,8 @@ export default function FeedbackLayer({ isModeActive, pageId, isHideComments }) 
       {/* 기존 피드백 핀 렌더링 */}
       {!isHideComments && feedbacks.map((fb, index) => {
           const isLocked = lockedPinId === fb.id;
+          // 💡 스마트 포지셔닝: y좌표가 상단 25% 미만이면 팝업을 아래로 보냄
+          const isNearTop = fb.y_percent < 0.25;
           return (
             <div
               key={fb.id}
@@ -205,9 +207,12 @@ export default function FeedbackLayer({ isModeActive, pageId, isHideComments }) 
               </div>
 
               {/* 팝업 창 */}
-              <div className={cn(
-                "qna-popup absolute bottom-full mb-3 w-72 rounded-lg bg-slate-800 p-4 text-sm text-white shadow-2xl transition-opacity",
-                isLocked ? "opacity-100 pointer-events-auto" : "opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto"
+              <div
+                onClick={(e) => e.stopPropagation()}
+                className={cn(
+                "qna-popup absolute left-1/2 -translate-x-1/2 w-72 rounded-lg bg-slate-800 p-4 text-sm text-white shadow-2xl transition-opacity",
+                isLocked ? "opacity-100 pointer-events-auto" : "opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto",
+                isNearTop ? "top-full mt-3" : "bottom-full mb-3" // 상단이면 아래로, 아니면 위로
               )}>
                 <div className="flex justify-between items-start mb-2 border-b border-slate-700 pb-2">
                   <span className="font-bold text-blue-300">{fb.author}</span>
@@ -222,7 +227,12 @@ export default function FeedbackLayer({ isModeActive, pageId, isHideComments }) 
                 >
                   {resolvingId === fb.id ? '처리 중...' : '해결(완료)'}
                 </button>
-                <div className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-x-8 border-x-transparent border-t-8 border-t-slate-800"></div>
+                <div className={cn(
+                  "absolute left-1/2 -translate-x-1/2 w-0 h-0 border-x-8 border-x-transparent",
+                  isNearTop 
+                    ? "bottom-full border-b-8 border-b-slate-800" // 아래로 뜰 땐 화살표가 위로
+                    : "top-full border-t-8 border-t-slate-800"    // 위로 뜰 땐 화살표가 아래로
+                )}></div>
               </div>
             </div>
           );
