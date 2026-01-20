@@ -61,4 +61,8 @@ export const BROWN_HISTORY = [
   { id: 1, date: "2026-01-13 15:53", content: "기능 명세(Markdown) Drawer 연동 및 렌더러 구현", isPolicyChange: false, links: [] },
 ];
 
-export const ASTI_HISTORY = [];
+export const ASTI_HISTORY = [
+  { id: 2, date: "2026-01-20 13:22", content: "오더유형정책관리", isPolicyChange: false, links: [] },
+  { id: 2, date: "2026-01-20 13:22", content: "정책관리 페이지 업데이트(AI정책관리, 존정책관리)", isPolicyChange: false, links: [] },
+  { id: 1, date: "2026-01-20 13:21", content: "ASTI 업데이트 이력 기록 시작", isPolicyChange: false, links: [] },
+];
