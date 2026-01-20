@@ -1,25 +1,52 @@
 import React, { useState, useMemo, useEffect } from 'react';
+import { supabase } from '../lib/supabaseClient';
 import { 
-  Plus, X, ArrowUpDown, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight
+  Plus, X, ArrowUpDown, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Search, UploadCloud, Trash2
 } from 'lucide-react';
 
-/**
- * Utility & UI Components
- */
-function useIsMobile() {
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 640);
-  useEffect(() => {
-    const checkIsMobile = () => setIsMobile(window.innerWidth < 640);
-    window.addEventListener('resize', checkIsMobile);
-    return () => window.removeEventListener('resize', checkIsMobile);
-  }, []);
-  return isMobile;
-}
+// --- MOCK DATA ---
+const MOCK_ORDERS = [
+  { orderId: "O-90008", partnerName: "강남모빌리티", vehicleNumber: "33아1212" },
+  { orderId: "O-90002", partnerName: "수원카케어", vehicleNumber: "34나7890" },
+  { orderId: "O-90100", partnerName: "분당클린", vehicleNumber: "55오5678" },
+];
+
+const MOCK_INITIAL_LOST_ITEMS = [
+  { 
+    id: "L-1001", 
+    orderId: "O-90008",
+    partnerName: "강남모빌리티",
+    vehicleNumber: "33아1212",
+    status: "보관중", 
+    foundAt: "2026-01-20 13:40",
+    description: "검정색 남성 반지갑",
+    recipientName: "",
+    recipientAddress: "",
+    recipientAddressDetail: "",
+    photos: []
+  },
+  { 
+    id: "L-1002", 
+    orderId: "O-90002",
+    partnerName: "수원카케어",
+    vehicleNumber: "34나7890",
+    status: "경찰서 인계", 
+    foundAt: "2026-01-19 10:15",
+    description: "에어팟 프로 2세대",
+    recipientName: "서초경찰서",
+    recipientAddress: "서울특별시 서초구 반포대로 179",
+    recipientAddressDetail: "분실물 담당",
+    photos: []
+  },
+];
+
 
 /**
- * Utility & UI Components
+ * Utility & UI Components (Copied from CarsPage.jsx for consistency)
  */
-function cn(...classes) { return classes.filter(Boolean).join(" "); }
+function cn(...classes) {
+  return classes.filter(Boolean).join(" ");
+}
 
 function Card({ className, children }) {
   return <div className={cn("rounded-xl bg-white border border-[#E2E8F0] shadow-[0_2px_4px_rgba(0,0,0,0.02)]", className)}>{children}</div>;
@@ -39,6 +66,7 @@ function Button({ className, variant = "default", size = "md", ...props }) {
     default: "bg-[#0052CC] text-white hover:bg-[#0047B3] shadow-sm",
     secondary: "bg-white text-[#172B4D] border border-[#E2E8F0] hover:bg-[#F8FAFC] shadow-sm text-[#334155]",
     ghost: "bg-transparent text-[#172B4D] hover:bg-[#F4F5F7]",
+    danger: "bg-rose-600 text-white hover:bg-rose-700",
   };
   const sizes = { sm: "h-9 px-3 text-sm", md: "h-10 px-3.5 text-sm" };
   return <button className={cn(base, variants[variant], sizes[size], className)} {...props} />;
@@ -52,10 +80,34 @@ function Select({ className, children, ...props }) {
 function Badge({ children, tone = "default" }) {
   const tones = {
     default: "bg-slate-100 text-slate-800",
+    danger: "bg-rose-100 text-rose-800",
     warn: "bg-amber-100 text-amber-800",
     ok: "bg-emerald-100 text-emerald-800",
+    info: "bg-blue-100 text-blue-800",
   };
   return <span className={cn("inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-bold", tones[tone])}>{children}</span>;
+}
+
+function Chip({ children, onRemove }) {
+  return (
+    <span className="inline-flex items-center gap-1 rounded-lg bg-[#F4F5F7] px-2 py-1 text-xs font-medium text-[#172B4D] border border-[#DFE1E6]">
+      {children}
+      {onRemove ? (
+        <button className="rounded-full p-0.5 hover:bg-[#DFE1E6]" onClick={onRemove} aria-label="remove">
+          <X className="h-3.5 w-3.5" />
+        </button>
+      ) : null}
+    </span>
+  );
+}
+
+function Field({ label, children }) {
+  return (
+    <div className="space-y-1">
+      <label className="text-xs font-semibold text-[#6B778C]">{label}</label>
+      {children}
+    </div>
+  );
 }
 
 function Drawer({ open, title, onClose, children, footer }) {
@@ -74,19 +126,14 @@ function Drawer({ open, title, onClose, children, footer }) {
       const newWidth = window.innerWidth - e.clientX;
       if (newWidth >= 400 && newWidth <= 1200) setWidth(newWidth);
     };
-    const handleMouseUp = () => {
-      setIsResizing(false);
-      document.body.style.cursor = "default";
-    };
+    const handleMouseUp = () => setIsResizing(false);
     if (isResizing) {
       document.addEventListener("mousemove", handleMouseMove);
       document.addEventListener("mouseup", handleMouseUp);
-      document.body.style.cursor = "col-resize";
     }
     return () => {
       document.removeEventListener("mousemove", handleMouseMove);
       document.removeEventListener("mouseup", handleMouseUp);
-      document.body.style.cursor = "default";
     };
   }, [isResizing]);
 
@@ -117,7 +164,7 @@ function usePagination(data, itemsPerPage = 40) {
 }
 
 function Pagination({ currentPage, totalPages, onPageChange }) {
-  if (totalPages <= 0) return null;
+  if (totalPages <= 1) return null;
   const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
   return (
     <div className="flex items-center justify-center gap-1 py-4">
@@ -162,40 +209,54 @@ function DataTable({ columns, rows, onRowClick, rowKey, sortConfig, onSort }) {
   );
 }
 
+// --- Main Page & Components ---
+
 export default function LostItemsPage() {
-  const [items, setItems] = useState([
-    { id: "L-1001", orderId: "O-90008", plate: "33아1212", item: "지갑", status: "보관중", foundAt: "2026-01-12", location: "대전역 1번존 보관함" },
-    { id: "L-1002", orderId: "O-90002", plate: "34나7890", item: "무선 이어폰", status: "찾는 중", foundAt: "2026-01-11", location: "-" },
-  ]);
+  const [items, setItems] = useState(MOCK_INITIAL_LOST_ITEMS);
   const [selected, setSelected] = useState(null);
   const [isRegistering, setIsRegistering] = useState(false);
-  const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
+  const [sortConfig, setSortConfig] = useState({ key: 'foundAt', direction: 'desc' });
+  
+  const [q, setQ] = useState("");
+  const [searchField, setSearchField] = useState("orderId");
+  const [filterStatus, setFilterStatus] = useState("");
 
-  const columns = [
-    { key: "id", header: "분실물 ID" },
-    { key: "item", header: "습득물" },
-    { key: "plate", header: "차량번호" },
-    {
-      key: "status",
-      header: "상태",
-      render: (r) => {
-        const tone = r.status === "보관중" ? "ok" : r.status === "찾는 중" ? "warn" : "default";
-        return <Badge tone={tone}>{r.status}</Badge>;
-      },
-    },
-    { key: "foundAt", header: "습득일" },
-  ];
+  const filteredAndSortedData = useMemo(() => {
+    const qq = q.trim().toLowerCase();
+    
+    const filtered = items.filter((item) => {
+      const targetVal = String(item[searchField] || "").toLowerCase();
+      const hitQ = !qq || targetVal.includes(qq);
+      const hitStatus = !filterStatus || item.status === filterStatus;
+      return hitQ && hitStatus;
+    });
 
-  const sortedData = useMemo(() => {
-    if (!sortConfig.key) return items;
-    return [...items].sort((a, b) => {
+    if (!sortConfig.key) return filtered;
+
+    return [...filtered].sort((a, b) => {
       const aVal = a[sortConfig.key] || "";
       const bVal = b[sortConfig.key] || "";
       if (aVal < bVal) return sortConfig.direction === 'asc' ? -1 : 1;
       if (aVal > bVal) return sortConfig.direction === 'asc' ? 1 : -1;
       return 0;
     });
-  }, [items, sortConfig]);
+  }, [items, q, searchField, filterStatus, sortConfig]);
+
+  const columns = [
+    { key: "id", header: "분실물 ID" },
+    { key: "orderId", header: "오더 ID" },
+    { key: "partnerName", header: "파트너명" },
+    { key: "vehicleNumber", header: "차량번호" },
+    {
+      key: "status",
+      header: "분실물 상태",
+      render: (r) => {
+        const tone = r.status === "보관중" ? "ok" : r.status.includes("인계") || r.status.includes("발송") ? "info" : "warn";
+        return <Badge tone={tone}>{r.status}</Badge>;
+      },
+    },
+    { key: "foundAt", header: "등록일시" },
+  ];
 
   const handleSort = (key) => {
     setSortConfig(prev => ({
@@ -203,8 +264,37 @@ export default function LostItemsPage() {
       direction: prev.key === key && prev.direction === 'asc' ? 'desc' : 'asc',
     }));
   };
+  
+  const handleOpenRegister = () => {
+    setSelected(null);
+    setIsRegistering(true);
+  }
 
-  const { currentData, currentPage, totalPages, setCurrentPage, totalItems } = usePagination(sortedData, 40);
+  const handleSave = (itemToSave) => {
+    if(isRegistering) {
+      const now = new Date();
+      const pad = (num) => num.toString().padStart(2, '0');
+      const newTimestamp = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}`;
+
+      const newItem = {
+        ...itemToSave,
+        id: `L-${Date.now()}`,
+        foundAt: newTimestamp,
+      };
+      setItems(prev => [newItem, ...prev]);
+    } else {
+      setItems(prev => prev.map(item => item.id === itemToSave.id ? itemToSave : item));
+    }
+    closeDrawer();
+    alert("저장되었습니다. (프로토타입)");
+  };
+
+  const closeDrawer = () => {
+    setSelected(null);
+    setIsRegistering(false);
+  }
+
+  const { currentData, currentPage, totalPages, setCurrentPage, totalItems } = usePagination(filteredAndSortedData, 40);
 
   return (
     <div className="space-y-4">
@@ -213,10 +303,64 @@ export default function LostItemsPage() {
           <div className="text-base font-bold text-[#172B4D]">분실물 관리</div>
           <div className="mt-1 text-sm text-[#6B778C]">세차 중 습득된 분실물 등록 및 처리 현황</div>
         </div>
-        <Button onClick={() => setIsRegistering(true)}>
+        <Button onClick={handleOpenRegister}>
           <Plus className="mr-2 h-4 w-4" /> 분실물 등록
         </Button>
       </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>검색 및 필터</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 gap-x-4 gap-y-5 md:grid-cols-12">
+            <div className="md:col-span-3">
+              <label className="block text-xs font-semibold text-[#6B778C] mb-1.5">검색항목</label>
+              <Select value={searchField} onChange={e => setSearchField(e.target.value)}>
+                <option value="orderId">오더 ID</option>
+                <option value="partnerName">파트너명</option>
+                <option value="vehicleNumber">차량번호</option>
+              </Select>
+            </div>
+            <div className="md:col-span-4">
+              <label className="block text-xs font-semibold text-[#6B778C] mb-1.5">검색어</label>
+              <div className="relative">
+                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#6B778C]" />
+                <Input 
+                  value={q} 
+                  onChange={(e) => setQ(e.target.value)} 
+                  placeholder={`${ {orderId: '오더 ID', partnerName: '파트너명', vehicleNumber: '차량번호'}[searchField] } 검색`} 
+                  className="pl-9" 
+                />
+              </div>
+            </div>
+            <div className="md:col-span-3">
+              <label className="block text-xs font-semibold text-[#6B778C] mb-1.5">분실물 상태</label>
+              <Select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)}>
+                <option value="">전체</option>
+                <option value="보관중">보관중</option>
+                <option value="경찰서 인계">경찰서 인계</option>
+                <option value="택배 발송">택배 발송</option>
+              </Select>
+            </div>
+
+            <div className="md:col-span-12 flex flex-wrap items-center justify-between gap-2 pt-1">
+              <div className="flex flex-wrap gap-2">
+                {q ? <Chip onRemove={() => setQ("")}>검색: {q}</Chip> : null}
+                {filterStatus ? <Chip onRemove={() => setFilterStatus("")}>상태: {filterStatus}</Chip> : null}
+              </div>
+              <Button
+                variant="secondary"
+                onClick={() => {
+                  setQ(""); setFilterStatus(""); setSearchField("orderId");
+                }}
+              >
+                필터 초기화
+              </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       <div className="flex items-center justify-between mb-2">
         <div className="text-sm text-[#6B778C]">전체 건수 <b className="text-[#172B4D]">{totalItems.toLocaleString()}</b>건</div>
@@ -226,63 +370,154 @@ export default function LostItemsPage() {
       <DataTable columns={columns} rows={currentData} rowKey={(r) => r.id} onRowClick={setSelected} sortConfig={sortConfig} onSort={handleSort} />
       <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
 
-      <Drawer
-        open={!!selected || isRegistering}
-        title={isRegistering ? "분실물 등록" : "분실물 상세"}
-        onClose={() => { setSelected(null); setIsRegistering(false); }}
-        footer={
-          isRegistering ? (
-            <div className="flex w-full justify-end">
-              <Button className="w-full sm:w-auto" onClick={() => { alert("등록되었습니다(프로토타입)"); setIsRegistering(false); }}>등록하기</Button>
-            </div>
-          ) : (
-            <div className="flex w-full justify-end">
-              <Button className="w-full sm:w-auto" onClick={() => { alert("수정되었습니다(프로토타입)"); setSelected(null); }}>수정하기</Button>
-            </div>
-          )
-        }
-      >
-        <div className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>기본 정보</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-1">
-                <label className="text-xs font-semibold text-[#6B778C]">습득물 명</label>
-                <Input defaultValue={selected?.item} placeholder="예: 지갑, 차키 등" />
-              </div>
-              <div className="space-y-1">
-                <label className="text-xs font-semibold text-[#6B778C]">차량번호</label>
-                <Input defaultValue={selected?.plate} placeholder="12가3456" />
-              </div>
-              <div className="space-y-1">
-                <label className="text-xs font-semibold text-[#6B778C]">처리 상태</label>
-                <Select defaultValue={selected?.status || "찾는 중"}>
-                  <option>찾는 중</option>
-                  <option>보관중</option>
-                  <option>경찰서 인계</option>
-                  <option>택배 발송</option>
-                </Select>
-              </div>
-              <div className="space-y-1">
-                <label className="text-xs font-semibold text-[#6B778C]">보관 장소</label>
-                <Input defaultValue={selected?.location} />
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle>사진</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex h-32 w-full items-center justify-center rounded-lg bg-[#F4F5F7] text-[#6B778C]">
-                <span className="text-xs">사진 업로드 / 미리보기</span>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </Drawer>
+      {(selected || isRegistering) && (
+        <LostItemDetailDrawer
+          item={selected}
+          isRegistering={isRegistering}
+          onClose={closeDrawer}
+          onSave={handleSave}
+        />
+      )}
     </div>
+  );
+}
+
+function LostItemDetailDrawer({ item, isRegistering, onClose, onSave }) {
+  const [formData, setFormData] = useState(item || { status: '보관중', photos: [] });
+  const [orderIdSearch, setOrderIdSearch] = useState(item?.orderId || '');
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleOrderSearch = () => {
+    if (!orderIdSearch) return alert("오더 ID를 입력해주세요.");
+    const foundOrder = MOCK_ORDERS.find(o => o.orderId === orderIdSearch);
+    if (foundOrder) {
+      setFormData(prev => ({
+        ...prev,
+        orderId: foundOrder.orderId,
+        partnerName: foundOrder.partnerName,
+        vehicleNumber: foundOrder.vehicleNumber,
+      }));
+      alert("오더 정보가 조회되었습니다.");
+    } else {
+      alert("해당 ID의 오더를 찾을 수 없습니다.");
+    }
+  };
+
+  const [imageFiles, setImageFiles] = useState([]);
+  const handlePhotoChange = (e) => {
+    if (e.target.files) {
+      const files = Array.from(e.target.files);
+      if (imageFiles.length + files.length > 10) {
+        return alert("사진은 최대 10장까지 등록할 수 있습니다.");
+      }
+      setImageFiles(prev => [...prev, ...files]);
+    }
+  };
+  const removePhoto = (index) => {
+    setImageFiles(prev => prev.filter((_, i) => i !== index));
+  };
+  
+  const showDeliveryFields = formData.status === '경찰서 인계' || formData.status === '택배 발송';
+  const deliveryFieldLabel = formData.status === '경찰서 인계' ? '경찰서' : '배송지';
+  const recipientFieldLabel = formData.status === '경찰서 인계' ? '경찰서명' : '받는 사람';
+
+  const title = isRegistering ? "분실물 등록" : `분실물 상세 (${item?.id})`;
+
+  return (
+    <Drawer open={true} title={title} onClose={onClose}
+      footer={
+        <div className="flex w-full justify-end gap-2">
+          <Button variant="secondary" onClick={onClose}>취소</Button>
+          <Button onClick={() => onSave(formData)}>{isRegistering ? '등록하기' : '수정하기'}</Button>
+        </div>
+      }
+    >
+      <div className="space-y-6">
+        <Card>
+          <CardHeader><CardTitle>오더 정보</CardTitle></CardHeader>
+          <CardContent className="space-y-4">
+            <Field label="오더 ID">
+              <div className="flex gap-2">
+                <Input value={orderIdSearch} onChange={e => setOrderIdSearch(e.target.value)} placeholder="오더 ID로 검색" disabled={!isRegistering} />
+                {isRegistering && <Button variant="secondary" onClick={handleOrderSearch}><Search className="h-4 w-4 mr-1" /> 조회</Button>}
+              </div>
+            </Field>
+            <Field label="파트너명"><Input value={formData.partnerName || ''} readOnly className="bg-slate-50" /></Field>
+            <Field label="차량번호"><Input value={formData.vehicleNumber || ''} readOnly className="bg-slate-50" /></Field>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader><CardTitle>분실물 정보</CardTitle></CardHeader>
+          <CardContent className="space-y-4">
+            <Field label="처리 상태">
+              <Select name="status" value={formData.status} onChange={handleInputChange}>
+                <option value="보관중">보관중</option>
+                <option value="경찰서 인계">경찰서 인계</option>
+                <option value="택배 발송">택배 발송</option>
+              </Select>
+            </Field>
+            <Field label="습득물 설명">
+              <textarea
+                name="description"
+                value={formData.description || ''}
+                onChange={handleInputChange}
+                className="w-full min-h-[80px] rounded-lg border border-[#E2E8F0] bg-white px-3 py-2 text-sm text-[#172B4D] outline-none transition placeholder:text-[#94A3B8] focus:border-[#0052CC] focus:ring-1 focus:ring-[#0052CC]"
+                placeholder="습득한 물품의 특징을 자세하게 입력해주세요. (예: 검정색 샤넬 반지갑, 내용물 포함)"
+              />
+            </Field>
+          </CardContent>
+        </Card>
+
+        {showDeliveryFields && (
+          <Card>
+            <CardHeader><CardTitle>{deliveryFieldLabel} 정보</CardTitle></CardHeader>
+            <CardContent className="space-y-4">
+              <Field label={recipientFieldLabel}>
+                <Input name="recipientName" value={formData.recipientName || ''} onChange={handleInputChange} />
+              </Field>
+              <Field label={`${deliveryFieldLabel} 주소`}>
+                <div className="flex gap-2">
+                  <Input name="recipientAddress" value={formData.recipientAddress || ''} onChange={handleInputChange} placeholder="주소 검색" />
+                  <Button variant="secondary">검색</Button>
+                </div>
+              </Field>
+              <Field label="상세 주소">
+                <Input name="recipientAddressDetail" value={formData.recipientAddressDetail || ''} onChange={handleInputChange} placeholder="상세 주소 입력" />
+              </Field>
+            </CardContent>
+          </Card>
+        )}
+
+        <Card>
+          <CardHeader><CardTitle>사진 (최대 10장)</CardTitle></CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <label className="flex flex-col items-center justify-center w-full h-32 px-4 transition bg-white border-2 border-dashed rounded-lg appearance-none cursor-pointer hover:border-gray-400 focus:outline-none">
+                  <UploadCloud className="w-8 h-8 text-gray-400" />
+                  <span className="mt-2 text-sm text-gray-600">클릭 또는 드래그하여 파일 업로드</span>
+                  <input type="file" name="file_upload" className="hidden" multiple accept="image/*" onChange={handlePhotoChange} />
+              </label>
+              {imageFiles.length > 0 && (
+                <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-4">
+                  {imageFiles.map((file, index) => (
+                    <div key={index} className="relative aspect-square">
+                      <img src={URL.createObjectURL(file)} alt={`preview ${index}`} className="w-full h-full object-cover rounded-md" />
+                      <Button variant="danger" size="sm" className="absolute top-1 right-1 h-6 w-6 p-0" onClick={() => removePhoto(index)}>
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </Drawer>
   );
 }
