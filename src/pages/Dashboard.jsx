@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   ResponsiveContainer,
   BarChart,
@@ -15,6 +15,7 @@ import {
   Legend,
   ComposedChart,
 } from "recharts";
+import { X } from "lucide-react";
 
 function cn(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -41,6 +42,8 @@ function CardContent({ className, children }) {
 }
 
 function Dashboard() {
+  const [isGuideOpen, setIsGuideOpen] = useState(true);
+
   // Mock Data for Charts
   const dailyData = [
     { day: "월", prevWeek: 300, currWeek: 320 },
@@ -89,6 +92,48 @@ function Dashboard() {
 
   return (
     <div className="space-y-6">
+      {/* Guide Modal */}
+      {isGuideOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 animate-in fade-in-0">
+          <div className="relative w-full max-w-2xl rounded-2xl bg-white p-8 shadow-2xl animate-in fade-in-0 zoom-in-95">
+            <button 
+              onClick={() => setIsGuideOpen(false)}
+              className="absolute top-4 right-4 p-2 rounded-full text-gray-500 hover:bg-gray-100"
+            >
+              <X className="h-6 w-6" />
+            </button>
+            <h2 className="text-xl font-bold text-slate-800">대시보드 구현 방향 안내</h2>
+            <p className="mt-2 text-sm text-slate-500">
+              현재 대시보드 UI는 프로토타입에서만 제공합니다. 실제 기능 제공은 아래 방향으로 계획 중입니다.
+            </p>
+            <div className="mt-6 space-y-4 rounded-lg border border-slate-200 bg-slate-50 p-6 text-sm">
+              <div className="flex items-start gap-4">
+                <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-blue-100 text-blue-600 font-bold">1</div>
+                <div>
+                  <h3 className="font-bold text-slate-800">관제 대시보드 기능 구현</h3>
+                  <p className="mt-1 text-slate-600">
+                    신규 시스템 DB 데이터를 BigQuery에 적재하고, 이를 구글 스프레드시트와 1시간 주기로 연동하여 KPI 및 차트 데이터를 제공합니다. (인터널 어드민에서 제공하지 않음. 구글 스프레드시트로 제공.)
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-start gap-4">
+                <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-blue-100 text-blue-600 font-bold">2</div>
+                <div>
+                  <h3 className="font-bold text-slate-800">오더 관리 연동</h3>
+                  <p className="mt-1 text-slate-600">
+                    현재 대시보드 UI안의 각 지표 클릭 시, 해당 조건으로 필터링된 오더 관리 화면으로 즉시 연결할 수 있도록, 오더 관리 필터 화면 Short-Cut 기능을 제공할 예정입니다. (인터널 어드민에서)
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="mt-8 flex justify-end">
+              <button onClick={() => setIsGuideOpen(false)} className="w-full sm:w-auto rounded-lg bg-blue-600 px-8 py-3 text-sm font-bold text-white shadow-lg transition hover:bg-blue-700 active:scale-95">
+                확인했습니다
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       {/* KPI Section */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         {/* Car Wash Performance Status */}

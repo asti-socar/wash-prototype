@@ -1,4 +1,5 @@
 export const BROWN_HISTORY = [
+  { id: 60, date: "2026-01-20 11:12", content: "[기능] 관제 대시보드 구현 방향 안내 모달 레이어 추가", isPolicyChange: false, links: [] },
   { id: 59, date: "2026-01-20 09:30", content: "[기능] URL 쿼리 스트링 양방향 동기화 적용 및 페이지별 피드백 로딩 로직 고도화 (Deep Linking 지원)", isPolicyChange: false, links: [] },
   { id: 58, date: "2026-01-19 17:30", content: "[UI] 대시보드 문구 및 노출 필요한 정보 요소 변경", isPolicyChange: true, links: [{ label: "대시보드", page: "dashboard" }] },
   { id: 57, date: "2026-01-19 17:30", content: "[고도화] 피드백 작성자 정보 상시 노출, 해결 컨펌 추가", isPolicyChange: false, links: [] },
