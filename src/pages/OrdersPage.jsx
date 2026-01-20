@@ -632,79 +632,86 @@ function OrdersPage({ quickStatus, onClearQuickStatus, initialOrderId, orders, s
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-wrap gap-4">
-            <div className="w-full lg:flex-1 lg:min-w-[320px]">
-              <div className="flex items-center gap-2">
-                <Select className="!w-40 shrink-0" value={searchField} onChange={e => setSearchField(e.target.value)}>
-                  <option value="plate">차량번호</option>
-                  <option value="orderId">오더 ID</option>
-                  <option value="zone">존이름</option>
-                  <option value="worker">수행원</option>
-                </Select>
-                <div className="relative flex-1">
-                  <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#6B778C]" />
-                  <Input 
-                    value={q} 
-                    onChange={(e) => setQ(e.target.value)} 
-                    placeholder={`${
-                      searchField === 'plate' ? '차량번호' : searchField === 'orderId' ? '오더 ID' : searchField === 'zone' ? '존이름' : '수행원'
-                    } 검색`} 
-                    className="pl-9" 
-                  />
-                </div>
+          <div className="grid grid-cols-1 gap-x-4 gap-y-5 md:grid-cols-12">
+            <div className="md:col-span-2">
+              <label htmlFor="searchField" className="block text-xs font-semibold text-[#6B778C] mb-1.5">검색항목</label>
+              <Select id="searchField" value={searchField} onChange={e => setSearchField(e.target.value)}>
+                <option value="plate">차량번호</option>
+                <option value="orderId">오더 ID</option>
+                <option value="zone">존이름</option>
+                <option value="worker">수행원</option>
+              </Select>
+            </div>
+            <div className="md:col-span-2">
+              <label htmlFor="searchQuery" className="block text-xs font-semibold text-[#6B778C] mb-1.5">검색어</label>
+              <div className="relative">
+                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#6B778C]" />
+                <Input 
+                  id="searchQuery"
+                  value={q} 
+                  onChange={(e) => setQ(e.target.value)} 
+                  placeholder={`${
+                    searchField === 'plate' ? '차량번호' : searchField === 'orderId' ? '오더 ID' : searchField === 'zone' ? '존이름' : '수행원'
+                  } 검색`} 
+                  className="pl-9" 
+                />
               </div>
             </div>
-
-            <div className="w-full lg:flex-1 lg:min-w-[320px] flex flex-wrap items-center gap-x-4 gap-y-2">
-              <div className="flex items-center gap-2 w-full sm:w-auto flex-1">
-                <Input id="periodFrom" type="date" value={periodFrom} onChange={(e) => setPeriodFrom(e.target.value)} className="min-w-0"/>
-                <span className="text-gray-500">~</span>
-                <Input type="date" value={periodTo} onChange={(e) => setPeriodTo(e.target.value)} className="min-w-0"/>
-              </div>
+            <div className="md:col-span-2">
+              <label htmlFor="periodFrom" className="block text-xs font-semibold text-[#6B778C] mb-1.5">발행일 시작</label>
+              <Input id="periodFrom" type="date" value={periodFrom} onChange={(e) => setPeriodFrom(e.target.value)} />
             </div>
-
-            <div className="w-full sm:w-auto sm:flex-1 lg:min-w-[160px]">
-              <Select value={fRegion1} onChange={(e) => { setFRegion1(e.target.value); setFRegion2(""); }}>
-                <option value="">지역1 전체</option>
+            <div className="md:col-span-2">
+              <label htmlFor="periodTo" className="block text-xs font-semibold text-[#6B778C] mb-1.5">발행일 종료</label>
+              <Input id="periodTo" type="date" value={periodTo} onChange={(e) => setPeriodTo(e.target.value)} />
+            </div>
+            <div className="md:col-span-2">
+              <label htmlFor="fRegion1" className="block text-xs font-semibold text-[#6B778C] mb-1.5">지역1</label>
+              <Select id="fRegion1" value={fRegion1} onChange={(e) => { setFRegion1(e.target.value); setFRegion2(""); }}>
+                <option value="">전체</option>
                 {regions1.map((v) => <option key={v} value={v}>{v}</option>)}
               </Select>
             </div>
-            <div className="w-full sm:w-auto sm:flex-1 lg:min-w-[160px]">
-              <Select value={fRegion2} onChange={(e) => setFRegion2(e.target.value)}>
-                <option value="">지역2 전체</option>
+            <div className="md:col-span-2">
+              <label htmlFor="fRegion2" className="block text-xs font-semibold text-[#6B778C] mb-1.5">지역2</label>
+              <Select id="fRegion2" value={fRegion2} onChange={(e) => setFRegion2(e.target.value)}>
+                <option value="">전체</option>
                 {regions2.map((v) => <option key={v} value={v}>{v}</option>)}
               </Select>
             </div>
-
-            <div className="w-full sm:w-auto sm:flex-1 lg:min-w-[160px]">
-              <Select value={fOrderGroup} onChange={(e) => setFOrderGroup(e.target.value)}>
-                <option value="">오더구분 전체</option>
+            <div className="md:col-span-2">
+              <label htmlFor="fOrderGroup" className="block text-xs font-semibold text-[#6B778C] mb-1.5">오더구분</label>
+              <Select id="fOrderGroup" value={fOrderGroup} onChange={(e) => setFOrderGroup(e.target.value)}>
+                <option value="">전체</option>
                 {orderGroups.map((v) => <option key={v} value={v}>{v}</option>)}
               </Select>
             </div>
-            <div className="w-full sm:w-auto sm:flex-1 lg:min-w-[160px]">
-              <Select value={fOrderType} onChange={(e) => setFOrderType(e.target.value)}>
-                <option value="">오더유형 전체</option>
+            <div className="md:col-span-2">
+              <label htmlFor="fOrderType" className="block text-xs font-semibold text-[#6B778C] mb-1.5">오더유형</label>
+              <Select id="fOrderType" value={fOrderType} onChange={(e) => setFOrderType(e.target.value)}>
+                <option value="">전체</option>
                 {orderTypes.map((v) => <option key={v} value={v}>{v}</option>)}
               </Select>
             </div>
-            <div className="w-full sm:w-auto sm:flex-1 lg:min-w-[160px]">
-              <Select value={fWashType} onChange={(e) => setFWashType(e.target.value)}>
-                <option value="">세차유형 전체</option>
+            <div className="md:col-span-2">
+              <label htmlFor="fWashType" className="block text-xs font-semibold text-[#6B778C] mb-1.5">세차유형</label>
+              <Select id="fWashType" value={fWashType} onChange={(e) => setFWashType(e.target.value)}>
+                <option value="">전체</option>
                 {washTypes.map((v) => <option key={v} value={v}>{v}</option>)}
               </Select>
             </div>
-            <div className="w-full sm:w-auto sm:flex-1 lg:min-w-[160px]">
-              <Select value={fPartner} onChange={(e) => setFPartner(e.target.value)}>
-                <option value="">파트너명 전체</option>
+            <div className="md:col-span-2">
+              <label htmlFor="fPartner" className="block text-xs font-semibold text-[#6B778C] mb-1.5">파트너명</label>
+              <Select id="fPartner" value={fPartner} onChange={(e) => setFPartner(e.target.value)}>
+                <option value="">전체</option>
                 {partners.map((v) => <option key={v} value={v}>{v}</option>)}
               </Select>
             </div>
-            <div className="w-full sm:w-auto sm:flex-1 lg:min-w-[160px]">
-              <Select value={fPartnerType} onChange={(e) => {
+            <div className="md:col-span-2">
+              <label htmlFor="fPartnerType" className="block text-xs font-semibold text-[#6B778C] mb-1.5">파트너유형</label>
+              <Select id="fPartnerType" value={fPartnerType} onChange={(e) => {
                 const newType = e.target.value;
                 setFPartnerType(newType);
-                
                 // 파트너 유형 변경 시, 현재 선택된 상태값이 유효하지 않으면 초기화
                 let validStatuses = [];
                 if (newType === "현장") {
@@ -712,25 +719,25 @@ function OrdersPage({ quickStatus, onClearQuickStatus, initialOrderId, orders, s
                 } else {
                   validStatuses = ["미배정", "파트너 배정", "예약", "입고 중", "수행 중", "세차 완료", "출고 중", "완료", "취소"];
                 }
-                
                 if (fStatus && !validStatuses.includes(fStatus)) {
                   setFStatus("");
                   onClearQuickStatus();
                 }
               }}>
-                <option value="">파트너유형 전체</option>
+                <option value="">전체</option>
                 <option value="현장">현장</option>
                 <option value="입고">입고</option>
               </Select>
             </div>
-            <div className="w-full sm:w-auto sm:flex-1 lg:min-w-[160px]">
-              <Select value={fStatus} onChange={(e) => { setFStatus(e.target.value); onClearQuickStatus(); }}>
-                <option value="">진행상태 전체</option>
+            <div className="md:col-span-2">
+              <label htmlFor="fStatus" className="block text-xs font-semibold text-[#6B778C] mb-1.5">진행상태</label>
+              <Select id="fStatus" value={fStatus} onChange={(e) => { setFStatus(e.target.value); onClearQuickStatus(); }}>
+                <option value="">전체</option>
                 {currentStatuses.map((v) => <option key={v} value={v}>{v}</option>)}
               </Select>
             </div>
 
-            <div className="w-full flex flex-wrap items-center justify-between gap-2 pt-1">
+            <div className="md:col-span-12 flex flex-wrap items-center justify-between gap-2 pt-1">
               {chips}
               <Button
                 variant="secondary"
