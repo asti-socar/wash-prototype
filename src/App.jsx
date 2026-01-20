@@ -693,6 +693,16 @@ export default function App() {
     }
   }, []);
 
+  // URL 쿼리 스트링과 activeKey 상태 양방향 동기화
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('page') !== activeKey) {
+      const newUrl = new URL(window.location);
+      newUrl.searchParams.set('page', activeKey);
+      window.history.pushState({ path: newUrl.toString() }, '', newUrl.toString());
+    }
+  }, [activeKey]);
+
   const pageTitle = PAGE_TITLES[activeKey] ?? "Admin";
 
   const goOrdersWithStatus = (status) => {
