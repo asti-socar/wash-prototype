@@ -162,13 +162,23 @@ function DataTable({ columns, rows, onRowClick, rowKey, sortConfig, onSort }) {
 }
 
 export default function BillingPage() {
-  const [period, setPeriod] = useState(toYmd(new Date()));
+  const today = new Date();
+  const [periodFrom, setPeriodFrom] = useState(toYmd(new Date(today.getFullYear(), today.getMonth(), 1)));
+  const [periodTo, setPeriodTo] = useState(toYmd(today));
 
   const billingData = [
     { id: "B-1001", orderId: "O-90002", partner: "B파트너명", amount: 25000, status: "청구완료", date: "2026-01-12" },
     { id: "B-1002", orderId: "O-90005", partner: "B파트너명", amount: 18000, status: "대기", date: "2026-01-12" },
     { id: "B-1003", orderId: "O-90011", partner: "C파트너명", amount: 22000, status: "청구완료", date: "2026-01-11" },
   ];
+
+  const filteredData = useMemo(() => {
+    return billingData.filter(item => {
+      if (periodFrom && item.date < periodFrom) return false;
+      if (periodTo && item.date > periodTo) return false;
+      return true;
+    });
+  }, [billingData, periodFrom, periodTo]);
 
   const [selected, setSelected] = useState(null);
   const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
@@ -191,7 +201,7 @@ export default function BillingPage() {
     }));
   };
 
-  const { currentData: billingList, currentPage: billingPage, totalPages: billingTotalPages, setCurrentPage: setBillingPage, totalItems: billingTotal } = usePagination(getSortedData(billingData), 40);
+  const { currentData: billingList, currentPage: billingPage, totalPages: billingTotalPages, setCurrentPage: setBillingPage, totalItems: billingTotal } = usePagination(getSortedData(filteredData), 40);
   
   return (
     <div className="space-y-4">
@@ -215,10 +225,19 @@ export default function BillingPage() {
       </div>
 
       <Card>
-        <CardContent className="flex items-center gap-4">
-          <div className="flex items-center gap-2">
-            <span className="text-sm font-medium text-[#172B4D]">기간 조회</span>
-            <Input type="date" value={period} onChange={(e) => setPeriod(e.target.value)} className="!w-40" />
+        <CardHeader>
+          <CardTitle>검색 및 필터</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 gap-x-4 gap-y-5 md:grid-cols-12">
+            <div className="md:col-span-2">
+              <label htmlFor="periodFrom" className="block text-xs font-semibold text-[#6B778C] mb-1.5">청구일 시작</label>
+              <Input id="periodFrom" type="date" value={periodFrom} onChange={(e) => setPeriodFrom(e.target.value)} />
+            </div>
+            <div className="md:col-span-2">
+              <label htmlFor="periodTo" className="block text-xs font-semibold text-[#6B778C] mb-1.5">청구일 종료</label>
+              <Input id="periodTo" type="date" value={periodTo} onChange={(e) => setPeriodTo(e.target.value)} />
+            </div>
           </div>
         </CardContent>
       </Card>
