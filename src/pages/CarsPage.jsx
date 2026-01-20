@@ -426,7 +426,6 @@ function CarsPage() {
       <Card>
         <CardHeader>
           <CardTitle>검색 및 필터</CardTitle>
-          <CardDescription>검색: 차량번호, 존이름, 존 ID / 필터: 지역1, 지역2, 파트너명</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 gap-x-4 gap-y-5 md:grid-cols-12">

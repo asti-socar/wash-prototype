@@ -119,6 +119,19 @@ function Badge({ children, tone = "default" }) {
   );
 }
 
+function Chip({ children, onRemove }) {
+  return (
+    <span className="inline-flex items-center gap-1 rounded-lg bg-[#F4F5F7] px-2 py-1 text-xs font-medium text-[#172B4D] border border-[#DFE1E6]">
+      {children}
+      {onRemove ? (
+        <button className="rounded-full p-0.5 hover:bg-[#DFE1E6]" onClick={onRemove} aria-label="remove">
+          <X className="h-3.5 w-3.5" />
+        </button>
+      ) : null}
+    </span>
+  );
+}
+
 /**
  * Drawer
  */
@@ -390,6 +403,17 @@ function MissionsPage({ missions, setMissions, orders }) {
 
   const { currentData, currentPage, totalPages, setCurrentPage, totalItems } = usePagination(sortedData, 40);
 
+  const chips = (
+    <div className="flex flex-wrap gap-2">
+      {q ? <Chip onRemove={() => setQ("")}>검색: {q}</Chip> : null}
+      {periodFrom || periodTo ? <Chip onRemove={() => { setPeriodFrom(""); setPeriodTo(""); }}>기간: {periodFrom || "-"} ~ {periodTo || "-"}</Chip> : null}
+      {fStatus ? <Chip onRemove={() => setFStatus("")}>상태: {fStatus}</Chip> : null}
+      {fModel ? <Chip onRemove={() => setFModel("")}>차종: {fModel}</Chip> : null}
+      {fRegion1 ? <Chip onRemove={() => { setFRegion1(""); setFRegion2(""); }}>지역1: {fRegion1}</Chip> : null}
+      {fRegion2 ? <Chip onRemove={() => setFRegion2("")}>지역2: {fRegion2}</Chip> : null}
+    </div>
+  );
+
   // 체크박스 핸들러
   const toggleSelectAll = () => {
     const currentIds = currentData.map(r => r.id);
@@ -548,65 +572,82 @@ function MissionsPage({ missions, setMissions, orders }) {
           <CardTitle>검색 및 필터</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 gap-3 md:grid-cols-12">
-            <div className="md:col-span-4">
-              <div className="flex items-center gap-2">
-                <Select className="!w-40 shrink-0" value={searchField} onChange={e => setSearchField(e.target.value)}>
-                  <option value="plate">차량번호</option>
-                  <option value="id">미션 ID</option>
-                  <option value="zoneName">존이름</option>
-                </Select>
-                <div className="relative flex-1">
-                  <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#6B778C]" />
-                  <Input 
-                    value={q} 
-                    onChange={(e) => setQ(e.target.value)} 
-                    placeholder={`${
-                      searchField === 'plate' ? '차량번호' : searchField === 'id' ? '미션 ID' : '존이름'
-                    } 검색`} 
-                    className="pl-9" 
-                  />
-                </div>
+          <div className="grid grid-cols-1 gap-x-4 gap-y-5 md:grid-cols-12">
+            <div className="md:col-span-2">
+              <label htmlFor="searchField" className="block text-xs font-semibold text-[#6B778C] mb-1.5">검색항목</label>
+              <Select id="searchField" value={searchField} onChange={e => setSearchField(e.target.value)}>
+                <option value="plate">차량번호</option>
+                <option value="id">미션 ID</option>
+                <option value="zoneName">존이름</option>
+              </Select>
+            </div>
+            <div className="md:col-span-3">
+              <label htmlFor="searchQuery" className="block text-xs font-semibold text-[#6B778C] mb-1.5">검색어</label>
+              <div className="relative">
+                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#6B778C]" />
+                <Input
+                  id="searchQuery"
+                  value={q}
+                  onChange={(e) => setQ(e.target.value)}
+                  placeholder={`${
+                    searchField === 'plate' ? '차량번호' : searchField === 'id' ? '미션 ID' : '존이름'
+                  } 검색`}
+                  className="pl-9"
+                />
               </div>
             </div>
             <div className="md:col-span-2">
-              <Select value={fStatus} onChange={(e) => setFStatus(e.target.value)}>
-                <option value="">상태 전체</option>
-                <option value="대기">대기 (pending)</option>
-                <option value="수행완료">수행완료 (completed)</option>
+              <label htmlFor="periodFrom" className="block text-xs font-semibold text-[#6B778C] mb-1.5">등록일 시작</label>
+              <Input id="periodFrom" type="date" value={periodFrom} onChange={(e) => setPeriodFrom(e.target.value)} />
+            </div>
+            <div className="md:col-span-2">
+              <label htmlFor="periodTo" className="block text-xs font-semibold text-[#6B778C] mb-1.5">등록일 종료</label>
+              <Input id="periodTo" type="date" value={periodTo} onChange={(e) => setPeriodTo(e.target.value)} />
+            </div>
+            <div className="md:col-span-2">
+              <label htmlFor="fStatus" className="block text-xs font-semibold text-[#6B778C] mb-1.5">진행상태</label>
+              <Select id="fStatus" value={fStatus} onChange={(e) => setFStatus(e.target.value)}>
+                <option value="">전체</option>
+                <option value="대기">대기</option>
+                <option value="수행완료">수행완료</option>
               </Select>
             </div>
             <div className="md:col-span-2">
-              <Select value={fModel} onChange={(e) => setFModel(e.target.value)}>
-                <option value="">차종 전체</option>
+              <label htmlFor="fModel" className="block text-xs font-semibold text-[#6B778C] mb-1.5">차종</label>
+              <Select id="fModel" value={fModel} onChange={(e) => setFModel(e.target.value)}>
+                <option value="">전체</option>
                 {models.map(v => <option key={v} value={v}>{v}</option>)}
               </Select>
             </div>
             <div className="md:col-span-2">
-              <Select value={fRegion1} onChange={(e) => { setFRegion1(e.target.value); setFRegion2(""); }}>
-                <option value="">지역1 전체</option>
+              <label htmlFor="fRegion1" className="block text-xs font-semibold text-[#6B778C] mb-1.5">지역1</label>
+              <Select id="fRegion1" value={fRegion1} onChange={(e) => { setFRegion1(e.target.value); setFRegion2(""); }}>
+                <option value="">전체</option>
                 {regions1.map(v => <option key={v} value={v}>{v}</option>)}
               </Select>
             </div>
             <div className="md:col-span-2">
-              <Select value={fRegion2} onChange={(e) => setFRegion2(e.target.value)}>
-                <option value="">지역2 전체</option>
+              <label htmlFor="fRegion2" className="block text-xs font-semibold text-[#6B778C] mb-1.5">지역2</label>
+              <Select id="fRegion2" value={fRegion2} onChange={(e) => setFRegion2(e.target.value)}>
+                <option value="">전체</option>
                 {regions2.map(v => <option key={v} value={v}>{v}</option>)}
               </Select>
             </div>
-            <div className="md:col-span-3">
-              <div className="flex items-center gap-2">
-                <Input type="date" value={periodFrom} onChange={(e) => setPeriodFrom(e.target.value)} />
-                <span className="text-[#6B778C]">~</span>
-                <Input type="date" value={periodTo} onChange={(e) => setPeriodTo(e.target.value)} />
-              </div>
-            </div>
-            <div className="md:col-span-3 flex items-center justify-end gap-2">
+            <div className="md:col-span-12 flex flex-wrap items-center justify-between gap-2 pt-1">
+              {chips}
               <Button
                 variant="secondary"
-                onClick={() => { setQ(""); setFStatus(""); setFModel(""); setFRegion1(""); setFRegion2(""); setPeriodFrom(""); setPeriodTo(""); }}
+                onClick={() => { 
+                  setQ(""); 
+                  setFStatus(""); 
+                  setFModel(""); 
+                  setFRegion1(""); 
+                  setFRegion2(""); 
+                  setPeriodFrom(toYmd(new Date(today.getTime() - 30 * 86400000))); 
+                  setPeriodTo(toYmd(today)); 
+                }}
               >
-                초기화
+                필터 초기화
               </Button>
             </div>
           </div>

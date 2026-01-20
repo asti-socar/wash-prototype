@@ -627,9 +627,6 @@ function OrdersPage({ quickStatus, onClearQuickStatus, initialOrderId, orders, s
       <Card>
         <CardHeader>
           <CardTitle>검색 및 필터</CardTitle>
-          <CardDescription>
-            검색: 차량번호, 오더 ID, 존 ID, 존이름, 수행원, 코멘트 요약 / 필터: 기간, 지역1/2, 오더구분/유형, 세차유형, 파트너명, 진행상태
-          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 gap-x-4 gap-y-5 md:grid-cols-12">
