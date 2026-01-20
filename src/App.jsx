@@ -52,6 +52,9 @@ import BillingPage from './pages/BillingPage';
 import SettlementPage from './pages/SettlementPage';
 import LostItemsPage from './pages/LostItemsPage';
 import UpdateHistoryPage from './pages/UpdateHistoryPage';
+import AIPolicyPage from './pages/AIPolicyPage';
+import ZonePolicyPage from './pages/ZonePolicyPage';
+import OrderTypePolicyPage from './pages/OrderTypePolicyPage';
 
 import FeedbackLayer from './FeedbackLayer';
 
@@ -509,6 +512,7 @@ const NAV = [
     items: [
       { key: "ai-policy", label: "AI 모델 정책 관리", icon: Settings, parentKey: 'order-policy' },
       { key: "zone-policy", label: "존 정책 관리", icon: MapPinned, parentKey: 'order-policy' },
+      { key: "order-type-policy", label: "오더유형 정책", icon: Settings, parentKey: 'order-policy' },
       { key: "region-policy", label: "지역 정책 관리", icon: MapPinned, parentKey: 'order-policy' },
     ],
   },
@@ -547,6 +551,7 @@ const PAGE_TITLES = {
   dashboard: "관제 대시보드",
   "ai-policy": "AI 모델 정책 관리",
   "zone-policy": "존 정책 관리",
+  "order-type-policy": "오더유형 정책 관리",
   "region-policy": "지역 정책 관리",
   vehicles: "차량 관리",
   missions: "미션 관리",
@@ -758,6 +763,12 @@ export default function App() {
         return <PartnerManagersPage />;
       case "workers":
         return <WorkersPage />;
+      case "ai-policy":
+        return <AIPolicyPage />;
+      case "zone-policy":
+        return <ZonePolicyPage />;
+      case "order-type-policy":
+        return <OrderTypePolicyPage />;
       default:
         return <PlaceholderPage title={pageTitle} description="MVP 범위에서는 리스트 조회, 상단 검색/필터, 우측 Drawer 기반 상세 및 정책 수정 흐름으로 정리하는 것이 효율적입니다." />;
     }
