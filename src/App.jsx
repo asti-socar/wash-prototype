@@ -54,7 +54,8 @@ import LostItemsPage from './pages/LostItemsPage';
 import UpdateHistoryPage from './pages/UpdateHistoryPage';
 import AIPolicyPage from './pages/AIPolicyPage';
 import ZonePolicyPage from './pages/ZonePolicyPage';
-import OrderTypePolicyPage from './pages/OrderTypePolicyPage';
+import OrderTypePolicyPage from './pages/OrderType-policy-page';
+import ChecklistPage from './pages/ChecklistPage';
 
 import FeedbackLayer from './FeedbackLayer';
 
@@ -547,6 +548,10 @@ const NAV = [
       { key: "workers", label: "수행원 조회", icon: UserCog, parentKey: 'info-management' },
     ]
   },
+  {
+    group: "파트너 에이전트 (임시)",
+    items: [{ key: "checklist-mockup", label: "오더별 수행 목업", icon: ListChecks }],
+  },
 ];
 
 const PAGE_TITLES = {
@@ -566,6 +571,7 @@ const PAGE_TITLES = {
   partners: "파트너 관리",
   "partner-managers": "파트너 담당자 관리",
   workers: "수행원 조회",
+  "checklist-mockup": "오더별 수행 목업",
 };
 
 /**
@@ -735,6 +741,10 @@ export default function App() {
     if (key === "notices") {
       window.open("", "_blank")?.document.write("CMS Link 필요");
     }
+    if (key === "checklist-mockup") {
+      window.open('/?page=checklist-mockup', '_blank');
+      return;
+    }
     setActiveKey(key);
     const parentGroup = NAV.find(g => g.items?.some(it => it.key === key));
     if (parentGroup && parentGroup.type === 'group') {
@@ -785,6 +795,14 @@ export default function App() {
         return <ZonePolicyPage />;
       case "order-type-policy":
         return <OrderTypePolicyPage />;
+      case "checklist-mockup":
+        return (
+          <Card>
+            <CardContent className="flex items-center justify-center p-16">
+              <p className="text-center text-lg font-bold text-gray-500">TBD (기능 구현 예정)</p>
+            </CardContent>
+          </Card>
+        );
       default:
         return <PlaceholderPage title={pageTitle} description="MVP 범위에서는 리스트 조회, 상단 검색/필터, 우측 Drawer 기반 상세 및 정책 수정 흐름으로 정리하는 것이 효율적입니다." />;
     }
