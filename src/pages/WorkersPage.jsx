@@ -49,9 +49,17 @@ function Drawer({ open, title, onClose, children, footer }) {
   const [isResizing, setIsResizing] = useState(false);
 
   useEffect(() => {
-    if (open) document.body.style.overflow = 'hidden';
-    else document.body.style.overflow = 'auto';
-    return () => { document.body.style.overflow = 'auto'; };
+    if (open) {
+      document.body.style.overflow = 'hidden';
+      document.body.classList.add('drawer-open');
+    } else {
+      document.body.style.overflow = 'auto';
+      document.body.classList.remove('drawer-open');
+    }
+    return () => {
+      document.body.style.overflow = 'auto';
+      document.body.classList.remove('drawer-open');
+    };
   }, [open]);
 
   useEffect(() => {

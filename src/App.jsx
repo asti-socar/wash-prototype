@@ -856,7 +856,7 @@ export default function App() {
 
       <div className={cn(
         "fixed bottom-5 z-[10000] flex items-center gap-2 transition-all duration-300",
-        isDrawerOpen && !isMobile ? "right-auto left-5" : "right-5",
+        isDrawerOpen && !isMobile ? "left-5" : "right-5",
         isDrawerOpen && isMobile ? "opacity-0 pointer-events-none" : "opacity-100"
       )}>
         <button
