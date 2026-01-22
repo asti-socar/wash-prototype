@@ -54,7 +54,7 @@ import LostItemsPage from './pages/LostItemsPage';
 import UpdateHistoryPage from './pages/UpdateHistoryPage';
 import AIPolicyPage from './pages/AIPolicyPage';
 import ZonePolicyPage from './pages/ZonePolicyPage';
-import OrderTypePolicyPage from './pages/OrderType-policy-page';
+import OrderTypePolicyPage from './pages/OrderTypePolicyPage';
 import ChecklistPage from './pages/ChecklistPage';
 
 import FeedbackLayer from './FeedbackLayer';
