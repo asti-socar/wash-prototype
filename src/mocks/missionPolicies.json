@@ -4,20 +4,20 @@
     "content": "신규 프로모션 스티커 부착",
     "amount": 5000,
     "requiresPhoto": true,
-    "createdAt": "2026-01-15"
+    "createdAt": "2026-01-15 12:30"
   },
   {
     "id": "MP-002",
     "content": "내부 방향제 교체 (자스민향)",
     "amount": 3000,
     "requiresPhoto": false,
-    "createdAt": "2026-01-10"
+    "createdAt": "2026-01-10 11:27"
   },
   {
     "id": "MP-003",
     "content": "블랙박스 SD카드 포맷",
     "amount": 7000,
     "requiresPhoto": false,
-    "createdAt": "2026-01-05"
+    "createdAt": "2026-01-05 16:59"
   }
 ]

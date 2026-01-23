@@ -371,14 +371,14 @@ const MissionsPage = ({ missionPolicies, setMissionPolicies, policyVehicles, set
     { key: "targetVehicleCount", header: "대상 차량수", render: r => `${r.targetVehicleCount}대` },
     { key: "completedVehicleCount", header: "수행 완료수", render: r => `${r.completedVehicleCount}대` },
     { key: "progress", header: "진행률(%)", render: r => `${Math.round(r.progress * 100)}%` },
-    { key: "createdAt", header: "등록일" },
+    { key: "createdAt", header: "등록일시" },
   ];
   
   const vehicleColumns = [
     { key: "plate", header: "차량번호" },
     { key: "status", header: "수행 상태", render: r => <Badge tone={r.status === 'completed' ? 'ok' : 'warn'}>{r.status === 'completed' ? '완료' : '대기'}</Badge> },
     { key: "linkedOrderId", header: "연결된 오더", render: r => r.linkedOrderId ? <a href={`/?page=orders&orderId=${r.linkedOrderId}`} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">{r.linkedOrderId} <ExternalLink className="inline h-3 w-3" /></a> : "-" },
-    { key: "completedAt", header: "완료일시", render: r => r.completedAt ? toYmd(r.completedAt) : "-" },
+    { key: "completedAt", header: "완료일", render: r => r.completedAt ? toYmd(r.completedAt) : "-" },
     { key: "actions", header: "관리", render: r => r.status === 'pending' ? <Button variant="danger" size="sm" className="h-7 px-2" onClick={(e) => {e.stopPropagation(); handleRemoveVehicle(r.id);}}><Trash2 className="h-3 w-3" /></Button> : null },
   ];
 
