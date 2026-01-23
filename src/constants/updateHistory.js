@@ -1,4 +1,6 @@
 export const BROWN_HISTORY = [
+//미션 정책 관리 '상태' 추가
+  { id: 64, date: "2026-01-23 14:06", content: "[기능] 미션 관리 - 상태(활성/비활성) 추가", isPolicyChange: true, links: [{ label: "미션 관리", page: "missions" }] },
   { id: 63, date: "2026-01-23 13:26", content: "[정책] 미션 관리 기능 정책 변경", isPolicyChange: true, links: [{ label: "미션 관리", page: "missions" }] },
   { id: 62, date: "2026-01-23 11:15", content: "[정책] 오더별 수행 목업, 오더 유형별 수행(사진 촬영, 점검) 기능명세 작성", isPolicyChange: true, links: [{ label: "오더별 수행 목업", page: "checklist-mockup" }] },
   { id: 61, date: "2026-01-20 14:30", content: "[기능] 분실물 관리: 검색/필터, UI 일관성 및 상세화면 동작 개선", isPolicyChange: true, links: [{ label: "분실물 관리", page: "lostfound" }] },
