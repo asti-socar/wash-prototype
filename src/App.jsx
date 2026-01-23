@@ -532,7 +532,7 @@ const NAV = [
     items: [
       { key: "vehicles", label: "차량 관리", icon: Car, parentKey: 'work-management' },
       { key: "orders", label: "오더 관리", icon: ClipboardList, parentKey: 'work-management' },
-      { key: "missions", label: "미션 관리", icon: ClipboardList, parentKey: 'work-management' },
+      { key: "missions", label: "미션 정책 관리", icon: ClipboardList, parentKey: 'work-management' },
       { key: "settlement", label: "합의 요청 관리", icon: Handshake, parentKey: 'work-management' },
       { key: "billing", label: "청구 관리", icon: Receipt, parentKey: 'work-management' },
       { key: "lostfound", label: "분실물 관리", icon: PackageSearch, parentKey: 'work-management' },
@@ -565,7 +565,7 @@ const PAGE_TITLES = {
   "order-type-policy": "오더유형 정책 관리",
   "region-policy": "지역 정책 관리",
   vehicles: "차량 관리",
-  missions: "미션 관리",
+  missions: "미션 정책 관리",
   orders: "오더 관리",
   settlement: "합의 요청 관리",
   billing: "청구 관리",

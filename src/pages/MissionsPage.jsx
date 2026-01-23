@@ -265,7 +265,6 @@ const MissionsPage = ({ missionPolicies, setMissionPolicies, policyVehicles, set
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
   const [newPolicyForm, setNewPolicyForm] = useState({ content: "", amount: 0, requiresPhoto: true });
   
-  const [q, setQ] = useState("");
   const [periodFrom, setPeriodFrom] = useState("");
   const [periodTo, setPeriodTo] = useState("");
   const [sortConfig, setSortConfig] = useState({ key: 'createdAt', direction: 'desc' });
@@ -289,13 +288,11 @@ const MissionsPage = ({ missionPolicies, setMissionPolicies, policyVehicles, set
   }, [missionPolicies, policyVehicles]);
 
   const filteredPolicies = useMemo(() => {
-    const qq = q.trim().toLowerCase();
     return enrichedPolicies.filter(p => {
-      const hitQ = !qq || p.content.toLowerCase().includes(qq);
       const hitPeriod = (!periodFrom || p.createdAt >= periodFrom) && (!periodTo || p.createdAt <= periodTo);
-      return hitQ && hitPeriod;
+      return hitPeriod;
     });
-  }, [enrichedPolicies, q, periodFrom, periodTo]);
+  }, [enrichedPolicies, periodFrom, periodTo]);
   
   const sortedData = useMemo(() => {
     if (!sortConfig.key) return filteredPolicies;
@@ -419,13 +416,6 @@ const MissionsPage = ({ missionPolicies, setMissionPolicies, policyVehicles, set
         <CardHeader><CardTitle>검색 및 필터</CardTitle></CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-12">
-            <div className="md:col-span-5">
-              <label htmlFor="searchQuery" className="block text-xs font-semibold text-[#6B778C] mb-1.5">미션 내용 검색</label>
-              <div className="relative">
-                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#6B778C]" />
-                <Input id="searchQuery" value={q} onChange={(e) => setQ(e.target.value)} placeholder="미션 내용 검색" className="pl-9" />
-              </div>
-            </div>
             <div className="md:col-span-2">
               <label htmlFor="periodFrom" className="block text-xs font-semibold text-[#6B778C] mb-1.5">등록일 시작</label>
               <Input id="periodFrom" type="date" value={periodFrom} onChange={(e) => setPeriodFrom(e.target.value)} />
