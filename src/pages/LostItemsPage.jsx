@@ -233,7 +233,7 @@ const initialMockLostItems = [
     itemCategory: '전자기기',
     status: '접수',
     itemDetails: '검은색 스마트폰, 최신 모델',
-    itemPhotos: ['https://via.placeholder.com/150/0000FF/808080?Text=Photo1'],
+    itemPhotos: ['https://placehold.co/20x20?text=Hello\nWorld'],
     carId: 'CAR001',
     carNumber: '12가3456',
     zoneId: 'ZONE01',
