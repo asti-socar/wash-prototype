@@ -1,0 +1,10 @@
+[
+  { "id": "PV-001", "policyId": "MP-001", "plate": "12가3456", "status": "completed", "linkedOrderId": "O-90001", "completedAt": "2026-01-16T14:30:00Z" },
+  { "id": "PV-002", "policyId": "MP-001", "plate": "34나7890", "status": "pending", "linkedOrderId": null, "completedAt": null },
+  { "id": "PV-003", "policyId": "MP-001", "plate": "56다1122", "status": "pending", "linkedOrderId": null, "completedAt": null },
+  { "id": "PV-004", "policyId": "MP-002", "plate": "12가3456", "status": "completed", "linkedOrderId": "O-90001", "completedAt": "2026-01-16T14:30:00Z" },
+  { "id": "PV-005", "policyId": "MP-002", "plate": "78라3344", "status": "completed", "linkedOrderId": "O-90004", "completedAt": "2026-01-17T10:00:00Z" },
+  { "id": "PV-006", "policyId": "MP-002", "plate": "90마5566", "status": "pending", "linkedOrderId": null, "completedAt": null },
+  { "id": "PV-007", "policyId": "MP-002", "plate": "11바7788", "status": "pending", "linkedOrderId": null, "completedAt": null },
+  { "id": "PV-008", "policyId": "MP-003", "plate": "12가3456", "status": "pending", "linkedOrderId": null, "completedAt": null }
+]

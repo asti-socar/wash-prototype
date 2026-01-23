@@ -57,6 +57,9 @@ import ZonePolicyPage from './pages/ZonePolicyPage';
 import OrderTypePolicyPage from './pages/OrderTypePolicyPage';
 import ChecklistPage from './pages/ChecklistPage';
 
+import missionPoliciesData from "./mocks/missionPolicies.json";
+import policyVehiclesData from "./mocks/policyVehicles.json";
+
 import FeedbackLayer from './FeedbackLayer';
 
 /**
@@ -684,29 +687,9 @@ function AdminApp() {
   const [orderQuickFilter, setOrderQuickFilter] = useState(null); // { status: '예약' | ... }
   const [initialOrderId, setInitialOrderId] = useState(null);
 
-  // Lifted State: Missions (전역 관리)
-  const [missions, setMissions] = useState([
-    // 1. Pending (policy compliant)
-    { id: "M-1001", plate: "12가3456", content: "스티커 부착", status: "pending", createdAt: "2026-01-10", amount: 0, requiresPhoto: true, zoneName: null, assignedAt: null, completedAt: null, linkedOrderId: null },
-    // 2. Completed
-    { id: "M-1002", plate: "34나7890", content: "내부 청소 집중", status: "completed", linkedOrderId: "O-90002", zoneName: "잠실역 2번존", createdAt: "2026-01-08", assignedAt: "2026-01-09 10:00", completedAt: "2026-01-09 14:00", amount: 5000, requiresPhoto: true },
-    // 3. Completed
-    { id: "M-1003", plate: "78라3344", content: "블랙박스 점검", status: "completed", linkedOrderId: "O-90004", zoneName: "판교 1번존", createdAt: "2026-01-07", assignedAt: "2026-01-08 11:00", completedAt: "2026-01-08 15:00", amount: 3000, requiresPhoto: false },
-    // 4. Pending
-    { id: "M-1004", plate: "56다1122", content: "광고물 제거", status: "pending", createdAt: "2026-01-11", amount: 2000, requiresPhoto: true, zoneName: null, assignedAt: null, completedAt: null, linkedOrderId: null },
-    // 5. Pending
-    { id: "M-1005", plate: "90마5566", content: "타이어 공기압 체크", status: "pending", createdAt: "2026-01-12", amount: 0, requiresPhoto: false, zoneName: null, assignedAt: null, completedAt: null, linkedOrderId: null },
-    // 6. Completed
-    { id: "M-1006", plate: "11바7788", content: "엔진룸 클리닝", status: "completed", linkedOrderId: "O-90006", zoneName: "부산역 1번존", createdAt: "2026-01-05", assignedAt: "2026-01-06 09:00", completedAt: "2026-01-06 13:00", amount: 15000, requiresPhoto: true },
-    // 7. Pending
-    { id: "M-1007", plate: "22사9900", content: "유리 발수 코팅", status: "pending", createdAt: "2026-01-13", amount: 8000, requiresPhoto: true, zoneName: null, assignedAt: null, completedAt: null, linkedOrderId: null },
-    // 8. Completed
-    { id: "M-1008", plate: "33아1212", content: "실내 탈취", status: "completed", linkedOrderId: "O-90008", zoneName: "대전역 1번존", createdAt: "2026-01-09", assignedAt: "2026-01-10 12:00", completedAt: "2026-01-10 16:00", amount: 5000, requiresPhoto: false },
-    // 9. Pending
-    { id: "M-1009", plate: "44자3434", content: "와이퍼 교체", status: "pending", createdAt: "2026-01-14", amount: 1000, requiresPhoto: false, zoneName: null, assignedAt: null, completedAt: null, linkedOrderId: null },
-    // 10. Completed
-    { id: "M-1010", plate: "55차5656", content: "가죽 시트 케어", status: "completed", linkedOrderId: "O-90010", zoneName: "광주 1번존", createdAt: "2026-01-10", assignedAt: "2026-01-11 13:00", completedAt: "2026-01-11 17:00", amount: 12000, requiresPhoto: true },
-  ]);
+  // Lifted State: Missions (전역 관리) - 정책 기반
+  const [missionPolicies, setMissionPolicies] = useState(missionPoliciesData);
+  const [policyVehicles, setPolicyVehicles] = useState(policyVehiclesData);
 
   // Lifted State: Orders (전역 관리)
   const [orders, setOrders] = useState(() => [
@@ -771,7 +754,13 @@ function AdminApp() {
       case "vehicles":
         return <CarsPage />;
       case "missions":
-        return <MissionsPage missions={missions} setMissions={setMissions} orders={orders} />;
+        return <MissionsPage
+          missionPolicies={missionPolicies}
+          setMissionPolicies={setMissionPolicies}
+          policyVehicles={policyVehicles}
+          setPolicyVehicles={setPolicyVehicles}
+          orders={orders}
+        />;
       case "orders":
         return (
           <OrdersPage
@@ -780,8 +769,6 @@ function AdminApp() {
             initialOrderId={initialOrderId}
             orders={orders}
             setOrders={setOrders}
-            missions={missions}
-            setMissions={setMissions}
           />
         );
       case "settlement":
