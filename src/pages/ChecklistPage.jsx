@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { Camera, ChevronLeft, ChevronRight, CheckCircle, ArrowLeft, Car, Droplet, Sparkles, ClipboardList, Send } from 'lucide-react';
+import { getPreWashPhotos, getPostWashPhotos, getChecklistItems, mockOrderTypes } from '../lib/checklistData.js';
 
 // --- UI Components (Inspired by project's existing style) ---
 
@@ -20,21 +21,100 @@ const Button = React.forwardRef(({ className, variant = "default", size = "md", 
 });
 
 const ToggleButton = ({ options, value, onChange, className }) => {
+  const gridCols = options.length > 3 ? 'grid-cols-3' : `grid-cols-${options.length}`;
   return (
-    <div className={cn("grid grid-cols-2 gap-2", className)}>
+    <div className={cn(`grid ${gridCols} gap-2`, className)}>
       {options.map(option => (
         <button
-          key={option.value}
-          onClick={() => onChange(option.value)}
+          key={option}
+          onClick={() => onChange(option)}
           className={cn(
-            "w-full text-center px-4 py-2 text-sm font-semibold rounded-lg border transition-colors",
-            value === option.value
+            "w-full text-center px-3 py-2 text-sm font-semibold rounded-lg border transition-colors",
+            value === option
               ? "bg-[#0052CC] text-white border-[#0052CC]"
               : "bg-white text-slate-700 border-slate-300 hover:bg-slate-50"
           )}
         >
-          {option.label}
+          {option}
         </button>
+      ))}
+    </div>
+  );
+};
+
+const MultiSelectButton = ({ options, value = [], onChange, className }) => {
+  const gridCols = options.length > 2 ? 'grid-cols-3' : `grid-cols-${options.length}`;
+  
+  const handleToggle = (option) => {
+    if (value.includes(option)) {
+      onChange(value.filter(item => item !== option));
+    } else {
+      onChange([...value, option]);
+    }
+  };
+
+  return (
+    <div className={cn(`grid ${gridCols} gap-2`, className)}>
+      {options.map(option => (
+        <button
+          key={option}
+          onClick={() => handleToggle(option)}
+          className={cn(
+            "w-full text-center px-3 py-2 text-sm font-semibold rounded-lg border transition-colors",
+            value.includes(option)
+              ? "bg-[#0052CC] text-white border-[#0052CC]"
+              : "bg-white text-slate-700 border-slate-300 hover:bg-slate-50"
+          )}
+        >
+          {option}
+        </button>
+      ))}
+    </div>
+  );
+};
+
+const Dropdown = ({ options, value, onChange, placeholder, className }) => (
+  <select
+    value={value || ""}
+    onChange={(e) => onChange(e.target.value)}
+    className={cn("w-full p-2 border border-slate-300 rounded-lg bg-white", className)}
+  >
+    {placeholder && <option value="" disabled>{placeholder}</option>}
+    {options.map(option => (
+      <option key={option} value={option}>{option}</option>
+    ))}
+  </select>
+);
+
+const TireInputGroup = ({ type, locations, options, value = {}, onChange }) => {
+  const handleSingleUpdate = (location, val) => {
+    onChange({ ...value, [location]: val });
+  };
+
+  return (
+    <div className="grid grid-cols-2 gap-x-4 gap-y-3">
+      {locations.map(location => (
+        <div key={location}>
+          <label className="text-xs font-medium text-slate-500">{location}</label>
+          {type === 'tires-text' && (
+            <input
+              type="text"
+              placeholder="0.0"
+              value={value[location] || ''}
+              onChange={(e) => handleSingleUpdate(location, e.target.value)}
+              className="w-full p-2 mt-1 border border-slate-300 rounded-lg"
+            />
+          )}
+          {type === 'tires-toggle' && (
+            <div className="mt-1">
+              <ToggleButton
+                options={options}
+                value={value[location]}
+                onChange={(val) => handleSingleUpdate(location, val)}
+              />
+            </div>
+          )}
+        </div>
       ))}
     </div>
   );
@@ -74,56 +154,57 @@ const steps = [
   { name: '제출', icon: Send },
 ];
 
-const sampleOrder = {
-  type: "B유형",
-  category: "정규",
-  washType: "내외부",
-  partnerType: "입고",
-  vehicle: "쏘렌토 MQ4",
-  licensePlate: "12가 3456",
-  location: "서울 A-12 구역"
-};
-
-const OrderConfirmationStep = () => (
+const OrderConfirmationStep = ({ order }) => (
   <div className="p-4 space-y-4">
     <h2 className="text-xl font-bold text-slate-800">오더 정보를 확인해주세요.</h2>
     <div className="bg-slate-50 rounded-lg p-4 space-y-2 border border-slate-200">
       <div className="flex justify-between items-center">
         <span className="text-sm font-semibold text-slate-500">차량</span>
-        <span className="text-sm font-bold text-slate-800">{sampleOrder.vehicle} ({sampleOrder.licensePlate})</span>
+        <span className="text-sm font-bold text-slate-800">{order.vehicle} ({order.licensePlate})</span>
       </div>
       <div className="flex justify-between items-center">
         <span className="text-sm font-semibold text-slate-500">점검 유형</span>
-        <span className="text-sm font-bold text-slate-800">{sampleOrder.type} ({sampleOrder.category})</span>
+        <span className="text-sm font-bold text-slate-800">{order.inspectionType} ({order.orderType})</span>
       </div>
       <div className="flex justify-between items-center">
         <span className="text-sm font-semibold text-slate-500">세차 유형</span>
-        <span className="text-sm font-bold text-slate-800">{sampleOrder.washType}</span>
+        <span className="text-sm font-bold text-slate-800">{order.washType}</span>
       </div>
        <div className="flex justify-between items-center">
         <span className="text-sm font-semibold text-slate-500">파트너 유형</span>
-        <span className="text-sm font-bold text-slate-800">{sampleOrder.partnerType}</span>
+        <span className="text-sm font-bold text-slate-800">{order.partnerType}</span>
       </div>
        <div className="flex justify-between items-center">
         <span className="text-sm font-semibold text-slate-500">위치</span>
-        <span className="text-sm font-bold text-slate-800">{sampleOrder.location}</span>
+        <span className="text-sm font-bold text-slate-800">{order.location}</span>
       </div>
     </div>
     <p className="text-xs text-slate-500 text-center pt-4">
-      점검 명세서 2.1 분류표에 따른 B유형, 정규, 내외부, 입고 오더입니다.
+      점검 명세서에 따른 {order.inspectionType}, {order.orderType}, {order.washType}, {order.partnerType} 오더입니다.
     </p>
   </div>
 );
 
-const PreWashPhotoStep = () => {
-    const photos = ["정면", "운전석 방향 측면", "후면", "조수석 방향 측면", "1열", "2열"];
+const PreWashPhotoStep = ({ order }) => {
+    const photos = getPreWashPhotos(order);
+    
+    if (photos.length === 0) {
+        return (
+            <div className="p-4 text-center">
+                <CheckCircle className="w-16 h-16 text-emerald-500 mx-auto mb-4" />
+                <h2 className="text-xl font-bold text-slate-800">세차 전 사진 촬영 없음</h2>
+                <p className="text-sm text-slate-500 mt-2">{order.washType} 유형은 세차 전 사진 촬영이 필요하지 않습니다.</p>
+            </div>
+        );
+    }
+
     return (
         <div className="p-4 space-y-3">
             <h2 className="text-xl font-bold text-slate-800">세차 전 사진 촬영</h2>
             <p className="text-sm text-slate-500">세차 전 차량 상태를 촬영해주세요. 총 {photos.length}장이 필요합니다.</p>
             <div className="space-y-2 pt-2">
                 {photos.map((photo, index) => (
-                    <PhotoUpload key={index} label={photo} completed={index < 2} />
+                    <PhotoUpload key={index} label={photo} completed={index < 0} /> // Initially not completed
                 ))}
             </div>
         </div>
@@ -138,61 +219,78 @@ const WashingStep = () => (
   </div>
 );
 
-const PostWashPhotoStep = () => {
-    const exteriorPhotos = ["워셔액", "전면", "조수석 도어", "조수석 사이드미러", "조수석 앞타이어 트레드", "조수석 뒷도어", "조수석 뒷타이어 트레드", "후면", "트렁크 내부", "운전석 뒷도어", "운전석 뒷타이어 트레드", "운전석 도어", "운전석 사이드 미러", "운전석 앞타이어 트레드"];
-    const interiorPhotos = ["조수석 내부", "조수석 발매트", "조수석 뒷좌석 내부", "조수석 뒷좌석 발매트", "조수석 시트 하단", "운전석 뒷좌석 내부", "운전석 뒷좌석 발매트", "운전석 시트 하단", "운전석 내부", "운전석 발매트", "센터페시아", "컵홀더"];
+const PostWashPhotoStep = ({ order }) => {
+    const { exterior: exteriorPhotos, interior: interiorPhotos } = getPostWashPhotos(order);
+    
     return (
         <div className="p-4 space-y-4">
             <h2 className="text-xl font-bold text-slate-800">세차 후 사진 촬영</h2>
             <p className="text-sm text-slate-500">작업 완료 후 결과를 촬영해주세요.</p>
             
-            <div className="space-y-3">
-                <h3 className="text-base font-bold text-slate-700 mt-4">외부 ({exteriorPhotos.length}장)</h3>
-                {exteriorPhotos.map((photo, index) => (
-                    <PhotoUpload key={`ext-${index}`} label={photo} completed={false} />
-                ))}
-            </div>
+            {exteriorPhotos.length > 0 && (
+              <div className="space-y-3">
+                  <h3 className="text-base font-bold text-slate-700 mt-4">외부 ({exteriorPhotos.length}장)</h3>
+                  {exteriorPhotos.map((photo, index) => (
+                      <PhotoUpload key={`ext-${index}`} label={photo} completed={false} />
+                  ))}
+              </div>
+            )}
 
-            <div className="space-y-3">
-                <h3 className="text-base font-bold text-slate-700 mt-4">내부 ({interiorPhotos.length}장)</h3>
-                {interiorPhotos.map((photo, index) => (
-                    <PhotoUpload key={`int-${index}`} label={photo} completed={false} />
-                ))}
-            </div>
+            {interiorPhotos.length > 0 && (
+              <div className="space-y-3">
+                  <h3 className="text-base font-bold text-slate-700 mt-4">내부 ({interiorPhotos.length}장)</h3>
+                  {interiorPhotos.map((photo, index) => (
+                      <PhotoUpload key={`int-${index}`} label={photo} completed={false} />
+                  ))}
+              </div>
+            )}
         </div>
     );
 };
 
-const ChecklistStep = () => {
+const ChecklistStep = ({ order }) => {
     const [checklist, setChecklist] = useState({});
-    const handleUpdate = (key, value) => {
-        setChecklist(prev => ({...prev, [key]: value}));
+    const handleUpdate = (id, value) => {
+        setChecklist(prev => ({...prev, [id]: value}));
     };
     
-    const commonItems = ["유리창", "배터리전압", "안전삼각대", "차량용 소화기", "워셔액통", "발판매트", "시동불가", "본넷"];
-    const bTypeItems = ["방향제", "와이퍼", "시트/폴딩"];
+    const items = getChecklistItems(order.inspectionType);
+
+    const renderInput = (item) => {
+      const value = checklist[item.id];
+      const onChange = (val) => handleUpdate(item.id, val);
+
+      switch (item.type) {
+        case 'number':
+          return <input type="number" className="w-full p-2 border border-slate-300 rounded-lg" placeholder={item.placeholder} value={value || ''} onChange={(e) => onChange(e.target.value)} />;
+        case 'text':
+          return <input type="text" className="w-full p-2 border border-slate-300 rounded-lg" placeholder={item.placeholder} value={value || ''} onChange={(e) => onChange(e.target.value)} />;
+        case 'textarea':
+          return <textarea className="w-full p-2 border border-slate-300 rounded-lg" rows="3" value={value || ''} onChange={(e) => onChange(e.target.value)} />;
+        case 'toggle':
+          return <ToggleButton options={item.options} value={value} onChange={onChange} />;
+        case 'multiselect':
+          return <MultiSelectButton options={item.options} value={value} onChange={onChange} />;
+        case 'dropdown':
+          return <Dropdown options={item.options} value={value} onChange={onChange} placeholder="선택..." />;
+        case 'tires-text':
+        case 'tires-toggle':
+          return <TireInputGroup type={item.type} locations={item.locations} options={item.options} value={value} onChange={onChange} />;
+        default:
+          return <p className="text-sm text-red-500">Unsupported input type: {item.type}</p>
+      }
+    }
 
     return (
         <div className="p-4 space-y-4">
             <h2 className="text-xl font-bold text-slate-800">점검 항목 입력</h2>
-            <p className="text-sm text-slate-500">B유형 점검 항목을 확인하고 상태를 입력해주세요.</p>
+            <p className="text-sm text-slate-500">{order.inspectionType}유형 점검 항목을 확인하고 상태를 입력해주세요.</p>
 
             <div className="bg-white p-4 rounded-lg border border-slate-200 space-y-5">
-                <h3 className="text-base font-bold text-slate-700">공통 점검 항목</h3>
-                {commonItems.map(item => (
-                    <div key={item}>
-                        <label className="text-sm font-semibold text-slate-600 mb-2 block">{item}</label>
-                        <ToggleButton options={[{label: '정상', value: 'ok'}, {label: '이상', value: 'bad'}]} value={checklist[item]} onChange={(val) => handleUpdate(item, val)} />
-                    </div>
-                ))}
-            </div>
-
-            <div className="bg-white p-4 rounded-lg border border-slate-200 space-y-5">
-                <h3 className="text-base font-bold text-slate-700">B유형 추가 항목</h3>
-                 {bTypeItems.map(item => (
-                    <div key={item}>
-                        <label className="text-sm font-semibold text-slate-600 mb-2 block">{item}</label>
-                        <ToggleButton options={[{label: '정상', value: 'ok'}, {label: '분실/이상', value: 'bad'}]} value={checklist[item]} onChange={(val) => handleUpdate(item, val)} />
+                {items.map(item => (
+                    <div key={item.id}>
+                        <label className="text-sm font-semibold text-slate-600 mb-2 block">{item.label}</label>
+                        {renderInput(item)}
                     </div>
                 ))}
             </div>
@@ -225,10 +323,14 @@ const SuccessScreen = ({ onReset }) => (
 
 
 // --- Main Page Component ---
-
 export default function ChecklistPage() {
   const [currentStep, setCurrentStep] = useState(0);
   const [isFinished, setIsFinished] = useState(false);
+  const [orderKey, setOrderKey] = useState(mockOrderTypes[0].key);
+  
+  const currentOrder = useMemo(() => {
+    return mockOrderTypes.find(o => o.key === orderKey) || mockOrderTypes[0];
+  }, [orderKey]);
 
   const goToNext = () => setCurrentStep(prev => Math.min(prev + 1, steps.length - 1));
   const goToPrev = () => setCurrentStep(prev => Math.max(prev - 1, 0));
@@ -240,16 +342,28 @@ export default function ChecklistPage() {
   }
 
   const StepComponent = useMemo(() => {
-    switch (currentStep) {
-      case 0: return <OrderConfirmationStep />;
-      case 1: return <PreWashPhotoStep />;
-      case 2: return <WashingStep />;
-      case 3: return <PostWashPhotoStep />;
-      case 4: return <ChecklistStep />;
-      case 5: return <SubmitStep onFinish={handleFinish} />;
-      default: return <OrderConfirmationStep />;
+    // Reset checklist state when order changes
+    // A bit of a hack, but effective for this prototype structure
+    const ChecklistWithReset = () => {
+      const [checklist, setChecklist] = useState({});
+      
+      useEffect(() => {
+        setChecklist({});
+      }, [orderKey]);
+
+      return <ChecklistStep order={currentOrder} checklist={checklist} setChecklist={setChecklist} />;
     }
-  }, [currentStep]);
+
+    switch (currentStep) {
+      case 0: return <OrderConfirmationStep order={currentOrder} />;
+      case 1: return <PreWashPhotoStep order={currentOrder} />;
+      case 2: return <WashingStep />;
+      case 3: return <PostWashPhotoStep order={currentOrder} />;
+      case 4: return <ChecklistStep order={currentOrder} />;
+      case 5: return <SubmitStep onFinish={handleFinish} />;
+      default: return <OrderConfirmationStep order={currentOrder} />;
+    }
+  }, [currentStep, currentOrder, orderKey]);
 
   if (isFinished) {
     return (
@@ -270,6 +384,23 @@ export default function ChecklistPage() {
         
         {/* Header */}
         <div className="shrink-0 bg-white/80 backdrop-blur-lg border-b border-slate-200 p-4">
+            {/* Order Switcher for testing */}
+            <div className="flex items-center gap-2 mb-3">
+              <label htmlFor="order-select" className="text-xs font-bold text-slate-500">TEST ORDER:</label>
+              <select 
+                id="order-select" 
+                value={orderKey} 
+                onChange={(e) => { setOrderKey(e.target.value); setCurrentStep(0); }} 
+                className="w-full text-xs p-1 border border-slate-300 rounded"
+              >
+                {mockOrderTypes.map(order => (
+                  <option key={order.key} value={order.key}>
+                    {order.inspectionType}형 / {order.orderType} / {order.washType} ({order.partnerType})
+                  </option>
+                ))}
+              </select>
+            </div>
+
             <div className="flex items-center justify-between">
                 <div className="flex items-center">
                     <CurrentIcon className="w-6 h-6 text-[#0052CC]"/>

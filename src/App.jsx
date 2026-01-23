@@ -578,7 +578,24 @@ const PAGE_TITLES = {
  * App
  */
 export default function App() {
-  const [activeKey, setActiveKey] = useState("update-history");
+  const pageKeyFromUrl = useMemo(() => {
+    const params = new URLSearchParams(window.location.search);
+    return params.get("page");
+  }, []);
+  
+  return <AdminApp />;
+}
+
+function AdminApp() {
+  const [activeKey, setActiveKey] = useState(() => {
+    const params = new URLSearchParams(window.location.search);
+    const page = params.get("page");
+    if (page && Object.keys(PAGE_TITLES).includes(page)) {
+      return page;
+    }
+    return "update-history";
+  });
+
   const [isHideComments, setIsHideComments] = useState(false);
   const [isFeedbackMode, setIsFeedbackMode] = useState(false);
   const isMobile = useIsMobile(); // 1. useIsMobile 훅 사용
@@ -709,12 +726,8 @@ export default function App() {
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const page = params.get("page");
     const orderId = params.get("orderId");
 
-    if (page) {
-      setActiveKey(page);
-    }
     if (orderId) {
       setInitialOrderId(orderId);
     }
@@ -740,10 +753,6 @@ export default function App() {
   const onNavSelect = (key) => {
     if (key === "notices") {
       window.open("", "_blank")?.document.write("CMS Link 필요");
-    }
-    if (key === "checklist-mockup") {
-      window.open('/?page=checklist-mockup', '_blank');
-      return;
     }
     setActiveKey(key);
     const parentGroup = NAV.find(g => g.items?.some(it => it.key === key));
@@ -796,13 +805,7 @@ export default function App() {
       case "order-type-policy":
         return <OrderTypePolicyPage />;
       case "checklist-mockup":
-        return (
-          <Card>
-            <CardContent className="flex items-center justify-center p-16">
-              <p className="text-center text-lg font-bold text-gray-500">TBD (기능 구현 예정)</p>
-            </CardContent>
-          </Card>
-        );
+        return <ChecklistPage />;
       default:
         return <PlaceholderPage title={pageTitle} description="MVP 범위에서는 리스트 조회, 상단 검색/필터, 우측 Drawer 기반 상세 및 정책 수정 흐름으로 정리하는 것이 효율적입니다." />;
     }
