@@ -36,10 +36,11 @@ const MissionsPage = ({ missionPolicies, setMissionPolicies, policyVehicles, set
   const [periodFrom, setPeriodFrom] = useState("");
   const [periodTo, setPeriodTo] = useState("");
   const [fStatus, setFStatus] = useState("");
-  const [sortConfig, setSortConfig] = useState({ key: 'createdAt', direction: 'desc' });
+  const [sortConfig, setSortConfig] = useState({ key: 'id', direction: 'desc' });
   
   const [selectedPolicy, setSelectedPolicy] = useState(null);
   const [bulkPlates, setBulkPlates] = useState("");
+  const [vehicleSearchQuery, setVehicleSearchQuery] = useState("");
 
   const enrichedPolicies = useMemo(() => {
     return missionPolicies.map(policy => {
@@ -163,6 +164,16 @@ const MissionsPage = ({ missionPolicies, setMissionPolicies, policyVehicles, set
     return selectedPolicy ? policyVehicles.filter(v => v.policyId === selectedPolicy.id) : [];
   }, [selectedPolicy, policyVehicles]);
 
+  const filteredAssignedVehicles = useMemo(() => {
+    if (!vehicleSearchQuery.trim()) {
+      return assignedVehiclesForSelectedPolicy;
+    }
+    const searchPlates = new Set(vehicleSearchQuery.split(/[\n,]+/).map(p => p.trim()).filter(Boolean));
+    if (searchPlates.size === 0) {
+      return assignedVehiclesForSelectedPolicy;
+    }
+    return assignedVehiclesForSelectedPolicy.filter(vehicle => searchPlates.has(vehicle.plate));
+  }, [assignedVehiclesForSelectedPolicy, vehicleSearchQuery]);
 
   // Effect to update selected policy data when the main list changes
   useEffect(() => {
@@ -171,12 +182,18 @@ const MissionsPage = ({ missionPolicies, setMissionPolicies, policyVehicles, set
       if (updatedPolicyData) {
         setSelectedPolicy(updatedPolicyData);
       } else {
-        // If the policy was deleted, close the drawer
         setSelectedPolicy(null);
       }
     }
   }, [enrichedPolicies, selectedPolicy?.id]);
   
+  // Effect to clear vehicle search when drawer closes
+  useEffect(() => {
+    if (!selectedPolicy) {
+      setVehicleSearchQuery("");
+    }
+  }, [selectedPolicy]);
+
   return (
     <div className="space-y-4">
       <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
@@ -344,9 +361,18 @@ const MissionsPage = ({ missionPolicies, setMissionPolicies, policyVehicles, set
                   <textarea className="w-full rounded-lg border border-[#E2E8F0] p-2 text-sm min-h-[100px]" value={bulkPlates} onChange={e => setBulkPlates(e.target.value)} placeholder="차량번호를 콤마 또는 엔터로 구분하여 입력..."></textarea>
                   <Button onClick={handleAddVehicles}>차량 추가</Button>
                 </div>
-                <div className="mt-4">
-                    <div className="text-sm text-[#6B778C] mb-2">할당된 차량 목록 ({assignedVehiclesForSelectedPolicy.length}대)</div>
-                    <DataTable columns={vehicleColumns} rows={assignedVehiclesForSelectedPolicy} rowKey={r => r.id} />
+                <div className="mt-6 border-t pt-4">
+                    <div className="space-y-2 mb-4">
+                      <label className="text-xs font-semibold text-[#6B778C]">할당 차량 검색</label>
+                      <textarea 
+                          className="w-full rounded-lg border border-[#E2E8F0] p-2 text-sm min-h-[60px]"
+                          value={vehicleSearchQuery}
+                          onChange={e => setVehicleSearchQuery(e.target.value)}
+                          placeholder="차량번호를 콤마 또는 엔터로 구분하여 검색..."
+                      />
+                    </div>
+                    <div className="text-sm text-[#6B778C] mb-2">할당된 차량 목록 ({filteredAssignedVehicles.length} / {assignedVehiclesForSelectedPolicy.length}대)</div>
+                    <DataTable columns={vehicleColumns} rows={filteredAssignedVehicles} rowKey={r => r.id} />
                 </div>
               </CardContent>
             </Card>
