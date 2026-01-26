@@ -283,11 +283,17 @@ const MissionsPage = ({ missionPolicies, setMissionPolicies, policyVehicles, set
       <Drawer open={isRegisterOpen} title="신규 미션 정책 등록" subtitle="신규 미션 정책의 상세 정보를 입력합니다." onClose={() => setIsRegisterOpen(false)} footer={<Button onClick={handleRegisterPolicy} className="w-full">등록하기</Button>}>
         <div className="space-y-4">
             <div className="space-y-1">
-              <label className="text-xs font-semibold text-[#6B778C]">미션 제목 *</label>
+              <div className="flex justify-between items-center">
+                <label className="text-xs font-semibold text-[#6B778C]">미션 제목 *</label>
+                <span className="text-xs text-[#6B778C]">{newPolicyForm.title.length} / 20</span>
+              </div>
               <Input value={newPolicyForm.title} onChange={e => setNewPolicyForm({...newPolicyForm, title: e.target.value})} placeholder="예: 스티커 부착" maxLength={20} />
             </div>
             <div className="space-y-1">
-              <label className="text-xs font-semibold text-[#6B778C]">미션 내용</label>
+              <div className="flex justify-between items-center">
+                <label className="text-xs font-semibold text-[#6B778C]">미션 내용</label>
+                <span className="text-xs text-[#6B778C]">{newPolicyForm.content.length} / 500</span>
+              </div>
               <textarea className="w-full rounded-lg border border-[#E2E8F0] p-2 text-sm min-h-[100px]" value={newPolicyForm.content} onChange={e => setNewPolicyForm({...newPolicyForm, content: e.target.value})} placeholder="미션에 대한 상세 내용을 입력하세요." maxLength={500}></textarea>
             </div>
             <div className="space-y-1">
@@ -322,11 +328,17 @@ const MissionsPage = ({ missionPolicies, setMissionPolicies, policyVehicles, set
               <CardContent className="space-y-4">
                 <div className="space-y-4">
                   <div className="space-y-1">
-                    <label className="text-xs font-semibold text-[#6B778C]">미션 제목 *</label>
+                    <div className="flex justify-between items-center">
+                      <label className="text-xs font-semibold text-[#6B778C]">미션 제목 *</label>
+                      <span className="text-xs text-[#6B778C]">{selectedPolicy.title?.length || 0} / 20</span>
+                    </div>
                     <Input value={selectedPolicy.title || ''} onChange={e => setSelectedPolicy({...selectedPolicy, title: e.target.value})} maxLength={20} />
                   </div>
                   <div className="space-y-1">
-                    <label className="text-xs font-semibold text-[#6B778C]">미션 내용</label>
+                    <div className="flex justify-between items-center">
+                      <label className="text-xs font-semibold text-[#6B778C]">미션 내용</label>
+                      <span className="text-xs text-[#6B778C]">{selectedPolicy.content?.length || 0} / 500</span>
+                    </div>
                     <textarea className="w-full rounded-lg border border-[#E2E8F0] p-2 text-sm min-h-[100px]" value={selectedPolicy.content || ''} onChange={e => setSelectedPolicy({...selectedPolicy, content: e.target.value})} maxLength={500}></textarea>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
