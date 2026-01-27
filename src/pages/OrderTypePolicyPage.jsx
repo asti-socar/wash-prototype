@@ -2554,7 +2554,7 @@ const DetailDrawer = ({ policy, onClose, onSave, policies, mode }) => {
 
 
 
-    if (!formData.order_type_name?.trim()) newErrors.order_type_name = "오더 유형 명칭은 필수입니다.";
+    if (!formData.order_type_name?.trim()) newErrors.order_type_name = "발생유형 명칭은 필수입니다.";
 
 
 
@@ -2570,7 +2570,7 @@ const DetailDrawer = ({ policy, onClose, onSave, policies, mode }) => {
 
 
 
-    if (policies.some(p => p.order_type_name === formData.order_type_name && p.id !== formData.id)) newErrors.order_type_name = "이미 존재하는 오더 유형 명칭입니다.";
+    if (policies.some(p => p.order_type_name === formData.order_type_name && p.id !== formData.id)) newErrors.order_type_name = "이미 존재하는 발생유형 명칭입니다.";
 
 
 
@@ -2586,7 +2586,7 @@ const DetailDrawer = ({ policy, onClose, onSave, policies, mode }) => {
 
 
 
-    if (formData.order_type_score < 1 || formData.order_type_score > 9) newErrors.order_type_score = "오더 유형 점수는 1-9 사이여야 합니다.";
+    if (formData.order_type_score < 1 || formData.order_type_score > 9) newErrors.order_type_score = "발생유형 점수는 1-9 사이여야 합니다.";
 
 
 
@@ -2602,7 +2602,7 @@ const DetailDrawer = ({ policy, onClose, onSave, policies, mode }) => {
 
 
 
-    else if (policies.some(p => p.order_division === formData.order_division && p.order_type_score === formData.order_type_score && p.id !== formData.id)) newErrors.order_type_score = "동일 오더구분 내에 중복된 오더유형 점수가 있습니다.";
+    else if (policies.some(p => p.order_division === formData.order_division && p.order_type_score === formData.order_type_score && p.id !== formData.id)) newErrors.order_type_score = "동일 오더구분 내에 중복된 발생유형 점수가 있습니다.";
 
 
 
@@ -3290,7 +3290,7 @@ const DetailDrawer = ({ policy, onClose, onSave, policies, mode }) => {
 
 
 
-    <Drawer open={!!policy} title={isCreating ? "오더 유형 추가" : `[ID: ${policy.id}] 오더유형 정책 수정`} onClose={onClose} footer={
+    <Drawer open={!!policy} title={isCreating ? "발생유형 추가" : `[ID: ${policy.id}] 발생유형 정책 수정`} onClose={onClose} footer={
 
 
 
@@ -3802,7 +3802,7 @@ const DetailDrawer = ({ policy, onClose, onSave, policies, mode }) => {
 
 
 
-                        <Field label="파트너 유형" tooltip={HELP_TEXTS.partner_type}><ReadOnlyValue>{formData.partner_type}</ReadOnlyValue></Field>
+                        <Field label="파트너유형" tooltip={HELP_TEXTS.partner_type}><ReadOnlyValue>{formData.partner_type}</ReadOnlyValue></Field>
 
 
 
@@ -3914,7 +3914,7 @@ const DetailDrawer = ({ policy, onClose, onSave, policies, mode }) => {
 
 
 
-                        <Field label="오더 유형 명칭" error={errors.order_type_name}>{isEditing ? <Input value={formData.order_type_name || ''} onChange={e => handleFormDataChange('order_type_name', e.target.value)} /> : <ReadOnlyValue>{formData.order_type_name}</ReadOnlyValue>}</Field>
+                        <Field label="발생유형 명칭" error={errors.order_type_name}>{isEditing ? <Input value={formData.order_type_name || ''} onChange={e => handleFormDataChange('order_type_name', e.target.value)} /> : <ReadOnlyValue>{formData.order_type_name}</ReadOnlyValue>}</Field>
 
 
 
@@ -3930,7 +3930,7 @@ const DetailDrawer = ({ policy, onClose, onSave, policies, mode }) => {
 
 
 
-                        <Field label="오더 유형 점수" error={errors.order_type_score} tooltip={HELP_TEXTS.order_type_score}>{isEditing ? <Input type="number" min="1" max="9" value={formData.order_type_score || ''} onChange={e => handleFormDataChange('order_type_score', Number(e.target.value))} /> : <ReadOnlyValue>{formData.order_type_score}</ReadOnlyValue>}</Field>
+                        <Field label="발생유형 점수" error={errors.order_type_score} tooltip={HELP_TEXTS.order_type_score}>{isEditing ? <Input type="number" min="1" max="9" value={formData.order_type_score || ''} onChange={e => handleFormDataChange('order_type_score', Number(e.target.value))} /> : <ReadOnlyValue>{formData.order_type_score}</ReadOnlyValue>}</Field>
 
 
 
@@ -5218,7 +5218,7 @@ export default function OrderTypePolicyPage() {
 
 
 
-      { key: 'order_type_name', header: '오더유형' },
+      { key: 'order_type_name', header: '발생유형' },
 
 
 
@@ -5254,9 +5254,9 @@ export default function OrderTypePolicyPage() {
 
         <div>
 
-          <h1 className="text-base font-bold text-[#172B4D]">오더유형 정책 관리</h1>
+          <h1 className="text-base font-bold text-[#172B4D]">발생유형 정책 관리</h1>
 
-          <p className="mt-1 text-sm text-[#6B778C]">오더 발행의 기준이 되는 오더 유형별 상세 정책을 관리합니다.</p>
+          <p className="mt-1 text-sm text-[#6B778C]">오더 발행의 기준이 되는 발생유형별 상세 정책을 관리합니다.</p>
 
         </div>
 
@@ -5264,7 +5264,7 @@ export default function OrderTypePolicyPage() {
 
             <Button variant="secondary" onClick={handleDownloadCsv}><FileDown className="mr-2 h-4 w-4" />엑셀 다운로드</Button>
 
-            <Button onClick={handleCreate}><Plus className="mr-2 h-4 w-4" />오더 유형 추가</Button>
+            <Button onClick={handleCreate}><Plus className="mr-2 h-4 w-4" />발생유형 추가</Button>
 
         </div>
 

@@ -121,7 +121,7 @@ const NAV = [
     label: '오더 정책 관리',
     icon: Settings,
     items: [
-      { key: "order-type-policy", label: "오더유형 정책", icon: Settings, parentKey: 'order-policy' },
+      { key: "order-type-policy", label: "발생유형 정책", icon: Settings, parentKey: 'order-policy' },
       { key: "ai-policy", label: "AI 모델 정책 관리", icon: Settings, parentKey: 'order-policy' },
       { key: "zone-policy", label: "존 정책 관리", icon: MapPinned, parentKey: 'order-policy' },
       { key: "region-policy", label: "지역 정책 관리", icon: MapPinned, parentKey: 'order-policy' },
@@ -166,7 +166,7 @@ const PAGE_TITLES = {
   dashboard: "관제 대시보드",
   "ai-policy": "AI 모델 정책 관리",
   "zone-policy": "존 정책 관리",
-  "order-type-policy": "오더유형 정책 관리",
+  "order-type-policy": "발생유형 정책 관리",
   "region-policy": "지역 정책 관리",
   vehicles: "차량 관리",
   missions: "미션 정책 관리",
@@ -659,13 +659,15 @@ function SimpleMarkdownRenderer({ content }) {
     if (!line) continue;
 
     if (line.startsWith('# ')) {
-      elements.push(<h1 key={i} className="text-2xl font-bold mt-8 mb-4 text-[#172B4D]">{parseInline(line.slice(2))}</h1>);
+      elements.push(<h1 key={i} className="text-2xl font-bold mt-8 mb-4 text-[#0747A6]">{parseInline(line.slice(2))}</h1>);
     } else if (line.startsWith('## ')) {
-      elements.push(<h2 key={i} className="text-lg font-bold mt-6 mb-3 text-[#172B4D] border-b border-[#DFE1E6] pb-2">{parseInline(line.slice(3))}</h2>);
+      elements.push(<h2 key={i} className="text-xl font-bold mt-6 mb-3 text-[#0747A6] border-b border-[#DFE1E6] pb-2">{parseInline(line.slice(3))}</h2>);
     } else if (line.startsWith('### ')) {
-      elements.push(<h3 key={i} className="text-base font-bold mt-4 mb-2 text-[#172B4D]">{parseInline(line.slice(4))}</h3>);
+      elements.push(<h3 key={i} className="text-lg font-bold mt-4 mb-2 text-[#0747A6]">{parseInline(line.slice(4))}</h3>);
     } else if (line.startsWith('#### ')) {
-      elements.push(<h4 key={i} className="text-sm font-bold mt-3 mb-1 text-[#172B4D]">{parseInline(line.slice(5))}</h4>);
+      elements.push(<h4 key={i} className="text-base font-bold mt-3 mb-1 text-[#0747A6]">{parseInline(line.slice(5))}</h4>);
+    } else if (line.startsWith('##### ')) {
+      elements.push(<h5 key={i} className="text-sm font-bold mt-3 mb-1 text-[#0747A6]">{parseInline(line.slice(6))}</h5>);
     } else if (line.startsWith('- ')) {
       const leadingSpaces = rawLine.match(/^ */)[0].length;
       const indentLevel = Math.floor(leadingSpaces / 2);

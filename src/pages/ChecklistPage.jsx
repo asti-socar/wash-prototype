@@ -167,11 +167,11 @@ const OrderConfirmationStep = ({ order }) => (
         <span className="text-sm font-bold text-slate-800">{order.inspectionType} ({order.orderType})</span>
       </div>
       <div className="flex justify-between items-center">
-        <span className="text-sm font-semibold text-slate-500">세차 유형</span>
+        <span className="text-sm font-semibold text-slate-500">세차유형</span>
         <span className="text-sm font-bold text-slate-800">{order.washType}</span>
       </div>
        <div className="flex justify-between items-center">
-        <span className="text-sm font-semibold text-slate-500">파트너 유형</span>
+        <span className="text-sm font-semibold text-slate-500">파트너유형</span>
         <span className="text-sm font-bold text-slate-800">{order.partnerType}</span>
       </div>
        <div className="flex justify-between items-center">
@@ -215,7 +215,7 @@ const WashingStep = () => (
   <div className="p-4 text-center">
     <Droplet className="w-16 h-16 text-[#0052CC] mx-auto mb-4 animate-pulse" />
     <h2 className="text-xl font-bold text-slate-800">세차 작업 진행</h2>
-    <p className="text-sm text-slate-500 mt-2">세차 유형에 맞게 작업을 진행한 후 다음 단계로 이동해주세요.</p>
+    <p className="text-sm text-slate-500 mt-2">세차유형에 맞게 작업을 진행한 후 다음 단계로 이동해주세요.</p>
   </div>
 );
 

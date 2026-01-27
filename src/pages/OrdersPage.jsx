@@ -122,7 +122,7 @@ function OrdersPage({ quickStatus, onClearQuickStatus, initialOrderId, orders, s
   };
 
   /**
-   * 세차 유형에 따라 표시할 사진 목록을 반환하는 헬퍼 함수.
+   * 세차유형에 따라 표시할 사진 목록을 반환하는 헬퍼 함수.
    * @param {object} order - 현재 선택된 오더 객체.
    * @returns {{pre: array, post: array}} - 세차 전/후 사진 목록.
    */
@@ -316,7 +316,7 @@ function OrdersPage({ quickStatus, onClearQuickStatus, initialOrderId, orders, s
     alert(`오더가 발행되었습니다. (포함된 미션: ${pendingMissions.length}건)`);
   };
 
-  // 파트너 유형에 따른 진행상태 옵션 동적화
+  // 파트너유형에 따른 진행상태 옵션 동적화
   const currentStatuses = useMemo(() => {
     if (fPartnerType === "현장") {
       return ["미배정", "예약", "수행 중", "완료", "취소"];
@@ -378,7 +378,7 @@ function OrdersPage({ quickStatus, onClearQuickStatus, initialOrderId, orders, s
   const columns = [
     { key: "orderId", header: "오더 ID" },
     { key: "orderGroup", header: "오더구분" },
-    { key: "orderType", header: "오더유형" },
+    { key: "orderType", header: "발생유형" },
     {
       key: "washType",
       header: "세차유형",
@@ -425,7 +425,7 @@ function OrdersPage({ quickStatus, onClearQuickStatus, initialOrderId, orders, s
       {fRegion1 ? <Chip onRemove={() => { setFRegion1(""); setFRegion2(""); }}>지역1: {fRegion1}</Chip> : null}
       {fRegion2 ? <Chip onRemove={() => setFRegion2("")}>지역2: {fRegion2}</Chip> : null}
       {fOrderGroup ? <Chip onRemove={() => setFOrderGroup("")}>오더구분: {fOrderGroup}</Chip> : null}
-      {fOrderType ? <Chip onRemove={() => setFOrderType("")}>오더유형: {fOrderType}</Chip> : null}
+      {fOrderType ? <Chip onRemove={() => setFOrderType("")}>발생유형: {fOrderType}</Chip> : null}
       {fWashType ? <Chip onRemove={() => setFWashType("")}>세차유형: {fWashType}</Chip> : null}
       {fPartner ? <Chip onRemove={() => setFPartner("")}>파트너명: {fPartner}</Chip> : null}
       {fPartnerType ? <Chip onRemove={() => setFPartnerType("")}>파트너유형: {fPartnerType}</Chip> : null}
@@ -511,7 +511,7 @@ function OrdersPage({ quickStatus, onClearQuickStatus, initialOrderId, orders, s
               </Select>
             </div>
             <div className="md:col-span-2">
-              <label htmlFor="fOrderType" className="block text-xs font-semibold text-[#6B778C] mb-1.5">오더유형</label>
+              <label htmlFor="fOrderType" className="block text-xs font-semibold text-[#6B778C] mb-1.5">발생유형</label>
               <Select id="fOrderType" value={fOrderType} onChange={(e) => setFOrderType(e.target.value)}>
                 <option value="">전체</option>
                 {orderTypes.map((v) => <option key={v} value={v}>{v}</option>)}
@@ -536,7 +536,7 @@ function OrdersPage({ quickStatus, onClearQuickStatus, initialOrderId, orders, s
               <Select id="fPartnerType" value={fPartnerType} onChange={(e) => {
                 const newType = e.target.value;
                 setFPartnerType(newType);
-                // 파트너 유형 변경 시, 현재 선택된 상태값이 유효하지 않으면 초기화
+                // 파트너유형 변경 시, 현재 선택된 상태값이 유효하지 않으면 초기화
                 let validStatuses = [];
                 if (newType === "현장") {
                   validStatuses = ["미배정", "예약", "수행 중", "완료", "취소"];
@@ -706,7 +706,7 @@ function OrdersPage({ quickStatus, onClearQuickStatus, initialOrderId, orders, s
                     <div className="font-medium">{selected.region1} / {selected.region2}</div>
                   </div>
                   <div className="space-y-1">
-                    <div className="text-xs text-[#6B778C]">오더 유형</div>
+                    <div className="text-xs text-[#6B778C]">발생유형</div>
                     <div>{selected.orderType}</div>
                   </div>
                   <div className="space-y-1">
@@ -714,7 +714,7 @@ function OrdersPage({ quickStatus, onClearQuickStatus, initialOrderId, orders, s
                     <div className="font-medium">{selected.washType}</div>
                   </div>
                   <div className="space-y-1">
-                    <div className="text-xs text-[#6B778C]">파트너 유형</div>
+                    <div className="text-xs text-[#6B778C]">파트너유형</div>
                     <div>{selected.partnerType}</div>
                   </div>
                   <div className="space-y-1">
@@ -985,7 +985,7 @@ function OrdersPage({ quickStatus, onClearQuickStatus, initialOrderId, orders, s
                 </Select>
               </div>
               <div className="space-y-1">
-                <label className="text-xs font-semibold text-[#6B778C]">오더유형</label>
+                <label className="text-xs font-semibold text-[#6B778C]">발생유형</label>
                 <Select value={newOrderForm.orderType} onChange={e => setNewOrderForm({...newOrderForm, orderType: e.target.value})}>
                   {orderTypes.map((t) => (
                     <option key={t} value={t}>{t}</option>
