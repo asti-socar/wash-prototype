@@ -5,21 +5,21 @@
 - 주기 세차와 라이트 세차(마일드 워시)의 적용 여부 및 기준을 유연하게 조정할 수 있도록 지원합니다.
 
 ## 2. 주요 관리 필드
-| 필드명 (En) | 필드명 (Ko) | 데이터 타입 | 설명 | 비고 |
+| 필드명 (En) | 필드명 (Ko) | 데이터 타입 | 설명 | 비고 | 신규존 기본 값|
 |---|---|---|---|---|
-| `zoneId` | Zone ID | `String` | 존을 식별하는 고유 ID | 예: `Z-1001` |
-| `zoneName` | 존 이름 | `String` | 사용자에게 노출되는 존의 이름 | 예: `강남역 1번존` |
-| `fullAddress` | 상세 주소 | `String` | 존의 전체 주소 | 예: `서울특별시 강남구 강남대로 396` |
-| `zoneType` | 존 유형 | `Enum` | 존의 운영 방식을 정의 | `현장세차존`, `주기세차존`, `현장세차 불가존` |
-| `parkingType`| 주차 유형 | `Enum` | 주차장 유형 | `노상`, `건물외`, `건물안`, `기계식` |
-| `operationTime`| 운영 시간 | `String` | 존 운영 시간 | 예: `09:00~22:00` 또는 `24시간` |
+| `zoneId` | Zone ID | `String` | 존을 식별하는 고유 ID | 예: `Z-1001` |존정보|
+| `zoneName` | 존 이름 | `String` | 사용자에게 노출되는 존의 이름 | 예: `강남역 1번존` |존정보|
+| `fullAddress` | 상세 주소 | `String` | 존의 전체 주소 | 예: `서울특별시 강남구 강남대로 396` |존정보|
+| `zoneType` | 존 유형 | `Enum` | 존의 운영 방식을 정의 | `현장세차존`, `주기세차존`, `현장세차 불가존` |null 값|
+| `parkingType`| 주차 유형 | `Enum` | 주차장 유형 | `노상`, `건물외`, `건물안`, `기계식` |존정보|
+| `operationTime`| 운영 시간 | `String` | 존 운영 시간 | 예: `09:00~22:00` 또는 `24시간` ||
 | `zoneNotes` | 존 특이사항 | `String` | 존 관련 메모 및 특이사항 | |
-| `region1` | Region 1 | `String` | 1차 지역 구분 (시/도) | 예: `서울` |
-| `region2` | Region 2 | `String` | 2차 지역 구분 (구/군) | 예: `강남구` |
-| `cycleWashDays`| 주기세차 경과일| `Number` | 주기세차 오더가 발행되기까지 필요한 최소 경과일 | |
-| `isLightWash` | 라이트세차 | `Boolean` | 라이트세차(마일드 워시) 발행 여부 | `true` / `false` |
-| `cancelOnRain`| 우천시 취소 여부| `Boolean`| 우천시 취소 Y인 존은 우천시에 오더가 취소되고 wait타임이 설정된다. | `true` / `false` |
-| `policyType` | 정책 유형 | `Enum` | 현재 적용된 정책의 출처 | `Region1`, `Region2`, `Zone` (개별) |
+| `region1` | Region 1 | `String` | 1차 지역 구분 (시/도) | 예: `서울` |존정보|
+| `region2` | Region 2 | `String` | 2차 지역 구분 (구/군) | 예: `강남구` |존정보|
+| `cycleWashDays`| 주기세차 경과일| `Number` | 주기세차 오더가 발행되기까지 필요한 최소 경과일 |null 값|
+| `isLightWash` | 라이트세차 | `Boolean` | 라이트세차(마일드 워시) 발행 여부 | `true` / `false` |null 값|
+| `cancelOnRain`| 우천시 취소 여부| `Boolean`| 우천시 취소 Y인 존은 우천시에 오더가 취소되고 wait타임이 설정된다. | `true` / `false` |null 값|
+| `policyType` | 정책 유형 | `Enum` | 현재 적용된 정책의 출처 | `Region1`, `Region2`, `Zone` (개별) |`Region1`또는`Reg ion2`|
 
 ## 3. 기능 요구사항
 
