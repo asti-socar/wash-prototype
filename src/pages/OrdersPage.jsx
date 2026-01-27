@@ -82,7 +82,7 @@ function OrdersPage({ quickStatus, onClearQuickStatus, initialOrderId, orders, s
 
   const [q, setQ] = useState("");
   const [searchField, setSearchField] = useState("plate");
-  const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
+  const [sortConfig, setSortConfig] = useState({ key: 'orderId', direction: 'desc' });
   const [periodFrom, setPeriodFrom] = useState(() => {
     const d = new Date();
     d.setMonth(d.getMonth() - 1);
@@ -385,8 +385,8 @@ function OrdersPage({ quickStatus, onClearQuickStatus, initialOrderId, orders, s
       render: (r) => <span className="text-[#172B4D]">{r.washType}</span>,
     },
     { key: "carId", header: "차량 ID" },
-    { key: "model", header: "차종" },
     { key: "plate", header: "차량 번호" },
+    { key: "model", header: "차종" },
     { key: "region1", header: "지역1" },
     { key: "region2", header: "지역2" },
     { key: "zone", header: "존 이름" },
@@ -459,6 +459,7 @@ function OrdersPage({ quickStatus, onClearQuickStatus, initialOrderId, orders, s
               <label htmlFor="searchField" className="block text-xs font-semibold text-[#6B778C] mb-1.5">검색항목</label>
               <Select id="searchField" value={searchField} onChange={e => setSearchField(e.target.value)}>
                 <option value="plate">차량 번호</option>
+                <option value="carId">차량 ID</option>
                 <option value="orderId">오더 ID</option>
                 <option value="zone">존 이름</option>
               </Select>
@@ -472,7 +473,7 @@ function OrdersPage({ quickStatus, onClearQuickStatus, initialOrderId, orders, s
                   value={q} 
                   onChange={(e) => setQ(e.target.value)} 
                   placeholder={`${
-                    searchField === 'plate' ? '차량 번호' : searchField === 'orderId' ? '오더 ID' : searchField === 'zone' ? '존 이름' : '수행원'
+                    searchField === 'plate' ? '차량 번호' : searchField === 'carId' ? '차량 ID' : searchField === 'orderId' ? '오더 ID' : searchField === 'zone' ? '존 이름' : '수행원'
                   } 검색`} 
                   className="pl-9" 
                 />
