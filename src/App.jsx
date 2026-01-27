@@ -54,6 +54,7 @@ import LostItemsPage from './pages/LostItemsPage';
 import UpdateHistoryPage from './pages/UpdateHistoryPage';
 import AIPolicyPage from './pages/AIPolicyPage';
 import ZonePolicyPage from './pages/ZonePolicyPage';
+import RegionPolicyPage from './pages/RegionPolicyPage';
 import OrderTypePolicyPage from './pages/OrderTypePolicyPage';
 import ChecklistPage from './pages/ChecklistPage';
 
@@ -379,6 +380,8 @@ function AdminApp() {
         return <AIPolicyPage />;
       case "zone-policy":
         return <ZonePolicyPage />;
+      case "region-policy":
+        return <RegionPolicyPage />;
       case "order-type-policy":
         return <OrderTypePolicyPage />;
       case "checklist-mockup":
