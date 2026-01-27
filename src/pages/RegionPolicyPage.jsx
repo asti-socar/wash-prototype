@@ -70,21 +70,6 @@ const Region1PolicyTab = () => {
           </Select>
         ) : ( <Badge tone={row["라이트세차"] === 'Y' ? 'ok' : 'default'}>{row["라이트세차"]}</Badge> ),
     },
-    {
-      key: "우천취소",
-      header: "우천취소",
-      render: (row) => 
-        isEditMode ? (
-          <Select
-            value={row["우천취소"]}
-            onChange={(e) => handleUpdateData(row.Region1ID, "우천취소", e.target.value)}
-            className="w-20"
-          >
-            <option value="Y">Y</option>
-            <option value="N">N</option>
-          </Select>
-        ) : ( <Badge tone={row["우천취소"] === 'Y' ? 'ok' : 'default'}>{row["우천취소"]}</Badge> ),
-    },
   ], [isEditMode]);
 
   return (
@@ -179,24 +164,9 @@ const Region2PolicyTab = () => {
           <option value="Y">Y</option>
           <option value="N">N</option>
         </Select>
-      ) : ( <Badge tone={row["라이트세차"] === 'Y' ? 'ok' : 'default'}>{row["라이트세차"]}</Badge> ),
-    },
-    {
-      key: "우천취소",
-      header: "우천취소",
-      render: (row) => isEditMode2 ? (
-        <Select
-          value={row["우천취소"]}
-          onChange={(e) => handleUpdateData2(row.Region2ID, "우천취소", e.target.value)}
-          className="w-20"
-        >
-          <option value="Y">Y</option>
-          <option value="N">N</option>
-        </Select>
-      ) : ( <Badge tone={row["우천취소"] === 'Y' ? 'ok' : 'default'}>{row["우천취소"]}</Badge> ),
-    },
-  ], [isEditMode2]);
-
+              ) : ( <Badge tone={row["라이트세차"] === 'Y' ? 'ok' : 'default'}>{row["라이트세차"]}</Badge> ),
+          },
+        ], [isEditMode2]);
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center gap-4">

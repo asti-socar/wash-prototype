@@ -159,20 +159,20 @@ function Field({ label, children, isEditing }) {
 
 // ============== MOCK DATA ==============
 const REGION1_POLICIES = {
-  '서울': { cycleWashDays: 14, isLightWash: true, cancelOnRain: false },
-  '경기': { cycleWashDays: 15, isLightWash: true, cancelOnRain: true },
-  '부산': { cycleWashDays: 10, isLightWash: false, cancelOnRain: true },
-  '기타': { cycleWashDays: 20, isLightWash: false, cancelOnRain: false },
+  '서울': { cycleWashDays: 14, isLightWash: true },
+  '경기': { cycleWashDays: 15, isLightWash: true },
+  '부산': { cycleWashDays: 10, isLightWash: false },
+  '기타': { cycleWashDays: 20, isLightWash: false },
 };
 
 const REGION2_POLICIES = {
-  '강남구': { cycleWashDays: 10, isLightWash: true, cancelOnRain: false },
+  '강남구': { cycleWashDays: 10, isLightWash: true },
   '종로구': { isLightWash: false },
-  '해운대구': { cancelOnRain: true },
+  '해운대구': {},
 };
 
 const RAW_ZONES = [
-    { zoneId: 'Z-1001', zoneName: '강남역 1번존', zoneType: '현장세차존', region1: '서울', region2: '강남구', operationTime: '24시간', parkingType: '건물안', fullAddress: '서울특별시 강남구 강남대로 396', zoneNotes: '지하 3층 B구역 주차장 이용', policy: { cycleWashDays: 7, cancelOnRain: true } },
+    { zoneId: 'Z-1001', zoneName: '강남역 1번존', zoneType: '현장세차존', region1: '서울', region2: '강남구', operationTime: '24시간', parkingType: '건물안', fullAddress: '서울특별시 강남구 강남대로 396', zoneNotes: '지하 3층 B구역 주차장 이용', policy: { cycleWashDays: 7 } },
     { zoneId: 'Z-1002', zoneName: '역삼역 2번존', zoneType: '현장세차존', region1: '서울', region2: '강남구', operationTime: '09:00~22:00', parkingType: '기계식', fullAddress: '서울특별시 강남구 테헤란로 152', zoneNotes: '기계식 주차장. SUV 입차 불가.', policy: { isLightWash: false } },
     { zoneId: 'Z-1003', zoneName: '판교역 3번존', zoneType: '주기세차존', region1: '경기', region2: '성남시', operationTime: '24시간', parkingType: '건물안', fullAddress: '경기도 성남시 분당구 판교역로 166', zoneNotes: '', policy: {} },
     { zoneId: 'Z-1004', zoneName: '해운대 1번존', zoneType: '현장세차존', region1: '부산', region2: '해운대구', operationTime: '10:00~20:00', parkingType: '노상', fullAddress: '부산광역시 해운대구 해운대해변로 266', zoneNotes: '해변가 공영주차장, 주말 혼잡', policy: { cycleWashDays: 5 } },
@@ -186,7 +186,7 @@ const RAW_ZONES = [
 ];
 
 function generateMockData() {
-  const policyFields = ['cycleWashDays', 'isLightWash', 'cancelOnRain'];
+  const policyFields = ['cycleWashDays', 'isLightWash'];
   return RAW_ZONES.map(zone => {
     const r1Policy = REGION1_POLICIES[zone.region1] || REGION1_POLICIES['기타'];
     const r2Policy = REGION2_POLICIES[zone.region2] || {};
@@ -194,7 +194,6 @@ function generateMockData() {
     const finalPolicy = {
       cycleWashDays: {},
       isLightWash: {},
-      cancelOnRain: {},
     };
 
     policyFields.forEach(field => {
@@ -325,7 +324,6 @@ export default function ZonePolicyPage() {
     { key: 'zoneType', header: '존 유형' },
     { key: 'cycleWashDays', header: '주기세차(일)', render: r => r.cycleWashDays.value },
     { key: 'isLightWash', header: '라이트세차', render: r => r.isLightWash.value ? 'Y' : 'N' },
-    { key: 'cancelOnRain', header: '우천취소', render: r => r.cancelOnRain.value ? 'Y' : 'N' },
     { key: 'hasZonePolicy', header: '개별 정책', render: r => r.hasZonePolicy ? 'O' : 'X' },
   ];
 
@@ -427,11 +425,11 @@ function ZonePolicyDrawer({ policy, onClose, onSave }) {
 
     const handleInputChange = (e) => {
         const { name, value, type } = e.target;
-        const policyFields = ['cycleWashDays', 'isLightWash', 'cancelOnRain'];
+        const policyFields = ['cycleWashDays', 'isLightWash'];
 
         if (policyFields.includes(name)) {
           let processedValue = value;
-           if (name === 'isLightWash' || name === 'cancelOnRain') {
+           if (name === 'isLightWash') {
               processedValue = value === 'true';
           } else if (type === 'number') {
               processedValue = value === '' ? '' : Number(value);
@@ -447,7 +445,7 @@ function ZonePolicyDrawer({ policy, onClose, onSave }) {
 
     const handleSave = () => {
         const newFormData = { ...formData };
-        const policyFields = ['cycleWashDays', 'isLightWash', 'cancelOnRain'];
+        const policyFields = ['cycleWashDays', 'isLightWash'];
         let hasZonePolicy = false;
 
         policyFields.forEach(field => {
@@ -549,14 +547,6 @@ function ZonePolicyDrawer({ policy, onClose, onSave }) {
                               <option value="false">N</option>
                           </Select>
                       ) : renderPolicyField('isLightWash')}
-                  </Field>
-                  <Field label="우천시 취소" isEditing={isEditing}>
-                       {isEditing ? (
-                          <Select name="cancelOnRain" value={String(formData.cancelOnRain.value)} onChange={handleInputChange}>
-                              <option value="true">Y (취소함)</option>
-                              <option value="false">N (취소안함)</option>
-                          </Select>
-                      ) : renderPolicyField('cancelOnRain')}
                   </Field>
               </CardContent>
             </Card>
