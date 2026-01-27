@@ -121,7 +121,7 @@ const NAV = [
     label: '오더 정책 관리',
     icon: Settings,
     items: [
-      { key: "order-type-policy", label: "발생유형 정책", icon: Settings, parentKey: 'order-policy' },
+      { key: "order-type-policy", label: "발행유형 정책", icon: Settings, parentKey: 'order-policy' },
       { key: "ai-policy", label: "AI 모델 정책 관리", icon: Settings, parentKey: 'order-policy' },
       { key: "zone-policy", label: "존 정책 관리", icon: MapPinned, parentKey: 'order-policy' },
       { key: "region-policy", label: "지역 정책 관리", icon: MapPinned, parentKey: 'order-policy' },
@@ -166,7 +166,7 @@ const PAGE_TITLES = {
   dashboard: "관제 대시보드",
   "ai-policy": "AI 모델 정책 관리",
   "zone-policy": "존 정책 관리",
-  "order-type-policy": "발생유형 정책 관리",
+  "order-type-policy": "발행유형 정책 관리",
   "region-policy": "지역 정책 관리",
   vehicles: "차량 관리",
   missions: "미션 정책 관리",

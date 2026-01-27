@@ -3,7 +3,7 @@ export const BROWN_HISTORY = [
   { id: 65, date: "2026-01-23 17:09", content: "오더 관리 목업 데이터 외부 파일 분리 및 200개로 증량, 필터 기본값 1개월로 변경", isPolicyChange: true, links: [{ label: "오더 관리", page: "orders" }] },
   { id: 64, date: "2026-01-23 14:06", content: "[기능] 미션 관리 - 상태(활성/비활성) 추가", isPolicyChange: true, links: [{ label: "미션 관리", page: "missions" }] },
   { id: 63, date: "2026-01-23 13:26", content: "[정책] 미션 관리 기능 정책 변경", isPolicyChange: true, links: [{ label: "미션 관리", page: "missions" }] },
-  { id: 62, date: "2026-01-23 11:15", content: "[정책] 오더별 수행 목업, 발생유형별 수행(사진 촬영, 점검) 기능명세 작성", isPolicyChange: true, links: [{ label: "오더별 수행 목업", page: "checklist-mockup" }] },
+  { id: 62, date: "2026-01-23 11:15", content: "[정책] 오더별 수행 목업, 발행유형별 수행(사진 촬영, 점검) 기능명세 작성", isPolicyChange: true, links: [{ label: "오더별 수행 목업", page: "checklist-mockup" }] },
   { id: 61, date: "2026-01-20 14:30", content: "[기능] 분실물 관리: 검색/필터, UI 일관성 및 상세화면 동작 개선", isPolicyChange: true, links: [{ label: "분실물 관리", page: "lostfound" }] },
   { id: 60, date: "2026-01-20 11:12", content: "[기능] 관제 대시보드 구현 방향 안내 모달 레이어 추가", isPolicyChange: false, links: [] },
   { id: 59, date: "2026-01-20 09:30", content: "[기능] URL 쿼리 스트링 양방향 동기화 적용 및 페이지별 피드백 로딩 로직 고도화 (Deep Linking 지원)", isPolicyChange: false, links: [] },
@@ -68,7 +68,7 @@ export const BROWN_HISTORY = [
 ];
 
 export const ASTI_HISTORY = [
-  { id: 3, date: "2026-01-20 13:22", content: "발생유형정책관리", isPolicyChange: false, links: [] },
+  { id: 3, date: "2026-01-20 13:22", content: "발행유형정책관리", isPolicyChange: false, links: [] },
   { id: 2, date: "2026-01-20 13:22", content: "정책관리 페이지 업데이트(AI정책관리, 존정책관리)", isPolicyChange: false, links: [] },
   { id: 1, date: "2026-01-20 13:21", content: "ASTI 업데이트 이력 기록 시작", isPolicyChange: false, links: [] },
 ];
