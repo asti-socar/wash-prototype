@@ -1,4 +1,5 @@
 export const BROWN_HISTORY = [
+  { id: 67, date: "2026-01-28 10:13", content: "[문서] 오더 관리 기능 명세서 고도화: 운영 시나리오 구체화, 점검 항목 전체 목록", isPolicyChange: true, links: [{ label: "오더 관리", page: "orders" }] },
   { id: 66, date: "2026-01-26 16:45", content: "미션 정책 관리 - 할당된 차량 검색 기능 및 목업 데이터 추가", isPolicyChange: true, links: [{ label: "미션 관리", page: "missions" }] },
   { id: 65, date: "2026-01-23 17:09", content: "오더 관리 목업 데이터 외부 파일 분리 및 200개로 증량, 필터 기본값 1개월로 변경", isPolicyChange: true, links: [{ label: "오더 관리", page: "orders" }] },
   { id: 64, date: "2026-01-23 14:06", content: "[기능] 미션 관리 - 상태(활성/비활성) 추가", isPolicyChange: true, links: [{ label: "미션 관리", page: "missions" }] },
