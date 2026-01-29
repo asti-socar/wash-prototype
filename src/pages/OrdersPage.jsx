@@ -820,7 +820,53 @@ function OrdersPage({ quickStatus, onClearQuickStatus, initialOrderId, orders, s
                 </CardContent>
               </Card>
 
-              {/* 6. 금액 및 연계 정보 */}
+              {/* 2. 탁송 정보 (입고 파트너 전용) */}
+              {selected.partnerType === '입고' && MOCK_DELIVERY_INFO[selected.orderId] && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle>탁송 정보</CardTitle>
+                    <CardDescription>입고/출고 차량 이동 상태</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-2 gap-4 text-xs">
+                      <div className="space-y-1">
+                        <div className="text-[#6B778C]">입고 예약 ID</div>
+                        <div className="font-medium text-[#172B4D]">{MOCK_DELIVERY_INFO[selected.orderId].pickupReservationId}</div>
+                      </div>
+                      <div className="space-y-1">
+                        <div className="text-[#6B778C]">입고 탁송 상태</div>
+                        <div>
+                          <Badge tone={MOCK_DELIVERY_INFO[selected.orderId].pickupStatus === "END" ? "ok" : "info"}>
+                            {DELIVERY_STATUS_MAP[MOCK_DELIVERY_INFO[selected.orderId].pickupStatus]}
+                          </Badge>
+                        </div>
+                      </div>
+                      <div className="space-y-1">
+                        <div className="text-[#6B778C]">출고 예약 ID</div>
+                        <div className="font-medium text-[#172B4D]">
+                          {selected.status === '완료' && MOCK_DELIVERY_INFO[selected.orderId].deliveryReservationId
+                            ? MOCK_DELIVERY_INFO[selected.orderId].deliveryReservationId
+                            : '-'}
+                        </div>
+                      </div>
+                      <div className="space-y-1">
+                        <div className="text-[#6B778C]">출고 탁송 상태</div>
+                        <div>
+                          {selected.status === '완료' && MOCK_DELIVERY_INFO[selected.orderId].deliveryStatus ? (
+                            <Badge tone={MOCK_DELIVERY_INFO[selected.orderId].deliveryStatus === "END" ? "ok" : "warn"}>
+                              {DELIVERY_STATUS_MAP[MOCK_DELIVERY_INFO[selected.orderId].deliveryStatus]}
+                            </Badge>
+                          ) : (
+                            <span className="text-[#6B778C]">-</span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* 3. 금액 및 연계 정보 */}
               <Card>
                 <CardHeader>
                   <CardTitle>금액 및 연계 정보</CardTitle>
@@ -835,47 +881,6 @@ function OrdersPage({ quickStatus, onClearQuickStatus, initialOrderId, orders, s
                       </Button>
                     </div>
                   </div>
-                  {selected.partnerType === '입고' && MOCK_DELIVERY_INFO[selected.orderId] && (
-                    <>
-                      <div className="border-t border-[#DFE1E6] pt-3 space-y-2">
-                        <div className="text-xs font-semibold text-[#172B4D] mb-2">탁송 정보</div>
-                        <div className="grid grid-cols-2 gap-2 text-xs">
-                          <div className="space-y-1">
-                            <div className="text-[#6B778C]">입고 예약 ID</div>
-                            <div className="font-medium text-[#172B4D]">{MOCK_DELIVERY_INFO[selected.orderId].pickupReservationId}</div>
-                          </div>
-                          <div className="space-y-1">
-                            <div className="text-[#6B778C]">입고 탁송 상태</div>
-                            <div>
-                              <Badge tone={MOCK_DELIVERY_INFO[selected.orderId].pickupStatus === "END" ? "ok" : "info"}>
-                                {DELIVERY_STATUS_MAP[MOCK_DELIVERY_INFO[selected.orderId].pickupStatus]}
-                              </Badge>
-                            </div>
-                          </div>
-                          <div className="space-y-1">
-                            <div className="text-[#6B778C]">출고 예약 ID</div>
-                            <div className="font-medium text-[#172B4D]">
-                              {selected.status === '완료' && MOCK_DELIVERY_INFO[selected.orderId].deliveryReservationId
-                                ? MOCK_DELIVERY_INFO[selected.orderId].deliveryReservationId
-                                : '-'}
-                            </div>
-                          </div>
-                          <div className="space-y-1">
-                            <div className="text-[#6B778C]">출고 탁송 상태</div>
-                            <div>
-                              {selected.status === '완료' && MOCK_DELIVERY_INFO[selected.orderId].deliveryStatus ? (
-                                <Badge tone={MOCK_DELIVERY_INFO[selected.orderId].deliveryStatus === "END" ? "ok" : "warn"}>
-                                  {DELIVERY_STATUS_MAP[MOCK_DELIVERY_INFO[selected.orderId].deliveryStatus]}
-                                </Badge>
-                              ) : (
-                                <span className="text-[#6B778C]">-</span>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </>
-                  )}
                   {selected.partnerType === '입고' && (
                     <div className="flex items-center justify-between border-t border-[#DFE1E6] pt-3">
                       <span className="text-sm text-[#6B778C]">연계 오더 (Parent)</span>
