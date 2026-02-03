@@ -171,11 +171,15 @@ export default function SettlementPage() {
     { id: "A-1003", orderId: "O-90005", plate: "55차5656", model: "EV6", zoneName: "광주 1번존", partner: "A파트너", requestedAt: "2026-01-10 09:15", approvalType: "2단계 승인", requestType: "입고 변경(내외부→특수)", status: "거절", cost: 20000, reason: "입고 세차 유형 변경 (특수)", requestComment: "외부 스크래치가 많아 광택 작업 요청드립니다.", rejectComment: "광택 작업은 세차 서비스 범위에 포함되지 않습니다. 별도 외부 업체 이용 바랍니다.", washItems: ["광택"] },
     { id: "A-1004", orderId: "O-90003", plate: "12가3456", model: "아반떼", zoneName: "강남역 1번존", partner: "C파트너", requestedAt: "2026-01-09 16:45", approvalType: "1단계 승인", requestType: "전환(현장→입고)", status: "요청", cost: 8000, reason: "현장 세차 → 입고(특수) 세차 변경", requestComment: "진흙 오염이 심해 현장에서 처리가 어렵습니다.", rejectComment: null, washItems: ["특수오염제거"] },
     { id: "A-1005", orderId: "O-90001", plate: "78다9012", model: "쏘나타", zoneName: "판교역 3번존", partner: "A파트너", requestedAt: "2026-01-08 11:20", approvalType: "2단계 승인", requestType: "입고 변경(내외부→협의)", status: "수락", cost: 35000, reason: "입고 세차 유형 변경 (협의)", requestComment: "엔진룸 오일 누출로 특수 약품 처리 필요합니다.", rejectComment: null, washItems: ["엔진룸세척", "특수약품처리"] },
+    { id: "A-1006", orderId: "O-90015", plate: "23바1234", model: "그랜저", zoneName: "분당 센트럴존", partner: "B파트너", requestedAt: "2026-01-13 09:00", approvalType: "2단계 승인", requestType: "입고 변경(내외부→특수)", status: "요청", cost: 45000, reason: "특수 오염(페인트) 제거 필요", requestComment: "차량 외부에 페인트 오염이 있어 특수 약품 처리가 필요합니다.", rejectComment: null, washItems: ["페인트제거", "광택"] },
+    { id: "A-1007", orderId: "O-90018", plate: "67사8901", model: "투싼", zoneName: "일산 킨텍스존", partner: "A파트너", requestedAt: "2026-01-13 11:30", approvalType: "2단계 승인", requestType: "입고 변경(내외부→협의)", status: "요청", cost: 55000, reason: "시트 전체 교체 수준 오염", requestComment: "뒷좌석 시트에 음료 대량 유출로 시트 전체 클리닝 필요합니다. 부품비 포함.", rejectComment: null, washItems: ["시트클리닝", "탈취", "부품교체"] },
+    { id: "A-1008", orderId: "O-90020", plate: "45차6789", model: "아이오닉6", zoneName: "송도 컨벤시아존", partner: "C파트너", requestedAt: "2026-01-13 14:15", approvalType: "2단계 승인", requestType: "입고 변경(내외부→특수)", status: "요청", cost: 38000, reason: "타르 및 철분 제거 필요", requestComment: "고속도로 주행 후 타르와 철분 오염이 심합니다. 특수 약품 처리 요청드립니다.", rejectComment: null, washItems: ["타르제거", "철분제거", "광택"] },
   ]);
 
   const [selected, setSelected] = useState(null);
   const [sortConfig, setSortConfig] = useState({ key: 'orderId', direction: 'desc' });
   const [statusFilter, setStatusFilter] = useState("전체");
+  const [approvalTypeFilter, setApprovalTypeFilter] = useState("전체");
   const [rejectReason, setRejectReason] = useState("");
   const [isRejecting, setIsRejecting] = useState(false);
 
@@ -211,7 +215,10 @@ export default function SettlementPage() {
   const filteredAndSortedData = useMemo(() => {
     let filtered = items;
     if (statusFilter !== "전체") {
-      filtered = items.filter(item => item.status === statusFilter);
+      filtered = filtered.filter(item => item.status === statusFilter);
+    }
+    if (approvalTypeFilter !== "전체") {
+      filtered = filtered.filter(item => item.approvalType === approvalTypeFilter);
     }
     if (!sortConfig.key) return filtered;
     return [...filtered].sort((a, b) => {
@@ -221,7 +228,7 @@ export default function SettlementPage() {
       if (aVal > bVal) return sortConfig.direction === 'asc' ? 1 : -1;
       return 0;
     });
-  }, [items, sortConfig, statusFilter]);
+  }, [items, sortConfig, statusFilter, approvalTypeFilter]);
 
   const handleSort = (key) => {
     setSortConfig(prev => ({
@@ -242,6 +249,18 @@ export default function SettlementPage() {
       </div>
 
       <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
+          <span className="text-sm font-medium text-[#6B778C]">합의 유형</span>
+          <select
+            value={approvalTypeFilter}
+            onChange={(e) => setApprovalTypeFilter(e.target.value)}
+            className="h-9 rounded-lg border border-[#E2E8F0] bg-white px-3 text-sm text-[#172B4D] outline-none focus:border-[#0052CC] focus:ring-1 focus:ring-[#0052CC]"
+          >
+            <option value="전체">전체</option>
+            <option value="1단계 승인">1단계 승인</option>
+            <option value="2단계 승인">2단계 승인</option>
+          </select>
+        </div>
         <div className="flex items-center gap-2">
           <span className="text-sm font-medium text-[#6B778C]">상태</span>
           <select
