@@ -246,7 +246,7 @@ const MissionsPage = ({ missionPolicies, setMissionPolicies, policyVehicles, set
       <Card>
         <DataTable columns={policyColumns} rows={currentData} rowKey={(r) => r.id} onRowClick={setSelectedPolicy} sortConfig={sortConfig} onSort={handleSort} />
       </Card>
-      <div className="flex items-center pt-2">
+      <div className="flex items-center justify-end pt-2">
         <div className="flex items-center gap-2 text-sm text-[#6B778C]">
           <span>
             {totalItems > 0

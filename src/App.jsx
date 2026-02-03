@@ -57,6 +57,7 @@ import ZonePolicyPage from './pages/ZonePolicyPage';
 import RegionPolicyPage from './pages/RegionPolicyPage';
 import OrderTypePolicyPage from './pages/OrderTypePolicyPage';
 import ChecklistPage from './pages/ChecklistPage';
+import ZoneAssignmentPage from './pages/ZoneAssignmentPage';
 
 import missionPoliciesData from "./mocks/missionPolicies.json";
 import policyVehiclesData from "./mocks/policyVehicles.json";
@@ -151,6 +152,7 @@ const NAV = [
     icon: Folder,
     items: [
       { key: "partners", label: "파트너 관리", icon: Building2, parentKey: 'info-management' },
+      { key: "zone-assignment", label: "존 배정 관리", icon: MapPinned, parentKey: 'info-management' },
       { key: "partner-managers", label: "파트너 담당자 관리", icon: Users, parentKey: 'info-management' },
       { key: "workers", label: "수행원 조회", icon: UserCog, parentKey: 'info-management' },
     ]
@@ -176,6 +178,7 @@ const PAGE_TITLES = {
   lostfound: "분실물 관리",
   notices: "공지 관리(CMS)",
   partners: "파트너 관리",
+  "zone-assignment": "존 배정 관리",
   "partner-managers": "파트너 담당자 관리",
   workers: "수행원 조회",
   "checklist-mockup": "오더별 수행 목업",
@@ -372,6 +375,8 @@ function AdminApp() {
         return <PlaceholderPage title="공지 관리(CMS)" description="외부 시스템으로 이동 중입니다. 새 탭이 열리지 않으면 팝업 차단을 확인해주세요." />;
       case "partners":
         return <PartnersPage />;
+      case "zone-assignment":
+        return <ZoneAssignmentPage />;
       case "partner-managers":
         return <PartnerManagersPage />;
       case "workers":
@@ -456,8 +461,7 @@ function AdminApp() {
       </div>
 
       <div className={cn(
-        "fixed bottom-5 z-[10000] flex items-center gap-2 transition-all duration-300",
-        isDrawerOpen && !isMobile ? "left-5" : "right-5",
+        "fixed bottom-5 left-5 z-[10000] flex items-center gap-2 transition-all duration-300",
         isDrawerOpen && isMobile ? "opacity-0 pointer-events-none" : "opacity-100"
       )}>
         <button

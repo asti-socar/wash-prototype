@@ -263,7 +263,7 @@ export default function PartnerManagersPage() {
 
 
       <DataTable columns={columns} rows={currentData} rowKey={r => r.id} onRowClick={handleOpenDrawer} sortConfig={sortConfig} onSort={handleSort} />
-      <div className="flex items-center pt-2">
+      <div className="flex items-center justify-end pt-2">
         <div className="flex items-center gap-2 text-sm text-[#6B778C]">
           <span>
             {totalItems > 0
