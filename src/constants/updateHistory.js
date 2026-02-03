@@ -1,4 +1,5 @@
 export const BROWN_HISTORY = [
+  { id: 77, date: "2026-02-03 17:00", content: "[기능] 파트너 단가 정책 일자별 관리: 적용 시작일 지정, 적용 중/예정 정책 분리 표시, 미래 적용 정책 사전 등록 기능", isPolicyChange: true, links: [{ label: "파트너 관리", page: "partners" }] },
   { id: 73, date: "2026-02-03 11:30", content: "[기능] 존 배정 관리 메뉴 신설: 존 중심 파트너 배정 현황 관리, 미배정 존 식별 UI, 파트너 관리에서 존 배정 탭 분리", isPolicyChange: true, links: [{ label: "존 배정 관리", page: "zone-assignment" }, { label: "파트너 관리", page: "partners" }] },
   { id: 72, date: "2026-02-02 18:15", content: "[정책] 합의 요청 관리: 요청 유형 값 형식 변경 - 변경 내용 명시적 표시 (예: 현장 변경(내부→내외부), 전환(현장→입고), 입고 변경(내외부→특수))", isPolicyChange: true, links: [{ label: "합의 요청 관리", page: "settlement" }] },
   { id: 71, date: "2026-02-02 15:05", content: "[기능] 핸들러 오더 고도화: 파트너 명 '핸들러' 고정, 사진 및 점검 탭 추가 (진행 이력/탁송 상태 연계, 세차 전후 사진, 세차 후기)", isPolicyChange: true, links: [{ label: "오더 관리", page: "orders" }] },

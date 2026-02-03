@@ -223,7 +223,19 @@ const MOCK_PARTNERS_V2 = [
     createdAt: '2025-01-01',
     updatedAt: '2026-01-10',
     assignedZoneIds: MOCK_ALL_ZONES.slice(0, 60).map(z => z.zoneId), // 60 zones (>50)
-    unitPrices: [{ id: 1, orderGroup: '정규', washType: '내외부', price: 15000 }, { id: 2, orderGroup: '수시', washType: '외부', price: 12000 }],
+    unitPrices: [
+      // 적용 중 (2026-02-03 기준 과거)
+      { id: 1, orderGroup: '정규', washType: '내외부', price: 15000, effectiveDate: '2025-01-01' },
+      { id: 2, orderGroup: '수시', washType: '외부', price: 12000, effectiveDate: '2025-03-15' },
+      { id: 3, orderGroup: '긴급', washType: '내외부', price: 20000, effectiveDate: '2025-06-01' },
+      { id: 4, orderGroup: '정규', washType: '내부', price: 10000, effectiveDate: '2025-09-01' },
+      { id: 5, orderGroup: '변경', washType: '특수', price: 35000, effectiveDate: '2026-01-15' },
+      // 예정된 (2026-06-01 이후)
+      { id: 6, orderGroup: '정규', washType: '내외부', price: 17000, effectiveDate: '2026-06-01' },
+      { id: 7, orderGroup: '긴급', washType: '내외부', price: 23000, effectiveDate: '2026-06-01' },
+      { id: 8, orderGroup: '수시', washType: '외부', price: 14000, effectiveDate: '2026-07-01' },
+      { id: 9, orderGroup: '특별', washType: '협의', price: 50000, effectiveDate: '2026-09-01' },
+    ],
   },
   {
     partnerId: 'P-002',
@@ -243,7 +255,15 @@ const MOCK_PARTNERS_V2 = [
     createdAt: '2024-06-01',
     updatedAt: '2025-06-01',
     assignedZoneIds: MOCK_ALL_ZONES.slice(60, 120).map(z => z.zoneId), // 60 zones (>50)
-    unitPrices: [{ id: 1, orderGroup: '정규', washType: '내외부', price: 16000 }],
+    unitPrices: [
+      // 적용 중 (2026-02-03 기준 과거)
+      { id: 1, orderGroup: '정규', washType: '내외부', price: 16000, effectiveDate: '2024-06-01' },
+      { id: 2, orderGroup: '긴급', washType: '내외부', price: 22000, effectiveDate: '2025-01-01' },
+      { id: 3, orderGroup: '수시', washType: '내부', price: 11000, effectiveDate: '2025-08-15' },
+      // 예정된 (2026-06-01 이후)
+      { id: 4, orderGroup: '정규', washType: '내외부', price: 18000, effectiveDate: '2026-06-15' },
+      { id: 5, orderGroup: '긴급', washType: '내외부', price: 25000, effectiveDate: '2026-08-01' },
+    ],
   },
 ];
 
@@ -377,10 +397,16 @@ function PartnerDetailDrawer({ partner, onClose, onSave }) {
   return (
     <Drawer open={!!partner} title={partner.partnerName ? `파트너 상세 - ${partner.partnerName}` : "신규 파트너 등록"} onClose={onClose}
       footer={
-        <div className="flex w-full flex-col-reverse sm:flex-row sm:justify-end gap-2">
-          <Button variant="secondary" onClick={onClose} className="w-full sm:w-auto">닫기</Button>
-          <Button onClick={() => onSave(formData)} className="w-full sm:w-auto">{isEditing ? '수정하기' : '등록하기'}</Button>
-        </div>
+        activeTab === 'prices' ? (
+          <div className="flex w-full flex-col-reverse sm:flex-row sm:justify-end gap-2">
+            <Button variant="secondary" onClick={onClose} className="w-full sm:w-auto">닫기</Button>
+          </div>
+        ) : (
+          <div className="flex w-full flex-col-reverse sm:flex-row sm:justify-end gap-2">
+            <Button variant="secondary" onClick={onClose} className="w-full sm:w-auto">닫기</Button>
+            <Button onClick={() => onSave(formData)} className="w-full sm:w-auto">{isEditing ? '수정하기' : '등록하기'}</Button>
+          </div>
+        )
       }
     >
       <Tabs value={activeTab}>
@@ -417,65 +443,151 @@ function PartnerDetailDrawer({ partner, onClose, onSave }) {
 }
 
 function PricePolicyTab({ formData, setFormData }) {
-  const [newPrice, setNewPrice] = useState({ orderGroup: '정규', washType: '내외부', price: 0 });
+  const today = new Date().toISOString().split('T')[0];
+  const [newPrice, setNewPrice] = useState({
+    orderGroup: '긴급',
+    washType: '내외부',
+    price: 0,
+    effectiveDate: today
+  });
+
+  // 정책을 적용 중 / 예정으로 분류
+  const { activePolicies, scheduledPolicies } = useMemo(() => {
+    const prices = formData.unitPrices || [];
+    const active = prices.filter(p => p.effectiveDate <= today).sort((a, b) => b.effectiveDate.localeCompare(a.effectiveDate));
+    const scheduled = prices.filter(p => p.effectiveDate > today).sort((a, b) => a.effectiveDate.localeCompare(b.effectiveDate));
+    return { activePolicies: active, scheduledPolicies: scheduled };
+  }, [formData.unitPrices, today]);
+
+  // 예정 정책을 날짜별로 그룹화
+  const scheduledGroups = useMemo(() => {
+    const groups = {};
+    scheduledPolicies.forEach(p => {
+      if (!groups[p.effectiveDate]) groups[p.effectiveDate] = [];
+      groups[p.effectiveDate].push(p);
+    });
+    return Object.entries(groups).sort((a, b) => a[0].localeCompare(b[0]));
+  }, [scheduledPolicies]);
 
   const handleAdd = () => {
     if (newPrice.price <= 0) return alert("금액을 입력해주세요.");
-    const nextId = (formData.unitPrices?.length || 0) > 0 
-      ? Math.max(...formData.unitPrices.map(p => p.id)) + 1 
+    if (!newPrice.effectiveDate) return alert("적용 시작일을 선택해주세요.");
+    if (!window.confirm("정책을 추가할까요?")) return;
+    const nextId = (formData.unitPrices?.length || 0) > 0
+      ? Math.max(...formData.unitPrices.map(p => p.id)) + 1
       : 1;
     const newItem = { ...newPrice, id: nextId };
     setFormData(prev => ({
       ...prev,
       unitPrices: [...(prev.unitPrices || []), newItem]
     }));
-    setNewPrice({ orderGroup: '정규', washType: '내외부', price: 0 });
+    setNewPrice({ orderGroup: '긴급', washType: '내외부', price: 0, effectiveDate: today });
   };
 
   const handleRemove = (id) => {
+    if (!window.confirm("정책을 삭제할까요?")) return;
     setFormData(prev => ({
       ...prev,
       unitPrices: prev.unitPrices.filter(p => p.id !== id)
     }));
   };
 
+  const PolicyTable = ({ policies, emptyMessage }) => (
+    <div className="rounded-lg border border-[#E2E8F0] overflow-hidden">
+      <table className="min-w-full text-sm text-left">
+        <thead className="bg-[#F8FAFC] border-b border-[#E2E8F0]">
+          <tr>
+            <th className="px-4 py-2 font-semibold text-[#475569]">오더 구분</th>
+            <th className="px-4 py-2 font-semibold text-[#475569]">세차 유형</th>
+            <th className="px-4 py-2 font-semibold text-[#475569]">단가</th>
+            <th className="px-4 py-2 font-semibold text-[#475569]">적용 시작일</th>
+            <th className="px-4 py-2 font-semibold text-[#475569]">관리</th>
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-[#E2E8F0]">
+          {policies.map(p => (
+            <tr key={p.id}>
+              <td className="px-4 py-2">{p.orderGroup}</td>
+              <td className="px-4 py-2">{p.washType}</td>
+              <td className="px-4 py-2">{p.price.toLocaleString()}원</td>
+              <td className="px-4 py-2">{p.effectiveDate}</td>
+              <td className="px-4 py-2">
+                <button onClick={() => handleRemove(p.id)} className="text-rose-600 hover:underline">
+                  <Trash2 className="h-4 w-4" />
+                </button>
+              </td>
+            </tr>
+          ))}
+          {policies.length === 0 && (
+            <tr><td colSpan={5} className="px-4 py-4 text-center text-[#6B778C]">{emptyMessage}</td></tr>
+          )}
+        </tbody>
+      </table>
+    </div>
+  );
+
   return (
     <div className="space-y-6">
+      {/* 적용 중 단가 정책 */}
       <Card>
-        <CardHeader><CardTitle>단가 정책 목록</CardTitle></CardHeader>
+        <CardHeader>
+          <CardTitle>적용 중 단가 정책</CardTitle>
+        </CardHeader>
         <CardContent>
-          <div className="rounded-lg border border-[#E2E8F0] overflow-hidden">
-            <table className="min-w-full text-sm text-left">
-              <thead className="bg-[#F8FAFC] border-b border-[#E2E8F0]">
-                <tr>
-                  <th className="px-4 py-2 font-semibold text-[#475569]">오더 구분</th>
-                  <th className="px-4 py-2 font-semibold text-[#475569]">세차 유형</th>
-                  <th className="px-4 py-2 font-semibold text-[#475569]">단가</th>
-                  <th className="px-4 py-2 font-semibold text-[#475569]">관리</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[#E2E8F0]">
-                {formData.unitPrices?.map(p => (
-                  <tr key={p.id}>
-                    <td className="px-4 py-2">{p.orderGroup}</td>
-                    <td className="px-4 py-2">{p.washType}</td>
-                    <td className="px-4 py-2">{p.price.toLocaleString()}원</td>
-                    <td className="px-4 py-2"><button onClick={() => handleRemove(p.id)} className="text-rose-600 hover:underline"><Trash2 className="h-4 w-4" /></button></td>
-                  </tr>
-                ))}
-                {(!formData.unitPrices || formData.unitPrices.length === 0) && <tr><td colSpan={4} className="px-4 py-4 text-center text-[#6B778C]">등록된 정책이 없습니다.</td></tr>}
-              </tbody>
-            </table>
-          </div>
+          <PolicyTable policies={activePolicies} emptyMessage="적용 중인 정책이 없습니다." />
         </CardContent>
       </Card>
 
+      {/* 예정된 단가 정책 */}
+      {scheduledPolicies.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle>예정된 단가 정책</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <PolicyTable policies={scheduledPolicies} emptyMessage="" />
+          </CardContent>
+        </Card>
+      )}
+
+      {/* 예정 정책이 없을 때 안내 */}
+      {scheduledGroups.length === 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle>예정된 단가 정책</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="rounded-lg border border-[#E2E8F0] px-4 py-4 text-center text-sm text-[#6B778C]">
+              예정된 정책이 없습니다.
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* 정책 추가 */}
       <Card>
         <CardHeader><CardTitle>정책 추가</CardTitle></CardHeader>
-        <CardContent className="flex gap-2 items-end">
-          <div className="flex-1 space-y-1"><label className="text-xs font-semibold text-[#6B778C]">오더 구분</label><Select value={newPrice.orderGroup} onChange={e => setNewPrice({...newPrice, orderGroup: e.target.value})}><option>정규</option><option>수시</option><option>긴급</option></Select></div>
-          <div className="flex-1 space-y-1"><label className="text-xs font-semibold text-[#6B778C]">세차 유형</label><Select value={newPrice.washType} onChange={e => setNewPrice({...newPrice, washType: e.target.value})}><option>내외부</option><option>내부</option><option>외부</option><option>특수</option></Select></div>
-          <div className="flex-1 space-y-1"><label className="text-xs font-semibold text-[#6B778C]">단가</label><Input type="number" value={newPrice.price} onChange={e => setNewPrice({...newPrice, price: Number(e.target.value)})} /></div>
+        <CardContent className="flex flex-wrap gap-2 items-end">
+          <div className="flex-1 min-w-[100px] space-y-1">
+            <label className="text-xs font-semibold text-[#6B778C]">오더 구분</label>
+            <Select value={newPrice.orderGroup} onChange={e => setNewPrice({...newPrice, orderGroup: e.target.value})}>
+              <option>긴급</option><option>정규</option><option>변경</option><option>수시</option><option>특별</option>
+            </Select>
+          </div>
+          <div className="flex-1 min-w-[100px] space-y-1">
+            <label className="text-xs font-semibold text-[#6B778C]">세차 유형</label>
+            <Select value={newPrice.washType} onChange={e => setNewPrice({...newPrice, washType: e.target.value})}>
+              <option>내외부</option><option>내부</option><option>외부</option><option>특수</option><option>협의</option><option>라이트</option><option>기계세차</option>
+            </Select>
+          </div>
+          <div className="flex-1 min-w-[80px] space-y-1">
+            <label className="text-xs font-semibold text-[#6B778C]">단가</label>
+            <Input type="number" value={newPrice.price} onChange={e => setNewPrice({...newPrice, price: Number(e.target.value)})} placeholder="0" />
+          </div>
+          <div className="flex-1 min-w-[130px] space-y-1">
+            <label className="text-xs font-semibold text-[#6B778C]">적용 시작일</label>
+            <Input type="date" value={newPrice.effectiveDate} onChange={e => setNewPrice({...newPrice, effectiveDate: e.target.value})} />
+          </div>
           <Button onClick={handleAdd}><Plus className="h-4 w-4" /></Button>
         </CardContent>
       </Card>
