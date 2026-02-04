@@ -15,7 +15,7 @@ import {
   Legend,
   ReferenceLine,
 } from "recharts";
-import { RefreshCw, ArrowRight, ChevronDown } from "lucide-react";
+import { RefreshCw } from "lucide-react";
 import dashboardData from "../mocks/dashboard.json";
 
 function cn(...classes) {
@@ -43,34 +43,6 @@ function ClickableValue({ value, label, onClick, size = "md", color = "text-[#17
   );
 }
 
-// 취소 유형 상세 컴포넌트
-function CancelTypeDetail({ cancelled, onCancelTypeClick }) {
-  const cancelTypes = [
-    { key: "change", label: "변경취소", filterValue: "변경취소" },
-    { key: "no_reservation", label: "미예약취소", filterValue: "미예약취소" },
-    { key: "no_show", label: "노쇼취소", filterValue: "노쇼취소" },
-    { key: "agent", label: "수행원취소", filterValue: "수행원취소" },
-    { key: "rain", label: "우천취소", filterValue: "우천취소" },
-  ];
-
-  return (
-    <div className="mt-3 rounded-lg bg-[#FEF2F2] p-3">
-      <div className="text-xs font-semibold text-rose-700 mb-2">취소 유형 상세</div>
-      <div className="flex flex-wrap gap-2">
-        {cancelTypes.map((ct) => (
-          <button
-            key={ct.key}
-            onClick={() => onCancelTypeClick(ct.filterValue)}
-            className="inline-flex items-center gap-1 rounded-full bg-white px-2.5 py-1 text-xs font-medium text-rose-700 border border-rose-200 hover:bg-rose-50 transition-colors"
-          >
-            {ct.label}: <span className="font-bold">{cancelled[ct.key]}</span>
-          </button>
-        ))}
-      </div>
-    </div>
-  );
-}
-
 function Dashboard({ goOrdersWithFilter }) {
   const [data, setData] = useState(dashboardData);
   const [lastUpdated, setLastUpdated] = useState(new Date());
@@ -93,13 +65,12 @@ function Dashboard({ goOrdersWithFilter }) {
 
   const { order_status, risk_management, hourly_orders, daily_risks } = data;
 
-  // 오더 상태 도넛 차트 데이터
+  // 오더 상태 도넛 차트 데이터 (4개 상태: 수행 대기, 수행 중, 완료, 취소)
   const statusDonutData = [
-    { name: "발행", value: order_status.issued, color: "#3B82F6" },
-    { name: "예약", value: order_status.reserved, color: "#22C55E" },
-    { name: "수행 중", value: order_status.in_progress, color: "#EAB308" },
-    { name: "취소", value: order_status.cancelled.total, color: "#94A3B8" },
-    { name: "완료", value: order_status.completed.total, color: "#8B5CF6" },
+    { name: "수행 대기", value: order_status.issued + order_status.reserved, color: "#0052CC", filterStatus: null },
+    { name: "수행 중", value: order_status.in_progress, color: "#FF991F", filterStatus: "수행 중" },
+    { name: "완료", value: order_status.completed.total, color: "#36B37E", filterStatus: "완료" },
+    { name: "취소", value: order_status.cancelled.total, color: "#DE350B", filterStatus: "취소" },
   ];
 
   // 리스크 비율 도넛 차트 데이터
@@ -160,104 +131,143 @@ function Dashboard({ goOrdersWithFilter }) {
         </div>
       </div>
 
-      {/* [영역 1] 오더 현황 */}
+      {/* [영역 1] 오더 현황 - 카드 그리드 방식 */}
       <div className="rounded-xl border border-[#E2E8F0] bg-white shadow-sm">
         <div className="border-b border-[#E2E8F0] px-5 py-4">
           <h2 className="text-sm font-bold text-[#172B4D]">오더 현황</h2>
-          <p className="text-xs text-[#6B778C] mt-0.5">전체 오더의 상태별 흐름과 분포</p>
+          <p className="text-xs text-[#6B778C] mt-0.5">전체 오더의 상태별 현황</p>
         </div>
-        <div className="p-5">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Funnel 시각화 */}
-            <div className="lg:col-span-2 space-y-4">
-              {/* 1단계: 전체 오더 */}
-              <div className="text-center">
-                <ClickableValue
-                  label="전체 오더"
-                  value={order_status.total}
-                  size="lg"
-                  onClick={() => goToOrders({})}
-                />
-              </div>
+        <div className="p-5 space-y-6">
+          {/* 5열 카드 그리드 */}
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+            {/* 전체 오더 카드 */}
+            <button
+              onClick={() => goToOrders({})}
+              className="rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] p-4 text-center hover:border-[#172B4D] hover:shadow-md transition-all"
+            >
+              <div className="text-sm text-[#6B778C] mb-1">전체 오더</div>
+              <div className="text-3xl font-bold text-[#172B4D]">{order_status.total}</div>
+            </button>
 
-              {/* 2단계: 발행 / 예약 / 취소 */}
-              <div className="flex items-center justify-center gap-4">
-                <ClickableValue
-                  label="발행"
-                  value={order_status.issued}
-                  color="text-blue-600"
+            {/* 수행 대기 카드 */}
+            <div className="rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] p-4 text-center">
+              <div className="text-sm text-[#6B778C] mb-1">수행 대기</div>
+              <div className="text-3xl font-bold text-[#0052CC]">{order_status.issued + order_status.reserved}</div>
+              <div className="mt-3 pt-3 border-t border-[#E2E8F0] space-y-1">
+                <button
                   onClick={() => goToOrders({ status: "발행" })}
-                />
-                <ArrowRight className="h-4 w-4 text-[#DFE1E6]" />
-                <ClickableValue
-                  label="예약"
-                  value={order_status.reserved}
-                  color="text-green-600"
+                  className="w-full flex justify-between items-center text-xs text-[#6B778C] hover:text-[#0052CC] transition-colors"
+                >
+                  <span>발행</span>
+                  <span className="font-semibold">{order_status.issued}</span>
+                </button>
+                <button
                   onClick={() => goToOrders({ status: "예약" })}
-                />
-                <div className="h-8 w-px bg-[#DFE1E6] mx-2" />
-                <ClickableValue
-                  label="취소"
-                  value={order_status.cancelled.total}
-                  color="text-rose-600"
-                  onClick={() => goToOrders({ status: "취소" })}
-                />
+                  className="w-full flex justify-between items-center text-xs text-[#6B778C] hover:text-[#0052CC] transition-colors"
+                >
+                  <span>예약</span>
+                  <span className="font-semibold">{order_status.reserved}</span>
+                </button>
               </div>
-
-              {/* 3단계: 수행 중 */}
-              <div className="text-center">
-                <ArrowRight className="h-4 w-4 text-[#DFE1E6] mx-auto rotate-90 mb-1" />
-                <ClickableValue
-                  label="수행 중"
-                  value={order_status.in_progress}
-                  color="text-amber-600"
-                  onClick={() => goToOrders({ status: "수행 중" })}
-                />
-              </div>
-
-              {/* 4단계: 수행 완료 */}
-              <div className="text-center">
-                <ArrowRight className="h-4 w-4 text-[#DFE1E6] mx-auto rotate-90 mb-1" />
-                <ClickableValue
-                  label="완료"
-                  value={order_status.completed.total}
-                  color="text-purple-600"
-                  onClick={() => goToOrders({ status: "완료" })}
-                />
-                <div className="flex items-center justify-center gap-4 mt-2">
-                  <button
-                    onClick={() => goToOrders({ status: "완료" })}
-                    className="text-xs text-[#6B778C] hover:text-[#172B4D] transition-colors"
-                  >
-                    적시수행: <span className="font-bold text-green-600">{order_status.completed.on_time}</span>
-                  </button>
-                  <span className="text-[#DFE1E6]">|</span>
-                  <button
-                    onClick={() => goToOrders({ status: "완료" })}
-                    className="text-xs text-[#6B778C] hover:text-[#172B4D] transition-colors"
-                  >
-                    지연수행: <span className="font-bold text-rose-600">{order_status.completed.delayed}</span>
-                  </button>
-                </div>
-              </div>
-
-              {/* 취소 유형 상세 */}
-              <CancelTypeDetail
-                cancelled={order_status.cancelled}
-                onCancelTypeClick={(cancelType) => goToOrders({ status: "취소", cancelType })}
-              />
             </div>
 
-            {/* 오더 상태 도넛 차트 */}
-            <div className="flex flex-col items-center justify-center">
-              <ResponsiveContainer width="100%" height={220}>
+            {/* 수행 중 카드 */}
+            <button
+              onClick={() => goToOrders({ status: "수행 중" })}
+              className="rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] p-4 text-center hover:border-[#FF991F] hover:shadow-md transition-all"
+            >
+              <div className="text-sm text-[#6B778C] mb-1">수행 중</div>
+              <div className="text-3xl font-bold text-[#FF991F]">{order_status.in_progress}</div>
+            </button>
+
+            {/* 완료 카드 */}
+            <div className="rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] p-4 text-center">
+              <button
+                onClick={() => goToOrders({ status: "완료" })}
+                className="w-full"
+              >
+                <div className="text-sm text-[#6B778C] mb-1">완료</div>
+                <div className="text-3xl font-bold text-[#36B37E]">{order_status.completed.total}</div>
+              </button>
+              <div className="mt-3 pt-3 border-t border-[#E2E8F0] space-y-1">
+                <button
+                  onClick={() => goToOrders({ status: "완료" })}
+                  className="w-full flex justify-between items-center text-xs text-[#6B778C] hover:text-[#36B37E] transition-colors"
+                >
+                  <span>적시수행</span>
+                  <span className="font-semibold text-[#36B37E]">{order_status.completed.on_time}</span>
+                </button>
+                <button
+                  onClick={() => goToOrders({ status: "완료" })}
+                  className="w-full flex justify-between items-center text-xs text-[#6B778C] hover:text-[#DE350B] transition-colors"
+                >
+                  <span>지연수행</span>
+                  <span className="font-semibold text-[#DE350B]">{order_status.completed.delayed}</span>
+                </button>
+              </div>
+            </div>
+
+            {/* 취소 카드 */}
+            <div className="rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] p-4 text-center">
+              <button
+                onClick={() => goToOrders({ status: "취소" })}
+                className="w-full"
+              >
+                <div className="text-sm text-[#6B778C] mb-1">취소</div>
+                <div className="text-3xl font-bold text-[#DE350B]">{order_status.cancelled.total}</div>
+              </button>
+              <div className="mt-3 pt-3 border-t border-[#E2E8F0] space-y-1">
+                <button
+                  onClick={() => goToOrders({ status: "취소", cancelType: "변경취소" })}
+                  className="w-full flex justify-between items-center text-xs text-[#6B778C] hover:text-[#DE350B] transition-colors"
+                >
+                  <span>변경</span>
+                  <span className="font-semibold">{order_status.cancelled.change}</span>
+                </button>
+                <button
+                  onClick={() => goToOrders({ status: "취소", cancelType: "미예약취소" })}
+                  className="w-full flex justify-between items-center text-xs text-[#6B778C] hover:text-[#DE350B] transition-colors"
+                >
+                  <span>미예약</span>
+                  <span className="font-semibold">{order_status.cancelled.no_reservation}</span>
+                </button>
+                <button
+                  onClick={() => goToOrders({ status: "취소", cancelType: "노쇼취소" })}
+                  className="w-full flex justify-between items-center text-xs text-[#6B778C] hover:text-[#DE350B] transition-colors"
+                >
+                  <span>노쇼</span>
+                  <span className="font-semibold">{order_status.cancelled.no_show}</span>
+                </button>
+                <button
+                  onClick={() => goToOrders({ status: "취소", cancelType: "수행원취소" })}
+                  className="w-full flex justify-between items-center text-xs text-[#6B778C] hover:text-[#DE350B] transition-colors"
+                >
+                  <span>수행원</span>
+                  <span className="font-semibold">{order_status.cancelled.agent}</span>
+                </button>
+                <button
+                  onClick={() => goToOrders({ status: "취소", cancelType: "우천취소" })}
+                  className="w-full flex justify-between items-center text-xs text-[#6B778C] hover:text-[#DE350B] transition-colors"
+                >
+                  <span>우천</span>
+                  <span className="font-semibold">{order_status.cancelled.rain}</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* 오더 상태 분포 도넛 차트 */}
+          <div className="rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] p-4">
+            <div className="text-sm font-semibold text-[#172B4D] mb-4">오더 상태 분포</div>
+            <div className="flex items-center justify-center">
+              <ResponsiveContainer width="100%" height={180}>
                 <PieChart>
                   <Pie
                     data={statusDonutData}
                     cx="50%"
                     cy="50%"
-                    innerRadius={60}
-                    outerRadius={85}
+                    innerRadius={50}
+                    outerRadius={75}
                     paddingAngle={2}
                     dataKey="value"
                   >
@@ -266,7 +276,7 @@ function Dashboard({ goOrdersWithFilter }) {
                         key={`cell-${index}`}
                         fill={entry.color}
                         className="cursor-pointer"
-                        onClick={() => goToOrders({ status: entry.name })}
+                        onClick={() => goToOrders(entry.filterStatus ? { status: entry.filterStatus } : {})}
                       />
                     ))}
                   </Pie>
@@ -274,27 +284,27 @@ function Dashboard({ goOrdersWithFilter }) {
                     formatter={(value, name) => [`${value}건 (${((value / order_status.total) * 100).toFixed(1)}%)`, name]}
                   />
                   <text x="50%" y="50%" textAnchor="middle" dominantBaseline="middle">
-                    <tspan x="50%" dy="-5" className="text-2xl font-bold fill-[#172B4D]">
+                    <tspan x="50%" dy="-5" className="text-xl font-bold fill-[#172B4D]">
                       {order_status.total}
                     </tspan>
-                    <tspan x="50%" dy="20" className="text-xs fill-[#6B778C]">
+                    <tspan x="50%" dy="18" className="text-xs fill-[#6B778C]">
                       전체
                     </tspan>
                   </text>
                 </PieChart>
               </ResponsiveContainer>
-              <div className="flex flex-wrap justify-center gap-2 mt-2">
-                {statusDonutData.map((item) => (
-                  <button
-                    key={item.name}
-                    onClick={() => goToOrders({ status: item.name })}
-                    className="inline-flex items-center gap-1.5 text-xs text-[#6B778C] hover:text-[#172B4D] transition-colors"
-                  >
-                    <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: item.color }} />
-                    {item.name}: {item.value}
-                  </button>
-                ))}
-              </div>
+            </div>
+            <div className="flex flex-wrap justify-center gap-4 mt-2">
+              {statusDonutData.map((item) => (
+                <button
+                  key={item.name}
+                  onClick={() => goToOrders(item.filterStatus ? { status: item.filterStatus } : {})}
+                  className="inline-flex items-center gap-1.5 text-xs text-[#6B778C] hover:text-[#172B4D] transition-colors"
+                >
+                  <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: item.color }} />
+                  {item.name}: {item.value}
+                </button>
+              ))}
             </div>
           </div>
         </div>
