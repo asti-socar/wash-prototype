@@ -80,9 +80,18 @@ function Dashboard({ goOrdersWithFilter }) {
 
   const currentRisk = riskTabData[riskTab];
 
+  // 리드 타임 계산 함수
+  const calculateLeadTime = (order) => {
+    const referenceDate = order.rootCreatedAt || order.createdAt;
+    const now = new Date();
+    const created = new Date(referenceDate);
+    return (now - created) / (1000 * 60 * 60 * 24); // 일 단위
+  };
+
   // 파트너별 데이터 집계
   const partnerStats = useMemo(() => {
     const stats = {};
+    const riskTypes = ["위생장애", "고객 피드백(ML)_긴급", "초장기 미세차"];
 
     ordersData.forEach((order) => {
       const partner = order.partner || "미지정";
@@ -96,6 +105,7 @@ function Dashboard({ goOrdersWithFilter }) {
           completedDelayed: 0, // 지연수행
           risk: 0, // 리스크 오더 (위생장애, ML긴급, 초장기미세차)
           delayed: 0, // 지연 중인 오더 (현재 수행 중이면서 지연)
+          riskLeadTimes: [], // 리스크 오더들의 리드 타임 배열
         };
       }
 
@@ -119,19 +129,22 @@ function Dashboard({ goOrdersWithFilter }) {
         }
       }
 
-      // 리스크 오더 집계
-      const riskTypes = ["위생장애", "고객 피드백(ML)_긴급", "초장기 미세차"];
+      // 리스크 오더 집계 및 리드 타임 수집
       if (riskTypes.includes(order.orderType)) {
         stats[partner].risk += 1;
+        stats[partner].riskLeadTimes.push(calculateLeadTime(order));
       }
     });
 
-    // 적시율 계산 및 배열로 변환
+    // 적시율 및 평균 리드타임 계산 후 배열로 변환
     return Object.values(stats).map((s) => ({
       ...s,
       onTimeRate: s.completedOnTime + s.completedDelayed > 0
         ? Math.round((s.completedOnTime / (s.completedOnTime + s.completedDelayed)) * 100)
         : 100,
+      avgLeadTime: s.riskLeadTimes.length > 0
+        ? s.riskLeadTimes.reduce((sum, lt) => sum + lt, 0) / s.riskLeadTimes.length
+        : null,
     })).sort((a, b) => b.total - a.total); // 담당 오더 수 기준 정렬
   }, []);
 
@@ -142,6 +155,7 @@ function Dashboard({ goOrdersWithFilter }) {
       onTimeRate: { red: 80, yellow: 85 }, // 미만이면 경고
       risk: { red: 5, yellow: 3 },
       delayed: { red: 3, yellow: 1 },
+      leadTime: { red: 10, yellow: 7 }, // 이상이면 경고
     };
     const t = thresholds[type];
     if (!t) return null;
@@ -560,6 +574,7 @@ function Dashboard({ goOrdersWithFilter }) {
                   <th className="text-center py-3 px-3 font-medium text-[#6B778C]">수행중</th>
                   <th className="text-center py-3 px-3 font-medium text-[#6B778C]">적시율</th>
                   <th className="text-center py-3 px-3 font-medium text-[#6B778C]">리스크</th>
+                  <th className="text-center py-3 px-3 font-medium text-[#6B778C]">리드타임</th>
                   <th className="text-center py-3 px-3 font-medium text-[#6B778C]">지연</th>
                 </tr>
               </thead>
@@ -568,6 +583,7 @@ function Dashboard({ goOrdersWithFilter }) {
                   const waitingWarning = getWarningLevel("waiting", row.waiting);
                   const onTimeWarning = getWarningLevel("onTimeRate", row.onTimeRate);
                   const riskWarning = getWarningLevel("risk", row.risk);
+                  const leadTimeWarning = row.avgLeadTime !== null ? getWarningLevel("leadTime", row.avgLeadTime) : null;
                   const delayedWarning = getWarningLevel("delayed", row.delayed);
 
                   return (
@@ -654,6 +670,29 @@ function Dashboard({ goOrdersWithFilter }) {
                           )}
                           <span className={riskWarning ? "font-semibold" : ""}>{row.risk}</span>
                         </button>
+                      </td>
+
+                      {/* 리드타임 */}
+                      <td className="text-center py-3 px-3">
+                        {row.avgLeadTime !== null ? (
+                          <button
+                            onClick={() => goToOrders({ partner: row.partner, orderType: "위생장애" })}
+                            className="inline-flex items-center gap-1 hover:opacity-80 transition-opacity"
+                            style={{ color: leadTimeWarning ? warningColors[leadTimeWarning] : "#172B4D" }}
+                          >
+                            {leadTimeWarning && (
+                              <span
+                                className="inline-block w-2 h-2 rounded-full"
+                                style={{ backgroundColor: warningColors[leadTimeWarning] }}
+                              />
+                            )}
+                            <span className={leadTimeWarning ? "font-semibold" : ""}>
+                              {row.avgLeadTime.toFixed(1)}일
+                            </span>
+                          </button>
+                        ) : (
+                          <span className="text-[#9CA3AF]">-</span>
+                        )}
                       </td>
 
                       {/* 지연 */}
