@@ -137,9 +137,9 @@ function Dashboard({ goOrdersWithFilter }) {
           <h2 className="text-sm font-bold text-[#172B4D]">오더 현황</h2>
           <p className="text-xs text-[#6B778C] mt-0.5">전체 오더의 상태별 현황</p>
         </div>
-        <div className="p-5 space-y-6">
-          {/* 5열 카드 그리드 */}
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+        <div className="p-5">
+          {/* 6열 그리드: 5개 카드 + 도넛 차트 */}
+          <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
             {/* 전체 오더 카드 */}
             <button
               onClick={() => goToOrders({})}
@@ -254,20 +254,17 @@ function Dashboard({ goOrdersWithFilter }) {
                 </button>
               </div>
             </div>
-          </div>
 
-          {/* 오더 상태 분포 도넛 차트 */}
-          <div className="rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] p-4">
-            <div className="text-sm font-semibold text-[#172B4D] mb-4">오더 상태 분포</div>
-            <div className="flex items-center justify-center">
-              <ResponsiveContainer width="100%" height={180}>
+            {/* 오더 상태 분포 도넛 차트 */}
+            <div className="rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] p-3 flex flex-col items-center justify-center">
+              <ResponsiveContainer width="100%" height={120}>
                 <PieChart>
                   <Pie
                     data={statusDonutData}
                     cx="50%"
                     cy="50%"
-                    innerRadius={50}
-                    outerRadius={75}
+                    innerRadius={30}
+                    outerRadius={50}
                     paddingAngle={2}
                     dataKey="value"
                   >
@@ -284,27 +281,27 @@ function Dashboard({ goOrdersWithFilter }) {
                     formatter={(value, name) => [`${value}건 (${((value / order_status.total) * 100).toFixed(1)}%)`, name]}
                   />
                   <text x="50%" y="50%" textAnchor="middle" dominantBaseline="middle">
-                    <tspan x="50%" dy="-5" className="text-xl font-bold fill-[#172B4D]">
+                    <tspan x="50%" dy="-3" className="text-sm font-bold fill-[#172B4D]">
                       {order_status.total}
                     </tspan>
-                    <tspan x="50%" dy="18" className="text-xs fill-[#6B778C]">
+                    <tspan x="50%" dy="14" className="text-[10px] fill-[#6B778C]">
                       전체
                     </tspan>
                   </text>
                 </PieChart>
               </ResponsiveContainer>
-            </div>
-            <div className="flex flex-wrap justify-center gap-4 mt-2">
-              {statusDonutData.map((item) => (
-                <button
-                  key={item.name}
-                  onClick={() => goToOrders(item.filterStatus ? { status: item.filterStatus } : {})}
-                  className="inline-flex items-center gap-1.5 text-xs text-[#6B778C] hover:text-[#172B4D] transition-colors"
-                >
-                  <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: item.color }} />
-                  {item.name}: {item.value}
-                </button>
-              ))}
+              <div className="flex flex-wrap justify-center gap-1.5 mt-1">
+                {statusDonutData.map((item) => (
+                  <button
+                    key={item.name}
+                    onClick={() => goToOrders(item.filterStatus ? { status: item.filterStatus } : {})}
+                    className="inline-flex items-center gap-1 text-[10px] text-[#6B778C] hover:text-[#172B4D] transition-colors"
+                  >
+                    <span className="h-2 w-2 rounded-full" style={{ backgroundColor: item.color }} />
+                    {item.value}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         </div>
