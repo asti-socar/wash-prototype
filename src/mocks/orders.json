@@ -269,7 +269,9 @@
         "name": "Other-3",
         "url": "https://placehold.co/600x400?text=Other-3"
       }
-    ]
+    ],
+    "rootOrderId": null,
+    "rootCreatedAt": "2025-12-28"
   },
   {
     "orderId": "O-90002",
@@ -541,7 +543,9 @@
         "name": "Other-8",
         "url": "https://placehold.co/600x400?text=Other-8"
       }
-    ]
+    ],
+    "rootOrderId": null,
+    "rootCreatedAt": "2025-12-25"
   },
   {
     "orderId": "O-90003",
@@ -811,7 +815,9 @@
         "name": "Other-6",
         "url": "https://placehold.co/600x400?text=Other-6"
       }
-    ]
+    ],
+    "rootOrderId": "O-80001",
+    "rootCreatedAt": "2025-12-28"
   },
   {
     "orderId": "O-90004",
@@ -1075,7 +1081,9 @@
         "name": "Other-4",
         "url": "https://placehold.co/600x400?text=Other-4"
       }
-    ]
+    ],
+    "rootOrderId": null,
+    "rootCreatedAt": "2026-01-22"
   },
   {
     "orderId": "O-90005",
@@ -1341,7 +1349,9 @@
         "name": "Other-5",
         "url": "https://placehold.co/600x400?text=Other-5"
       }
-    ]
+    ],
+    "rootOrderId": null,
+    "rootCreatedAt": "2026-01-18"
   },
   {
     "orderId": "O-90006",
@@ -1627,7 +1637,9 @@
         "name": "Other-4",
         "url": "https://placehold.co/600x400?text=Other-4"
       }
-    ]
+    ],
+    "rootOrderId": "O-80002",
+    "rootCreatedAt": "2026-01-05"
   },
   {
     "orderId": "O-90007",
@@ -1913,7 +1925,9 @@
         "name": "Other-10",
         "url": "https://placehold.co/600x400?text=Other-10"
       }
-    ]
+    ],
+    "rootOrderId": null,
+    "rootCreatedAt": "2026-01-13"
   },
   {
     "orderId": "O-90008",
@@ -2141,7 +2155,9 @@
         "name": "Other-10",
         "url": "https://placehold.co/600x400?text=Other-10"
       }
-    ]
+    ],
+    "rootOrderId": null,
+    "rootCreatedAt": "2025-12-25"
   },
   {
     "orderId": "O-90009",
@@ -2367,7 +2383,9 @@
         "name": "Other-7",
         "url": "https://placehold.co/600x400?text=Other-7"
       }
-    ]
+    ],
+    "rootOrderId": null,
+    "rootCreatedAt": "2026-01-05"
   },
   {
     "orderId": "O-90010",
@@ -2665,7 +2683,9 @@
         "name": "Other-7",
         "url": "https://placehold.co/600x400?text=Other-7"
       }
-    ]
+    ],
+    "rootOrderId": null,
+    "rootCreatedAt": "2026-01-15"
   },
   {
     "orderId": "O-90011",
@@ -2934,7 +2954,9 @@
         "name": "Other-2",
         "url": "https://placehold.co/600x400?text=Other-2"
       }
-    ]
+    ],
+    "rootOrderId": null,
+    "rootCreatedAt": "2025-12-31"
   },
   {
     "orderId": "O-90012",
@@ -3124,7 +3146,9 @@
         "status": "정상"
       }
     },
-    "additionalPhotos": []
+    "additionalPhotos": [],
+    "rootOrderId": "O-80003",
+    "rootCreatedAt": "2025-12-21"
   },
   {
     "orderId": "O-90013",
@@ -3367,7 +3391,10 @@
         "name": "Other-10",
         "url": "https://placehold.co/600x400?text=Other-10"
       }
-    ]
+    ],
+    "cancelType": "미예약취소",
+    "rootOrderId": "O-80004",
+    "rootCreatedAt": "2026-01-01"
   },
   {
     "orderId": "O-90014",
@@ -3636,7 +3663,9 @@
         "name": "Other-5",
         "url": "https://placehold.co/600x400?text=Other-5"
       }
-    ]
+    ],
+    "rootOrderId": null,
+    "rootCreatedAt": "2025-12-25"
   },
   {
     "orderId": "O-90015",
@@ -3838,7 +3867,9 @@
         "status": "정상"
       }
     },
-    "additionalPhotos": []
+    "additionalPhotos": [],
+    "rootOrderId": null,
+    "rootCreatedAt": "2025-12-31"
   },
   {
     "orderId": "O-90016",
@@ -4041,7 +4072,9 @@
         "name": "Other-2",
         "url": "https://placehold.co/600x400?text=Other-2"
       }
-    ]
+    ],
+    "rootOrderId": null,
+    "rootCreatedAt": "2026-01-02"
   },
   {
     "orderId": "O-90017",
@@ -4338,7 +4371,9 @@
         "name": "Other-9",
         "url": "https://placehold.co/600x400?text=Other-9"
       }
-    ]
+    ],
+    "rootOrderId": "O-80005",
+    "rootCreatedAt": "2026-01-02"
   },
   {
     "orderId": "O-90018",
@@ -4623,7 +4658,9 @@
         "name": "Other-3",
         "url": "https://placehold.co/600x400?text=Other-3"
       }
-    ]
+    ],
+    "rootOrderId": null,
+    "rootCreatedAt": "2026-01-09"
   },
   {
     "orderId": "O-90019",
@@ -4731,7 +4768,9 @@
         "name": "Other-8",
         "url": "https://placehold.co/600x400?text=Other-8"
       }
-    ]
+    ],
+    "rootOrderId": null,
+    "rootCreatedAt": "2026-01-06"
   },
   {
     "orderId": "O-90020",
@@ -4988,7 +5027,9 @@
         "status": "정상"
       }
     },
-    "additionalPhotos": []
+    "additionalPhotos": [],
+    "rootOrderId": null,
+    "rootCreatedAt": "2026-01-03"
   },
   {
     "orderId": "O-90021",
@@ -5280,7 +5321,9 @@
         "name": "Other-6",
         "url": "https://placehold.co/600x400?text=Other-6"
       }
-    ]
+    ],
+    "rootOrderId": "O-80006",
+    "rootCreatedAt": "2025-12-29"
   },
   {
     "orderId": "O-90022",
@@ -5525,7 +5568,9 @@
         "status": "정상"
       }
     },
-    "additionalPhotos": []
+    "additionalPhotos": [],
+    "rootOrderId": null,
+    "rootCreatedAt": "2026-01-12"
   },
   {
     "orderId": "O-90023",
@@ -5825,7 +5870,9 @@
         "name": "Other-9",
         "url": "https://placehold.co/600x400?text=Other-9"
       }
-    ]
+    ],
+    "rootOrderId": "O-80007",
+    "rootCreatedAt": "2026-01-17"
   },
   {
     "orderId": "O-90024",
@@ -6105,7 +6152,10 @@
         "name": "Other-10",
         "url": "https://placehold.co/600x400?text=Other-10"
       }
-    ]
+    ],
+    "cancelType": "미예약취소",
+    "rootOrderId": null,
+    "rootCreatedAt": "2026-01-11"
   },
   {
     "orderId": "O-90025",
@@ -6375,7 +6425,9 @@
         "name": "Other-3",
         "url": "https://placehold.co/600x400?text=Other-3"
       }
-    ]
+    ],
+    "rootOrderId": "O-80008",
+    "rootCreatedAt": "2026-01-02"
   },
   {
     "orderId": "O-90026",
@@ -6653,7 +6705,9 @@
         "name": "Other-3",
         "url": "https://placehold.co/600x400?text=Other-3"
       }
-    ]
+    ],
+    "rootOrderId": null,
+    "rootCreatedAt": "2026-01-06"
   },
   {
     "orderId": "O-90027",
@@ -6879,7 +6933,9 @@
         "name": "Other-7",
         "url": "https://placehold.co/600x400?text=Other-7"
       }
-    ]
+    ],
+    "rootOrderId": null,
+    "rootCreatedAt": "2026-01-04"
   },
   {
     "orderId": "O-90028",
@@ -7085,7 +7141,9 @@
         "name": "Other-5",
         "url": "https://placehold.co/600x400?text=Other-5"
       }
-    ]
+    ],
+    "rootOrderId": null,
+    "rootCreatedAt": "2025-12-27"
   },
   {
     "orderId": "O-90029",
@@ -7371,7 +7429,10 @@
         "name": "Other-5",
         "url": "https://placehold.co/600x400?text=Other-5"
       }
-    ]
+    ],
+    "cancelType": "미예약취소",
+    "rootOrderId": null,
+    "rootCreatedAt": "2026-01-21"
   },
   {
     "orderId": "O-90030",
@@ -7646,7 +7707,9 @@
         "name": "Other-3",
         "url": "https://placehold.co/600x400?text=Other-3"
       }
-    ]
+    ],
+    "rootOrderId": null,
+    "rootCreatedAt": "2026-01-13"
   },
   {
     "orderId": "O-90031",
@@ -7861,7 +7924,9 @@
         "name": "Other-9",
         "url": "https://placehold.co/600x400?text=Other-9"
       }
-    ]
+    ],
+    "rootOrderId": "O-80009",
+    "rootCreatedAt": "2026-01-18"
   },
   {
     "orderId": "O-90032",
@@ -8042,7 +8107,9 @@
         "name": "Other-1",
         "url": "https://placehold.co/600x400?text=Other-1"
       }
-    ]
+    ],
+    "rootOrderId": null,
+    "rootCreatedAt": "2026-01-21"
   },
   {
     "orderId": "O-90033",
@@ -8306,7 +8373,9 @@
         "status": "정상"
       }
     },
-    "additionalPhotos": []
+    "additionalPhotos": [],
+    "rootOrderId": null,
+    "rootCreatedAt": "2026-01-10"
   },
   {
     "orderId": "O-90034",
@@ -8519,7 +8588,10 @@
         "name": "Other-2",
         "url": "https://placehold.co/600x400?text=Other-2"
       }
-    ]
+    ],
+    "cancelType": "미예약취소",
+    "rootOrderId": "O-80010",
+    "rootCreatedAt": "2026-01-07"
   },
   {
     "orderId": "O-90035",
@@ -8756,7 +8828,9 @@
         "name": "Other-10",
         "url": "https://placehold.co/600x400?text=Other-10"
       }
-    ]
+    ],
+    "rootOrderId": null,
+    "rootCreatedAt": "2025-12-25"
   },
   {
     "orderId": "O-90036",
@@ -9041,7 +9115,9 @@
         "name": "Other-9",
         "url": "https://placehold.co/600x400?text=Other-9"
       }
-    ]
+    ],
+    "rootOrderId": null,
+    "rootCreatedAt": "2025-12-30"
   },
   {
     "orderId": "O-90037",
@@ -9289,7 +9365,9 @@
         ]
       }
     },
-    "additionalPhotos": []
+    "additionalPhotos": [],
+    "rootOrderId": "O-80011",
+    "rootCreatedAt": "2026-01-16"
   },
   {
     "orderId": "O-90038",
@@ -9393,7 +9471,9 @@
         "name": "Other-7",
         "url": "https://placehold.co/600x400?text=Other-7"
       }
-    ]
+    ],
+    "rootOrderId": null,
+    "rootCreatedAt": "2025-12-31"
   },
   {
     "orderId": "O-90039",
@@ -9671,7 +9751,9 @@
         "name": "Other-7",
         "url": "https://placehold.co/600x400?text=Other-7"
       }
-    ]
+    ],
+    "rootOrderId": null,
+    "rootCreatedAt": "2025-12-26"
   },
   {
     "orderId": "O-90040",
@@ -9971,7 +10053,9 @@
         "name": "Other-6",
         "url": "https://placehold.co/600x400?text=Other-6"
       }
-    ]
+    ],
+    "rootOrderId": null,
+    "rootCreatedAt": "2025-12-28"
   },
   {
     "orderId": "O-90041",
@@ -10275,7 +10359,9 @@
         "name": "Other-10",
         "url": "https://placehold.co/600x400?text=Other-10"
       }
-    ]
+    ],
+    "rootOrderId": null,
+    "rootCreatedAt": "2026-01-13"
   },
   {
     "orderId": "O-90042",
@@ -10555,7 +10641,9 @@
         "name": "Other-5",
         "url": "https://placehold.co/600x400?text=Other-5"
       }
-    ]
+    ],
+    "rootOrderId": null,
+    "rootCreatedAt": "2026-01-12"
   },
   {
     "orderId": "O-90043",
@@ -10821,7 +10909,10 @@
         "name": "Other-8",
         "url": "https://placehold.co/600x400?text=Other-8"
       }
-    ]
+    ],
+    "cancelType": "변경취소",
+    "rootOrderId": "O-80012",
+    "rootCreatedAt": "2026-01-07"
   },
   {
     "orderId": "O-90044",
@@ -11117,7 +11208,9 @@
         "name": "Other-10",
         "url": "https://placehold.co/600x400?text=Other-10"
       }
-    ]
+    ],
+    "rootOrderId": null,
+    "rootCreatedAt": "2026-01-13"
   },
   {
     "orderId": "O-90045",
@@ -11413,7 +11506,9 @@
         "name": "Other-7",
         "url": "https://placehold.co/600x400?text=Other-7"
       }
-    ]
+    ],
+    "rootOrderId": "O-80013",
+    "rootCreatedAt": "2025-12-22"
   },
   {
     "orderId": "O-90046",
@@ -11659,7 +11754,9 @@
         "name": "Other-7",
         "url": "https://placehold.co/600x400?text=Other-7"
       }
-    ]
+    ],
+    "rootOrderId": null,
+    "rootCreatedAt": "2025-12-29"
   },
   {
     "orderId": "O-90047",
@@ -11875,7 +11972,9 @@
         "name": "Other-6",
         "url": "https://placehold.co/600x400?text=Other-6"
       }
-    ]
+    ],
+    "rootOrderId": null,
+    "rootCreatedAt": "2025-12-28"
   },
   {
     "orderId": "O-90048",
@@ -12120,7 +12219,9 @@
         "status": "정상"
       }
     },
-    "additionalPhotos": []
+    "additionalPhotos": [],
+    "rootOrderId": "O-80014",
+    "rootCreatedAt": "2025-12-24"
   },
   {
     "orderId": "O-90049",
@@ -12371,7 +12472,9 @@
         "name": "Other-4",
         "url": "https://placehold.co/600x400?text=Other-4"
       }
-    ]
+    ],
+    "rootOrderId": null,
+    "rootCreatedAt": "2026-01-16"
   },
   {
     "orderId": "O-90050",
@@ -12584,7 +12687,9 @@
         "name": "Other-7",
         "url": "https://placehold.co/600x400?text=Other-7"
       }
-    ]
+    ],
+    "rootOrderId": "O-80015",
+    "rootCreatedAt": "2025-12-25"
   },
   {
     "orderId": "O-90051",
@@ -12819,7 +12924,9 @@
         "name": "Other-10",
         "url": "https://placehold.co/600x400?text=Other-10"
       }
-    ]
+    ],
+    "rootOrderId": "O-80016",
+    "rootCreatedAt": "2026-01-18"
   },
   {
     "orderId": "O-90052",
@@ -13074,7 +13181,9 @@
         "name": "Other-3",
         "url": "https://placehold.co/600x400?text=Other-3"
       }
-    ]
+    ],
+    "rootOrderId": null,
+    "rootCreatedAt": "2025-12-31"
   },
   {
     "orderId": "O-90053",
@@ -13297,7 +13406,10 @@
         "name": "Other-8",
         "url": "https://placehold.co/600x400?text=Other-8"
       }
-    ]
+    ],
+    "cancelType": "변경취소",
+    "rootOrderId": null,
+    "rootCreatedAt": "2026-01-21"
   },
   {
     "orderId": "O-90054",
@@ -13534,7 +13646,9 @@
         "name": "Other-10",
         "url": "https://placehold.co/600x400?text=Other-10"
       }
-    ]
+    ],
+    "rootOrderId": null,
+    "rootCreatedAt": "2026-01-10"
   },
   {
     "orderId": "O-90055",
@@ -13835,7 +13949,9 @@
         "name": "Other-9",
         "url": "https://placehold.co/600x400?text=Other-9"
       }
-    ]
+    ],
+    "rootOrderId": "O-80017",
+    "rootCreatedAt": "2026-01-07"
   },
   {
     "orderId": "O-90056",
@@ -14096,7 +14212,9 @@
         "name": "Other-3",
         "url": "https://placehold.co/600x400?text=Other-3"
       }
-    ]
+    ],
+    "rootOrderId": null,
+    "rootCreatedAt": "2026-01-11"
   },
   {
     "orderId": "O-90057",
@@ -14171,7 +14289,9 @@
         "value": "내외부 세차 필요"
       }
     },
-    "additionalPhotos": []
+    "additionalPhotos": [],
+    "rootOrderId": null,
+    "rootCreatedAt": "2026-01-21"
   },
   {
     "orderId": "O-90058",
@@ -14447,7 +14567,9 @@
         "name": "Other-3",
         "url": "https://placehold.co/600x400?text=Other-3"
       }
-    ]
+    ],
+    "rootOrderId": null,
+    "rootCreatedAt": "2026-01-10"
   },
   {
     "orderId": "O-90059",
@@ -14721,7 +14843,9 @@
         "name": "Other-1",
         "url": "https://placehold.co/600x400?text=Other-1"
       }
-    ]
+    ],
+    "rootOrderId": null,
+    "rootCreatedAt": "2026-01-06"
   },
   {
     "orderId": "O-90060",
@@ -14984,7 +15108,9 @@
         "status": "정상"
       }
     },
-    "additionalPhotos": []
+    "additionalPhotos": [],
+    "rootOrderId": "O-80018",
+    "rootCreatedAt": "2025-12-30"
   },
   {
     "orderId": "O-90061",
@@ -15270,7 +15396,9 @@
         "name": "Other-7",
         "url": "https://placehold.co/600x400?text=Other-7"
       }
-    ]
+    ],
+    "rootOrderId": null,
+    "rootCreatedAt": "2025-12-29"
   },
   {
     "orderId": "O-90062",
@@ -15538,7 +15666,9 @@
         "name": "Other-3",
         "url": "https://placehold.co/600x400?text=Other-3"
       }
-    ]
+    ],
+    "rootOrderId": null,
+    "rootCreatedAt": "2026-01-06"
   },
   {
     "orderId": "O-90063",
@@ -15820,7 +15950,9 @@
         "name": "Other-9",
         "url": "https://placehold.co/600x400?text=Other-9"
       }
-    ]
+    ],
+    "rootOrderId": "O-80019",
+    "rootCreatedAt": "2025-12-16"
   },
   {
     "orderId": "O-90064",
@@ -16102,7 +16234,10 @@
         "name": "Other-6",
         "url": "https://placehold.co/600x400?text=Other-6"
       }
-    ]
+    ],
+    "cancelType": "변경취소",
+    "rootOrderId": null,
+    "rootCreatedAt": "2026-01-04"
   },
   {
     "orderId": "O-90065",
@@ -16314,7 +16449,9 @@
         "name": "Other-3",
         "url": "https://placehold.co/600x400?text=Other-3"
       }
-    ]
+    ],
+    "rootOrderId": null,
+    "rootCreatedAt": "2026-01-20"
   },
   {
     "orderId": "O-90066",
@@ -16504,7 +16641,9 @@
         "name": "Other-4",
         "url": "https://placehold.co/600x400?text=Other-4"
       }
-    ]
+    ],
+    "rootOrderId": "O-80020",
+    "rootCreatedAt": "2026-01-11"
   },
   {
     "orderId": "O-90067",
@@ -16755,7 +16894,9 @@
         ]
       }
     },
-    "additionalPhotos": []
+    "additionalPhotos": [],
+    "rootOrderId": null,
+    "rootCreatedAt": "2026-01-21"
   },
   {
     "orderId": "O-90068",
@@ -17008,7 +17149,10 @@
         "name": "Other-1",
         "url": "https://placehold.co/600x400?text=Other-1"
       }
-    ]
+    ],
+    "cancelType": "노쇼취소",
+    "rootOrderId": "O-80021",
+    "rootCreatedAt": "2026-01-05"
   },
   {
     "orderId": "O-90069",
@@ -17225,7 +17369,9 @@
         "name": "Other-8",
         "url": "https://placehold.co/600x400?text=Other-8"
       }
-    ]
+    ],
+    "rootOrderId": null,
+    "rootCreatedAt": "2026-01-07"
   },
   {
     "orderId": "O-90070",
@@ -17430,7 +17576,9 @@
         "name": "Other-4",
         "url": "https://placehold.co/600x400?text=Other-4"
       }
-    ]
+    ],
+    "rootOrderId": null,
+    "rootCreatedAt": "2026-01-12"
   },
   {
     "orderId": "O-90071",
@@ -17691,7 +17839,9 @@
         "name": "Other-2",
         "url": "https://placehold.co/600x400?text=Other-2"
       }
-    ]
+    ],
+    "rootOrderId": null,
+    "rootCreatedAt": "2026-01-21"
   },
   {
     "orderId": "O-90072",
@@ -17908,7 +18058,9 @@
         "name": "Other-8",
         "url": "https://placehold.co/600x400?text=Other-8"
       }
-    ]
+    ],
+    "rootOrderId": null,
+    "rootCreatedAt": "2026-01-08"
   },
   {
     "orderId": "O-90073",
@@ -18084,7 +18236,9 @@
         "status": "정상"
       }
     },
-    "additionalPhotos": []
+    "additionalPhotos": [],
+    "rootOrderId": "O-80022",
+    "rootCreatedAt": "2025-12-17"
   },
   {
     "orderId": "O-90074",
@@ -18363,7 +18517,10 @@
         "name": "Other-9",
         "url": "https://placehold.co/600x400?text=Other-9"
       }
-    ]
+    ],
+    "cancelType": "노쇼취소",
+    "rootOrderId": null,
+    "rootCreatedAt": "2026-01-18"
   },
   {
     "orderId": "O-90075",
@@ -18636,7 +18793,9 @@
         "name": "Other-2",
         "url": "https://placehold.co/600x400?text=Other-2"
       }
-    ]
+    ],
+    "rootOrderId": null,
+    "rootCreatedAt": "2025-12-25"
   },
   {
     "orderId": "O-90076",
@@ -18748,7 +18907,9 @@
         "name": "Other-9",
         "url": "https://placehold.co/600x400?text=Other-9"
       }
-    ]
+    ],
+    "rootOrderId": "O-80023",
+    "rootCreatedAt": "2026-01-03"
   },
   {
     "orderId": "O-90077",
@@ -19048,7 +19209,9 @@
         "name": "Other-10",
         "url": "https://placehold.co/600x400?text=Other-10"
       }
-    ]
+    ],
+    "rootOrderId": null,
+    "rootCreatedAt": "2026-01-01"
   },
   {
     "orderId": "O-90078",
@@ -19348,7 +19511,9 @@
         "name": "Other-9",
         "url": "https://placehold.co/600x400?text=Other-9"
       }
-    ]
+    ],
+    "rootOrderId": "O-80024",
+    "rootCreatedAt": "2025-12-31"
   },
   {
     "orderId": "O-90079",
@@ -19670,7 +19835,9 @@
         "name": "Other-9",
         "url": "https://placehold.co/600x400?text=Other-9"
       }
-    ]
+    ],
+    "rootOrderId": "O-80025",
+    "rootCreatedAt": "2025-12-24"
   },
   {
     "orderId": "O-90080",
@@ -19952,7 +20119,9 @@
         "name": "Other-3",
         "url": "https://placehold.co/600x400?text=Other-3"
       }
-    ]
+    ],
+    "rootOrderId": null,
+    "rootCreatedAt": "2026-01-09"
   },
   {
     "orderId": "O-90081",
@@ -20230,7 +20399,9 @@
         "name": "Other-2",
         "url": "https://placehold.co/600x400?text=Other-2"
       }
-    ]
+    ],
+    "rootOrderId": "O-80026",
+    "rootCreatedAt": "2025-12-30"
   },
   {
     "orderId": "O-90082",
@@ -20481,7 +20652,9 @@
         "status": "정상"
       }
     },
-    "additionalPhotos": []
+    "additionalPhotos": [],
+    "rootOrderId": null,
+    "rootCreatedAt": "2025-12-25"
   },
   {
     "orderId": "O-90083",
@@ -20751,7 +20924,9 @@
         "name": "Other-6",
         "url": "https://placehold.co/600x400?text=Other-6"
       }
-    ]
+    ],
+    "rootOrderId": "O-80027",
+    "rootCreatedAt": "2025-12-28"
   },
   {
     "orderId": "O-90084",
@@ -20963,7 +21138,9 @@
         "name": "Other-4",
         "url": "https://placehold.co/600x400?text=Other-4"
       }
-    ]
+    ],
+    "rootOrderId": null,
+    "rootCreatedAt": "2025-12-26"
   },
   {
     "orderId": "O-90085",
@@ -21169,7 +21346,10 @@
         "name": "Other-3",
         "url": "https://placehold.co/600x400?text=Other-3"
       }
-    ]
+    ],
+    "cancelType": "수행원취소",
+    "rootOrderId": "O-80028",
+    "rootCreatedAt": "2026-01-06"
   },
   {
     "orderId": "O-90086",
@@ -21447,7 +21627,9 @@
         "name": "Other-4",
         "url": "https://placehold.co/600x400?text=Other-4"
       }
-    ]
+    ],
+    "rootOrderId": "O-80029",
+    "rootCreatedAt": "2025-12-25"
   },
   {
     "orderId": "O-90087",
@@ -21736,7 +21918,9 @@
         "name": "Other-6",
         "url": "https://placehold.co/600x400?text=Other-6"
       }
-    ]
+    ],
+    "rootOrderId": "O-80030",
+    "rootCreatedAt": "2026-01-03"
   },
   {
     "orderId": "O-90088",
@@ -21965,7 +22149,9 @@
         "name": "Other-8",
         "url": "https://placehold.co/600x400?text=Other-8"
       }
-    ]
+    ],
+    "rootOrderId": null,
+    "rootCreatedAt": "2026-01-10"
   },
   {
     "orderId": "O-90089",
@@ -22166,7 +22352,10 @@
         "name": "Other-3",
         "url": "https://placehold.co/600x400?text=Other-3"
       }
-    ]
+    ],
+    "cancelType": "우천취소",
+    "rootOrderId": "O-80031",
+    "rootCreatedAt": "2026-01-12"
   },
   {
     "orderId": "O-90090",
@@ -22439,7 +22628,9 @@
         "name": "Other-9",
         "url": "https://placehold.co/600x400?text=Other-9"
       }
-    ]
+    ],
+    "rootOrderId": null,
+    "rootCreatedAt": "2026-01-05"
   },
   {
     "orderId": "O-90091",
@@ -22658,7 +22849,9 @@
         "name": "Other-5",
         "url": "https://placehold.co/600x400?text=Other-5"
       }
-    ]
+    ],
+    "rootOrderId": null,
+    "rootCreatedAt": "2026-01-21"
   },
   {
     "orderId": "O-90092",
@@ -22857,7 +23050,9 @@
         "name": "Other-4",
         "url": "https://placehold.co/600x400?text=Other-4"
       }
-    ]
+    ],
+    "rootOrderId": null,
+    "rootCreatedAt": "2026-01-23"
   },
   {
     "orderId": "O-90093",
@@ -23136,7 +23331,9 @@
         "name": "Other-9",
         "url": "https://placehold.co/600x400?text=Other-9"
       }
-    ]
+    ],
+    "rootOrderId": null,
+    "rootCreatedAt": "2026-01-11"
   },
   {
     "orderId": "O-90094",
@@ -23384,7 +23581,9 @@
         "status": "정상"
       }
     },
-    "additionalPhotos": []
+    "additionalPhotos": [],
+    "rootOrderId": null,
+    "rootCreatedAt": "2026-01-11"
   },
   {
     "orderId": "O-90095",
@@ -23472,7 +23671,9 @@
         "name": "Other-3",
         "url": "https://placehold.co/600x400?text=Other-3"
       }
-    ]
+    ],
+    "rootOrderId": null,
+    "rootCreatedAt": "2026-01-07"
   },
   {
     "orderId": "O-90096",
@@ -23737,7 +23938,9 @@
         "status": "정상"
       }
     },
-    "additionalPhotos": []
+    "additionalPhotos": [],
+    "rootOrderId": null,
+    "rootCreatedAt": "2025-12-29"
   },
   {
     "orderId": "O-90097",
@@ -24015,7 +24218,9 @@
         "name": "Other-4",
         "url": "https://placehold.co/600x400?text=Other-4"
       }
-    ]
+    ],
+    "rootOrderId": null,
+    "rootCreatedAt": "2026-01-02"
   },
   {
     "orderId": "O-90098",
@@ -24319,7 +24524,9 @@
         "name": "Other-10",
         "url": "https://placehold.co/600x400?text=Other-10"
       }
-    ]
+    ],
+    "rootOrderId": null,
+    "rootCreatedAt": "2026-01-02"
   },
   {
     "orderId": "O-90099",
@@ -24613,7 +24820,9 @@
         "name": "Other-6",
         "url": "https://placehold.co/600x400?text=Other-6"
       }
-    ]
+    ],
+    "rootOrderId": null,
+    "rootCreatedAt": "2025-12-26"
   },
   {
     "orderId": "O-90100",
@@ -24868,7 +25077,9 @@
         "status": "정상"
       }
     },
-    "additionalPhotos": []
+    "additionalPhotos": [],
+    "rootOrderId": "O-80032",
+    "rootCreatedAt": "2026-01-13"
   },
   {
     "orderId": "O-90101",
@@ -24902,7 +25113,9 @@
       }
     ],
     "handlerPostWashPhotos": [],
-    "handlerReview": null
+    "handlerReview": null,
+    "rootOrderId": "O-80033",
+    "rootCreatedAt": "2026-01-22"
   },
   {
     "orderId": "O-90102",
@@ -24939,7 +25152,9 @@
       }
     ],
     "handlerPostWashPhotos": [],
-    "handlerReview": null
+    "handlerReview": null,
+    "rootOrderId": "O-80034",
+    "rootCreatedAt": "2026-01-22"
   },
   {
     "orderId": "O-90103",
@@ -25008,6 +25223,8 @@
         "url": "https://placehold.co/600x400?text=Handler+Post+8"
       }
     ],
-    "handlerReview": "기계세차 완료. 외부 오염 깨끗하게 제거됨. 광택도 좋음."
+    "handlerReview": "기계세차 완료. 외부 오염 깨끗하게 제거됨. 광택도 좋음.",
+    "rootOrderId": null,
+    "rootCreatedAt": "2026-01-26"
   }
 ]

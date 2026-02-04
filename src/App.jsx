@@ -322,8 +322,9 @@ function AdminApp() {
 
   const pageTitle = PAGE_TITLES[activeKey] ?? "Admin";
 
-  const goOrdersWithStatus = (status) => {
-    setOrderQuickFilter({ status });
+  // 대시보드에서 오더관리로 이동하면서 필터 적용
+  const goOrdersWithFilter = ({ status, orderType, cancelType } = {}) => {
+    setOrderQuickFilter({ status, orderType, cancelType });
     setActiveKey("orders");
   };
 
@@ -342,7 +343,7 @@ function AdminApp() {
   const renderPage = () => {
     switch (activeKey) {
       case "dashboard":
-        return <Dashboard />;
+        return <Dashboard goOrdersWithFilter={goOrdersWithFilter} />;
       case "update-history":
         return <UpdateHistoryPage />;
       case "vehicles":
@@ -358,8 +359,8 @@ function AdminApp() {
       case "orders":
         return (
           <OrdersPage
-            quickStatus={orderQuickFilter?.status ?? null}
-            onClearQuickStatus={() => setOrderQuickFilter(null)}
+            quickFilter={orderQuickFilter}
+            onClearQuickFilter={() => setOrderQuickFilter(null)}
             initialOrderId={initialOrderId}
             orders={orders}
             setOrders={setOrders}

@@ -216,7 +216,9 @@ const generateMockDeliveryInfo = (orders) => {
   return deliveryInfo;
 };
 
-function OrdersPage({ quickStatus, onClearQuickStatus, initialOrderId, orders, setOrders, missions, setMissions }) {
+const CANCEL_TYPES = ["변경취소", "미예약취소", "노쇼취소", "수행원취소", "우천취소"];
+
+function OrdersPage({ quickFilter, onClearQuickFilter, initialOrderId, orders, setOrders, missions, setMissions }) {
   const today = new Date();
 
   const [q, setQ] = useState("");
@@ -235,7 +237,17 @@ function OrdersPage({ quickStatus, onClearQuickStatus, initialOrderId, orders, s
   const [fWashType, setFWashType] = useState("");
   const [fPartner, setFPartner] = useState("");
   const [fPartnerType, setFPartnerType] = useState("");
-  const [fStatus, setFStatus] = useState(quickStatus && quickStatus !== "전체" ? quickStatus : "");
+  const [fStatus, setFStatus] = useState("");
+  const [fCancelType, setFCancelType] = useState("");
+
+  // quickFilter로부터 초기값 설정
+  useEffect(() => {
+    if (quickFilter) {
+      if (quickFilter.status) setFStatus(quickFilter.status);
+      if (quickFilter.orderType) setFOrderType(quickFilter.orderType);
+      if (quickFilter.cancelType) setFCancelType(quickFilter.cancelType);
+    }
+  }, [quickFilter]);
 
   const [selected, setSelected] = useState(null);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
@@ -484,10 +496,11 @@ function OrdersPage({ quickStatus, onClearQuickStatus, initialOrderId, orders, s
       const hitP = !fPartner || d.partner === fPartner;
       const hitPT = !fPartnerType || d.partnerType === fPartnerType;
       const hitS = !fStatus || d.status === fStatus;
+      const hitCT = !fCancelType || d.cancelType === fCancelType;
 
-      return hitQ && hitPeriod && hitR1 && hitR2 && hitOG && hitOT && hitWT && hitP && hitPT && hitS;
+      return hitQ && hitPeriod && hitR1 && hitR2 && hitOG && hitOT && hitWT && hitP && hitPT && hitS && hitCT;
     });
-  }, [orders, q, searchField, periodFrom, periodTo, fRegion1, fRegion2, fOrderGroup, fOrderType, fWashType, fPartner, fPartnerType, fStatus]);
+  }, [orders, q, searchField, periodFrom, periodTo, fRegion1, fRegion2, fOrderGroup, fOrderType, fWashType, fPartner, fPartnerType, fStatus, fCancelType]);
 
   const sortedData = useMemo(() => {
     if (!sortConfig.key) return filtered;
@@ -540,8 +553,16 @@ function OrdersPage({ quickStatus, onClearQuickStatus, initialOrderId, orders, s
       header: "진행 상태",
       render: (r) => <Badge tone={getStatusBadgeTone(r.status)}>{r.status}</Badge>,
     },
-    { 
-      key: "createdAt", 
+    {
+      key: "cancelType",
+      header: "취소 유형",
+      render: (r) => {
+        if (r.status !== "취소" || !r.cancelType) return "-";
+        return <Badge tone="default">{r.cancelType}</Badge>;
+      },
+    },
+    {
+      key: "createdAt",
       header: "발행 일시",
       render: (r) => {
         if (!r.createdAt) return "-";
@@ -556,9 +577,9 @@ function OrdersPage({ quickStatus, onClearQuickStatus, initialOrderId, orders, s
 
   const chips = (
     <div className="flex flex-wrap gap-2">
-      {quickStatus && quickStatus !== "전체" ? (
-        <Chip onRemove={() => { onClearQuickStatus(); setFStatus(""); }}>
-          Quick Filter: 상태={quickStatus}
+      {quickFilter ? (
+        <Chip variant="info" onRemove={() => { onClearQuickFilter?.(); setFStatus(""); setFOrderType(""); setFCancelType(""); }}>
+          Quick Filter: {quickFilter.status ? `상태=${quickFilter.status}` : ""}{quickFilter.orderType ? ` 유형=${quickFilter.orderType}` : ""}{quickFilter.cancelType ? ` 취소=${quickFilter.cancelType}` : ""}
         </Chip>
       ) : null}
       {q ? <Chip onRemove={() => setQ("")}>검색: {q}</Chip> : null}
@@ -566,11 +587,12 @@ function OrdersPage({ quickStatus, onClearQuickStatus, initialOrderId, orders, s
       {fRegion1 ? <Chip onRemove={() => { setFRegion1(""); setFRegion2(""); }}>지역1: {fRegion1}</Chip> : null}
       {fRegion2 ? <Chip onRemove={() => setFRegion2("")}>지역2: {fRegion2}</Chip> : null}
       {fOrderGroup ? <Chip onRemove={() => setFOrderGroup("")}>오더 구분: {fOrderGroup}</Chip> : null}
-      {fOrderType ? <Chip onRemove={() => setFOrderType("")}>발행 유형: {fOrderType}</Chip> : null}
+      {fOrderType && !quickFilter?.orderType ? <Chip onRemove={() => setFOrderType("")}>발행 유형: {fOrderType}</Chip> : null}
       {fWashType ? <Chip onRemove={() => setFWashType("")}>세차 유형: {fWashType}</Chip> : null}
       {fPartner ? <Chip onRemove={() => setFPartner("")}>파트너 명: {fPartner}</Chip> : null}
       {fPartnerType ? <Chip onRemove={() => setFPartnerType("")}>파트너 유형: {fPartnerType}</Chip> : null}
-      {fStatus ? <Chip onRemove={() => { setFStatus(""); onClearQuickStatus(); }}>상태: {fStatus}</Chip> : null}
+      {fStatus && !quickFilter?.status ? <Chip onRemove={() => { setFStatus(""); setFCancelType(""); }}>상태: {fStatus}</Chip> : null}
+      {fCancelType && !quickFilter?.cancelType ? <Chip onRemove={() => setFCancelType("")}>취소 유형: {fCancelType}</Chip> : null}
     </div>
   );
 
@@ -685,11 +707,20 @@ function OrdersPage({ quickStatus, onClearQuickStatus, initialOrderId, orders, s
             </div>
             <div className="md:col-span-2">
               <label htmlFor="fStatus" className="block text-xs font-semibold text-[#6B778C] mb-1.5">진행 상태</label>
-              <Select id="fStatus" value={fStatus} onChange={(e) => { setFStatus(e.target.value); onClearQuickStatus(); }}>
+              <Select id="fStatus" value={fStatus} onChange={(e) => { setFStatus(e.target.value); if (e.target.value !== "취소") setFCancelType(""); onClearQuickFilter?.(); }}>
                 <option value="">전체</option>
                 {statuses.map((v) => <option key={v} value={v}>{v}</option>)}
               </Select>
             </div>
+            {fStatus === "취소" && (
+              <div className="md:col-span-2">
+                <label htmlFor="fCancelType" className="block text-xs font-semibold text-[#6B778C] mb-1.5">취소 유형</label>
+                <Select id="fCancelType" value={fCancelType} onChange={(e) => { setFCancelType(e.target.value); onClearQuickFilter?.(); }}>
+                  <option value="">전체</option>
+                  {CANCEL_TYPES.map((v) => <option key={v} value={v}>{v}</option>)}
+                </Select>
+              </div>
+            )}
 
             <div className="md:col-span-12 flex flex-wrap items-center justify-between gap-2 pt-1">
               {chips}
@@ -708,7 +739,8 @@ function OrdersPage({ quickStatus, onClearQuickStatus, initialOrderId, orders, s
                   setFPartner("");
                   setFPartnerType("");
                   setFStatus("");
-                  onClearQuickStatus();
+                  setFCancelType("");
+                  onClearQuickFilter?.();
                 }}
               >
                 필터 초기화

@@ -1,5 +1,8 @@
 # 오더 관리 기능 명세서
 
+> **Version**: 1.1
+> **Last Updated**: 2026-02-04
+
 ## 1. 개요
 - **목적**: 세차 오더의 생명주기(발행~완료) 관리 및 모니터링
 - **주요 기능**: 조회/필터링, 수기 발행, 상세/타임라인 확인, 상태 변경(완료/삭제)
@@ -27,12 +30,30 @@
 | :--- | :--- |
 | **액션 버튼** | **[오더 발행]**: 긴급/수기 오더 생성<br>**[목록 다운로드]**: 현재 조회된 목록을 Excel로 다운로드 |
 | **검색** | 차량 번호(기본), 차량 ID, 오더 ID, 존 이름 기준 검색 |
-| **필터** | **기간**: 발행일 기준 (기본: 최근 1개월)<br>**속성**: 지역, 오더 구분, 발행/세차 유형<br>**파트너**: 파트너사 명, 유형(현장/입고), 진행 상태 |
+| **필터** | **기간**: 발행일 기준 (기본: 최근 1개월)<br>**속성**: 지역, 오더 구분, 발행/세차 유형<br>**파트너**: 파트너사 명, 유형(현장/입고), 진행 상태<br>**취소 유형**: 진행 상태가 '취소'일 때만 표시 (변경취소, 미예약취소, 노쇼취소, 수행원취소, 우천취소) |
 | **필터 동작** | 지역1 변경 시 지역2 자동 초기화 |
 | **편의기능** | **칩(Chip)**: 적용된 필터 확인 및 개별 삭제 (X 클릭)<br>**초기화**: 모든 조건 리셋 + 기간을 최근 1개월로 복원 |
 
 #### B. 오더 목록 (Data Grid)
-- **구성**: 오더ID, 구분, 차량정보, 지역, 파트너 정보, 진행 상태(배지) 등 표시
+- **컬럼 구성** (15개):
+  | 컬럼 | 설명 |
+  |:---|:---|
+  | 오더 ID | 오더 고유 식별자 |
+  | 오더 구분 | 긴급, 정규, 변경, 수시, 특별 |
+  | 발행 유형 | 세차 발행 사유 |
+  | 세차 유형 | 내외부, 특수, 협의, 라이트, 기계세차 등 |
+  | 차량 ID | 차량 고유 식별자 |
+  | 차량 번호 | 차량 등록 번호 |
+  | 차종 | 차량 모델명 |
+  | 지역1 | 시/도 |
+  | 지역2 | 구/군 |
+  | 존 이름 | 배치 존 명칭 |
+  | 파트너 명 | 담당 파트너사 |
+  | 파트너 유형 | 현장, 입고, 핸들러 |
+  | 진행 상태 | 상태 배지 표시 |
+  | **취소 유형** | 취소 상태에서만 표시 (변경취소, 미예약취소, 노쇼취소, 수행원취소, 우천취소) |
+  | 발행 일시 | 오더 생성 시점 |
+
 - **기능**: 헤더 클릭 시 정렬, 행 클릭 시 상세 패널 오픈, 페이지네이션(40건)
 - **상태 배지 색상**: 완료(초록) / 발행(주황) / 예약(주황) / 수행 중(파랑) / 취소(회색)
 
@@ -74,11 +95,61 @@
 #### 핵심 엔티티 정의
 | 구분 | 필드 구성 | 비고 |
 | :--- | :--- | :--- |
-| **오더 기본** | **ID**, 구분(긴급/정규...), 발행유형, 세차유형, 점검유형(A/B/C/D), 상태 | 점검유형은 세차유형에 종속 |
+| **오더 기본** | **ID**, 구분(긴급/정규/변경/수시/특별), 발행유형, 세차유형, 점검유형(A/B/C/D), 상태, **취소유형**, **rootOrderId**, **rootCreatedAt** | 점검유형은 세차유형에 종속. 취소유형은 취소 상태에서만 유효. rootOrderId/rootCreatedAt은 오더 체인 추적용 |
 | **차량 정보** | 차량 ID, 번호, 차종, 존(ID/이름), 지역(1/2) | 오더 발행 시 실시간 조회 |
 | **파트너** | 파트너 명, 유형(현장/입고/핸들러), 수행원 | 유형 기본값: 현장 |
 | **탁송 정보** | 입고 예약 ID, 입고 탁송 상태, 출고 예약 ID, 출고 탁송 상태 | 입고 파트너 전용. 오더 상세 화면에서 별도 카드로 표시. 출고 정보는 완료 상태에서만 표시되며, 그 외 상태에서는 '-' 표시. 탁송 상태: WAITING(매칭 전), ASSIGN(매칭 완료), RUN(운행 중), END(운행 종료), FORCE_END(강제 반납), CANCEL(예약 취소), ETC(알 수 없음) |
 | **상세 데이터** | 메모, 사진(전/후/기타), 점검결과(JSON), 미션(Snapshot), 분실물 | 분실물: ID, 접수일시, 구분, 상태, 상세 정보 |
+
+#### 오더 구분 (ORDER_GROUPS)
+```
+긴급, 정규, 변경, 수시, 특별
+```
+
+#### 발행 유형 (ORDER_TYPES)
+```
+위생장애, 고객 피드백(ML)_긴급, 초장기 미세차, 주기세차, 고객 피드백(ML),
+반납 사진(ML), 미션핸들, 특수세차, 협의세차, 재세차, 수시세차,
+BMW, 랜지로버, 포르쉐, 캠핑카
+```
+
+#### 세차 유형 (WASH_TYPES)
+```
+내외부, 내부, 외부, 특수, 협의, 라이트, 기계세차
+```
+
+#### 취소 유형 정의
+오더가 취소될 때 사유에 따라 아래 유형으로 분류됩니다.
+
+| 취소 유형 | 설명 |
+|:---|:---|
+| **변경취소** | 고객 요청 또는 운영 사유로 오더 내용 변경 시 기존 오더 취소 후 재발행 |
+| **미예약취소** | 발행 후 24시간 내 파트너 예약 미완료로 인한 자동 취소 |
+| **노쇼취소** | 예약 시간에 차량 미도착 또는 수행 불가 상황 |
+| **수행원취소** | 수행원 사유로 인한 오더 취소 |
+| **우천취소** | 우천으로 인한 세차 불가 취소 |
+
+#### 오더 체인 구조 (Order Chain)
+오더는 취소 후 재발행될 수 있으며, 이를 추적하기 위한 필드가 있습니다.
+
+| 필드 | 타입 | 설명 |
+|:---|:---|:---|
+| **rootOrderId** | String (nullable) | 최초 원본 오더 ID. null이면 본인이 최초 오더 |
+| **rootCreatedAt** | String (Date) | 최초 원본 오더의 발행 시점. 리드 타임 계산 기준 |
+
+**오더 체인 예시**
+```
+O-90000 (root, 최초 발행: 12/25)
+    ↓ 변경취소
+O-90001 (재발행: 12/28, rootOrderId: O-90000, rootCreatedAt: 12/25)
+    ↓ 미예약취소
+O-90002 (재발행: 12/30, rootOrderId: O-90000, rootCreatedAt: 12/25)
+```
+
+**리드 타임 계산**
+- 리드 타임 = 현재 시점 - `rootCreatedAt`
+- 재발행된 오더도 최초 발행 시점 기준으로 계산됨
+- 리스크 오더의 리드 타임이 길수록 우선 처리 필요
 
 #### 점검 유형 매핑 로직
 세차 유형 선택 시 `점검 유형`은 아래 규칙에 따라 자동 결정됩니다.
@@ -151,7 +222,103 @@
 
 ---
 
-### 3.3 상세 기능 구현 명세
+### 3.3 필터 및 대시보드 연동
+
+#### 필터 상태 변수
+| 필터 | 상태 변수 | 타입 | 설명 |
+|:---|:---|:---|:---|
+| 검색어 | fQuery | string | 차량번호, 차량ID, 오더ID, 존 검색 |
+| 기간 시작 | fPeriodStart | string | 발행일 기준 시작일 |
+| 기간 종료 | fPeriodEnd | string | 발행일 기준 종료일 |
+| 지역1 | fRegion1 | string | 시/도 |
+| 지역2 | fRegion2 | string | 구/군 |
+| 오더 구분 | fOrderGroup | string | 긴급, 정규, 변경, 수시, 특별 |
+| 발행 유형 | fOrderType | string | 세차 발행 유형 |
+| 세차 유형 | fWashType | string | 내외부, 특수, 협의 등 |
+| 파트너 | fPartner | string | 파트너사 명 |
+| 파트너 유형 | fPartnerType | string | 현장, 입고, 핸들러 |
+| 진행 상태 | fStatus | string | 발행, 예약, 수행 중, 완료, 취소 |
+| **취소 유형** | **fCancelType** | string | 변경취소, 미예약취소, 노쇼취소, 수행원취소, 우천취소 |
+
+#### 취소 유형 필터 UI
+- **표시 조건**: 진행 상태(fStatus)가 '취소'일 때만 취소 유형 드롭다운 표시
+- **기본값**: 전체 (빈 문자열)
+- **옵션**: 전체, 변경취소, 미예약취소, 노쇼취소, 수행원취소, 우천취소
+
+```jsx
+{/* 취소 유형 필터 - status가 '취소'일 때만 표시 */}
+{fStatus === "취소" && (
+  <Select value={fCancelType} onChange={e => setFCancelType(e.target.value)}>
+    <option value="">취소 유형 전체</option>
+    <option value="변경취소">변경취소</option>
+    <option value="미예약취소">미예약취소</option>
+    <option value="노쇼취소">노쇼취소</option>
+    <option value="수행원취소">수행원취소</option>
+    <option value="우천취소">우천취소</option>
+  </Select>
+)}
+```
+
+#### 대시보드 연동 (Quick Filter)
+대시보드에서 오더 관리 페이지로 이동 시 `quickFilter` props를 통해 필터 값 전달
+
+**quickFilter 구조**
+```typescript
+interface QuickFilter {
+  status?: string;      // 진행 상태 필터
+  orderType?: string;   // 발행 유형 필터
+  cancelType?: string;  // 취소 유형 필터
+  partner?: string;     // 파트너 필터
+}
+```
+
+**대시보드 → 오더관리 매핑**
+
+| 대시보드 클릭 요소 | status | orderType | cancelType | partner |
+|:---|:---|:---|:---|:---|
+| **[영역 1] 오더 현황** |
+| 전체 오더 | - | - | - | - |
+| 수행 대기 (발행+예약) | - | - | - | - |
+| 수행 중 | 수행 중 | - | - | - |
+| 완료 | 완료 | - | - | - |
+| 취소 (전체) | 취소 | - | - | - |
+| 변경취소 | 취소 | - | 변경취소 | - |
+| 미예약취소 | 취소 | - | 미예약취소 | - |
+| 노쇼취소 | 취소 | - | 노쇼취소 | - |
+| 수행원취소 | 취소 | - | 수행원취소 | - |
+| 우천취소 | 취소 | - | 우천취소 | - |
+| **[영역 2] 리스크 관리** |
+| 위생장애 | - | 위생장애 | - | - |
+| ML긴급 | - | 고객 피드백(ML)_긴급 | - | - |
+| 초장기미세차 | - | 초장기 미세차 | - | - |
+| **[영역 5] 파트너 수행 관리** |
+| 파트너별 오더 | - | - | - | {파트너명} |
+
+**OrdersPage 초기화 로직**
+```javascript
+// quickFilter로부터 초기값 설정
+useEffect(() => {
+  if (quickFilter) {
+    if (quickFilter.status) setFStatus(quickFilter.status);
+    if (quickFilter.orderType) setFOrderType(quickFilter.orderType);
+    if (quickFilter.cancelType) setFCancelType(quickFilter.cancelType);
+    if (quickFilter.partner) setFPartner(quickFilter.partner);
+  }
+}, [quickFilter]);
+```
+
+**필터 리셋 처리**
+```javascript
+// Quick Filter 칩 제거 시
+onClearQuickFilter?.();
+setFStatus("");
+setFOrderType("");
+setFCancelType("");
+```
+
+---
+
+### 3.4 상세 기능 구현 명세
 
 #### 점검 항목 및 결과 처리
 
@@ -179,3 +346,69 @@
 #### 오더 취소 및 완료
 -   **취소**: [오더 취소] 버튼 → 사유 입력 팝업(필수) → 확정 시 오더 상태 "취소"로 변경 및 감사 로그 적재
 -   **완료**: [수행 완료] 버튼 → 오더 상태 "완료" 처리 (미션은 수행원이 개별적으로 완료 처리한 것만 '완료' 상태 유지)
+
+---
+
+### 3.5 데이터 구조 예시
+
+#### 오더 JSON 구조
+```json
+{
+  "orderId": "O-90001",
+  "washType": "특수",
+  "orderGroup": "긴급",
+  "orderType": "위생장애",
+  "carId": "C-1001",
+  "model": "GV70",
+  "plate": "15라1184",
+  "zone": "서초 1번존",
+  "zoneId": "Z-1001",
+  "region1": "서울",
+  "region2": "서초",
+  "partner": "C파트너",
+  "partnerType": "입고",
+  "status": "취소",
+  "cancelType": "변경취소",
+  "elapsedDays": 26,
+  "worker": "신81",
+  "comment": "고객 요청으로 세차 일정 변경",
+  "createdAt": "2025-12-28",
+  "completedAt": null,
+  "rootOrderId": "O-80050",
+  "rootCreatedAt": "2025-12-20",
+  "inspectionType": "A",
+  "preWashPhotos": [...],
+  "postWashPhotos": [...],
+  "inspectionResults": {...}
+}
+```
+
+#### 필드 상세 설명
+| 필드 | 타입 | 필수 | 설명 |
+|:---|:---|:---|:---|
+| orderId | String | Y | 오더 고유 ID |
+| washType | String | Y | 세차 유형 (내외부, 특수, 협의, 라이트 등) |
+| orderGroup | String | Y | 오더 구분 (긴급, 정규, 변경, 수시, 특별) |
+| orderType | String | Y | 발행 유형 (위생장애, 수시세차, 반납 사진(ML) 등) |
+| carId | String | Y | 차량 고유 ID |
+| model | String | Y | 차종 |
+| plate | String | Y | 차량 번호 |
+| zone | String | Y | 존 이름 |
+| zoneId | String | Y | 존 고유 ID |
+| region1 | String | Y | 지역1 (시/도) |
+| region2 | String | Y | 지역2 (구/군) |
+| partner | String | Y | 파트너사 명 |
+| partnerType | String | Y | 파트너 유형 (현장, 입고, 핸들러) |
+| status | String | Y | 진행 상태 (발행, 예약, 수행 중, 완료, 취소) |
+| **cancelType** | String | N | 취소 유형 (취소 상태에서만 유효) |
+| elapsedDays | Number | N | 경과 일수 |
+| worker | String | N | 수행원 ID |
+| comment | String | N | 메모 |
+| createdAt | String | Y | 오더 발행 일시 |
+| completedAt | String | N | 수행 완료 일시 |
+| **rootOrderId** | String | N | 최초 원본 오더 ID (null이면 본인이 root) |
+| **rootCreatedAt** | String | Y | 최초 원본 오더 발행 시점 (리드 타임 기준) |
+| inspectionType | String | Y | 점검 유형 (A, B, C, D) |
+| preWashPhotos | Array | N | 세차 전 사진 목록 |
+| postWashPhotos | Array | N | 세차 후 사진 목록 |
+| inspectionResults | Object | N | 점검 결과 데이터 |

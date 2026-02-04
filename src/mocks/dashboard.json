@@ -1,0 +1,126 @@
+{
+  "updated_at": "2026-02-04T10:00:00Z",
+  "order_status": {
+    "total": 103,
+    "issued": 12,
+    "reserved": 16,
+    "in_progress": 12,
+    "cancelled": {
+      "total": 11,
+      "change": 3,
+      "no_reservation": 4,
+      "no_show": 2,
+      "agent": 1,
+      "rain": 1
+    },
+    "completed": {
+      "total": 52,
+      "on_time": 8,
+      "delayed": 44
+    }
+  },
+  "risk_management": {
+    "hygiene": {
+      "total": 3,
+      "issued": 0,
+      "reserved": 1,
+      "in_progress": 0,
+      "cancelled": {
+        "total": 1,
+        "change": 0,
+        "no_reservation": 0,
+        "no_show": 0,
+        "agent": 1,
+        "rain": 0
+      },
+      "completed": {
+        "total": 1,
+        "on_time": 0,
+        "delayed": 1
+      }
+    },
+    "ml_urgent": {
+      "total": 5,
+      "issued": 1,
+      "reserved": 1,
+      "in_progress": 2,
+      "cancelled": {
+        "total": 0,
+        "change": 0,
+        "no_reservation": 0,
+        "no_show": 0,
+        "agent": 0,
+        "rain": 0
+      },
+      "completed": {
+        "total": 1,
+        "on_time": 0,
+        "delayed": 1
+      }
+    },
+    "long_term": {
+      "total": 4,
+      "issued": 0,
+      "reserved": 0,
+      "in_progress": 0,
+      "cancelled": {
+        "total": 2,
+        "change": 1,
+        "no_reservation": 0,
+        "no_show": 1,
+        "agent": 0,
+        "rain": 0
+      },
+      "completed": {
+        "total": 2,
+        "on_time": 0,
+        "delayed": 2
+      }
+    }
+  },
+  "hourly_orders": {
+    "today": "2026-02-04",
+    "yesterday": "2026-02-03",
+    "data": [
+      { "hour": 0, "today": 2, "yesterday": 1 },
+      { "hour": 3, "today": 1, "yesterday": 2 },
+      { "hour": 6, "today": 5, "yesterday": 4 },
+      { "hour": 9, "today": 15, "yesterday": 12 },
+      { "hour": 12, "today": 20, "yesterday": 18 },
+      { "hour": 15, "today": 18, "yesterday": 20 },
+      { "hour": 18, "today": 12, "yesterday": 15 },
+      { "hour": 21, "today": 8, "yesterday": 10 },
+      { "hour": 23, "today": 3, "yesterday": 2 }
+    ]
+  },
+  "daily_risks": {
+    "period": {
+      "start": "2026-01-29",
+      "end": "2026-02-04"
+    },
+    "data": [
+      { "date": "2026-01-29", "hygiene": 2, "ml_urgent": 3, "long_term": 5 },
+      { "date": "2026-01-30", "hygiene": 1, "ml_urgent": 4, "long_term": 4 },
+      { "date": "2026-01-31", "hygiene": 3, "ml_urgent": 2, "long_term": 6 },
+      { "date": "2026-02-01", "hygiene": 2, "ml_urgent": 5, "long_term": 3 },
+      { "date": "2026-02-02", "hygiene": 1, "ml_urgent": 3, "long_term": 4 },
+      { "date": "2026-02-03", "hygiene": 2, "ml_urgent": 4, "long_term": 5 },
+      { "date": "2026-02-04", "hygiene": 3, "ml_urgent": 5, "long_term": 4 }
+    ]
+  },
+  "daily_regular_orders": {
+    "period": {
+      "start": "2026-01-29",
+      "end": "2026-02-04"
+    },
+    "data": [
+      { "date": "2026-01-29", "count": 12 },
+      { "date": "2026-01-30", "count": 15 },
+      { "date": "2026-01-31", "count": 18 },
+      { "date": "2026-02-01", "count": 14 },
+      { "date": "2026-02-02", "count": 20 },
+      { "date": "2026-02-03", "count": 16 },
+      { "date": "2026-02-04", "count": 22 }
+    ]
+  }
+}
