@@ -553,8 +553,16 @@ function OrdersPage({ quickFilter, onClearQuickFilter, initialOrderId, orders, s
       header: "진행 상태",
       render: (r) => <Badge tone={getStatusBadgeTone(r.status)}>{r.status}</Badge>,
     },
-    { 
-      key: "createdAt", 
+    {
+      key: "cancelType",
+      header: "취소 유형",
+      render: (r) => {
+        if (r.status !== "취소" || !r.cancelType) return "-";
+        return <Badge tone="default">{r.cancelType}</Badge>;
+      },
+    },
+    {
+      key: "createdAt",
       header: "발행 일시",
       render: (r) => {
         if (!r.createdAt) return "-";

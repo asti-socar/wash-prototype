@@ -107,5 +107,20 @@
       { "date": "2026-02-03", "hygiene": 2, "ml_urgent": 4, "long_term": 5 },
       { "date": "2026-02-04", "hygiene": 3, "ml_urgent": 5, "long_term": 4 }
     ]
+  },
+  "daily_regular_orders": {
+    "period": {
+      "start": "2026-01-29",
+      "end": "2026-02-04"
+    },
+    "data": [
+      { "date": "2026-01-29", "count": 12 },
+      { "date": "2026-01-30", "count": 15 },
+      { "date": "2026-01-31", "count": 18 },
+      { "date": "2026-02-01", "count": 14 },
+      { "date": "2026-02-02", "count": 20 },
+      { "date": "2026-02-03", "count": 16 },
+      { "date": "2026-02-04", "count": 22 }
+    ]
   }
 }

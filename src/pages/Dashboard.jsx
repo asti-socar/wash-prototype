@@ -4,16 +4,15 @@ import {
   PieChart,
   Pie,
   Cell,
+  BarChart,
+  Bar,
   LineChart,
   Line,
-  AreaChart,
-  Area,
   XAxis,
   YAxis,
   Tooltip,
   CartesianGrid,
   Legend,
-  ReferenceLine,
 } from "recharts";
 import { RefreshCw } from "lucide-react";
 import dashboardData from "../mocks/dashboard.json";
@@ -43,27 +42,23 @@ function Dashboard({ goOrdersWithFilter }) {
     setSecondsAgo(0);
   };
 
-  const { order_status, risk_management, hourly_orders, daily_risks } = data;
+  const { order_status, risk_management, daily_risks, daily_regular_orders } = data;
 
-  // 오더 상태 도넛 차트 데이터 (4개 상태: 수행 대기, 수행 중, 완료, 취소) - 쿨 톤 색상
+  // 오더 상태 도넛 차트 데이터 (4개 상태: 수행 대기, 수행 중, 완료, 취소) - 쿨 톤 색상 80% 투명도
   const statusDonutData = [
-    { name: "수행 대기", value: order_status.issued + order_status.reserved, color: "#7BA3C9", filterStatus: null },
-    { name: "수행 중", value: order_status.in_progress, color: "#E8C47C", filterStatus: "수행 중" },
-    { name: "완료", value: order_status.completed.total, color: "#7BC9A8", filterStatus: "완료" },
-    { name: "취소", value: order_status.cancelled.total, color: "#D98E8E", filterStatus: "취소" },
+    { name: "수행 대기", value: order_status.issued + order_status.reserved, color: "rgba(123, 163, 201, 0.8)", filterStatus: null },
+    { name: "수행 중", value: order_status.in_progress, color: "rgba(232, 196, 124, 0.8)", filterStatus: "수행 중" },
+    { name: "완료", value: order_status.completed.total, color: "rgba(123, 201, 168, 0.8)", filterStatus: "완료" },
+    { name: "취소", value: order_status.cancelled.total, color: "rgba(217, 142, 142, 0.8)", filterStatus: "취소" },
   ];
 
-  // 리스크 비율 도넛 차트 데이터 - 쿨 톤 색상 (리스크 오더만 표시)
+  // 리스크 비율 도넛 차트 데이터 - 쿨 톤 색상 80% 투명도 (리스크 오더만 표시)
   const riskTotal = risk_management.hygiene.total + risk_management.ml_urgent.total + risk_management.long_term.total;
   const riskDonutData = [
-    { name: "위생장애", value: risk_management.hygiene.total, color: "#D98E8E" },
-    { name: "ML긴급", value: risk_management.ml_urgent.total, color: "#E8C47C" },
-    { name: "초장기미세차", value: risk_management.long_term.total, color: "#7BA3C9" },
+    { name: "위생장애", value: risk_management.hygiene.total, color: "rgba(217, 142, 142, 0.8)" },
+    { name: "ML긴급", value: risk_management.ml_urgent.total, color: "rgba(232, 196, 124, 0.8)" },
+    { name: "초장기미세차", value: risk_management.long_term.total, color: "rgba(123, 163, 201, 0.8)" },
   ];
-
-  // 시간대별 오더 생성량 차트 데이터
-  const hourlyChartData = hourly_orders.data;
-  const currentHour = new Date().getHours();
 
   // 일별 리스크 추이 차트 데이터
   const dailyRiskChartData = daily_risks.data.map((d) => ({
@@ -147,6 +142,12 @@ function Dashboard({ goOrdersWithFilter }) {
         : null,
     })).sort((a, b) => b.total - a.total); // 담당 오더 수 기준 정렬
   }, []);
+
+  // 일자별 정규 오더 생성량 차트 데이터
+  const dailyRegularChartData = daily_regular_orders.data.map((d) => ({
+    ...d,
+    dateLabel: d.date.slice(5).replace("-", "/"), // MM/DD 형식
+  }));
 
   // 경고 표시 로직
   const getWarningLevel = (type, value) => {
@@ -722,49 +723,34 @@ function Dashboard({ goOrdersWithFilter }) {
 
       {/* [영역 3] 시계열 트렌드 그래프 */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* 시간대별 오더 생성량 */}
+        {/* 일자별 정규 오더 생성량 */}
         <div className="rounded-xl border border-[#E2E8F0] bg-white shadow-sm">
           <div className="border-b border-[#E2E8F0] px-5 py-4">
-            <h2 className="text-sm font-bold text-[#172B4D]">시간대별 오더 생성량</h2>
-            <p className="text-xs text-[#6B778C] mt-0.5">오늘 vs 어제</p>
+            <h2 className="text-sm font-bold text-[#172B4D]">일자별 정규 오더 생성량</h2>
+            <p className="text-xs text-[#6B778C] mt-0.5">최근 7일</p>
           </div>
           <div className="p-5">
             <ResponsiveContainer width="100%" height={240}>
-              <LineChart data={hourlyChartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+              <BarChart data={dailyRegularChartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" />
                 <XAxis
-                  dataKey="hour"
+                  dataKey="dateLabel"
                   tickLine={false}
                   axisLine={false}
                   tick={{ fontSize: 11, fill: "#6B778C" }}
-                  tickFormatter={(h) => `${h}시`}
                 />
                 <YAxis tickLine={false} axisLine={false} tick={{ fontSize: 11, fill: "#6B778C" }} />
                 <Tooltip
-                  formatter={(value, name) => [
-                    `${value}건`,
-                    name === "today" ? `오늘 (${hourly_orders.today})` : `어제 (${hourly_orders.yesterday})`,
-                  ]}
-                  labelFormatter={(h) => `${h}시`}
+                  formatter={(value) => [`${value}건`, "정규 오더"]}
+                  labelFormatter={(label) => label}
                 />
-                <Legend
-                  verticalAlign="top"
-                  align="right"
-                  wrapperStyle={{ top: -5 }}
-                  iconType="line"
-                  formatter={(value) => (value === "today" ? "오늘" : "어제")}
+                <Bar
+                  dataKey="count"
+                  fill="rgba(123, 163, 201, 0.8)"
+                  radius={[4, 4, 0, 0]}
+                  maxBarSize={40}
                 />
-                <ReferenceLine x={currentHour} stroke="#0052CC" strokeDasharray="3 3" label="" />
-                <Line
-                  type="monotone"
-                  dataKey="yesterday"
-                  stroke="#94A3B8"
-                  strokeDasharray="5 5"
-                  strokeWidth={2}
-                  dot={false}
-                />
-                <Line type="monotone" dataKey="today" stroke="#0052CC" strokeWidth={2} dot={{ r: 3 }} />
-              </LineChart>
+              </BarChart>
             </ResponsiveContainer>
           </div>
         </div>
@@ -777,57 +763,60 @@ function Dashboard({ goOrdersWithFilter }) {
           </div>
           <div className="p-5">
             <ResponsiveContainer width="100%" height={240}>
-              <AreaChart data={dailyRiskChartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                <defs>
-                  <linearGradient id="colorHygiene" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#D98E8E" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="#D98E8E" stopOpacity={0} />
-                  </linearGradient>
-                  <linearGradient id="colorMlUrgent" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#E8C47C" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="#E8C47C" stopOpacity={0} />
-                  </linearGradient>
-                  <linearGradient id="colorLongTerm" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#7BA3C9" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="#7BA3C9" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
+              <LineChart data={dailyRiskChartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" />
                 <XAxis dataKey="date" tickLine={false} axisLine={false} tick={{ fontSize: 11, fill: "#6B778C" }} />
                 <YAxis tickLine={false} axisLine={false} tick={{ fontSize: 11, fill: "#6B778C" }} />
-                <Tooltip formatter={(value, name) => [`${value}건`, name]} />
+                <Tooltip
+                  formatter={(value, name) => {
+                    const labels = { hygiene: "위생장애", ml_urgent: "ML긴급", long_term: "초장기미세차" };
+                    return [`${value}건`, labels[name] || name];
+                  }}
+                  contentStyle={{
+                    backgroundColor: "#fff",
+                    border: "1px solid #E5E7EB",
+                    borderRadius: "8px",
+                    boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+                  }}
+                />
                 <Legend
                   verticalAlign="top"
                   align="right"
-                  wrapperStyle={{ top: -5 }}
+                  wrapperStyle={{ top: -5, paddingBottom: "10px" }}
                   iconType="circle"
                   formatter={(value) => {
                     const labels = { hygiene: "위생장애", ml_urgent: "ML긴급", long_term: "초장기미세차" };
                     return labels[value] || value;
                   }}
                 />
-                <Area
-                  type="monotone"
+                <Line
+                  type="linear"
                   dataKey="hygiene"
-                  stroke="#D98E8E"
-                  fill="url(#colorHygiene)"
+                  name="위생장애"
+                  stroke="rgba(217, 142, 142, 0.8)"
                   strokeWidth={2}
+                  dot={{ fill: "rgba(217, 142, 142, 0.8)", strokeWidth: 2, r: 4 }}
+                  activeDot={{ r: 6, fill: "#D98E8E" }}
                 />
-                <Area
-                  type="monotone"
+                <Line
+                  type="linear"
                   dataKey="ml_urgent"
-                  stroke="#E8C47C"
-                  fill="url(#colorMlUrgent)"
+                  name="ML긴급"
+                  stroke="rgba(232, 196, 124, 0.8)"
                   strokeWidth={2}
+                  dot={{ fill: "rgba(232, 196, 124, 0.8)", strokeWidth: 2, r: 4 }}
+                  activeDot={{ r: 6, fill: "#E8C47C" }}
                 />
-                <Area
-                  type="monotone"
+                <Line
+                  type="linear"
                   dataKey="long_term"
-                  stroke="#7BA3C9"
-                  fill="url(#colorLongTerm)"
+                  name="초장기미세차"
+                  stroke="rgba(123, 163, 201, 0.8)"
                   strokeWidth={2}
+                  dot={{ fill: "rgba(123, 163, 201, 0.8)", strokeWidth: 2, r: 4 }}
+                  activeDot={{ r: 6, fill: "#7BA3C9" }}
                 />
-              </AreaChart>
+              </LineChart>
             </ResponsiveContainer>
           </div>
         </div>
