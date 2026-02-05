@@ -1,4 +1,5 @@
 export const BROWN_HISTORY = [
+  { id: 83, date: "2026-02-05 17:00", content: "[UI] LNB 메뉴 구조 변경: '존 배정 관리'를 '오더 정책 관리' 그룹으로 이동, 메뉴 그룹 순서 재정렬 (업무 관리 → 오더 정책 관리 → 정보 관리)", isPolicyChange: false, links: [{ label: "존 배정 관리", page: "zone-assignment" }] },
   { id: 82, date: "2026-02-05 16:00", content: "[UI] 합의 요청 관리: '처리자' → '처리 주체'로 변경, 인터널/파트너 배지 표시, 상세 화면에 처리 주체 필드 추가", isPolicyChange: true, links: [{ label: "합의 요청 관리", page: "settlement" }] },
   { id: 81, date: "2026-02-05 15:40", content: "[UI] 합의 요청 관리: '요청 시간' → '요청 일시' 문구 변경, 상세 화면에서 '요청 사유', '세차 항목' 필드 제거", isPolicyChange: true, links: [{ label: "합의 요청 관리", page: "settlement" }] },
   { id: 80, date: "2026-02-05 15:30", content: "[기능] 합의 요청 관리: 처리자/처리 일시 필드 추가, 합의 유형별 처리자 정책 적용 (1단계: 내부/파트너 관리자, 2단계: 내부 관리자만)", isPolicyChange: true, links: [{ label: "합의 요청 관리", page: "settlement" }] },

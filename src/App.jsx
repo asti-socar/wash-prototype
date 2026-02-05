@@ -116,19 +116,6 @@ const NAV = [
     items: [{ key: "dashboard", label: "대시보드(HOME)", icon: LayoutDashboard }],
   },
   {
-    group: "오더 정책 관리",
-    type: 'group',
-    key: 'order-policy',
-    label: '오더 정책 관리',
-    icon: Settings,
-    items: [
-      { key: "order-type-policy", label: "발행 유형 정책", icon: Settings, parentKey: 'order-policy' },
-      { key: "ai-policy", label: "AI 모델 정책 관리", icon: Settings, parentKey: 'order-policy' },
-      { key: "zone-policy", label: "존 정책 관리", icon: MapPinned, parentKey: 'order-policy' },
-      { key: "region-policy", label: "지역 정책 관리", icon: MapPinned, parentKey: 'order-policy' },
-    ],
-  },
-  {
     group: "업무 관리",
     type: 'group',
     key: 'work-management',
@@ -145,6 +132,20 @@ const NAV = [
     ],
   },
   {
+    group: "오더 정책 관리",
+    type: 'group',
+    key: 'order-policy',
+    label: '오더 정책 관리',
+    icon: Settings,
+    items: [
+      { key: "order-type-policy", label: "발행 유형 정책", icon: Settings, parentKey: 'order-policy' },
+      { key: "ai-policy", label: "AI 모델 정책 관리", icon: Settings, parentKey: 'order-policy' },
+      { key: "zone-policy", label: "존 정책 관리", icon: MapPinned, parentKey: 'order-policy' },
+      { key: "zone-assignment", label: "존 배정 관리", icon: MapPinned, parentKey: 'order-policy' },
+      { key: "region-policy", label: "지역 정책 관리", icon: MapPinned, parentKey: 'order-policy' },
+    ],
+  },
+  {
     group: "정보 관리",
     type: 'group',
     key: 'info-management',
@@ -152,7 +153,6 @@ const NAV = [
     icon: Folder,
     items: [
       { key: "partners", label: "파트너 관리", icon: Building2, parentKey: 'info-management' },
-      { key: "zone-assignment", label: "존 배정 관리", icon: MapPinned, parentKey: 'info-management' },
       { key: "partner-managers", label: "파트너 담당자 관리", icon: Users, parentKey: 'info-management' },
       { key: "workers", label: "수행원 조회", icon: UserCog, parentKey: 'info-management' },
     ]
