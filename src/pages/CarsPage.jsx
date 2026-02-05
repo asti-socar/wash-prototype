@@ -107,19 +107,6 @@ function CarsPage() {
     { key: "zoneId", header: "존 ID" },
     { key: "region1", header: "지역1" },
     { key: "region2", header: "지역2" },
-    { key: "partner", header: "파트너 명" },
-    {
-      key: "activeOrderId",
-      header: "발행된 오더",
-      render: (r) => r.activeOrderId ? (
-        <div className="flex items-center gap-1">
-          <Button variant="ghost" size="sm" className="h-6 px-1 text-xs text-[#0052CC]" onClick={(e) => { e.stopPropagation(); window.open(`/?page=orders&orderId=${r.activeOrderId}`, "_blank"); }}>{r.activeOrderId}</Button>
-          <span className="text-xs text-[#6B778C]">({r.activeOrderStatus})</span>
-        </div>
-      ) : (
-        <span className="text-[#B3BAC5] text-xs">-</span>
-      ),
-    },
     { key: "lastWash", header: "마지막 세차일" },
     { key: "elapsedDays", header: "세차 경과일", render: (r) => <span className="font-medium">{getElapsedDays(r.lastWash)}일</span> },
   ];
@@ -277,7 +264,21 @@ function CarsPage() {
                 <Field label="지역1" value={selected.region1} />
                 <Field label="지역2" value={selected.region2} />
                 <Field label="파트너 명" value={selected.partner} />
-                <Field label="발행된 오더" value={selected.activeOrderId ? `${selected.activeOrderId} (${selected.activeOrderStatus})` : "없음"} />
+                <Field
+                  label="발행된 오더"
+                  value={selected.activeOrderId ? (
+                    <span className="flex items-center gap-1.5">
+                      <button
+                        className="inline-flex items-center gap-1 text-sm text-[#0052CC] underline hover:text-[#0747A6] transition-colors"
+                        onClick={() => window.open(`/?page=orders&orderId=${selected.activeOrderId}`, "_blank")}
+                      >
+                        {selected.activeOrderId}
+                        <ExternalLink className="h-3.5 w-3.5" />
+                      </button>
+                      <span className="text-[#6B778C]">({selected.activeOrderStatus})</span>
+                    </span>
+                  ) : "없음"}
+                />
                 <Field label="마지막 세차일" value={selected.lastWash} />
                 <Field label="세차 경과일" value={`${getElapsedDays(selected.lastWash)}일`} />
               </CardContent>
