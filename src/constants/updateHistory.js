@@ -1,5 +1,7 @@
 export const BROWN_HISTORY = [
-  { id: 79, date: "2026-02-05 10:30", content: "[UI] 차량 관리: 리스트에서 '파트너 명', '발행된 오더' 컬럼 제거 (기술 제약), 파트너 필터 유지, 상세 화면 발행된 오더 링크 추가", isPolicyChange: true, links: [{ label: "차량 관리", page: "vehicles" }] },
+  { id: 81, date: "2026-02-05 15:40", content: "[UI] 합의 요청 관리: '요청 시간' → '요청 일시' 문구 변경, 상세 화면에서 '요청 사유', '세차 항목' 필드 제거", isPolicyChange: true, links: [{ label: "합의 요청 관리", page: "settlement" }] },
+  { id: 80, date: "2026-02-05 15:30", content: "[기능] 합의 요청 관리: 처리자/처리 일시 필드 추가, 합의 유형별 처리자 정책 적용 (1단계: 내부/파트너 관리자, 2단계: 내부 관리자만)", isPolicyChange: true, links: [{ label: "합의 요청 관리", page: "settlement" }] },
+  { id: 79, date: "2026-02-05 15:10", content: "[UI] 차량 관리: 리스트에서 '파트너 명', '발행된 오더' 컬럼 제거 (기술 제약), 파트너 필터 유지, 상세 화면 발행된 오더 링크 추가", isPolicyChange: true, links: [{ label: "차량 관리", page: "vehicles" }] },
   { id: 78, date: "2026-02-03 18:30", content: "[기능] 대량 존 배정: CSV 파일 업로드를 통한 존-파트너 일괄 배정, 드래그앤드롭 업로드, 양식 다운로드, 검증 실패 내역 표시", isPolicyChange: true, links: [{ label: "존 배정 관리", page: "zone-assignment" }] },
   { id: 77, date: "2026-02-03 17:00", content: "[기능] 파트너 단가 정책 일자별 관리: 적용 시작일 지정, 적용 중/예정 정책 분리 표시, 미래 적용 정책 사전 등록 기능", isPolicyChange: true, links: [{ label: "파트너 관리", page: "partners" }] },
   { id: 73, date: "2026-02-03 11:30", content: "[기능] 존 배정 관리 메뉴 신설: 존 중심 파트너 배정 현황 관리, 미배정 존 식별 UI, 파트너 관리에서 존 배정 탭 분리", isPolicyChange: true, links: [{ label: "존 배정 관리", page: "zone-assignment" }, { label: "파트너 관리", page: "partners" }] },
