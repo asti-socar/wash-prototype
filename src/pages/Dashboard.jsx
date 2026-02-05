@@ -573,18 +573,14 @@ function Dashboard({ goOrdersWithFilter }) {
                   <th className="text-center py-3 px-3 font-medium text-[#6B778C]">담당</th>
                   <th className="text-center py-3 px-3 font-medium text-[#6B778C]">대기</th>
                   <th className="text-center py-3 px-3 font-medium text-[#6B778C]">수행중</th>
-                  <th className="text-center py-3 px-3 font-medium text-[#6B778C]">적시율</th>
                   <th className="text-center py-3 px-3 font-medium text-[#6B778C]">리스크</th>
-                  <th className="text-center py-3 px-3 font-medium text-[#6B778C]">리드타임</th>
                   <th className="text-center py-3 px-3 font-medium text-[#6B778C]">지연</th>
                 </tr>
               </thead>
               <tbody>
                 {partnerStats.map((row) => {
                   const waitingWarning = getWarningLevel("waiting", row.waiting);
-                  const onTimeWarning = getWarningLevel("onTimeRate", row.onTimeRate);
                   const riskWarning = getWarningLevel("risk", row.risk);
-                  const leadTimeWarning = row.avgLeadTime !== null ? getWarningLevel("leadTime", row.avgLeadTime) : null;
                   const delayedWarning = getWarningLevel("delayed", row.delayed);
 
                   return (
@@ -639,23 +635,6 @@ function Dashboard({ goOrdersWithFilter }) {
                         </button>
                       </td>
 
-                      {/* 적시율 */}
-                      <td className="text-center py-3 px-3">
-                        <button
-                          onClick={() => goToOrders({ partner: row.partner, status: "완료" })}
-                          className="inline-flex items-center gap-1 hover:opacity-80 transition-opacity"
-                          style={{ color: onTimeWarning ? warningColors[onTimeWarning] : "#7BC9A8" }}
-                        >
-                          {onTimeWarning && (
-                            <span
-                              className="inline-block w-2 h-2 rounded-full"
-                              style={{ backgroundColor: warningColors[onTimeWarning] }}
-                            />
-                          )}
-                          <span className={onTimeWarning ? "font-semibold" : ""}>{row.onTimeRate}%</span>
-                        </button>
-                      </td>
-
                       {/* 리스크 */}
                       <td className="text-center py-3 px-3">
                         <button
@@ -671,29 +650,6 @@ function Dashboard({ goOrdersWithFilter }) {
                           )}
                           <span className={riskWarning ? "font-semibold" : ""}>{row.risk}</span>
                         </button>
-                      </td>
-
-                      {/* 리드타임 */}
-                      <td className="text-center py-3 px-3">
-                        {row.avgLeadTime !== null ? (
-                          <button
-                            onClick={() => goToOrders({ partner: row.partner, orderType: "위생장애" })}
-                            className="inline-flex items-center gap-1 hover:opacity-80 transition-opacity"
-                            style={{ color: leadTimeWarning ? warningColors[leadTimeWarning] : "#172B4D" }}
-                          >
-                            {leadTimeWarning && (
-                              <span
-                                className="inline-block w-2 h-2 rounded-full"
-                                style={{ backgroundColor: warningColors[leadTimeWarning] }}
-                              />
-                            )}
-                            <span className={leadTimeWarning ? "font-semibold" : ""}>
-                              {row.avgLeadTime.toFixed(1)}일
-                            </span>
-                          </button>
-                        ) : (
-                          <span className="text-[#9CA3AF]">-</span>
-                        )}
                       </td>
 
                       {/* 지연 */}
