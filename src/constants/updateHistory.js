@@ -1,4 +1,5 @@
 export const BROWN_HISTORY = [
+  { id: 82, date: "2026-02-05 16:00", content: "[UI] 합의 요청 관리: '처리자' → '처리 주체'로 변경, 인터널/파트너 배지 표시, 상세 화면에 처리 주체 필드 추가", isPolicyChange: true, links: [{ label: "합의 요청 관리", page: "settlement" }] },
   { id: 81, date: "2026-02-05 15:40", content: "[UI] 합의 요청 관리: '요청 시간' → '요청 일시' 문구 변경, 상세 화면에서 '요청 사유', '세차 항목' 필드 제거", isPolicyChange: true, links: [{ label: "합의 요청 관리", page: "settlement" }] },
   { id: 80, date: "2026-02-05 15:30", content: "[기능] 합의 요청 관리: 처리자/처리 일시 필드 추가, 합의 유형별 처리자 정책 적용 (1단계: 내부/파트너 관리자, 2단계: 내부 관리자만)", isPolicyChange: true, links: [{ label: "합의 요청 관리", page: "settlement" }] },
   { id: 79, date: "2026-02-05 15:10", content: "[UI] 차량 관리: 리스트에서 '파트너 명', '발행된 오더' 컬럼 제거 (기술 제약), 파트너 필터 유지, 상세 화면 발행된 오더 링크 추가", isPolicyChange: true, links: [{ label: "차량 관리", page: "vehicles" }] },

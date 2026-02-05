@@ -185,6 +185,13 @@ export default function SettlementPage() {
   const [rejectReason, setRejectReason] = useState("");
   const [isRejecting, setIsRejecting] = useState(false);
 
+  // 처리 주체 판별 (영문 닉네임 = 인터널, 한글 이름 = 파트너)
+  const getProcessorType = (processor) => {
+    if (!processor) return null;
+    const isKorean = /[가-힣]/.test(processor);
+    return isKorean ? "파트너" : "인터널";
+  };
+
   const columns = [
     { key: "orderId", header: "오더 ID" },
     { key: "plate", header: "차량 번호" },
@@ -194,7 +201,10 @@ export default function SettlementPage() {
     { key: "requestType", header: "요청 유형" },
     { key: "requestedAt", header: "요청 일시" },
     { key: "approvalType", header: "합의 유형" },
-    { key: "processor", header: "처리자", render: (r) => r.processor || <span className="text-[#94A3B8]">-</span> },
+    { key: "processorType", header: "처리 주체", render: (r) => {
+      const type = getProcessorType(r.processor);
+      return type ? <Badge tone={type === "인터널" ? "ok" : "default"}>{type}</Badge> : <span className="text-[#94A3B8]">-</span>;
+    }},
     { key: "processedAt", header: "처리 일시", render: (r) => r.processedAt || <span className="text-[#94A3B8]">-</span> },
     {
       key: "status",
@@ -348,6 +358,7 @@ export default function SettlementPage() {
                 <Field label="요청 유형" value={selected.requestType} />
                 <Field label="요청 일시" value={selected.requestedAt} />
                 <Field label="합의 유형" value={<Badge tone={selected.approvalType === "1단계 승인" ? "ok" : "warn"}>{selected.approvalType}</Badge>} />
+                <Field label="처리 주체" value={getProcessorType(selected.processor) ? <Badge tone={getProcessorType(selected.processor) === "인터널" ? "ok" : "default"}>{getProcessorType(selected.processor)}</Badge> : <span className="text-[#94A3B8]">-</span>} />
                 <Field label="처리자" value={selected.processor || <span className="text-[#94A3B8]">-</span>} />
                 <Field label="처리 일시" value={selected.processedAt || <span className="text-[#94A3B8]">-</span>} />
                 <Field label="상태" value={<Badge tone={selected.status === "요청" ? "warn" : selected.status === "수락" ? "ok" : selected.status === "거절" ? "danger" : "default"}>{selected.status}</Badge>} />
