@@ -110,7 +110,7 @@ const MissionsPage = ({ missionPolicies, setMissionPolicies, policyVehicles, set
   };
 
   const handleDeletePolicy = (policyId) => {
-    if (!window.confirm("정말로 이 정책을 삭제하시겠습니까? 연관된 차량 할당 내역도 모두 삭제됩니다.")) return;
+    if (!window.confirm("정말로 이 정책을 삭제하시겠습니까?")) return;
     setMissionPolicies(missionPolicies.filter(p => p.id !== policyId));
     setPolicyVehicles(policyVehicles.filter(v => v.policyId !== policyId));
     setSelectedPolicy(null);
@@ -138,7 +138,30 @@ const MissionsPage = ({ missionPolicies, setMissionPolicies, policyVehicles, set
   };
 
   const handleRemoveVehicle = (vehicleId) => {
+    if (!window.confirm("선택한 차량을 삭제하시겠습니까?")) return;
     setPolicyVehicles(policyVehicles.filter(v => v.id !== vehicleId));
+  };
+
+  const handleStatusChange = (newStatus) => {
+    if (!selectedPolicy || newStatus === selectedPolicy.status) return;
+    if (newStatus === "비활성") {
+      if (!window.confirm("비활성 상태로 전환 시, 대기 중인 차량 목록이 모두 삭제됩니다. 상태를 변경하시겠습니까?")) return;
+      const pendingIds = new Set(policyVehicles.filter(v => v.policyId === selectedPolicy.id && v.status === 'pending').map(v => v.id));
+      setPolicyVehicles(policyVehicles.filter(v => !pendingIds.has(v.id)));
+      setMissionPolicies(missionPolicies.map(p => p.id === selectedPolicy.id ? { ...p, status: newStatus } : p));
+    } else {
+      if (!window.confirm("정책 상태를 정말 변경할까요?")) return;
+      setMissionPolicies(missionPolicies.map(p => p.id === selectedPolicy.id ? { ...p, status: newStatus } : p));
+    }
+  };
+
+  const handleDeleteAllPendingVehicles = () => {
+    if (!selectedPolicy) return;
+    const pendingVehicles = assignedVehiclesForSelectedPolicy.filter(v => v.status === 'pending');
+    if (pendingVehicles.length === 0) return;
+    if (!window.confirm(`대기 상태 차량 ${pendingVehicles.length}대를 모두 삭제하시겠습니까?`)) return;
+    const pendingIds = new Set(pendingVehicles.map(v => v.id));
+    setPolicyVehicles(policyVehicles.filter(v => !pendingIds.has(v.id)));
   };
   
   const policyColumns = [
@@ -174,6 +197,13 @@ const MissionsPage = ({ missionPolicies, setMissionPolicies, policyVehicles, set
     }
     return assignedVehiclesForSelectedPolicy.filter(vehicle => searchPlates.has(vehicle.plate));
   }, [assignedVehiclesForSelectedPolicy, vehicleSearchQuery]);
+
+  const { currentData: paginatedVehicles, currentPage: vehiclePage, totalPages: vehicleTotalPages, setCurrentPage: setVehiclePage, totalItems: vehicleTotal } = usePagination(filteredAssignedVehicles, 100);
+
+  const hasAssignedVehicles = assignedVehiclesForSelectedPolicy.length > 0;
+  const hasCompletedVehicles = assignedVehiclesForSelectedPolicy.some(v => v.status === 'completed');
+  const hasPendingVehicles = assignedVehiclesForSelectedPolicy.some(v => v.status === 'pending');
+  const canDeletePolicy = !hasAssignedVehicles;
 
   // Effect to update selected policy data when the main list changes
   useEffect(() => {
@@ -317,50 +347,43 @@ const MissionsPage = ({ missionPolicies, setMissionPolicies, policyVehicles, set
       {/* Policy Detail Drawer */}
       <Drawer open={!!selectedPolicy} title="미션 정책 상세" subtitle="미션 정책 상세 및 차량 관리" onClose={() => setSelectedPolicy(null)} footer={
           <div className="flex w-full justify-between gap-2">
-            <Button variant="danger" onClick={() => handleDeletePolicy(selectedPolicy.id)}><Trash2 className="mr-2 h-4 w-4" /> 정책 삭제</Button>
+            <div title={hasAssignedVehicles ? (hasCompletedVehicles ? "완료된 차량이 있어 정책을 삭제할 수 없습니다" : "대기 차량을 모두 삭제한 후 정책 삭제가 가능합니다") : ""}>
+              <Button variant="danger" onClick={() => handleDeletePolicy(selectedPolicy?.id)} disabled={!canDeletePolicy}><Trash2 className="mr-2 h-4 w-4" /> 정책 삭제</Button>
+            </div>
             <Button variant="secondary" onClick={() => setSelectedPolicy(null)} className="w-full sm:w-auto">닫기</Button>
           </div>
       }>
         {selectedPolicy && (
           <div className="space-y-6">
             <Card>
-              <CardHeader><CardTitle>정책 정보 수정</CardTitle></CardHeader>
+              <CardHeader><CardTitle>정책 정보</CardTitle></CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-4">
                   <div className="space-y-1">
-                    <div className="flex justify-between items-center">
-                      <label className="text-xs font-semibold text-[#6B778C]">미션 제목 *</label>
-                      <span className="text-xs text-[#6B778C]">{selectedPolicy.title?.length || 0} / 20</span>
-                    </div>
-                    <Input value={selectedPolicy.title || ''} onChange={e => setSelectedPolicy({...selectedPolicy, title: e.target.value})} maxLength={20} />
+                    <label className="text-xs font-semibold text-[#6B778C]">미션 제목</label>
+                    <Input value={selectedPolicy.title || ''} disabled className="bg-[#F4F5F7]! text-[#6B778C]! cursor-not-allowed" />
                   </div>
                   <div className="space-y-1">
-                    <div className="flex justify-between items-center">
-                      <label className="text-xs font-semibold text-[#6B778C]">미션 내용</label>
-                      <span className="text-xs text-[#6B778C]">{selectedPolicy.content?.length || 0} / 500</span>
-                    </div>
-                    <textarea className="w-full rounded-lg border border-[#E2E8F0] p-2 text-sm min-h-[100px]" value={selectedPolicy.content || ''} onChange={e => setSelectedPolicy({...selectedPolicy, content: e.target.value})} maxLength={500}></textarea>
+                    <label className="text-xs font-semibold text-[#6B778C]">미션 내용</label>
+                    <textarea className="w-full rounded-lg border border-[#E2E8F0] p-2 text-sm min-h-[100px] bg-[#F4F5F7] text-[#6B778C] cursor-not-allowed" value={selectedPolicy.content || ''} disabled></textarea>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-1">
                       <label className="text-xs font-semibold text-[#6B778C]">미션 금액</label>
-                      <Input type="number" min="0" value={selectedPolicy.amount} onChange={e => setSelectedPolicy({...selectedPolicy, amount: Number(e.target.value)})} />
+                      <Input type="number" value={selectedPolicy.amount} disabled className="bg-[#F4F5F7]! text-[#6B778C]! cursor-not-allowed" />
                     </div>
                     <div className="space-y-1">
                       <label className="text-xs font-semibold text-[#6B778C]">상태</label>
-                      <Select value={selectedPolicy.status} onChange={e => setSelectedPolicy({...selectedPolicy, status: e.target.value})}>
+                      <Select value={selectedPolicy.status} onChange={e => handleStatusChange(e.target.value)}>
                         <option value="활성">활성</option>
                         <option value="비활성">비활성</option>
                       </Select>
                     </div>
                   </div>
                 </div>
-                 <div className="flex items-center gap-2 pt-2">
-                  <input type="checkbox" id="reqPhotoEdit" className="h-4 w-4" checked={selectedPolicy.requiresPhoto} onChange={e => setSelectedPolicy({...selectedPolicy, requiresPhoto: e.target.checked})} />
-                  <label htmlFor="reqPhotoEdit" className="text-sm text-[#172B4D]">수행 시 증빙 사진 필수</label>
-                </div>
-                <div className="flex justify-end">
-                  <Button onClick={() => handleUpdatePolicy(selectedPolicy)}>정책 저장</Button>
+                <div className="flex items-center gap-2 pt-2">
+                  <input type="checkbox" id="reqPhotoEdit" className="h-4 w-4 cursor-not-allowed" checked={selectedPolicy.requiresPhoto} disabled />
+                  <label htmlFor="reqPhotoEdit" className="text-sm text-[#6B778C]">수행 시 증빙 사진 필수</label>
                 </div>
               </CardContent>
             </Card>
@@ -376,15 +399,41 @@ const MissionsPage = ({ missionPolicies, setMissionPolicies, policyVehicles, set
                 <div className="mt-6 border-t pt-4">
                     <div className="space-y-2 mb-4">
                       <label className="text-xs font-semibold text-[#6B778C]">할당 차량 검색</label>
-                      <textarea 
+                      <textarea
                           className="w-full rounded-lg border border-[#E2E8F0] p-2 text-sm min-h-[60px]"
                           value={vehicleSearchQuery}
                           onChange={e => setVehicleSearchQuery(e.target.value)}
                           placeholder="차량 번호를 콤마 또는 엔터로 구분하여 검색..."
                       />
                     </div>
-                    <div className="text-sm text-[#6B778C] mb-2">할당된 차량 목록 ({filteredAssignedVehicles.length} / {assignedVehiclesForSelectedPolicy.length}대)</div>
-                    <DataTable columns={vehicleColumns} rows={filteredAssignedVehicles} rowKey={r => r.id} />
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="text-sm text-[#6B778C]">할당된 차량 목록 ({filteredAssignedVehicles.length} / {assignedVehiclesForSelectedPolicy.length}대)</div>
+                      {hasPendingVehicles && (
+                        <Button variant="danger" size="sm" onClick={handleDeleteAllPendingVehicles}>
+                          <Trash2 className="mr-1 h-3 w-3" /> 대기 차량 전체 삭제
+                        </Button>
+                      )}
+                    </div>
+                    <DataTable columns={vehicleColumns} rows={paginatedVehicles} rowKey={r => r.id} />
+                    {vehicleTotalPages > 1 && (
+                      <div className="flex items-center justify-end pt-2">
+                        <div className="flex items-center gap-2 text-sm text-[#6B778C]">
+                          <span>
+                            {vehicleTotal > 0
+                              ? `${(vehiclePage - 1) * 100 + 1} - ${Math.min(vehiclePage * 100, vehicleTotal)} / ${vehicleTotal.toLocaleString()}`
+                              : "0 - 0 / 0"}
+                          </span>
+                          <div className="flex items-center">
+                            <Button variant="ghost" size="sm" onClick={() => setVehiclePage(vehiclePage - 1)} disabled={vehiclePage === 1} className="p-1 h-auto">
+                              <ChevronLeft className="h-4 w-4" />
+                            </Button>
+                            <Button variant="ghost" size="sm" onClick={() => setVehiclePage(vehiclePage + 1)} disabled={vehiclePage === vehicleTotalPages} className="p-1 h-auto">
+                              <ChevronRight className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                 </div>
               </CardContent>
             </Card>

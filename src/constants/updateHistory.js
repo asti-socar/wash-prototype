@@ -1,4 +1,6 @@
 export const BROWN_HISTORY = [
+  { id: 86, date: "2026-02-06 12:00", content: "[정책] 미션 정책 관리 상세 보완: 비활성 전환 시 대기 차량 일괄 삭제 정책, 차량 개별 삭제 컨펌, 정책 삭제 컨펌 메시지 변경, 읽기 전용 필드 Disabled UI 스타일 적용", isPolicyChange: true, links: [{ label: "미션 관리", page: "missions" }] },
+  { id: 85, date: "2026-02-06 11:00", content: "[정책] 미션 정책 관리 고도화: 등록 후 상태만 변경 가능(나머지 읽기 전용), 상태 변경 컨펌, 정책 삭제 조건부 활성화(할당 차량 유무), 대기 차량 전체 삭제 기능, 할당 차량 100건 페이지네이션", isPolicyChange: true, links: [{ label: "미션 관리", page: "missions" }] },
   { id: 84, date: "2026-02-06 09:40", content: "[정책] 청구 관리 고도화: 기본 필터 최근 1개월로 변경, 상세 화면에 오더 정보(수행 일시/차량/세차 유형 등) 및 세차 수행 사진 추가, 상태 필드 제거, 청구일→청구 일시 변경, 목업 데이터 20건 생성", isPolicyChange: true, links: [{ label: "청구 관리", page: "billing" }] },
   { id: 83, date: "2026-02-05 17:00", content: "[UI] LNB 메뉴 구조 변경: '존 배정 관리'를 '오더 정책 관리' 그룹으로 이동, 메뉴 그룹 순서 재정렬 (업무 관리 → 오더 정책 관리 → 정보 관리)", isPolicyChange: false, links: [{ label: "존 배정 관리", page: "zone-assignment" }] },
   { id: 82, date: "2026-02-05 16:00", content: "[UI] 합의 요청 관리: '처리자' → '처리 주체'로 변경, 인터널/파트너 배지 표시, 상세 화면에 처리 주체 필드 추가", isPolicyChange: true, links: [{ label: "합의 요청 관리", page: "settlement" }] },
