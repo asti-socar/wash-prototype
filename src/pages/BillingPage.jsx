@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import {
   FileSpreadsheet, X, ArrowUpDown, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight,
-  Image as ImageIcon
+  ExternalLink
 } from 'lucide-react';
 import billingData from '../mocks/billing.json';
 
@@ -168,25 +168,29 @@ export default function BillingPage() {
   const [fPartner, setFPartner] = useState("전체");
   const [periodFrom, setPeriodFrom] = useState(defaultFrom);
   const [periodTo, setPeriodTo] = useState(defaultTo);
+  const [fExcludeSettlement, setFExcludeSettlement] = useState("전체");
 
   const partnerOptions = useMemo(() => {
     const set = new Set(billingData.map(d => d.partner));
     return ["전체", ...Array.from(set).sort()];
   }, []);
 
-  const isFilterChanged = searchOrderId !== "" || fPartner !== "전체" || periodFrom !== defaultFrom || periodTo !== defaultTo;
-  const resetFilters = () => { setSearchOrderId(""); setFPartner("전체"); setPeriodFrom(defaultFrom); setPeriodTo(defaultTo); };
+  const isFilterChanged = searchOrderId !== "" || fPartner !== "전체" || periodFrom !== defaultFrom || periodTo !== defaultTo || fExcludeSettlement !== "전체";
+  const resetFilters = () => { setSearchOrderId(""); setFPartner("전체"); setPeriodFrom(defaultFrom); setPeriodTo(defaultTo); setFExcludeSettlement("전체"); };
+
+  const [localData, setLocalData] = useState(() => billingData.map(d => ({ ...d })));
 
   const filteredData = useMemo(() => {
-    return billingData.filter(item => {
+    return localData.filter(item => {
       if (searchOrderId && !item.orderId.toLowerCase().includes(searchOrderId.toLowerCase())) return false;
       if (fPartner !== "전체" && item.partner !== fPartner) return false;
       const itemDate = item.billedAt.slice(0, 10);
       if (periodFrom && itemDate < periodFrom) return false;
       if (periodTo && itemDate > periodTo) return false;
+      if (fExcludeSettlement !== "전체" && item.excludeSettlement !== fExcludeSettlement) return false;
       return true;
     });
-  }, [billingData, searchOrderId, fPartner, periodFrom, periodTo]);
+  }, [localData, searchOrderId, fPartner, periodFrom, periodTo, fExcludeSettlement]);
 
   const [selected, setSelected] = useState(null);
   const [sortConfig, setSortConfig] = useState({ key: 'id', direction: 'desc' });
@@ -254,7 +258,15 @@ export default function BillingPage() {
               <label htmlFor="periodTo" className="block text-xs font-semibold text-[#6B778C] mb-1.5">청구 일시 종료</label>
               <Input id="periodTo" type="date" value={periodTo} onChange={(e) => setPeriodTo(e.target.value)} />
             </div>
-            <div className="md:col-span-4 flex items-end">
+            <div className="md:col-span-2">
+              <label htmlFor="fExcludeSettlement" className="block text-xs font-semibold text-[#6B778C] mb-1.5">정산 제외</label>
+              <select id="fExcludeSettlement" value={fExcludeSettlement} onChange={(e) => setFExcludeSettlement(e.target.value)} className="h-10 w-full rounded-lg border border-[#E2E8F0] bg-white px-3 text-sm text-[#172B4D] outline-none transition focus:border-[#0052CC] focus:ring-1 focus:ring-[#0052CC]">
+                <option value="전체">전체</option>
+                <option value="Y">Y</option>
+                <option value="N">N</option>
+              </select>
+            </div>
+            <div className="md:col-span-2 flex items-end">
               <Button variant="ghost" size="sm" className="text-[#6B778C] hover:text-[#172B4D]" onClick={resetFilters}>
                 필터 초기화
               </Button>
@@ -267,15 +279,20 @@ export default function BillingPage() {
         {searchOrderId && <Chip onRemove={() => setSearchOrderId("")}>오더 ID: {searchOrderId}</Chip>}
         {fPartner !== "전체" && <Chip onRemove={() => setFPartner("전체")}>파트너: {fPartner}</Chip>}
         {(periodFrom || periodTo) && <Chip onRemove={() => { setPeriodFrom(""); setPeriodTo(""); }}>기간: {periodFrom || "-"} ~ {periodTo || "-"}</Chip>}
+        {fExcludeSettlement !== "전체" && <Chip onRemove={() => setFExcludeSettlement("전체")}>정산 제외: {fExcludeSettlement}</Chip>}
       </div>
 
       <DataTable
         columns={[
           { key: "id", header: "청구 ID" },
           { key: "orderId", header: "오더 ID" },
+          { key: "orderGroup", header: "오더 구분" },
+          { key: "washType", header: "세차 유형" },
+          { key: "partnerType", header: "파트너 유형" },
           { key: "partner", header: "파트너 이름" },
           { key: "amount", header: "금액", render: (r) => `${r.amount.toLocaleString()}원` },
           { key: "billedAt", header: "청구 일시" },
+          { key: "excludeSettlement", header: "정산 제외", render: (r) => r.excludeSettlement === "Y" ? <span className="font-semibold text-[#DE350B]">Y</span> : "N" },
         ]}
         rows={billingList}
         rowKey={(r) => r.id}
@@ -320,7 +337,24 @@ export default function BillingPage() {
         open={!!selected}
         title={selected ? `청구 상세 - ${selected.id}` : ""}
         onClose={() => setSelected(null)}
-        footer={<Button variant="secondary" onClick={() => setSelected(null)}>닫기</Button>}
+        footer={
+          <div className="flex w-full justify-between gap-2">
+            <Button variant="outline" className="text-[#DE350B] border-[#DE350B] hover:bg-red-50" onClick={() => {
+              if (!selected) return;
+              const isExcluded = selected.excludeSettlement === "Y";
+              const msg = isExcluded
+                ? "해당 청구 건의 정산 제외를 해제하시겠습니까?"
+                : "해당 청구 건을 정산에서 제외하시겠습니까?";
+              if (!window.confirm(msg)) return;
+              const next = isExcluded ? "N" : "Y";
+              setLocalData(prev => prev.map(d => d.id === selected.id ? { ...d, excludeSettlement: next } : d));
+              setSelected({ ...selected, excludeSettlement: next });
+            }}>
+              {selected?.excludeSettlement === "Y" ? "정산 제외 해제" : "정산 제외"}
+            </Button>
+            <Button variant="secondary" onClick={() => setSelected(null)}>닫기</Button>
+          </div>
+        }
       >
         {selected && (
           <div className="space-y-4">
@@ -330,9 +364,18 @@ export default function BillingPage() {
               </CardHeader>
               <CardContent className="space-y-2 text-sm text-[#172B4D]">
                 <Field label="청구 ID" value={selected.id} />
-                <Field label="오더 ID" value={selected.orderId} />
+                <Field label="오더 ID" value={
+                  <a href={`/?page=orders&orderId=${selected.orderId}`} target="_blank" rel="noopener noreferrer" className="text-[#0052CC] hover:underline inline-flex items-center gap-1">
+                    {selected.orderId} <ExternalLink className="h-3 w-3" />
+                  </a>
+                } />
                 <Field label="청구 금액" value={`${selected.amount.toLocaleString()}원`} />
                 <Field label="청구 일시" value={selected.billedAt} />
+                <Field label="정산 제외 여부" value={
+                  selected.excludeSettlement === "Y"
+                    ? <span className="font-bold text-[#DE350B]">Y</span>
+                    : <span>N</span>
+                } />
               </CardContent>
             </Card>
 
@@ -341,36 +384,10 @@ export default function BillingPage() {
                 <CardTitle>오더 정보</CardTitle>
               </CardHeader>
               <CardContent className="space-y-2 text-sm text-[#172B4D]">
-                <Field label="수행 일시" value={selected.completedAt} />
-                <Field label="차량 번호" value={selected.plate} />
-                <Field label="차종" value={selected.model} />
                 <Field label="오더 구분" value={selected.orderGroup} />
-                <Field label="발행 유형" value={selected.orderType} />
                 <Field label="세차 유형" value={selected.washType} />
-                <Field label="존 타입" value={selected.zoneType} />
+                <Field label="파트너 유형" value={selected.partnerType} />
                 <Field label="파트너 이름" value={selected.partner} />
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>세차 수행 사진</CardTitle>
-              </CardHeader>
-              <CardContent>
-                {selected.postWashPhotos && selected.postWashPhotos.length > 0 ? (
-                  <div className="grid grid-cols-2 gap-2">
-                    {selected.postWashPhotos.map((url, idx) => (
-                      <div key={idx} className="overflow-hidden rounded-lg border border-[#E2E8F0]">
-                        <img src={url} alt={`세차 수행 사진 ${idx + 1}`} className="h-32 w-full object-cover" />
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="flex h-32 w-full items-center justify-center rounded-lg bg-[#F4F5F7] text-[#6B778C]">
-                    <ImageIcon className="mr-2 h-4 w-4" />
-                    <span className="text-xs">등록된 사진이 없습니다</span>
-                  </div>
-                )}
               </CardContent>
             </Card>
           </div>

@@ -1,4 +1,5 @@
 export const BROWN_HISTORY = [
+  { id: 87, date: "2026-02-06 14:00", content: "[정책] 청구 관리 고도화: 리스트에 오더 구분/발행 유형/세차 유형/파트너 유형 컬럼 추가, 정산 제외 기능(필터/컬럼/상세 필드/토글 버튼), 오더 ID 링크, 세차 수행 사진 영역 제거, 목업 데이터 오더 관리 값 유형 반영", isPolicyChange: true, links: [{ label: "청구 관리", page: "billing" }] },
   { id: 86, date: "2026-02-06 12:00", content: "[정책] 미션 정책 관리 상세 보완: 비활성 전환 시 대기 차량 일괄 삭제 정책, 차량 개별 삭제 컨펌, 정책 삭제 컨펌 메시지 변경, 읽기 전용 필드 Disabled UI 스타일 적용", isPolicyChange: true, links: [{ label: "미션 관리", page: "missions" }] },
   { id: 85, date: "2026-02-06 11:00", content: "[정책] 미션 정책 관리 고도화: 등록 후 상태만 변경 가능(나머지 읽기 전용), 상태 변경 컨펌, 정책 삭제 조건부 활성화(할당 차량 유무), 대기 차량 전체 삭제 기능, 할당 차량 100건 페이지네이션", isPolicyChange: true, links: [{ label: "미션 관리", page: "missions" }] },
   { id: 84, date: "2026-02-06 09:40", content: "[정책] 청구 관리 고도화: 기본 필터 최근 1개월로 변경, 상세 화면에 오더 정보(수행 일시/차량/세차 유형 등) 및 세차 수행 사진 추가, 상태 필드 제거, 청구일→청구 일시 변경, 목업 데이터 20건 생성", isPolicyChange: true, links: [{ label: "청구 관리", page: "billing" }] },
