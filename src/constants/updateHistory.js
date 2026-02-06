@@ -1,4 +1,7 @@
 export const BROWN_HISTORY = [
+  { id: 90, date: "2026-02-06 17:30", content: "[UI] 합의 요청 관리: 필터 적용 정보 칩(Chip) 표시 및 필터 초기화 버튼 추가", isPolicyChange: false, links: [{ label: "합의 요청 관리", page: "settlement" }] },
+  { id: 89, date: "2026-02-06 17:00", content: "[용어] 합의 요청 관리: 상태 용어 변경 - '수락'→'승인', '거절'→'반려' (기능/목업/명세서 전체 반영)", isPolicyChange: true, links: [{ label: "합의 요청 관리", page: "settlement" }] },
+  { id: 88, date: "2026-02-06 16:00", content: "[정책] 합의 요청 관리 고도화: 2단계 승인 처리자 1차/2차 분리(파트너 담당자/인터널 담당자), 검색 필터 추가(파트너 이름, 요청 유형, 요청일 기간), 필터 배치 순서 변경", isPolicyChange: true, links: [{ label: "합의 요청 관리", page: "settlement" }] },
   { id: 87, date: "2026-02-06 14:00", content: "[정책] 청구 관리 고도화: 리스트에 오더 구분/발행 유형/세차 유형/파트너 유형 컬럼 추가, 정산 제외 기능(필터/컬럼/상세 필드/토글 버튼), 오더 ID 링크, 세차 수행 사진 영역 제거, 목업 데이터 오더 관리 값 유형 반영", isPolicyChange: true, links: [{ label: "청구 관리", page: "billing" }] },
   { id: 86, date: "2026-02-06 12:00", content: "[정책] 미션 정책 관리 상세 보완: 비활성 전환 시 대기 차량 일괄 삭제 정책, 차량 개별 삭제 컨펌, 정책 삭제 컨펌 메시지 변경, 읽기 전용 필드 Disabled UI 스타일 적용", isPolicyChange: true, links: [{ label: "미션 관리", page: "missions" }] },
   { id: 85, date: "2026-02-06 11:00", content: "[정책] 미션 정책 관리 고도화: 등록 후 상태만 변경 가능(나머지 읽기 전용), 상태 변경 컨펌, 정책 삭제 조건부 활성화(할당 차량 유무), 대기 차량 전체 삭제 기능, 할당 차량 100건 페이지네이션", isPolicyChange: true, links: [{ label: "미션 관리", page: "missions" }] },

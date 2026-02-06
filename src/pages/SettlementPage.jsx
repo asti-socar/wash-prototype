@@ -1,7 +1,8 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { 
-  X, ArrowUpDown, Trash2, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight
+import {
+  X, ArrowUpDown, Trash2, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, RotateCcw
 } from 'lucide-react';
+import settlementData from '../mocks/settlement.json';
 
 /**
  * Utility & UI Components
@@ -49,6 +50,15 @@ function Field({ label, value }) {
       <div className="w-36 shrink-0 text-xs font-semibold text-[#6B778C]">{label}</div>
       <div className="min-w-0 flex-1 text-sm text-[#172B4D]">{value}</div>
     </div>
+  );
+}
+
+function Chip({ children, onRemove }) {
+  return (
+    <span className="inline-flex items-center gap-1 rounded-full bg-[#E9F2FF] px-2.5 py-1 text-xs font-medium text-[#0052CC]">
+      {children}
+      <button onClick={onRemove} className="ml-0.5 rounded-full hover:bg-[#CCE0FF] p-0.5"><X className="h-3 w-3" /></button>
+    </span>
   );
 }
 
@@ -165,18 +175,14 @@ function DataTable({ columns, rows, onRowClick, rowKey, sortConfig, onSort }) {
 }
 
 export default function SettlementPage() {
-  const [items, setItems] = useState([
-    { id: "A-1001", orderId: "O-90012", plate: "34나7890", model: "K5", zoneName: "잠실역 2번존", partner: "B파트너", requestedAt: "2026-01-12 10:30", approvalType: "1단계 승인", requestType: "현장 변경(내부→내외부)", status: "요청", processor: null, processedAt: null, cost: 15000, reason: "오염도 심각으로 인한 세차 유형 상향", requestComment: "조수석 시트 및 바닥 오염 심각합니다. 첨부 사진 확인 부탁드립니다.", rejectComment: null, washItems: ["내부세차", "특수오염제거"] },
-    { id: "A-1002", orderId: "O-90008", plate: "90마5566", model: "스포티지", zoneName: "수원역 2번존", partner: "B파트너", requestedAt: "2026-01-11 14:20", approvalType: "1단계 승인", requestType: "현장 변경(라이트→내외부)", status: "수락", processor: "김길동", processedAt: "2026-01-11 15:05", cost: 10000, reason: "현장 세차 유형 업그레이드", requestComment: "유아 카시트 음식물 오염으로 분리 세척 필요합니다.", rejectComment: null, washItems: ["카시트세척"] },
-    { id: "A-1003", orderId: "O-90005", plate: "55차5656", model: "EV6", zoneName: "광주 1번존", partner: "A파트너", requestedAt: "2026-01-10 09:15", approvalType: "2단계 승인", requestType: "입고 변경(내외부→특수)", status: "거절", processor: "brown", processedAt: "2026-01-10 14:30", cost: 20000, reason: "입고 세차 유형 변경 (특수)", requestComment: "외부 스크래치가 많아 광택 작업 요청드립니다.", rejectComment: "광택 작업은 세차 서비스 범위에 포함되지 않습니다. 별도 외부 업체 이용 바랍니다.", washItems: ["광택"] },
-    { id: "A-1004", orderId: "O-90003", plate: "12가3456", model: "아반떼", zoneName: "강남역 1번존", partner: "C파트너", requestedAt: "2026-01-09 16:45", approvalType: "1단계 승인", requestType: "전환(현장→입고)", status: "요청", processor: null, processedAt: null, cost: 8000, reason: "현장 세차 → 입고(특수) 세차 변경", requestComment: "진흙 오염이 심해 현장에서 처리가 어렵습니다.", rejectComment: null, washItems: ["특수오염제거"] },
-    { id: "A-1005", orderId: "O-90001", plate: "78다9012", model: "쏘나타", zoneName: "판교역 3번존", partner: "A파트너", requestedAt: "2026-01-08 11:20", approvalType: "2단계 승인", requestType: "입고 변경(내외부→협의)", status: "수락", processor: "asti", processedAt: "2026-01-08 16:45", cost: 35000, reason: "입고 세차 유형 변경 (협의)", requestComment: "엔진룸 오일 누출로 특수 약품 처리 필요합니다.", rejectComment: null, washItems: ["엔진룸세척", "특수약품처리"] },
-    { id: "A-1006", orderId: "O-90015", plate: "23바1234", model: "그랜저", zoneName: "분당 센트럴존", partner: "B파트너", requestedAt: "2026-01-13 09:00", approvalType: "2단계 승인", requestType: "입고 변경(내외부→특수)", status: "요청", processor: null, processedAt: null, cost: 45000, reason: "특수 오염(페인트) 제거 필요", requestComment: "차량 외부에 페인트 오염이 있어 특수 약품 처리가 필요합니다.", rejectComment: null, washItems: ["페인트제거", "광택"] },
-    { id: "A-1007", orderId: "O-90018", plate: "67사8901", model: "투싼", zoneName: "일산 킨텍스존", partner: "A파트너", requestedAt: "2026-01-13 11:30", approvalType: "2단계 승인", requestType: "입고 변경(내외부→협의)", status: "요청", processor: null, processedAt: null, cost: 55000, reason: "시트 전체 교체 수준 오염", requestComment: "뒷좌석 시트에 음료 대량 유출로 시트 전체 클리닝 필요합니다. 부품비 포함.", rejectComment: null, washItems: ["시트클리닝", "탈취", "부품교체"] },
-    { id: "A-1008", orderId: "O-90020", plate: "45차6789", model: "아이오닉6", zoneName: "송도 컨벤시아존", partner: "C파트너", requestedAt: "2026-01-13 14:15", approvalType: "2단계 승인", requestType: "입고 변경(내외부→특수)", status: "요청", processor: null, processedAt: null, cost: 38000, reason: "타르 및 철분 제거 필요", requestComment: "고속도로 주행 후 타르와 철분 오염이 심합니다. 특수 약품 처리 요청드립니다.", rejectComment: null, washItems: ["타르제거", "철분제거", "광택"] },
-    { id: "A-1009", orderId: "O-90022", plate: "88가1234", model: "쏘렌토", zoneName: "강서 마곡존", partner: "B파트너", requestedAt: "2026-01-12 08:45", approvalType: "1단계 승인", requestType: "현장 변경(외부→내외부)", status: "수락", processor: "iron", processedAt: "2026-01-12 09:30", cost: 12000, reason: "현장 세차 유형 업그레이드", requestComment: "비 온 후 외부 오염 심해 내부까지 세차 필요합니다.", rejectComment: null, washItems: ["내부세차", "외부세차"] },
-    { id: "A-1010", orderId: "O-90025", plate: "11나5678", model: "카니발", zoneName: "김포공항존", partner: "A파트너", requestedAt: "2026-01-11 17:00", approvalType: "1단계 승인", requestType: "현장 변경(라이트→외부)", status: "거절", processor: "이영희", processedAt: "2026-01-11 18:20", cost: 8000, reason: "현장 세차 유형 업그레이드", requestComment: "외부 새똥 오염으로 외부 세차 필요합니다.", rejectComment: "라이트 세차 범위 내 처리 가능합니다.", washItems: ["외부세차"] },
-  ]);
+  const toYmd = (d) => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  const today = new Date();
+  const oneMonthAgo = new Date(today);
+  oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+  const defaultFrom = toYmd(oneMonthAgo);
+  const defaultTo = toYmd(today);
+
+  const [items, setItems] = useState(() => settlementData.map(d => ({ ...d })));
 
   const [selected, setSelected] = useState(null);
   const [sortConfig, setSortConfig] = useState({ key: 'orderId', direction: 'desc' });
@@ -184,6 +190,20 @@ export default function SettlementPage() {
   const [approvalTypeFilter, setApprovalTypeFilter] = useState("전체");
   const [rejectReason, setRejectReason] = useState("");
   const [isRejecting, setIsRejecting] = useState(false);
+  const [fPartner, setFPartner] = useState("전체");
+  const [fRequestType, setFRequestType] = useState("전체");
+  const [periodFrom, setPeriodFrom] = useState(defaultFrom);
+  const [periodTo, setPeriodTo] = useState(defaultTo);
+
+  const isFilterChanged = fPartner !== "전체" || fRequestType !== "전체" || periodFrom !== defaultFrom || periodTo !== defaultTo || approvalTypeFilter !== "전체" || statusFilter !== "전체";
+  const resetFilters = () => {
+    setFPartner("전체");
+    setFRequestType("전체");
+    setPeriodFrom(defaultFrom);
+    setPeriodTo(defaultTo);
+    setApprovalTypeFilter("전체");
+    setStatusFilter("전체");
+  };
 
   // 처리 주체 판별 (영문 닉네임 = 인터널, 한글 이름 = 파트너)
   const getProcessorType = (processor) => {
@@ -210,7 +230,7 @@ export default function SettlementPage() {
       key: "status",
       header: "상태",
       render: (r) => {
-        const tone = r.status === "요청" ? "warn" : r.status === "수락" ? "ok" : r.status === "거절" ? "danger" : "default";
+        const tone = r.status === "요청" ? "warn" : r.status === "승인" ? "ok" : r.status === "반려" ? "danger" : "default";
         return <Badge tone={tone}>{r.status}</Badge>;
       },
     },
@@ -221,9 +241,19 @@ export default function SettlementPage() {
     const now = new Date();
     const processedAt = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
     // 프로토타입에서는 내부 관리자(brown)로 고정
-    const processor = "brown";
+    const adminName = "brown";
     setItems((prev) =>
-      prev.map((it) => (it.id === selected.id ? { ...it, status: newStatus, processor, processedAt, rejectComment: newStatus === "거절" ? rejectCommentText : it.rejectComment } : it))
+      prev.map((it) => {
+        if (it.id !== selected.id) return it;
+        const updates = { ...it, status: newStatus, processedAt, rejectComment: newStatus === "반려" ? rejectCommentText : it.rejectComment };
+        if (it.approvalType === "2단계 승인") {
+          updates.secondaryProcessor = adminName;
+          updates.processor = adminName;
+        } else {
+          updates.processor = adminName;
+        }
+        return updates;
+      })
     );
     setSelected(null);
     setIsRejecting(false);
@@ -232,11 +262,23 @@ export default function SettlementPage() {
 
   const filteredAndSortedData = useMemo(() => {
     let filtered = items;
-    if (statusFilter !== "전체") {
-      filtered = filtered.filter(item => item.status === statusFilter);
+    if (fPartner !== "전체") {
+      filtered = filtered.filter(item => item.partner === fPartner);
+    }
+    if (fRequestType !== "전체") {
+      filtered = filtered.filter(item => item.requestType === fRequestType);
+    }
+    if (periodFrom) {
+      filtered = filtered.filter(item => item.requestedAt.slice(0, 10) >= periodFrom);
+    }
+    if (periodTo) {
+      filtered = filtered.filter(item => item.requestedAt.slice(0, 10) <= periodTo);
     }
     if (approvalTypeFilter !== "전체") {
       filtered = filtered.filter(item => item.approvalType === approvalTypeFilter);
+    }
+    if (statusFilter !== "전체") {
+      filtered = filtered.filter(item => item.status === statusFilter);
     }
     if (!sortConfig.key) return filtered;
     return [...filtered].sort((a, b) => {
@@ -246,7 +288,7 @@ export default function SettlementPage() {
       if (aVal > bVal) return sortConfig.direction === 'asc' ? 1 : -1;
       return 0;
     });
-  }, [items, sortConfig, statusFilter, approvalTypeFilter]);
+  }, [items, sortConfig, statusFilter, approvalTypeFilter, fPartner, fRequestType, periodFrom, periodTo]);
 
   const handleSort = (key) => {
     setSortConfig(prev => ({
@@ -266,33 +308,62 @@ export default function SettlementPage() {
         </div>
       </div>
 
-      <div className="flex items-center gap-3">
-        <div className="flex items-center gap-2">
-          <span className="text-sm font-medium text-[#6B778C]">합의 유형</span>
-          <select
-            value={approvalTypeFilter}
-            onChange={(e) => setApprovalTypeFilter(e.target.value)}
-            className="h-9 rounded-lg border border-[#E2E8F0] bg-white px-3 text-sm text-[#172B4D] outline-none focus:border-[#0052CC] focus:ring-1 focus:ring-[#0052CC]"
-          >
+      <div className="grid grid-cols-12 gap-3 items-end">
+        <div className="col-span-2">
+          <label className="block text-xs font-medium text-[#6B778C] mb-1">파트너 이름</label>
+          <select value={fPartner} onChange={e => setFPartner(e.target.value)} className="h-9 w-full rounded-lg border border-[#E2E8F0] bg-white px-3 text-sm text-[#172B4D] outline-none focus:border-[#0052CC] focus:ring-1 focus:ring-[#0052CC]">
+            <option value="전체">전체</option>
+            {[...new Set(items.map(i => i.partner))].sort().map(p => <option key={p} value={p}>{p}</option>)}
+          </select>
+        </div>
+        <div className="col-span-2">
+          <label className="block text-xs font-medium text-[#6B778C] mb-1">요청 유형</label>
+          <select value={fRequestType} onChange={e => setFRequestType(e.target.value)} className="h-9 w-full rounded-lg border border-[#E2E8F0] bg-white px-3 text-sm text-[#172B4D] outline-none focus:border-[#0052CC] focus:ring-1 focus:ring-[#0052CC]">
+            <option value="전체">전체</option>
+            {[...new Set(items.map(i => i.requestType))].sort().map(t => <option key={t} value={t}>{t}</option>)}
+          </select>
+        </div>
+        <div className="col-span-2">
+          <label className="block text-xs font-medium text-[#6B778C] mb-1">요청 일 시작</label>
+          <Input type="date" className="h-9" value={periodFrom} onChange={e => setPeriodFrom(e.target.value)} />
+        </div>
+        <div className="col-span-2">
+          <label className="block text-xs font-medium text-[#6B778C] mb-1">요청 일 종료</label>
+          <Input type="date" className="h-9" value={periodTo} onChange={e => setPeriodTo(e.target.value)} />
+        </div>
+        <div className="col-span-2">
+          <label className="block text-xs font-medium text-[#6B778C] mb-1">합의 유형</label>
+          <select value={approvalTypeFilter} onChange={e => setApprovalTypeFilter(e.target.value)} className="h-9 w-full rounded-lg border border-[#E2E8F0] bg-white px-3 text-sm text-[#172B4D] outline-none focus:border-[#0052CC] focus:ring-1 focus:ring-[#0052CC]">
             <option value="전체">전체</option>
             <option value="1단계 승인">1단계 승인</option>
             <option value="2단계 승인">2단계 승인</option>
           </select>
         </div>
-        <div className="flex items-center gap-2">
-          <span className="text-sm font-medium text-[#6B778C]">상태</span>
-          <select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            className="h-9 rounded-lg border border-[#E2E8F0] bg-white px-3 text-sm text-[#172B4D] outline-none focus:border-[#0052CC] focus:ring-1 focus:ring-[#0052CC]"
-          >
+        <div className="col-span-2">
+          <label className="block text-xs font-medium text-[#6B778C] mb-1">상태</label>
+          <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="h-9 w-full rounded-lg border border-[#E2E8F0] bg-white px-3 text-sm text-[#172B4D] outline-none focus:border-[#0052CC] focus:ring-1 focus:ring-[#0052CC]">
             <option value="전체">전체</option>
             <option value="요청">요청</option>
-            <option value="수락">수락</option>
-            <option value="거절">거절</option>
+            <option value="승인">승인</option>
+            <option value="반려">반려</option>
           </select>
         </div>
       </div>
+
+      {isFilterChanged && (
+        <div className="flex items-center gap-2 flex-wrap">
+          {fPartner !== "전체" && <Chip onRemove={() => setFPartner("전체")}>파트너: {fPartner}</Chip>}
+          {fRequestType !== "전체" && <Chip onRemove={() => setFRequestType("전체")}>요청 유형: {fRequestType}</Chip>}
+          {(periodFrom !== defaultFrom || periodTo !== defaultTo) && (
+            <Chip onRemove={() => { setPeriodFrom(defaultFrom); setPeriodTo(defaultTo); }}>요청 일: {periodFrom || "-"} ~ {periodTo || "-"}</Chip>
+          )}
+          {approvalTypeFilter !== "전체" && <Chip onRemove={() => setApprovalTypeFilter("전체")}>합의 유형: {approvalTypeFilter}</Chip>}
+          {statusFilter !== "전체" && <Chip onRemove={() => setStatusFilter("전체")}>상태: {statusFilter}</Chip>}
+          <button onClick={resetFilters} className="inline-flex items-center gap-1 text-xs text-[#6B778C] hover:text-[#172B4D] ml-1">
+            <RotateCcw className="h-3 w-3" />초기화
+          </button>
+        </div>
+      )}
 
       <DataTable columns={columns} rows={currentData} rowKey={(r) => r.id} onRowClick={setSelected} sortConfig={sortConfig} onSort={handleSort} />
       <div className="flex items-center justify-end pt-2">
@@ -336,7 +407,7 @@ export default function SettlementPage() {
           selected?.status === "요청" ? (
             <>
               <Button variant="secondary" onClick={() => setIsRejecting(true)}>반려</Button>
-              <Button onClick={() => handleUpdateStatus("수락")}>승인</Button>
+              <Button onClick={() => handleUpdateStatus("승인")}>승인</Button>
             </>
           ) : (
             <Button variant="secondary" onClick={() => setSelected(null)}>닫기</Button>
@@ -358,10 +429,19 @@ export default function SettlementPage() {
                 <Field label="요청 유형" value={selected.requestType} />
                 <Field label="요청 일시" value={selected.requestedAt} />
                 <Field label="합의 유형" value={<Badge tone={selected.approvalType === "1단계 승인" ? "ok" : "warn"}>{selected.approvalType}</Badge>} />
-                <Field label="처리 주체" value={getProcessorType(selected.processor) ? <Badge tone={getProcessorType(selected.processor) === "인터널" ? "ok" : "default"}>{getProcessorType(selected.processor)}</Badge> : <span className="text-[#94A3B8]">-</span>} />
-                <Field label="처리자" value={selected.processor || <span className="text-[#94A3B8]">-</span>} />
+                {selected.approvalType === "2단계 승인" ? (
+                  <>
+                    <Field label="1차 처리자" value={selected.primaryProcessor || <span className="text-[#94A3B8]">-</span>} />
+                    <Field label="2차 처리자" value={selected.secondaryProcessor || <span className="text-[#94A3B8]">-</span>} />
+                  </>
+                ) : (
+                  <>
+                    <Field label="처리 주체" value={getProcessorType(selected.processor) ? <Badge tone={getProcessorType(selected.processor) === "인터널" ? "ok" : "default"}>{getProcessorType(selected.processor)}</Badge> : <span className="text-[#94A3B8]">-</span>} />
+                    <Field label="처리자" value={selected.processor || <span className="text-[#94A3B8]">-</span>} />
+                  </>
+                )}
                 <Field label="처리 일시" value={selected.processedAt || <span className="text-[#94A3B8]">-</span>} />
-                <Field label="상태" value={<Badge tone={selected.status === "요청" ? "warn" : selected.status === "수락" ? "ok" : selected.status === "거절" ? "danger" : "default"}>{selected.status}</Badge>} />
+                <Field label="상태" value={<Badge tone={selected.status === "요청" ? "warn" : selected.status === "승인" ? "ok" : selected.status === "반려" ? "danger" : "default"}>{selected.status}</Badge>} />
                 <div className="border-t border-[#E2E8F0] my-3" />
                 <div className="flex items-center justify-between gap-3">
                   <div className="w-36 shrink-0 text-xs font-semibold text-[#6B778C]">청구 금액</div>
@@ -373,7 +453,7 @@ export default function SettlementPage() {
                   />
                 </div>
                 <Field label="요청 코멘트" value={selected.requestComment || '-'} />
-                {selected.status === '거절' && (
+                {selected.status === '반려' && (
                   <Field label="반려 코멘트" value={<span className="text-rose-600">{selected.rejectComment || '-'}</span>} />
                 )}
               </CardContent>
@@ -403,7 +483,7 @@ export default function SettlementPage() {
                   />
                   <div className="flex justify-end gap-2">
                     <Button variant="secondary" onClick={() => setIsRejecting(false)}>취소</Button>
-                    <Button variant="danger" onClick={() => handleUpdateStatus("거절", rejectReason)}>반려 확정</Button>
+                    <Button variant="danger" onClick={() => handleUpdateStatus("반려", rejectReason)}>반려 확정</Button>
                   </div>
                 </CardContent>
               </Card>
