@@ -170,7 +170,7 @@ function CarsPage() {
               </Select>
             </div>
             <div className="md:col-span-2">
-              <label htmlFor="fPartner" className="block text-xs font-semibold text-[#6B778C] mb-1.5">파트너 명</label>
+              <label htmlFor="fPartner" className="block text-xs font-semibold text-[#6B778C] mb-1.5">파트너 이름</label>
               <Select id="fPartner" value={fPartner} onChange={(e) => setFPartner(e.target.value)}>
                 <option value="">전체</option>
                 {partners.map((v) => <option key={v} value={v}>{v}</option>)}
@@ -182,7 +182,7 @@ function CarsPage() {
                 {q ? <Chip onRemove={() => setQ("")}>검색: {q}</Chip> : null}
                 {fRegion1 ? <Chip onRemove={() => { setFRegion1(""); setFRegion2(""); }}>지역1: {fRegion1}</Chip> : null}
                 {fRegion2 ? <Chip onRemove={() => setFRegion2("")}>지역2: {fRegion2}</Chip> : null}
-                {fPartner ? <Chip onRemove={() => setFPartner("")}>파트너 명: {fPartner}</Chip> : null}
+                {fPartner ? <Chip onRemove={() => setFPartner("")}>파트너 이름: {fPartner}</Chip> : null}
               </div>
               <Button
                 variant="secondary"
@@ -263,7 +263,7 @@ function CarsPage() {
                 <Field label="존 이름" value={`${selected.zoneName} (${selected.zoneId})`} />
                 <Field label="지역1" value={selected.region1} />
                 <Field label="지역2" value={selected.region2} />
-                <Field label="파트너 명" value={selected.partner} />
+                <Field label="파트너 이름" value={selected.partner} />
                 <Field
                   label="발행된 오더"
                   value={selected.activeOrderId ? (

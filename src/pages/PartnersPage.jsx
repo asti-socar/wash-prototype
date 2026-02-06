@@ -302,7 +302,7 @@ export default function PartnersPage() {
   };
 
   const columns = [
-    { key: 'partnerName', header: '파트너 명' },
+    { key: 'partnerName', header: '파트너 이름' },
     { key: 'ceoName', header: '대표자' },
     { key: 'contractStatus', header: '계약 상태', align: 'center', render: r => <Badge tone={getStatusTone(r.contractStatus)}>{r.contractStatus}</Badge> },
     { key: 'phone', header: '휴대전화' },
@@ -417,7 +417,7 @@ function PartnerDetailDrawer({ partner, onClose, onSave }) {
 
         <TabsContent value="info" currentValue={activeTab} className="pt-4">
           <div className="space-y-2">
-            <Field label={<>파트너 명<span className="text-rose-500 ml-1">*</span></>}><Input name="partnerName" value={formData.partnerName || ''} onChange={handleInputChange} placeholder="파트너 명 입력" /></Field>
+            <Field label={<>파트너 이름<span className="text-rose-500 ml-1">*</span></>}><Input name="partnerName" value={formData.partnerName || ''} onChange={handleInputChange} placeholder="파트너 이름 입력" /></Field>
             <Field label={<>대표자<span className="text-rose-500 ml-1">*</span></>}><Input name="ceoName" value={formData.ceoName || ''} onChange={handleInputChange} placeholder="대표자 이름 입력" /></Field>
             <Field label="사업자번호"><Input name="businessNumber" value={formData.businessNumber || ''} onChange={handleInputChange} placeholder="사업자번호 입력" /></Field>
             <Field label="주소"><Input name="address" value={formData.address || ''} onChange={handleInputChange} placeholder="주소 입력" /></Field>

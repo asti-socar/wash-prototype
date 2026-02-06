@@ -197,7 +197,7 @@ export default function SettlementPage() {
     { key: "plate", header: "차량 번호" },
     { key: "model", header: "차종" },
     { key: "zoneName", header: "존 이름" },
-    { key: "partner", header: "파트너 명" },
+    { key: "partner", header: "파트너 이름" },
     { key: "requestType", header: "요청 유형" },
     { key: "requestedAt", header: "요청 일시" },
     { key: "approvalType", header: "합의 유형" },
@@ -354,7 +354,7 @@ export default function SettlementPage() {
                 <Field label="차량 번호" value={selected.plate} />
                 <Field label="차종" value={selected.model} />
                 <Field label="존 이름" value={selected.zoneName} />
-                <Field label="파트너 명" value={selected.partner} />
+                <Field label="파트너 이름" value={selected.partner} />
                 <Field label="요청 유형" value={selected.requestType} />
                 <Field label="요청 일시" value={selected.requestedAt} />
                 <Field label="합의 유형" value={<Badge tone={selected.approvalType === "1단계 승인" ? "ok" : "warn"}>{selected.approvalType}</Badge>} />

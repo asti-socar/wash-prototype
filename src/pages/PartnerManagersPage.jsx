@@ -228,7 +228,7 @@ export default function PartnerManagersPage() {
 
   const columns = [
     { key: 'id', header: '담당자 ID', align: 'center' },
-    { key: 'partner', header: '파트너 명' },
+    { key: 'partner', header: '파트너 이름' },
     { key: 'role', header: '직무' },
     { key: 'name', header: '이름' },
     { key: 'phone', header: '휴대전화' },

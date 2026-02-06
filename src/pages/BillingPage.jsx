@@ -1,7 +1,9 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { 
-  FileSpreadsheet, X, ArrowUpDown, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight
+import {
+  FileSpreadsheet, X, ArrowUpDown, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight,
+  Image as ImageIcon
 } from 'lucide-react';
+import billingData from '../mocks/billing.json';
 
 /**
  * Utility & UI Components
@@ -41,12 +43,17 @@ function Button({ className, variant = "default", size = "md", ...props }) {
 function Input({ className, ...props }) {
   return <input className={cn("h-10 w-full rounded-lg border border-[#E2E8F0] bg-white px-3 text-sm text-[#172B4D] outline-none transition placeholder:text-[#94A3B8] focus:border-[#0052CC] focus:ring-1 focus:ring-[#0052CC]", className)} {...props} />;
 }
-function Badge({ children, tone = "default" }) {
-  const tones = {
-    default: "bg-slate-100 text-slate-800",
-    ok: "bg-emerald-100 text-emerald-800",
-  };
-  return <span className={cn("inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-bold", tones[tone])}>{children}</span>;
+function Chip({ children, onRemove }) {
+  return (
+    <span className="inline-flex items-center gap-1 rounded-lg bg-[#F4F5F7] px-2 py-1 text-xs font-medium text-[#172B4D] border border-[#DFE1E6]">
+      {children}
+      {onRemove ? (
+        <button className="rounded-full p-0.5 hover:bg-[#DFE1E6]" onClick={onRemove} aria-label="remove">
+          <X className="h-3.5 w-3.5" />
+        </button>
+      ) : null}
+    </span>
+  );
 }
 function Field({ label, value }) {
   return (
@@ -123,22 +130,6 @@ function usePagination(data, itemsPerPage = 40) {
   return { currentPage, setCurrentPage, totalPages, currentData, totalItems };
 }
 
-function Pagination({ currentPage, totalPages, onPageChange }) {
-  if (totalPages <= 0) return null;
-  const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
-  return (
-    <div className="flex items-center justify-center gap-1 py-4">
-      <Button variant="ghost" size="sm" onClick={() => onPageChange(1)} disabled={currentPage === 1}><ChevronsLeft className="h-4 w-4" /></Button>
-      <Button variant="ghost" size="sm" onClick={() => onPageChange(currentPage - 1)} disabled={currentPage === 1}><ChevronLeft className="h-4 w-4" /></Button>
-      {pages.map(p => (
-        <Button key={p} variant={p === currentPage ? "default" : "ghost"} size="sm" className={cn("w-8 h-8 p-0", p !== currentPage && "font-normal text-[#6B778C]")} onClick={() => onPageChange(p)}>{p}</Button>
-      ))}
-      <Button variant="ghost" size="sm" onClick={() => onPageChange(currentPage + 1)} disabled={currentPage === totalPages}><ChevronRight className="h-4 w-4" /></Button>
-      <Button variant="ghost" size="sm" onClick={() => onPageChange(totalPages)} disabled={currentPage === totalPages}><ChevronsRight className="h-4 w-4" /></Button>
-    </div>
-  );
-}
-
 function DataTable({ columns, rows, onRowClick, rowKey, sortConfig, onSort }) {
   return (
     <div className="overflow-x-auto rounded-xl border border-[#E2E8F0]">
@@ -171,25 +162,34 @@ function DataTable({ columns, rows, onRowClick, rowKey, sortConfig, onSort }) {
 
 export default function BillingPage() {
   const today = new Date();
-  const [periodFrom, setPeriodFrom] = useState(toYmd(new Date(today.getFullYear(), today.getMonth(), 1)));
-  const [periodTo, setPeriodTo] = useState(toYmd(today));
+  const defaultFrom = toYmd(new Date(today.getFullYear(), today.getMonth() - 1, today.getDate()));
+  const defaultTo = toYmd(today);
+  const [searchOrderId, setSearchOrderId] = useState("");
+  const [fPartner, setFPartner] = useState("전체");
+  const [periodFrom, setPeriodFrom] = useState(defaultFrom);
+  const [periodTo, setPeriodTo] = useState(defaultTo);
 
-  const billingData = [
-    { id: "B-1001", orderId: "O-90002", partner: "B파트너", amount: 25000, status: "청구완료", date: "2026-01-12" },
-    { id: "B-1002", orderId: "O-90005", partner: "B파트너", amount: 18000, status: "대기", date: "2026-01-12" },
-    { id: "B-1003", orderId: "O-90011", partner: "C파트너", amount: 22000, status: "청구완료", date: "2026-01-11" },
-  ];
+  const partnerOptions = useMemo(() => {
+    const set = new Set(billingData.map(d => d.partner));
+    return ["전체", ...Array.from(set).sort()];
+  }, []);
+
+  const isFilterChanged = searchOrderId !== "" || fPartner !== "전체" || periodFrom !== defaultFrom || periodTo !== defaultTo;
+  const resetFilters = () => { setSearchOrderId(""); setFPartner("전체"); setPeriodFrom(defaultFrom); setPeriodTo(defaultTo); };
 
   const filteredData = useMemo(() => {
     return billingData.filter(item => {
-      if (periodFrom && item.date < periodFrom) return false;
-      if (periodTo && item.date > periodTo) return false;
+      if (searchOrderId && !item.orderId.toLowerCase().includes(searchOrderId.toLowerCase())) return false;
+      if (fPartner !== "전체" && item.partner !== fPartner) return false;
+      const itemDate = item.billedAt.slice(0, 10);
+      if (periodFrom && itemDate < periodFrom) return false;
+      if (periodTo && itemDate > periodTo) return false;
       return true;
     });
-  }, [billingData, periodFrom, periodTo]);
+  }, [billingData, searchOrderId, fPartner, periodFrom, periodTo]);
 
   const [selected, setSelected] = useState(null);
-  const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
+  const [sortConfig, setSortConfig] = useState({ key: 'id', direction: 'desc' });
 
   const getSortedData = (data) => {
     if (!sortConfig.key) return data;
@@ -210,7 +210,7 @@ export default function BillingPage() {
   };
 
   const { currentData: billingList, currentPage: billingPage, totalPages: billingTotalPages, setCurrentPage: setBillingPage, totalItems: billingTotal } = usePagination(getSortedData(filteredData), 40);
-  
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -218,12 +218,10 @@ export default function BillingPage() {
           <div className="text-base font-bold text-[#172B4D]">청구 관리</div>
           <div className="mt-1 text-sm text-[#6B778C]">파트너사별 청구 내역 조회</div>
         </div>
-        <Button 
-          variant="outline" 
+        <Button
+          variant="outline"
           onClick={() => {
-            // 1. 콘솔 로그 출력
-            console.log("SAP 엑셀 추출 중..."); 
-            // 2. 링크를 새 창으로 열기
+            console.log("SAP 엑셀 추출 중...");
             window.open("https://docs.google.com/spreadsheets/d/16jMIaSzOMakrXEniyZShFOUdHeSTaslfGOG52ArzZ2w/edit?usp=sharing", "_blank");
           }}
         >
@@ -239,25 +237,45 @@ export default function BillingPage() {
         <CardContent>
           <div className="grid grid-cols-1 gap-x-4 gap-y-5 md:grid-cols-12">
             <div className="md:col-span-2">
-              <label htmlFor="periodFrom" className="block text-xs font-semibold text-[#6B778C] mb-1.5">청구일 시작</label>
+              <label htmlFor="searchOrderId" className="block text-xs font-semibold text-[#6B778C] mb-1.5">오더 ID</label>
+              <Input id="searchOrderId" type="text" placeholder="오더 ID 검색" value={searchOrderId} onChange={(e) => setSearchOrderId(e.target.value)} />
+            </div>
+            <div className="md:col-span-2">
+              <label htmlFor="fPartner" className="block text-xs font-semibold text-[#6B778C] mb-1.5">파트너 이름</label>
+              <select id="fPartner" value={fPartner} onChange={(e) => setFPartner(e.target.value)} className="h-10 w-full rounded-lg border border-[#E2E8F0] bg-white px-3 text-sm text-[#172B4D] outline-none transition focus:border-[#0052CC] focus:ring-1 focus:ring-[#0052CC]">
+                {partnerOptions.map(p => <option key={p} value={p}>{p}</option>)}
+              </select>
+            </div>
+            <div className="md:col-span-2">
+              <label htmlFor="periodFrom" className="block text-xs font-semibold text-[#6B778C] mb-1.5">청구 일시 시작</label>
               <Input id="periodFrom" type="date" value={periodFrom} onChange={(e) => setPeriodFrom(e.target.value)} />
             </div>
             <div className="md:col-span-2">
-              <label htmlFor="periodTo" className="block text-xs font-semibold text-[#6B778C] mb-1.5">청구일 종료</label>
+              <label htmlFor="periodTo" className="block text-xs font-semibold text-[#6B778C] mb-1.5">청구 일시 종료</label>
               <Input id="periodTo" type="date" value={periodTo} onChange={(e) => setPeriodTo(e.target.value)} />
+            </div>
+            <div className="md:col-span-4 flex items-end">
+              <Button variant="ghost" size="sm" className="text-[#6B778C] hover:text-[#172B4D]" onClick={resetFilters}>
+                필터 초기화
+              </Button>
             </div>
           </div>
         </CardContent>
       </Card>
 
+      <div className="flex flex-wrap gap-2">
+        {searchOrderId && <Chip onRemove={() => setSearchOrderId("")}>오더 ID: {searchOrderId}</Chip>}
+        {fPartner !== "전체" && <Chip onRemove={() => setFPartner("전체")}>파트너: {fPartner}</Chip>}
+        {(periodFrom || periodTo) && <Chip onRemove={() => { setPeriodFrom(""); setPeriodTo(""); }}>기간: {periodFrom || "-"} ~ {periodTo || "-"}</Chip>}
+      </div>
+
       <DataTable
         columns={[
           { key: "id", header: "청구 ID" },
           { key: "orderId", header: "오더 ID" },
-          { key: "partner", header: "파트너 명" },
+          { key: "partner", header: "파트너 이름" },
           { key: "amount", header: "금액", render: (r) => `${r.amount.toLocaleString()}원` },
-          { key: "status", header: "상태", render: (r) => <Badge tone={r.status === "청구완료" ? "ok" : "default"}>{r.status}</Badge> },
-          { key: "date", header: "청구일" },
+          { key: "billedAt", header: "청구 일시" },
         ]}
         rows={billingList}
         rowKey={(r) => r.id}
@@ -300,24 +318,62 @@ export default function BillingPage() {
 
       <Drawer
         open={!!selected}
-        title="청구 상세"
+        title={selected ? `청구 상세 - ${selected.id}` : ""}
         onClose={() => setSelected(null)}
         footer={<Button variant="secondary" onClick={() => setSelected(null)}>닫기</Button>}
       >
         {selected && (
-          <Card>
-            <CardHeader>
-              <CardTitle>청구 정보</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2 text-sm text-[#172B4D]">
-              <Field label="청구 ID" value={selected.id} />
-              <Field label="오더 ID" value={selected.orderId} />
-              <Field label="파트너 명" value={selected.partner} />
-              <Field label="청구 금액" value={`${selected.amount.toLocaleString()}원`} />
-              <Field label="상태" value={selected.status} />
-              <Field label="청구일" value={selected.date} />
-            </CardContent>
-          </Card>
+          <div className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>청구 정보</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2 text-sm text-[#172B4D]">
+                <Field label="청구 ID" value={selected.id} />
+                <Field label="오더 ID" value={selected.orderId} />
+                <Field label="청구 금액" value={`${selected.amount.toLocaleString()}원`} />
+                <Field label="청구 일시" value={selected.billedAt} />
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>오더 정보</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2 text-sm text-[#172B4D]">
+                <Field label="수행 일시" value={selected.completedAt} />
+                <Field label="차량 번호" value={selected.plate} />
+                <Field label="차종" value={selected.model} />
+                <Field label="오더 구분" value={selected.orderGroup} />
+                <Field label="발행 유형" value={selected.orderType} />
+                <Field label="세차 유형" value={selected.washType} />
+                <Field label="존 타입" value={selected.zoneType} />
+                <Field label="파트너 이름" value={selected.partner} />
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>세차 수행 사진</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {selected.postWashPhotos && selected.postWashPhotos.length > 0 ? (
+                  <div className="grid grid-cols-2 gap-2">
+                    {selected.postWashPhotos.map((url, idx) => (
+                      <div key={idx} className="overflow-hidden rounded-lg border border-[#E2E8F0]">
+                        <img src={url} alt={`세차 수행 사진 ${idx + 1}`} className="h-32 w-full object-cover" />
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="flex h-32 w-full items-center justify-center rounded-lg bg-[#F4F5F7] text-[#6B778C]">
+                    <ImageIcon className="mr-2 h-4 w-4" />
+                    <span className="text-xs">등록된 사진이 없습니다</span>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
         )}
       </Drawer>
     </div>

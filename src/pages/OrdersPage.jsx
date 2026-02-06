@@ -546,7 +546,7 @@ function OrdersPage({ quickFilter, onClearQuickFilter, initialOrderId, orders, s
     { key: "region1", header: "지역1" },
     { key: "region2", header: "지역2" },
     { key: "zone", header: "존 이름" },
-    { key: "partner", header: "파트너 명" },
+    { key: "partner", header: "파트너 이름" },
     { key: "partnerType", header: "파트너 유형" },
     {
       key: "status",
@@ -589,7 +589,7 @@ function OrdersPage({ quickFilter, onClearQuickFilter, initialOrderId, orders, s
       {fOrderGroup ? <Chip onRemove={() => setFOrderGroup("")}>오더 구분: {fOrderGroup}</Chip> : null}
       {fOrderType && !quickFilter?.orderType ? <Chip onRemove={() => setFOrderType("")}>발행 유형: {fOrderType}</Chip> : null}
       {fWashType ? <Chip onRemove={() => setFWashType("")}>세차 유형: {fWashType}</Chip> : null}
-      {fPartner ? <Chip onRemove={() => setFPartner("")}>파트너 명: {fPartner}</Chip> : null}
+      {fPartner ? <Chip onRemove={() => setFPartner("")}>파트너 이름: {fPartner}</Chip> : null}
       {fPartnerType ? <Chip onRemove={() => setFPartnerType("")}>파트너 유형: {fPartnerType}</Chip> : null}
       {fStatus && !quickFilter?.status ? <Chip onRemove={() => { setFStatus(""); setFCancelType(""); }}>상태: {fStatus}</Chip> : null}
       {fCancelType && !quickFilter?.cancelType ? <Chip onRemove={() => setFCancelType("")}>취소 유형: {fCancelType}</Chip> : null}
@@ -688,7 +688,7 @@ function OrdersPage({ quickFilter, onClearQuickFilter, initialOrderId, orders, s
               </Select>
             </div>
             <div className="md:col-span-2">
-              <label htmlFor="fPartner" className="block text-xs font-semibold text-[#6B778C] mb-1.5">파트너 명</label>
+              <label htmlFor="fPartner" className="block text-xs font-semibold text-[#6B778C] mb-1.5">파트너 이름</label>
               <Select id="fPartner" value={fPartner} onChange={(e) => setFPartner(e.target.value)}>
                 <option value="">전체</option>
                 {partners.map((v) => <option key={v} value={v}>{v}</option>)}
