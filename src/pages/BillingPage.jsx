@@ -3,6 +3,7 @@ import {
   FileSpreadsheet, X, ArrowUpDown, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight,
   ExternalLink
 } from 'lucide-react';
+import { FilterPanel, Chip } from '../components/ui';
 import billingData from '../mocks/billing.json';
 
 /**
@@ -42,18 +43,6 @@ function Button({ className, variant = "default", size = "md", ...props }) {
 }
 function Input({ className, ...props }) {
   return <input className={cn("h-10 w-full rounded-lg border border-[#E2E8F0] bg-white px-3 text-sm text-[#172B4D] outline-none transition placeholder:text-[#94A3B8] focus:border-[#0052CC] focus:ring-1 focus:ring-[#0052CC]", className)} {...props} />;
-}
-function Chip({ children, onRemove }) {
-  return (
-    <span className="inline-flex items-center gap-1 rounded-lg bg-[#F4F5F7] px-2 py-1 text-xs font-medium text-[#172B4D] border border-[#DFE1E6]">
-      {children}
-      {onRemove ? (
-        <button className="rounded-full p-0.5 hover:bg-[#DFE1E6]" onClick={onRemove} aria-label="remove">
-          <X className="h-3.5 w-3.5" />
-        </button>
-      ) : null}
-    </span>
-  );
 }
 function Field({ label, value }) {
   return (
@@ -234,53 +223,42 @@ export default function BillingPage() {
         </Button>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>검색 및 필터</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 gap-x-4 gap-y-5 md:grid-cols-12">
-            <div className="md:col-span-2">
-              <label htmlFor="searchOrderId" className="block text-xs font-semibold text-[#6B778C] mb-1.5">오더 ID</label>
-              <Input id="searchOrderId" type="text" placeholder="오더 ID 검색" value={searchOrderId} onChange={(e) => setSearchOrderId(e.target.value)} />
-            </div>
-            <div className="md:col-span-2">
-              <label htmlFor="fPartner" className="block text-xs font-semibold text-[#6B778C] mb-1.5">파트너 이름</label>
-              <select id="fPartner" value={fPartner} onChange={(e) => setFPartner(e.target.value)} className="h-10 w-full rounded-lg border border-[#E2E8F0] bg-white px-3 text-sm text-[#172B4D] outline-none transition focus:border-[#0052CC] focus:ring-1 focus:ring-[#0052CC]">
-                {partnerOptions.map(p => <option key={p} value={p}>{p}</option>)}
-              </select>
-            </div>
-            <div className="md:col-span-2">
-              <label htmlFor="periodFrom" className="block text-xs font-semibold text-[#6B778C] mb-1.5">청구 일시 시작</label>
-              <Input id="periodFrom" type="date" value={periodFrom} onChange={(e) => setPeriodFrom(e.target.value)} />
-            </div>
-            <div className="md:col-span-2">
-              <label htmlFor="periodTo" className="block text-xs font-semibold text-[#6B778C] mb-1.5">청구 일시 종료</label>
-              <Input id="periodTo" type="date" value={periodTo} onChange={(e) => setPeriodTo(e.target.value)} />
-            </div>
-            <div className="md:col-span-2">
-              <label htmlFor="fExcludeSettlement" className="block text-xs font-semibold text-[#6B778C] mb-1.5">정산 제외</label>
-              <select id="fExcludeSettlement" value={fExcludeSettlement} onChange={(e) => setFExcludeSettlement(e.target.value)} className="h-10 w-full rounded-lg border border-[#E2E8F0] bg-white px-3 text-sm text-[#172B4D] outline-none transition focus:border-[#0052CC] focus:ring-1 focus:ring-[#0052CC]">
-                <option value="전체">전체</option>
-                <option value="Y">Y</option>
-                <option value="N">N</option>
-              </select>
-            </div>
-            <div className="md:col-span-2 flex items-end">
-              <Button variant="ghost" size="sm" className="text-[#6B778C] hover:text-[#172B4D]" onClick={resetFilters}>
-                필터 초기화
-              </Button>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      <div className="flex flex-wrap gap-2">
-        {searchOrderId && <Chip onRemove={() => setSearchOrderId("")}>오더 ID: {searchOrderId}</Chip>}
-        {fPartner !== "전체" && <Chip onRemove={() => setFPartner("전체")}>파트너: {fPartner}</Chip>}
-        {(periodFrom || periodTo) && <Chip onRemove={() => { setPeriodFrom(""); setPeriodTo(""); }}>기간: {periodFrom || "-"} ~ {periodTo || "-"}</Chip>}
-        {fExcludeSettlement !== "전체" && <Chip onRemove={() => setFExcludeSettlement("전체")}>정산 제외: {fExcludeSettlement}</Chip>}
-      </div>
+      <FilterPanel
+        chips={<>
+          {searchOrderId && <Chip onRemove={() => setSearchOrderId("")}>오더 ID: {searchOrderId}</Chip>}
+          {fPartner !== "전체" && <Chip onRemove={() => setFPartner("전체")}>파트너: {fPartner}</Chip>}
+          {(periodFrom || periodTo) && <Chip onRemove={() => { setPeriodFrom(""); setPeriodTo(""); }}>기간: {periodFrom || "-"} ~ {periodTo || "-"}</Chip>}
+          {fExcludeSettlement !== "전체" && <Chip onRemove={() => setFExcludeSettlement("전체")}>정산 제외: {fExcludeSettlement}</Chip>}
+        </>}
+        onReset={resetFilters}
+      >
+        <div className="md:col-span-2">
+          <label htmlFor="searchOrderId" className="block text-xs font-semibold text-[#6B778C] mb-1.5">오더 ID</label>
+          <Input id="searchOrderId" type="text" placeholder="오더 ID 검색" value={searchOrderId} onChange={(e) => setSearchOrderId(e.target.value)} />
+        </div>
+        <div className="md:col-span-2">
+          <label htmlFor="fPartner" className="block text-xs font-semibold text-[#6B778C] mb-1.5">파트너 이름</label>
+          <select id="fPartner" value={fPartner} onChange={(e) => setFPartner(e.target.value)} className="h-10 w-full rounded-lg border border-[#E2E8F0] bg-white px-3 text-sm text-[#172B4D] outline-none transition focus:border-[#0052CC] focus:ring-1 focus:ring-[#0052CC]">
+            {partnerOptions.map(p => <option key={p} value={p}>{p}</option>)}
+          </select>
+        </div>
+        <div className="md:col-span-2">
+          <label htmlFor="periodFrom" className="block text-xs font-semibold text-[#6B778C] mb-1.5">청구 일시 시작</label>
+          <Input id="periodFrom" type="date" value={periodFrom} onChange={(e) => setPeriodFrom(e.target.value)} />
+        </div>
+        <div className="md:col-span-2">
+          <label htmlFor="periodTo" className="block text-xs font-semibold text-[#6B778C] mb-1.5">청구 일시 종료</label>
+          <Input id="periodTo" type="date" value={periodTo} onChange={(e) => setPeriodTo(e.target.value)} />
+        </div>
+        <div className="md:col-span-2">
+          <label htmlFor="fExcludeSettlement" className="block text-xs font-semibold text-[#6B778C] mb-1.5">정산 제외</label>
+          <select id="fExcludeSettlement" value={fExcludeSettlement} onChange={(e) => setFExcludeSettlement(e.target.value)} className="h-10 w-full rounded-lg border border-[#E2E8F0] bg-white px-3 text-sm text-[#172B4D] outline-none transition focus:border-[#0052CC] focus:ring-1 focus:ring-[#0052CC]">
+            <option value="전체">전체</option>
+            <option value="Y">Y</option>
+            <option value="N">N</option>
+          </select>
+        </div>
+      </FilterPanel>
 
       <DataTable
         columns={[

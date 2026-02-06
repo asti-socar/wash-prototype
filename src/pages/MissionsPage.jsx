@@ -23,6 +23,7 @@ import {
   Select,
   Badge,
   Chip,
+  FilterPanel,
   Drawer,
   usePagination,
   DataTable,
@@ -236,42 +237,31 @@ const MissionsPage = ({ missionPolicies, setMissionPolicies, policyVehicles, set
         </Button>
       </div>
 
-      <Card>
-        <CardHeader><CardTitle>검색 및 필터</CardTitle></CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 gap-x-4 gap-y-5 md:grid-cols-12">
-            <div className="md:col-span-2">
-              <label htmlFor="periodFrom" className="block text-xs font-semibold text-[#6B778C] mb-1.5">등록일 시작</label>
-              <Input id="periodFrom" type="date" value={periodFrom} onChange={(e) => setPeriodFrom(e.target.value)} />
-            </div>
-            <div className="md:col-span-2">
-              <label htmlFor="periodTo" className="block text-xs font-semibold text-[#6B778C] mb-1.5">등록일 종료</label>
-              <Input id="periodTo" type="date" value={periodTo} onChange={(e) => setPeriodTo(e.target.value)} />
-            </div>
-            <div className="md:col-span-2">
-              <label htmlFor="fStatus" className="block text-xs font-semibold text-[#6B778C] mb-1.5">상태</label>
-              <Select id="fStatus" value={fStatus} onChange={(e) => setFStatus(e.target.value)}>
-                <option value="">전체</option>
-                <option value="활성">활성</option>
-                <option value="비활성">비활성</option>
-              </Select>
-            </div>
-          </div>
-          <div className="md:col-span-12 flex flex-wrap items-center justify-between gap-2 pt-4">
-            <div className="flex flex-wrap gap-2">
-              {periodFrom ? <Chip onRemove={() => setPeriodFrom("")}>시작일: {periodFrom}</Chip> : null}
-              {periodTo ? <Chip onRemove={() => setPeriodTo("")}>종료일: {periodTo}</Chip> : null}
-              {fStatus ? <Chip onRemove={() => setFStatus("")}>상태: {fStatus}</Chip> : null}
-            </div>
-            <Button
-              variant="secondary"
-              onClick={handleResetFilters}
-            >
-              필터 초기화
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+      <FilterPanel
+        chips={<>
+          {periodFrom ? <Chip onRemove={() => setPeriodFrom("")}>시작일: {periodFrom}</Chip> : null}
+          {periodTo ? <Chip onRemove={() => setPeriodTo("")}>종료일: {periodTo}</Chip> : null}
+          {fStatus ? <Chip onRemove={() => setFStatus("")}>상태: {fStatus}</Chip> : null}
+        </>}
+        onReset={handleResetFilters}
+      >
+        <div className="md:col-span-2">
+          <label htmlFor="periodFrom" className="block text-xs font-semibold text-[#6B778C] mb-1.5">등록일 시작</label>
+          <Input id="periodFrom" type="date" value={periodFrom} onChange={(e) => setPeriodFrom(e.target.value)} />
+        </div>
+        <div className="md:col-span-2">
+          <label htmlFor="periodTo" className="block text-xs font-semibold text-[#6B778C] mb-1.5">등록일 종료</label>
+          <Input id="periodTo" type="date" value={periodTo} onChange={(e) => setPeriodTo(e.target.value)} />
+        </div>
+        <div className="md:col-span-2">
+          <label htmlFor="fStatus" className="block text-xs font-semibold text-[#6B778C] mb-1.5">상태</label>
+          <Select id="fStatus" value={fStatus} onChange={(e) => setFStatus(e.target.value)}>
+            <option value="">전체</option>
+            <option value="활성">활성</option>
+            <option value="비활성">비활성</option>
+          </Select>
+        </div>
+      </FilterPanel>
       
       <Card>
         <DataTable columns={policyColumns} rows={currentData} rowKey={(r) => r.id} onRowClick={setSelectedPolicy} sortConfig={sortConfig} onSort={handleSort} />

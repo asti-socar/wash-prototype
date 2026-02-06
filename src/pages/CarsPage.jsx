@@ -22,6 +22,7 @@ import {
   Select,
   Badge,
   Chip,
+  FilterPanel,
   Drawer,
   usePagination,
   Pagination,
@@ -126,76 +127,60 @@ function CarsPage() {
         </div>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>검색 및 필터</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 gap-x-4 gap-y-5 md:grid-cols-12">
-            <div className="md:col-span-2">
-              <label htmlFor="searchField" className="block text-xs font-semibold text-[#6B778C] mb-1.5">검색항목</label>
-              <Select id="searchField" value={searchField} onChange={e => setSearchField(e.target.value)}>
-                <option value="plate">차량 번호</option>
-                <option value="zoneName">존 이름</option>
-                <option value="zoneId">존 ID</option>
-              </Select>
-            </div>
-            <div className="md:col-span-3">
-              <label htmlFor="searchQuery" className="block text-xs font-semibold text-[#6B778C] mb-1.5">검색어</label>
-              <div className="relative">
-                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#6B778C]" />
-                <Input 
-                  id="searchQuery"
-                  value={q} 
-                  onChange={(e) => setQ(e.target.value)} 
-                  placeholder={`${
-                    searchField === 'plate' ? '차량 번호' : searchField === 'zoneName' ? '존 이름' : '존 ID'
-                  } 검색`} 
-                  className="pl-9" 
-                />
-              </div>
-            </div>
-            <div className="md:col-span-2">
-              <label htmlFor="fRegion1" className="block text-xs font-semibold text-[#6B778C] mb-1.5">지역1</label>
-              <Select id="fRegion1" value={fRegion1} onChange={(e) => { setFRegion1(e.target.value); setFRegion2(""); }}>
-                <option value="">전체</option>
-                {regions1.map((v) => <option key={v} value={v}>{v}</option>)}
-              </Select>
-            </div>
-            <div className="md:col-span-2">
-              <label htmlFor="fRegion2" className="block text-xs font-semibold text-[#6B778C] mb-1.5">지역2</label>
-              <Select id="fRegion2" value={fRegion2} onChange={(e) => setFRegion2(e.target.value)}>
-                <option value="">전체</option>
-                {regions2.map((v) => <option key={v} value={v}>{v}</option>)}
-              </Select>
-            </div>
-            <div className="md:col-span-2">
-              <label htmlFor="fPartner" className="block text-xs font-semibold text-[#6B778C] mb-1.5">파트너 이름</label>
-              <Select id="fPartner" value={fPartner} onChange={(e) => setFPartner(e.target.value)}>
-                <option value="">전체</option>
-                {partners.map((v) => <option key={v} value={v}>{v}</option>)}
-              </Select>
-            </div>
-
-            <div className="md:col-span-12 flex flex-wrap items-center justify-between gap-2 pt-1">
-              <div className="flex flex-wrap gap-2">
-                {q ? <Chip onRemove={() => setQ("")}>검색: {q}</Chip> : null}
-                {fRegion1 ? <Chip onRemove={() => { setFRegion1(""); setFRegion2(""); }}>지역1: {fRegion1}</Chip> : null}
-                {fRegion2 ? <Chip onRemove={() => setFRegion2("")}>지역2: {fRegion2}</Chip> : null}
-                {fPartner ? <Chip onRemove={() => setFPartner("")}>파트너 이름: {fPartner}</Chip> : null}
-              </div>
-              <Button
-                variant="secondary"
-                onClick={() => {
-                  setQ(""); setFRegion1(""); setFRegion2(""); setFPartner("");
-                }}
-              >
-                필터 초기화
-              </Button>
-            </div>
+      <FilterPanel
+        chips={<>
+          {q ? <Chip onRemove={() => setQ("")}>검색: {q}</Chip> : null}
+          {fRegion1 ? <Chip onRemove={() => { setFRegion1(""); setFRegion2(""); }}>지역1: {fRegion1}</Chip> : null}
+          {fRegion2 ? <Chip onRemove={() => setFRegion2("")}>지역2: {fRegion2}</Chip> : null}
+          {fPartner ? <Chip onRemove={() => setFPartner("")}>파트너 이름: {fPartner}</Chip> : null}
+        </>}
+        onReset={() => { setQ(""); setFRegion1(""); setFRegion2(""); setFPartner(""); }}
+      >
+        <div className="md:col-span-2">
+          <label htmlFor="searchField" className="block text-xs font-semibold text-[#6B778C] mb-1.5">검색항목</label>
+          <Select id="searchField" value={searchField} onChange={e => setSearchField(e.target.value)}>
+            <option value="plate">차량 번호</option>
+            <option value="zoneName">존 이름</option>
+            <option value="zoneId">존 ID</option>
+          </Select>
+        </div>
+        <div className="md:col-span-3">
+          <label htmlFor="searchQuery" className="block text-xs font-semibold text-[#6B778C] mb-1.5">검색어</label>
+          <div className="relative">
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#6B778C]" />
+            <Input
+              id="searchQuery"
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              placeholder={`${
+                searchField === 'plate' ? '차량 번호' : searchField === 'zoneName' ? '존 이름' : '존 ID'
+              } 검색`}
+              className="pl-9"
+            />
           </div>
-        </CardContent>
-      </Card>
+        </div>
+        <div className="md:col-span-2">
+          <label htmlFor="fRegion1" className="block text-xs font-semibold text-[#6B778C] mb-1.5">지역1</label>
+          <Select id="fRegion1" value={fRegion1} onChange={(e) => { setFRegion1(e.target.value); setFRegion2(""); }}>
+            <option value="">전체</option>
+            {regions1.map((v) => <option key={v} value={v}>{v}</option>)}
+          </Select>
+        </div>
+        <div className="md:col-span-2">
+          <label htmlFor="fRegion2" className="block text-xs font-semibold text-[#6B778C] mb-1.5">지역2</label>
+          <Select id="fRegion2" value={fRegion2} onChange={(e) => setFRegion2(e.target.value)}>
+            <option value="">전체</option>
+            {regions2.map((v) => <option key={v} value={v}>{v}</option>)}
+          </Select>
+        </div>
+        <div className="md:col-span-2">
+          <label htmlFor="fPartner" className="block text-xs font-semibold text-[#6B778C] mb-1.5">파트너 이름</label>
+          <Select id="fPartner" value={fPartner} onChange={(e) => setFPartner(e.target.value)}>
+            <option value="">전체</option>
+            {partners.map((v) => <option key={v} value={v}>{v}</option>)}
+          </Select>
+        </div>
+      </FilterPanel>
 
 
 

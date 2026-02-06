@@ -1,4 +1,5 @@
 export const BROWN_HISTORY = [
+  { id: 91, date: "2026-02-06 18:30", content: "[리팩토링] 조회 조건 설정(FilterPanel) 공통 컴포넌트화: 9개 페이지 필터 UI 통일, 로컬 UI 컴포넌트 공용화, 칩(Chip) 표시 및 설정 초기화 버튼 전체 적용", isPolicyChange: false, links: [{ label: "오더 관리", page: "orders" }, { label: "차량 관리", page: "cars" }, { label: "미션 관리", page: "missions" }, { label: "청구 관리", page: "billing" }, { label: "합의 요청 관리", page: "settlement" }, { label: "존 정책 관리", page: "zone-policy" }, { label: "존 배정 관리", page: "zone-assignment" }, { label: "파트너 담당자 관리", page: "partner-managers" }, { label: "수행원 조회", page: "workers" }] },
   { id: 90, date: "2026-02-06 17:30", content: "[UI] 합의 요청 관리: 필터 적용 정보 칩(Chip) 표시 및 필터 초기화 버튼 추가", isPolicyChange: false, links: [{ label: "합의 요청 관리", page: "settlement" }] },
   { id: 89, date: "2026-02-06 17:00", content: "[용어] 합의 요청 관리: 상태 용어 변경 - '수락'→'승인', '거절'→'반려' (기능/목업/명세서 전체 반영)", isPolicyChange: true, links: [{ label: "합의 요청 관리", page: "settlement" }] },
   { id: 88, date: "2026-02-06 16:00", content: "[정책] 합의 요청 관리 고도화: 2단계 승인 처리자 1차/2차 분리(파트너 담당자/인터널 담당자), 검색 필터 추가(파트너 이름, 요청 유형, 요청일 기간), 필터 배치 순서 변경", isPolicyChange: true, links: [{ label: "합의 요청 관리", page: "settlement" }] },

@@ -32,6 +32,7 @@ import {
   Select,
   Badge,
   Chip,
+  FilterPanel,
   Drawer,
   usePagination,
   Pagination,
@@ -614,141 +615,111 @@ function OrdersPage({ quickFilter, onClearQuickFilter, initialOrderId, orders, s
         </div>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>검색 및 필터</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 gap-x-4 gap-y-5 md:grid-cols-12">
-            <div className="md:col-span-2">
-              <label htmlFor="searchField" className="block text-xs font-semibold text-[#6B778C] mb-1.5">검색항목</label>
-              <Select id="searchField" value={searchField} onChange={e => setSearchField(e.target.value)}>
-                <option value="plate">차량 번호</option>
-                <option value="carId">차량 ID</option>
-                <option value="orderId">오더 ID</option>
-                <option value="zone">존 이름</option>
-              </Select>
-            </div>
-            <div className="md:col-span-2">
-              <label htmlFor="searchQuery" className="block text-xs font-semibold text-[#6B778C] mb-1.5">검색어</label>
-              <div className="relative">
-                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#6B778C]" />
-                <Input 
-                  id="searchQuery"
-                  value={q} 
-                  onChange={(e) => setQ(e.target.value)} 
-                  placeholder={`${
-                    searchField === 'plate' ? '차량 번호' : searchField === 'carId' ? '차량 ID' : searchField === 'orderId' ? '오더 ID' : searchField === 'zone' ? '존 이름' : '수행원'
-                  } 검색`} 
-                  className="pl-9" 
-                />
-              </div>
-            </div>
-            <div className="md:col-span-2">
-              <label htmlFor="periodFrom" className="block text-xs font-semibold text-[#6B778C] mb-1.5">발행일 시작</label>
-              <Input id="periodFrom" type="date" value={periodFrom} onChange={(e) => setPeriodFrom(e.target.value)} />
-            </div>
-            <div className="md:col-span-2">
-              <label htmlFor="periodTo" className="block text-xs font-semibold text-[#6B778C] mb-1.5">발행일 종료</label>
-              <Input id="periodTo" type="date" value={periodTo} onChange={(e) => setPeriodTo(e.target.value)} />
-            </div>
-            <div className="md:col-span-2">
-              <label htmlFor="fRegion1" className="block text-xs font-semibold text-[#6B778C] mb-1.5">지역1</label>
-              <Select id="fRegion1" value={fRegion1} onChange={(e) => { setFRegion1(e.target.value); setFRegion2(""); }}>
-                <option value="">전체</option>
-                {regions1.map((v) => <option key={v} value={v}>{v}</option>)}
-              </Select>
-            </div>
-            <div className="md:col-span-2">
-              <label htmlFor="fRegion2" className="block text-xs font-semibold text-[#6B778C] mb-1.5">지역2</label>
-              <Select id="fRegion2" value={fRegion2} onChange={(e) => setFRegion2(e.target.value)}>
-                <option value="">전체</option>
-                {regions2.map((v) => <option key={v} value={v}>{v}</option>)}
-              </Select>
-            </div>
-            <div className="md:col-span-2">
-              <label htmlFor="fOrderGroup" className="block text-xs font-semibold text-[#6B778C] mb-1.5">오더 구분</label>
-              <Select id="fOrderGroup" value={fOrderGroup} onChange={(e) => setFOrderGroup(e.target.value)}>
-                <option value="">전체</option>
-                {orderGroups.map((v) => <option key={v} value={v}>{v}</option>)}
-              </Select>
-            </div>
-            <div className="md:col-span-2">
-              <label htmlFor="fOrderType" className="block text-xs font-semibold text-[#6B778C] mb-1.5">발행 유형</label>
-              <Select id="fOrderType" value={fOrderType} onChange={(e) => setFOrderType(e.target.value)}>
-                <option value="">전체</option>
-                {orderTypes.map((v) => <option key={v} value={v}>{v}</option>)}
-              </Select>
-            </div>
-            <div className="md:col-span-2">
-              <label htmlFor="fWashType" className="block text-xs font-semibold text-[#6B778C] mb-1.5">세차 유형</label>
-              <Select id="fWashType" value={fWashType} onChange={(e) => setFWashType(e.target.value)}>
-                <option value="">전체</option>
-                {washTypes.map((v) => <option key={v} value={v}>{v}</option>)}
-              </Select>
-            </div>
-            <div className="md:col-span-2">
-              <label htmlFor="fPartner" className="block text-xs font-semibold text-[#6B778C] mb-1.5">파트너 이름</label>
-              <Select id="fPartner" value={fPartner} onChange={(e) => setFPartner(e.target.value)}>
-                <option value="">전체</option>
-                {partners.map((v) => <option key={v} value={v}>{v}</option>)}
-              </Select>
-            </div>
-            <div className="md:col-span-2">
-              <label htmlFor="fPartnerType" className="block text-xs font-semibold text-[#6B778C] mb-1.5">파트너 유형</label>
-              <Select id="fPartnerType" value={fPartnerType} onChange={(e) => {
-                setFPartnerType(e.target.value);
-              }}>
-                <option value="">전체</option>
-                <option value="현장">현장</option>
-                <option value="입고">입고</option>
-                <option value="핸들러">핸들러</option>
-              </Select>
-            </div>
-            <div className="md:col-span-2">
-              <label htmlFor="fStatus" className="block text-xs font-semibold text-[#6B778C] mb-1.5">진행 상태</label>
-              <Select id="fStatus" value={fStatus} onChange={(e) => { setFStatus(e.target.value); if (e.target.value !== "취소") setFCancelType(""); onClearQuickFilter?.(); }}>
-                <option value="">전체</option>
-                {statuses.map((v) => <option key={v} value={v}>{v}</option>)}
-              </Select>
-            </div>
-            {fStatus === "취소" && (
-              <div className="md:col-span-2">
-                <label htmlFor="fCancelType" className="block text-xs font-semibold text-[#6B778C] mb-1.5">취소 유형</label>
-                <Select id="fCancelType" value={fCancelType} onChange={(e) => { setFCancelType(e.target.value); onClearQuickFilter?.(); }}>
-                  <option value="">전체</option>
-                  {CANCEL_TYPES.map((v) => <option key={v} value={v}>{v}</option>)}
-                </Select>
-              </div>
-            )}
-
-            <div className="md:col-span-12 flex flex-wrap items-center justify-between gap-2 pt-1">
-              {chips}
-              <Button
-                variant="secondary"
-                onClick={() => {
-                  setQ("");
-                  setPeriodFrom(() => {
-                    const d = new Date();
-                    d.setMonth(d.getMonth() - 1);
-                    return toYmd(d);
-                  });
-                  setPeriodTo(toYmd(today));
-                  setFRegion1(""); setFRegion2("");
-                  setFOrderGroup(""); setFOrderType(""); setFWashType("");
-                  setFPartner("");
-                  setFPartnerType("");
-                  setFStatus("");
-                  setFCancelType("");
-                  onClearQuickFilter?.();
-                }}
-              >
-                필터 초기화
-              </Button>
-            </div>
+      <FilterPanel
+        chips={chips}
+        onReset={() => {
+          setQ("");
+          setPeriodFrom(() => { const d = new Date(); d.setMonth(d.getMonth() - 1); return toYmd(d); });
+          setPeriodTo(toYmd(today));
+          setFRegion1(""); setFRegion2("");
+          setFOrderGroup(""); setFOrderType(""); setFWashType("");
+          setFPartner(""); setFPartnerType("");
+          setFStatus(""); setFCancelType("");
+          onClearQuickFilter?.();
+        }}
+      >
+        <div className="md:col-span-2">
+          <label htmlFor="searchField" className="block text-xs font-semibold text-[#6B778C] mb-1.5">검색항목</label>
+          <Select id="searchField" value={searchField} onChange={e => setSearchField(e.target.value)}>
+            <option value="plate">차량 번호</option>
+            <option value="carId">차량 ID</option>
+            <option value="orderId">오더 ID</option>
+            <option value="zone">존 이름</option>
+          </Select>
+        </div>
+        <div className="md:col-span-2">
+          <label htmlFor="searchQuery" className="block text-xs font-semibold text-[#6B778C] mb-1.5">검색어</label>
+          <div className="relative">
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#6B778C]" />
+            <Input id="searchQuery" value={q} onChange={(e) => setQ(e.target.value)} placeholder={`${searchField === 'plate' ? '차량 번호' : searchField === 'carId' ? '차량 ID' : searchField === 'orderId' ? '오더 ID' : '존 이름'} 검색`} className="pl-9" />
           </div>
-        </CardContent>
-      </Card>
+        </div>
+        <div className="md:col-span-2">
+          <label htmlFor="periodFrom" className="block text-xs font-semibold text-[#6B778C] mb-1.5">발행일 시작</label>
+          <Input id="periodFrom" type="date" value={periodFrom} onChange={(e) => setPeriodFrom(e.target.value)} />
+        </div>
+        <div className="md:col-span-2">
+          <label htmlFor="periodTo" className="block text-xs font-semibold text-[#6B778C] mb-1.5">발행일 종료</label>
+          <Input id="periodTo" type="date" value={periodTo} onChange={(e) => setPeriodTo(e.target.value)} />
+        </div>
+        <div className="md:col-span-2">
+          <label htmlFor="fRegion1" className="block text-xs font-semibold text-[#6B778C] mb-1.5">지역1</label>
+          <Select id="fRegion1" value={fRegion1} onChange={(e) => { setFRegion1(e.target.value); setFRegion2(""); }}>
+            <option value="">전체</option>
+            {regions1.map((v) => <option key={v} value={v}>{v}</option>)}
+          </Select>
+        </div>
+        <div className="md:col-span-2">
+          <label htmlFor="fRegion2" className="block text-xs font-semibold text-[#6B778C] mb-1.5">지역2</label>
+          <Select id="fRegion2" value={fRegion2} onChange={(e) => setFRegion2(e.target.value)}>
+            <option value="">전체</option>
+            {regions2.map((v) => <option key={v} value={v}>{v}</option>)}
+          </Select>
+        </div>
+        <div className="md:col-span-2">
+          <label htmlFor="fOrderGroup" className="block text-xs font-semibold text-[#6B778C] mb-1.5">오더 구분</label>
+          <Select id="fOrderGroup" value={fOrderGroup} onChange={(e) => setFOrderGroup(e.target.value)}>
+            <option value="">전체</option>
+            {orderGroups.map((v) => <option key={v} value={v}>{v}</option>)}
+          </Select>
+        </div>
+        <div className="md:col-span-2">
+          <label htmlFor="fOrderType" className="block text-xs font-semibold text-[#6B778C] mb-1.5">발행 유형</label>
+          <Select id="fOrderType" value={fOrderType} onChange={(e) => setFOrderType(e.target.value)}>
+            <option value="">전체</option>
+            {orderTypes.map((v) => <option key={v} value={v}>{v}</option>)}
+          </Select>
+        </div>
+        <div className="md:col-span-2">
+          <label htmlFor="fWashType" className="block text-xs font-semibold text-[#6B778C] mb-1.5">세차 유형</label>
+          <Select id="fWashType" value={fWashType} onChange={(e) => setFWashType(e.target.value)}>
+            <option value="">전체</option>
+            {washTypes.map((v) => <option key={v} value={v}>{v}</option>)}
+          </Select>
+        </div>
+        <div className="md:col-span-2">
+          <label htmlFor="fPartner" className="block text-xs font-semibold text-[#6B778C] mb-1.5">파트너 이름</label>
+          <Select id="fPartner" value={fPartner} onChange={(e) => setFPartner(e.target.value)}>
+            <option value="">전체</option>
+            {partners.map((v) => <option key={v} value={v}>{v}</option>)}
+          </Select>
+        </div>
+        <div className="md:col-span-2">
+          <label htmlFor="fPartnerType" className="block text-xs font-semibold text-[#6B778C] mb-1.5">파트너 유형</label>
+          <Select id="fPartnerType" value={fPartnerType} onChange={(e) => setFPartnerType(e.target.value)}>
+            <option value="">전체</option>
+            <option value="현장">현장</option>
+            <option value="입고">입고</option>
+            <option value="핸들러">핸들러</option>
+          </Select>
+        </div>
+        <div className="md:col-span-2">
+          <label htmlFor="fStatus" className="block text-xs font-semibold text-[#6B778C] mb-1.5">진행 상태</label>
+          <Select id="fStatus" value={fStatus} onChange={(e) => { setFStatus(e.target.value); if (e.target.value !== "취소") setFCancelType(""); onClearQuickFilter?.(); }}>
+            <option value="">전체</option>
+            {statuses.map((v) => <option key={v} value={v}>{v}</option>)}
+          </Select>
+        </div>
+        {fStatus === "취소" && (
+          <div className="md:col-span-2">
+            <label htmlFor="fCancelType" className="block text-xs font-semibold text-[#6B778C] mb-1.5">취소 유형</label>
+            <Select id="fCancelType" value={fCancelType} onChange={(e) => { setFCancelType(e.target.value); onClearQuickFilter?.(); }}>
+              <option value="">전체</option>
+              {CANCEL_TYPES.map((v) => <option key={v} value={v}>{v}</option>)}
+            </Select>
+          </div>
+        )}
+      </FilterPanel>
 
       <DataTable
         columns={columns}

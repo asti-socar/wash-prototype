@@ -1,166 +1,10 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import {
-  Search, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, ArrowUpDown, X, MapPin,
+  Search, MapPin,
   Upload, Download, AlertCircle, CheckCircle2, FileSpreadsheet
 } from 'lucide-react';
+import { cn, Card, CardHeader, CardTitle, CardContent, Button, Input, Select, Badge, Chip, FilterPanel, Drawer, Field, usePagination, Pagination, DataTable } from '../components/ui';
 import zoneAssignmentsData from '../mocks/zoneAssignments.json';
-
-// ============== UTILITY & UI COMPONENTS ==============
-function cn(...classes) {
-  return classes.filter(Boolean).join(" ");
-}
-
-function Card({ className, children }) {
-  return <div className={cn("rounded-xl bg-white border border-[#E2E8F0] shadow-[0_2px_4px_rgba(0,0,0,0.02)]", className)}>{children}</div>;
-}
-function CardHeader({ className, children }) {
-  return <div className={cn("p-5 pb-3", className)}>{children}</div>;
-}
-function CardTitle({ className, children }) {
-  return <div className={cn("text-sm font-bold text-[#172B4D]", className)}>{children}</div>;
-}
-function CardContent({ className, children }) {
-  return <div className={cn("p-5 pt-2", className)}>{children}</div>;
-}
-function Button({ className, variant = "default", size = "md", ...props }) {
-  const base = "inline-flex items-center justify-center rounded-lg font-semibold transition-all focus:outline-none focus:ring-2 focus:ring-[#0052CC] focus:ring-offset-1 disabled:opacity-50 disabled:pointer-events-none active:scale-[0.98]";
-  const variants = {
-    default: "bg-[#0052CC] text-white hover:bg-[#0047B3] shadow-sm",
-    secondary: "bg-white text-[#172B4D] border border-[#E2E8F0] hover:bg-[#F8FAFC] shadow-sm text-[#334155]",
-    ghost: "bg-transparent text-[#172B4D] hover:bg-[#F4F5F7]",
-  };
-  const sizes = { sm: "h-9 px-3 text-sm", md: "h-10 px-3.5 text-sm" };
-  return <button className={cn(base, variants[variant], sizes[size], className)} {...props} />;
-}
-function Input({ className, ...props }) {
-  return <input className={cn("h-10 w-full rounded-lg border border-[#E2E8F0] bg-white px-3 text-sm text-[#172B4D] outline-none transition placeholder:text-[#94A3B8] focus:border-[#0052CC] focus:ring-1 focus:ring-[#0052CC]", className)} {...props} />;
-}
-function Select({ className, children, ...props }) {
-  return <select className={cn("h-10 w-full rounded-lg border border-[#E2E8F0] bg-white px-3 text-sm text-[#172B4D] outline-none transition focus:border-[#0052CC] focus:ring-1 focus:ring-[#0052CC]", className)} {...props}>{children}</select>;
-}
-function Badge({ children, tone = "default", className }) {
-  const tones = {
-    default: "bg-slate-100 text-slate-800",
-    warn: "bg-amber-100 text-amber-800",
-    ok: "bg-emerald-100 text-emerald-800",
-    info: "bg-blue-100 text-blue-800",
-  };
-  return <span className={cn("inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-bold", tones[tone], className)}>{children}</span>;
-}
-
-function usePagination(data, itemsPerPage = 40) {
-  const [currentPage, setCurrentPage] = useState(1);
-  useEffect(() => setCurrentPage(1), [data]);
-  const totalItems = data.length;
-  const totalPages = Math.max(1, Math.ceil(totalItems / itemsPerPage));
-  const currentData = useMemo(() => data.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage), [data, currentPage, itemsPerPage]);
-  return { currentPage, setCurrentPage, totalPages, currentData, totalItems };
-}
-
-function Pagination({ currentPage, totalPages, onPageChange }) {
-  if (totalPages <= 1) return null;
-  const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
-  return (
-    <div className="flex items-center justify-center gap-1 py-4">
-      <Button variant="ghost" size="sm" onClick={() => onPageChange(1)} disabled={currentPage === 1}><ChevronsLeft className="h-4 w-4" /></Button>
-      <Button variant="ghost" size="sm" onClick={() => onPageChange(currentPage - 1)} disabled={currentPage === 1}><ChevronLeft className="h-4 w-4" /></Button>
-      {pages.map(p => (
-        <Button key={p} variant={p === currentPage ? "default" : "ghost"} size="sm" className={cn("w-8 h-8 p-0", p !== currentPage && "font-normal text-[#6B778C]")} onClick={() => onPageChange(p)}>{p}</Button>
-      ))}
-      <Button variant="ghost" size="sm" onClick={() => onPageChange(currentPage + 1)} disabled={currentPage === totalPages}><ChevronRight className="h-4 w-4" /></Button>
-      <Button variant="ghost" size="sm" onClick={() => onPageChange(totalPages)} disabled={currentPage === totalPages}><ChevronsRight className="h-4 w-4" /></Button>
-    </div>
-  );
-}
-
-function DataTable({ columns, rows, onRowClick, rowKey, sortConfig, onSort }) {
-  return (
-    <div className="overflow-x-auto rounded-xl border border-[#E2E8F0]">
-      <table className="min-w-full bg-white text-left text-sm">
-        <thead className="bg-[#F8FAFC] border-b border-[#E2E8F0]">
-          <tr>
-            {columns.map(c => (
-              <th key={c.key} className={cn("whitespace-nowrap px-4 py-3.5 text-[13px] font-semibold text-[#475569] cursor-pointer hover:bg-slate-100", c.align === 'center' && 'text-center')} onClick={() => c.sortable !== false && onSort && onSort(c.key)}>
-                <div className={cn("flex items-center gap-1", c.align === 'center' && 'justify-center')}>
-                  {c.header}
-                  {c.sortable !== false && sortConfig?.key === c.key && (
-                    <ArrowUpDown className={cn("h-3 w-3", sortConfig.direction === 'asc' ? "text-[#0052CC]" : "text-[#0052CC] rotate-180")} />
-                  )}
-                </div>
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-[#E2E8F0]">
-          {rows.length === 0 ? <tr><td colSpan={columns.length} className="px-4 py-10 text-center text-sm text-[#6B778C]">결과가 없습니다.</td></tr> : rows.map(r => (
-            <tr key={rowKey(r)} className={cn(onRowClick ? "cursor-pointer hover:bg-[#F1F5F9]" : "hover:bg-[#F8FAFC]")} onClick={() => onRowClick?.(r)}>
-              {columns.map(c => <td key={c.key} className={cn("whitespace-nowrap px-4 py-3.5 text-sm text-[#1E293B]", c.align === 'center' && 'text-center')}>{typeof c.render === "function" ? c.render(r) : r[c.key]}</td>)}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
-}
-
-function Drawer({ open, title, onClose, children, footer }) {
-  const [width, setWidth] = useState(500);
-  const [isResizing, setIsResizing] = useState(false);
-
-  useEffect(() => {
-    if (open) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'auto';
-    }
-    return () => { document.body.style.overflow = 'auto'; };
-  }, [open]);
-
-  useEffect(() => {
-    const handleMouseMove = (e) => {
-      if (!isResizing) return;
-      const newWidth = window.innerWidth - e.clientX;
-      if (newWidth >= 400 && newWidth <= 900) setWidth(newWidth);
-    };
-    const handleMouseUp = () => setIsResizing(false);
-
-    if (isResizing) {
-      document.addEventListener("mousemove", handleMouseMove);
-      document.addEventListener("mouseup", handleMouseUp);
-      document.body.style.cursor = "col-resize";
-    }
-    return () => {
-      document.removeEventListener("mousemove", handleMouseMove);
-      document.removeEventListener("mouseup", handleMouseUp);
-      document.body.style.cursor = "";
-    };
-  }, [isResizing]);
-
-  if (!open) return null;
-  return (
-    <div className="fixed inset-0 z-50">
-      <div className="absolute inset-0 bg-black/30" onClick={onClose} />
-      <div className="absolute right-0 top-0 h-full bg-white shadow-2xl flex flex-col" style={{ width }}>
-        <div className="absolute left-0 top-0 bottom-0 w-1.5 cursor-col-resize hover:bg-[#0052CC] transition-colors" onMouseDown={() => setIsResizing(true)} />
-        <div className="flex h-16 items-center justify-between border-b border-[#DFE1E6] px-6 shrink-0">
-          <div className="text-lg font-bold text-[#172B4D]">{title}</div>
-          <button onClick={onClose}><X className="h-6 w-6 text-gray-500" /></button>
-        </div>
-        <div className="flex-1 overflow-y-auto p-6 bg-slate-50">{children}</div>
-        {footer && <div className="flex h-[72px] items-center justify-end gap-2 border-t border-[#DFE1E6] px-6 bg-[#F4F5F7] shrink-0">{footer}</div>}
-      </div>
-    </div>
-  );
-}
-
-function Field({ label, value }) {
-  return (
-    <div className="flex items-start justify-between gap-3 py-2">
-      <div className="w-28 shrink-0 text-xs font-semibold text-[#6B778C]">{label}</div>
-      <div className="min-w-0 flex-1 text-sm text-[#172B4D]">{value}</div>
-    </div>
-  );
-}
 
 // ============== MOCK PARTNERS ==============
 const MOCK_PARTNERS = [
@@ -333,58 +177,45 @@ export default function ZoneAssignmentPage() {
       </div>
 
       {/* Filters */}
-      <div className="flex flex-wrap items-center gap-3">
-        <div className="flex items-center gap-2">
-          <span className="text-sm font-medium text-[#6B778C]">지역1</span>
-          <select
-            value={region1Filter}
-            onChange={(e) => setRegion1Filter(e.target.value)}
-            className="h-9 rounded-lg border border-[#E2E8F0] bg-white px-3 text-sm text-[#172B4D] outline-none focus:border-[#0052CC] focus:ring-1 focus:ring-[#0052CC]"
-          >
+      <FilterPanel
+        chips={<>
+          {region1Filter ? <Chip onRemove={() => { setRegion1Filter(""); setRegion2Filter(""); }}>지역1: {region1Filter}</Chip> : null}
+          {region2Filter ? <Chip onRemove={() => setRegion2Filter("")}>지역2: {region2Filter}</Chip> : null}
+          {assignmentFilter ? <Chip onRemove={() => setAssignmentFilter("")}>배정 상태: {assignmentFilter}</Chip> : null}
+          {searchQuery ? <Chip onRemove={() => setSearchQuery("")}>검색: {searchQuery}</Chip> : null}
+        </>}
+        onReset={() => { setRegion1Filter(""); setRegion2Filter(""); setAssignmentFilter(""); setSearchQuery(""); }}
+      >
+        <div className="md:col-span-2">
+          <label className="block text-xs font-semibold text-[#6B778C] mb-1.5">지역1</label>
+          <Select value={region1Filter} onChange={(e) => setRegion1Filter(e.target.value)}>
             <option value="">전체</option>
             {region1Options.map(r => <option key={r} value={r}>{r}</option>)}
-          </select>
+          </Select>
         </div>
-        <div className="flex items-center gap-2">
-          <span className={cn("text-sm font-medium", region1Filter ? "text-[#6B778C]" : "text-[#94A3B8]")}>지역2</span>
-          <select
-            value={region2Filter}
-            onChange={(e) => setRegion2Filter(e.target.value)}
-            disabled={!region1Filter}
-            className={cn(
-              "h-9 rounded-lg border border-[#E2E8F0] px-3 text-sm outline-none focus:border-[#0052CC] focus:ring-1 focus:ring-[#0052CC]",
-              region1Filter ? "bg-white text-[#172B4D]" : "bg-[#F1F5F9] text-[#94A3B8] cursor-not-allowed"
-            )}
-          >
+        <div className="md:col-span-2">
+          <label className="block text-xs font-semibold text-[#6B778C] mb-1.5">지역2</label>
+          <Select value={region2Filter} onChange={(e) => setRegion2Filter(e.target.value)} disabled={!region1Filter}>
             <option value="">전체</option>
             {region2Options.map(r => <option key={r} value={r}>{r}</option>)}
-          </select>
+          </Select>
         </div>
-        <div className="flex items-center gap-2">
-          <span className="text-sm font-medium text-[#6B778C]">배정 상태</span>
-          <select
-            value={assignmentFilter}
-            onChange={(e) => setAssignmentFilter(e.target.value)}
-            className="h-9 rounded-lg border border-[#E2E8F0] bg-white px-3 text-sm text-[#172B4D] outline-none focus:border-[#0052CC] focus:ring-1 focus:ring-[#0052CC]"
-          >
+        <div className="md:col-span-2">
+          <label className="block text-xs font-semibold text-[#6B778C] mb-1.5">배정 상태</label>
+          <Select value={assignmentFilter} onChange={(e) => setAssignmentFilter(e.target.value)}>
             <option value="">전체</option>
             <option value="배정">배정</option>
             <option value="미배정">미배정</option>
-          </select>
+          </Select>
         </div>
-        <div className="flex items-center gap-2 ml-auto">
+        <div className="md:col-span-4">
+          <label className="block text-xs font-semibold text-[#6B778C] mb-1.5">검색</label>
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#94A3B8]" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="존 ID 또는 이름 검색..."
-              className="h-9 w-64 rounded-lg border border-[#E2E8F0] bg-white pl-9 pr-3 text-sm text-[#172B4D] outline-none placeholder:text-[#94A3B8] focus:border-[#0052CC] focus:ring-1 focus:ring-[#0052CC]"
-            />
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#6B778C]" />
+            <Input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="존 ID 또는 이름 검색..." className="pl-9" />
           </div>
         </div>
-      </div>
+      </FilterPanel>
 
       <DataTable
         columns={columns}

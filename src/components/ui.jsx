@@ -143,6 +143,28 @@ export function Badge({ children, tone = "default" }) {
     </span>
   );
 }
+export function FilterPanel({ children, chips, onReset }) {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>조회 조건 설정</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="grid grid-cols-1 gap-x-4 gap-y-5 md:grid-cols-12">
+          {children}
+          <div className="md:col-span-12 flex flex-wrap items-center justify-between gap-2 pt-1">
+            <div className="flex flex-wrap gap-2">
+              {chips}
+            </div>
+            <Button variant="secondary" onClick={onReset}>
+              설정 초기화
+            </Button>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
 export function Chip({ children, onRemove }) {
   return (
     <span className="inline-flex items-center gap-1 rounded-lg bg-[#F4F5F7] px-2 py-1 text-xs font-medium text-[#172B4D] border border-[#DFE1E6]">

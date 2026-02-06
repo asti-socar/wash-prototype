@@ -1,41 +1,11 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { 
-  Search, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, ArrowUpDown, Edit, X
-} from 'lucide-react';
+import { Search, Edit, X } from 'lucide-react';
+import {
+  cn, Card, CardHeader, CardTitle, CardContent, Button, Input, Select,
+  usePagination, Pagination, DataTable, FilterPanel, Chip,
+} from '../components/ui';
 
-// ============== UTILITY & UI COMPONENTS (from PartnersPage.jsx) ==============
-function cn(...classes) {
-  return classes.filter(Boolean).join(" ");
-}
-
-function Card({ className, children }) {
-  return <div className={cn("rounded-xl bg-white border border-[#E2E8F0] shadow-[0_2px_4px_rgba(0,0,0,0.02)]", className)}>{children}</div>;
-}
-function CardHeader({ className, children }) {
-  return <div className={cn("p-5 pb-3", className)}>{children}</div>;
-}
-function CardTitle({ className, children }) {
-  return <div className={cn("text-sm font-bold text-[#172B4D]", className)}>{children}</div>;
-}
-function CardContent({ className, children }) {
-  return <div className={cn("p-5 pt-2", className)}>{children}</div>;
-}
-function Button({ className, variant = "default", size = "md", ...props }) {
-  const base = "inline-flex items-center justify-center rounded-lg font-semibold transition-all focus:outline-none focus:ring-2 focus:ring-[#0052CC] focus:ring-offset-1 disabled:opacity-50 disabled:pointer-events-none active:scale-[0.98]";
-  const variants = {
-    default: "bg-[#0052CC] text-white hover:bg-[#0047B3] shadow-sm",
-    secondary: "bg-white text-[#172B4D] border border-[#E2E8F0] hover:bg-[#F8FAFC] shadow-sm text-[#334155]",
-    ghost: "bg-transparent text-[#172B4D] hover:bg-[#F4F5F7]",
-  };
-  const sizes = { sm: "h-9 px-3 text-sm", md: "h-10 px-3.5 text-sm" };
-  return <button className={cn(base, variants[variant], sizes[size], className)} {...props} />;
-}
-function Input({ className, ...props }) {
-  return <input className={cn("h-10 w-full rounded-lg border border-[#E2E8F0] bg-white px-3 text-sm text-[#172B4D] outline-none transition placeholder:text-[#94A3B8] focus:border-[#0052CC] focus:ring-1 focus:ring-[#0052CC]", className)} {...props} />;
-}
-function Select({ className, children, ...props }) {
-  return <select className={cn("h-10 w-full rounded-lg border border-[#E2E8F0] bg-white px-3 text-sm text-[#172B4D] outline-none transition focus:border-[#0052CC] focus:ring-1 focus:ring-[#0052CC]", className)} {...props}>{children}</select>;
-}
+// ============== LOCAL UI COMPONENTS (not in shared ui.jsx) ==============
 function Textarea({ className, ...props }) {
   return <textarea className={cn("w-full rounded-lg border border-[#E2E8F0] bg-white px-3 py-2 text-sm text-[#172B4D] outline-none transition placeholder:text-[#94A3B8] focus:border-[#0052CC] focus:ring-1 focus:ring-[#0052CC]", className)} rows={4} {...props} />;
 }
@@ -50,60 +20,6 @@ function Badge({ children, tone = "default", className }) {
   return <span className={cn("inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-bold", tones[tone], className)}>{children}</span>;
 }
 
-function usePagination(data, itemsPerPage = 15) {
-  const [currentPage, setCurrentPage] = useState(1);
-  useEffect(() => setCurrentPage(1), [data]);
-  const totalItems = data.length;
-  const totalPages = Math.max(1, Math.ceil(totalItems / itemsPerPage));
-  const currentData = useMemo(() => data.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage), [data, currentPage, itemsPerPage]);
-  return { currentPage, setCurrentPage, totalPages, currentData, totalItems };
-}
-
-function Pagination({ currentPage, totalPages, onPageChange }) {
-  if (totalPages <= 1) return null;
-  const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
-  return (
-    <div className="flex items-center justify-center gap-1 py-4">
-      <Button variant="ghost" size="sm" onClick={() => onPageChange(1)} disabled={currentPage === 1}><ChevronsLeft className="h-4 w-4" /></Button>
-      <Button variant="ghost" size="sm" onClick={() => onPageChange(currentPage - 1)} disabled={currentPage === 1}><ChevronLeft className="h-4 w-4" /></Button>
-      {pages.map(p => (
-        <Button key={p} variant={p === currentPage ? "default" : "ghost"} size="sm" className={cn("w-8 h-8 p-0", p !== currentPage && "font-normal text-[#6B778C]")} onClick={() => onPageChange(p)}>{p}</Button>
-      ))}
-      <Button variant="ghost" size="sm" onClick={() => onPageChange(currentPage + 1)} disabled={currentPage === totalPages}><ChevronRight className="h-4 w-4" /></Button>
-      <Button variant="ghost" size="sm" onClick={() => onPageChange(totalPages)} disabled={currentPage === totalPages}><ChevronsRight className="h-4 w-4" /></Button>
-    </div>
-  );
-}
-
-function DataTable({ columns, rows, onRowClick, rowKey, sortConfig, onSort }) {
-  return (
-    <div className="overflow-x-auto rounded-xl border border-[#E2E8F0]">
-      <table className="min-w-full bg-white text-left text-sm">
-        <thead className="bg-[#F8FAFC] border-b border-[#E2E8F0]">
-          <tr>
-            {columns.map(c => (
-              <th key={c.key} className="whitespace-nowrap px-4 py-3.5 text-[13px] font-semibold text-[#475569] cursor-pointer hover:bg-slate-100" onClick={() => onSort && onSort(c.key)}>
-                <div className="flex items-center gap-1">
-                  {c.header}
-                  {sortConfig?.key === c.key && (
-                    <ArrowUpDown className={cn("h-3 w-3", sortConfig.direction === 'asc' ? "text-[#0052CC]" : "text-[#0052CC] rotate-180")} />
-                  )}
-                </div>
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-[#E2E8F0]">
-          {rows.length === 0 ? <tr><td colSpan={columns.length} className="px-4 py-10 text-center text-sm text-[#6B778C]">결과가 없습니다.</td></tr> : rows.map(r => (
-            <tr key={rowKey(r)} className={cn(onRowClick ? "cursor-pointer hover:bg-[#F1F5F9]" : "hover:bg-[#F8FAFC]")} onClick={() => onRowClick?.(r)}>
-              {columns.map(c => <td key={c.key} className="whitespace-nowrap px-4 py-3.5 text-sm text-[#1E293B]">{typeof c.render === "function" ? c.render(r) : r[c.key]}</td>)}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
-}
 function Drawer({ open, title, onClose, children, footer }) {
   const [width, setWidth] = useState(500);
   const [isResizing, setIsResizing] = useState(false);
@@ -341,45 +257,51 @@ export default function ZonePolicyPage() {
         </Button>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>검색 및 필터</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-wrap items-center gap-3">
-            {/* Search Group */}
-            <div className="flex gap-1 w-full sm:w-auto sm:flex-1 sm:min-w-[320px]">
-              <Select value={searchField} onChange={e => setSearchField(e.target.value)} className="!w-32 shrink-0">
-                  <option value="zoneId">Zone ID</option>
-                  <option value="zoneName">존 이름</option>
-              </Select>
-              <div className="relative flex-1">
-                  <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#6B778C]" />
-                  <Input value={q} onChange={e => setQ(e.target.value)} placeholder="검색어 입력 (콤마/공백으로 구분)" className="pl-9" />
-              </div>
-            </div>
-
-            {/* Other Filters */}
-            <Select value={zoneTypeFilter} onChange={e => setZoneTypeFilter(e.target.value)} className="w-full sm:w-40">
-              <option value="">존 유형 전체</option>
-              {ZONE_TYPE_OPTIONS.map(o => <option key={o} value={o}>{o}</option>)}
-            </Select>
-            <Select value={fRegion1} onChange={e => setFRegion1(e.target.value)} className="w-full sm:w-40">
-              <option value="">Region 1 전체</option>
-              {region1Options.map(r => <option key={r} value={r}>{r}</option>)}
-            </Select>
-            <Select value={fRegion2} onChange={e => setFRegion2(e.target.value)} disabled={!fRegion1} className="w-full sm:w-40">
-              <option value="">Region 2 전체</option>
-              {region2Options.map(r => <option key={r} value={r}>{r}</option>)}
-            </Select>
-            
-            {/* Reset Button */}
-            <div className="w-full sm:w-auto">
-              <Button variant="secondary" onClick={resetFilters} className="w-full sm:w-auto">필터 초기화</Button>
-            </div>
+      <FilterPanel
+        chips={<>
+          {q ? <Chip onRemove={() => setQ("")}>검색: {q}</Chip> : null}
+          {zoneTypeFilter ? <Chip onRemove={() => setZoneTypeFilter("")}>존 유형: {zoneTypeFilter}</Chip> : null}
+          {fRegion1 ? <Chip onRemove={() => { setFRegion1(""); setFRegion2(""); }}>지역1: {fRegion1}</Chip> : null}
+          {fRegion2 ? <Chip onRemove={() => setFRegion2("")}>지역2: {fRegion2}</Chip> : null}
+        </>}
+        onReset={resetFilters}
+      >
+        <div className="md:col-span-2">
+          <label className="block text-xs font-semibold text-[#6B778C] mb-1.5">검색항목</label>
+          <Select value={searchField} onChange={e => setSearchField(e.target.value)}>
+            <option value="zoneId">Zone ID</option>
+            <option value="zoneName">존 이름</option>
+          </Select>
+        </div>
+        <div className="md:col-span-4">
+          <label className="block text-xs font-semibold text-[#6B778C] mb-1.5">검색어</label>
+          <div className="relative">
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#6B778C]" />
+            <Input value={q} onChange={e => setQ(e.target.value)} placeholder="검색어 입력 (콤마/공백으로 구분)" className="pl-9" />
           </div>
-        </CardContent>
-      </Card>
+        </div>
+        <div className="md:col-span-2">
+          <label className="block text-xs font-semibold text-[#6B778C] mb-1.5">존 유형</label>
+          <Select value={zoneTypeFilter} onChange={e => setZoneTypeFilter(e.target.value)}>
+            <option value="">전체</option>
+            {ZONE_TYPE_OPTIONS.map(o => <option key={o} value={o}>{o}</option>)}
+          </Select>
+        </div>
+        <div className="md:col-span-2">
+          <label className="block text-xs font-semibold text-[#6B778C] mb-1.5">지역1</label>
+          <Select value={fRegion1} onChange={e => setFRegion1(e.target.value)}>
+            <option value="">전체</option>
+            {region1Options.map(r => <option key={r} value={r}>{r}</option>)}
+          </Select>
+        </div>
+        <div className="md:col-span-2">
+          <label className="block text-xs font-semibold text-[#6B778C] mb-1.5">지역2</label>
+          <Select value={fRegion2} onChange={e => setFRegion2(e.target.value)} disabled={!fRegion1}>
+            <option value="">전체</option>
+            {region2Options.map(r => <option key={r} value={r}>{r}</option>)}
+          </Select>
+        </div>
+      </FilterPanel>
 
       <div className="flex items-center justify-between mb-2">
         <div className="text-sm text-[#6B778C]">
