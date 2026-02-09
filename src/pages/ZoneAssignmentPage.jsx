@@ -12,16 +12,6 @@ const MOCK_PARTNERS = [
   { partnerId: 'P-002', partnerName: 'B파트너' },
   { partnerId: 'P-003', partnerName: 'C파트너' },
   { partnerId: 'P-004', partnerName: 'D파트너' },
-  { partnerId: 'P-005', partnerName: 'E파트너' },
-  { partnerId: 'P-006', partnerName: 'F파트너' },
-  { partnerId: 'P-007', partnerName: 'G파트너' },
-  { partnerId: 'P-008', partnerName: 'H파트너' },
-  { partnerId: 'P-009', partnerName: 'I파트너' },
-  { partnerId: 'P-010', partnerName: 'J파트너' },
-  { partnerId: 'P-011', partnerName: 'K파트너' },
-  { partnerId: 'P-012', partnerName: 'L파트너' },
-  { partnerId: 'P-013', partnerName: 'M파트너' },
-  { partnerId: 'P-014', partnerName: 'N파트너' },
 ];
 
 const partnerMap = new Map(MOCK_PARTNERS.map(p => [p.partnerId, p.partnerName]));
@@ -33,10 +23,11 @@ export default function ZoneAssignmentPage() {
   const [bulkAssignmentOpen, setBulkAssignmentOpen] = useState(false);
 
   // Filters
+  const [searchField, setSearchField] = useState("zoneId");
   const [searchQuery, setSearchQuery] = useState("");
   const [region1Filter, setRegion1Filter] = useState("");
   const [region2Filter, setRegion2Filter] = useState("");
-  const [assignmentFilter, setAssignmentFilter] = useState("");
+  const [fPartner, setFPartner] = useState("");
 
   const [sortConfig, setSortConfig] = useState({ key: 'zoneId', direction: 'desc' });
 
@@ -53,6 +44,12 @@ export default function ZoneAssignmentPage() {
     return unique.sort();
   }, [zones, region1Filter]);
 
+  // Get unique assigned partner names for filter
+  const partnerOptions = useMemo(() => {
+    const names = [...new Set(zones.filter(z => z.assignedPartnerId).map(z => partnerMap.get(z.assignedPartnerId)).filter(Boolean))];
+    return names.sort();
+  }, [zones]);
+
   // Reset region2 when region1 changes
   useEffect(() => {
     setRegion2Filter("");
@@ -63,19 +60,22 @@ export default function ZoneAssignmentPage() {
       // Search filter
       if (searchQuery) {
         const q = searchQuery.toLowerCase();
-        const matchSearch = z.zoneId.toLowerCase().includes(q) || z.zoneName.toLowerCase().includes(q);
-        if (!matchSearch) return false;
+        const targetVal = String(z[searchField] || "").toLowerCase();
+        if (!targetVal.includes(q)) return false;
       }
       // Region1 filter
       if (region1Filter && z.region1 !== region1Filter) return false;
       // Region2 filter
       if (region2Filter && z.region2 !== region2Filter) return false;
-      // Assignment filter
-      if (assignmentFilter === "배정" && !z.assignedPartnerId) return false;
-      if (assignmentFilter === "미배정" && z.assignedPartnerId) return false;
+      // Partner filter
+      if (fPartner === "미배정" && z.assignedPartnerId) return false;
+      if (fPartner && fPartner !== "미배정") {
+        const assignedName = z.assignedPartnerId ? partnerMap.get(z.assignedPartnerId) : null;
+        if (assignedName !== fPartner) return false;
+      }
       return true;
     });
-  }, [zones, searchQuery, region1Filter, region2Filter, assignmentFilter]);
+  }, [zones, searchField, searchQuery, region1Filter, region2Filter, fPartner]);
 
   const sortedData = useMemo(() => {
     if (!sortConfig.key) return filteredData;
@@ -179,41 +179,48 @@ export default function ZoneAssignmentPage() {
       {/* Filters */}
       <FilterPanel
         chips={<>
+          {searchQuery ? <Chip onRemove={() => setSearchQuery("")}>{searchField === "zoneId" ? "존 ID" : "존 이름"}: {searchQuery}</Chip> : null}
           {region1Filter ? <Chip onRemove={() => { setRegion1Filter(""); setRegion2Filter(""); }}>지역1: {region1Filter}</Chip> : null}
           {region2Filter ? <Chip onRemove={() => setRegion2Filter("")}>지역2: {region2Filter}</Chip> : null}
-          {assignmentFilter ? <Chip onRemove={() => setAssignmentFilter("")}>배정 상태: {assignmentFilter}</Chip> : null}
-          {searchQuery ? <Chip onRemove={() => setSearchQuery("")}>검색: {searchQuery}</Chip> : null}
+          {fPartner ? <Chip onRemove={() => setFPartner("")}>배정 파트너: {fPartner}</Chip> : null}
         </>}
-        onReset={() => { setRegion1Filter(""); setRegion2Filter(""); setAssignmentFilter(""); setSearchQuery(""); }}
+        onReset={() => { setSearchField("zoneId"); setSearchQuery(""); setRegion1Filter(""); setRegion2Filter(""); setFPartner(""); }}
       >
         <div className="md:col-span-2">
-          <label className="block text-xs font-semibold text-[#6B778C] mb-1.5">지역1</label>
-          <Select value={region1Filter} onChange={(e) => setRegion1Filter(e.target.value)}>
+          <label htmlFor="searchField" className="block text-xs font-semibold text-[#6B778C] mb-1.5">검색항목</label>
+          <Select id="searchField" value={searchField} onChange={e => setSearchField(e.target.value)}>
+            <option value="zoneId">존 ID</option>
+            <option value="zoneName">존 이름</option>
+          </Select>
+        </div>
+        <div className="md:col-span-4">
+          <label htmlFor="searchQuery" className="block text-xs font-semibold text-[#6B778C] mb-1.5">검색어</label>
+          <div className="relative">
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#6B778C]" />
+            <Input id="searchQuery" type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder={searchField === "zoneId" ? "존 ID 검색..." : "존 이름 검색..."} className="pl-9" />
+          </div>
+        </div>
+        <div className="md:col-span-2">
+          <label htmlFor="region1Filter" className="block text-xs font-semibold text-[#6B778C] mb-1.5">지역1</label>
+          <Select id="region1Filter" value={region1Filter} onChange={(e) => setRegion1Filter(e.target.value)}>
             <option value="">전체</option>
             {region1Options.map(r => <option key={r} value={r}>{r}</option>)}
           </Select>
         </div>
         <div className="md:col-span-2">
-          <label className={cn("block text-xs font-semibold mb-1.5", region1Filter ? "text-[#6B778C]" : "text-[#C1C7CD]")}>지역2</label>
-          <Select value={region2Filter} onChange={(e) => setRegion2Filter(e.target.value)} disabled={!region1Filter} className={!region1Filter ? "bg-[#F4F5F7]! text-[#C1C7CD] cursor-not-allowed" : ""}>
+          <label htmlFor="region2Filter" className={cn("block text-xs font-semibold mb-1.5", region1Filter ? "text-[#6B778C]" : "text-[#C1C7CD]")}>지역2</label>
+          <Select id="region2Filter" value={region2Filter} onChange={(e) => setRegion2Filter(e.target.value)} disabled={!region1Filter} className={!region1Filter ? "bg-[#F4F5F7]! text-[#C1C7CD] cursor-not-allowed" : ""}>
             <option value="">전체</option>
             {region2Options.map(r => <option key={r} value={r}>{r}</option>)}
           </Select>
         </div>
         <div className="md:col-span-2">
-          <label className="block text-xs font-semibold text-[#6B778C] mb-1.5">배정 상태</label>
-          <Select value={assignmentFilter} onChange={(e) => setAssignmentFilter(e.target.value)}>
+          <label htmlFor="fPartner" className="block text-xs font-semibold text-[#6B778C] mb-1.5">배정 파트너</label>
+          <Select id="fPartner" value={fPartner} onChange={(e) => setFPartner(e.target.value)}>
             <option value="">전체</option>
-            <option value="배정">배정</option>
             <option value="미배정">미배정</option>
+            {partnerOptions.map(p => <option key={p} value={p}>{p}</option>)}
           </Select>
-        </div>
-        <div className="md:col-span-4">
-          <label className="block text-xs font-semibold text-[#6B778C] mb-1.5">검색</label>
-          <div className="relative">
-            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#6B778C]" />
-            <Input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="존 ID 또는 이름 검색..." className="pl-9" />
-          </div>
         </div>
       </FilterPanel>
 
