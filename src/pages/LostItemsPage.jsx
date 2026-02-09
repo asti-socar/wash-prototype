@@ -149,14 +149,6 @@ export default function LostItemsPage({ setActiveKey }) {
     updateItemField(selectedItem.id, { itemCategory: newCategory, ...statusReset });
   };
 
-  // Select confirm: 처리 상태
-  const handleStatusChange = (e) => {
-    const newStatus = e.target.value;
-    if (newStatus === selectedItem.status) return;
-    if (!confirm(`처리 상태를 '${newStatus}'(으)로 변경하시겠습니까?`)) return;
-    updateItemField(selectedItem.id, { status: newStatus });
-  };
-
   // Input individual save
   const handleSaveField = (key) => {
     if (drafts[key] === undefined || drafts[key] === selectedItem[key]) return;
@@ -164,13 +156,31 @@ export default function LostItemsPage({ setActiveKey }) {
     setDrafts(p => { const n = { ...p }; delete n[key]; return n; });
   };
 
-  // Address save
+  // Address save — auto status transition
   const handleSaveAddress = () => {
     const updates = { deliveryAddress1: draftAddr1, deliveryAddress2: draftAddr2 };
-    if (selectedItem.itemCategory === '일반' && selectedItem.status === '배송지 미입력' && draftAddr1.trim()) {
-      updates.status = '발송 대기';
+    if (selectedItem.status === '배송지 미입력' && draftAddr1.trim()) {
+      if (selectedItem.itemCategory === '일반') {
+        updates.status = '발송 대기';
+      } else if (selectedItem.itemCategory === '귀중품') {
+        updates.status = '경찰서 인계';
+      }
     }
     updateItemField(selectedItem.id, updates);
+  };
+
+  // 발송 완료 button handler
+  const handleShipComplete = () => {
+    if (!selectedItem || selectedItem.status !== '발송 대기') return;
+    if (!confirm('발송 완료 처리하시겠습니까?')) return;
+    updateItemField(selectedItem.id, { status: '발송 완료' });
+  };
+
+  // 폐기 완료 button handler
+  const handleDispose = () => {
+    if (!selectedItem || TERMINAL_STATUSES.includes(selectedItem.status)) return;
+    if (!confirm('폐기 완료 처리하시겠습니까?\n이 작업은 되돌릴 수 없습니다.')) return;
+    updateItemField(selectedItem.id, { status: '폐기 완료' });
   };
 
   // Daum postcode search
@@ -196,12 +206,6 @@ export default function LostItemsPage({ setActiveKey }) {
   };
   const handleRemovePhoto = (index) => {
     updateItemField(selectedItem.id, { itemPhotos: selectedItem.itemPhotos.filter((_, i) => i !== index) });
-  };
-
-  const getStatusOptions = (item) => {
-    if (!item) return [];
-    if (TERMINAL_STATUSES.includes(item.status)) return [item.status];
-    return STATUS_BY_CATEGORY[item.itemCategory] || [];
   };
 
   const handleResetFilters = () => {
@@ -242,6 +246,8 @@ export default function LostItemsPage({ setActiveKey }) {
     const data = selectedItem;
     const isTerminal = TERMINAL_STATUSES.includes(data.status);
     const isAddressChanged = draftAddr1 !== (data.deliveryAddress1 || '') || draftAddr2 !== (data.deliveryAddress2 || '');
+    const isValuable = data.itemCategory === '귀중품';
+    const addressLabel = isValuable ? '경찰서 주소' : '배송 주소';
 
     return (
       <div className="space-y-6">
@@ -261,16 +267,10 @@ export default function LostItemsPage({ setActiveKey }) {
             } />
 
             <Field label="처리 상태" value={
-              isTerminal ? (
-                <Badge tone={statusBadgeMap[data.status]}>{data.status}</Badge>
-              ) : (
-                <Select value={data.status} onChange={handleStatusChange}>
-                  {getStatusOptions(data).map(opt => <option key={opt} value={opt}>{opt}</option>)}
-                </Select>
-              )
+              <Badge tone={statusBadgeMap[data.status]}>{data.status}</Badge>
             } />
 
-            <Field label="배송 주소" value={
+            <Field label={addressLabel} value={
               isTerminal ? (
                 <div>
                   <div className="text-sm">{data.deliveryAddress1 || '-'}</div>
@@ -318,6 +318,52 @@ export default function LostItemsPage({ setActiveKey }) {
                       >저장</Button>
                     </div>
                   </div>
+                  {data.status === '배송지 미입력' && (
+                    <p className="text-xs text-[#6B778C]">
+                      {isValuable
+                        ? '* 주소 저장 시 경찰서 인계 상태로 자동 전환됩니다.'
+                        : '* 주소 저장 시 발송 대기 상태로 자동 전환됩니다.'}
+                    </p>
+                  )}
+                </div>
+              )
+            } />
+
+            {/* 수령인 정보 */}
+            <Field label="수령인 이름" value={
+              isTerminal ? (data.recipientName || '-') : (
+                <div className="flex items-center gap-2">
+                  <div className="flex-1">
+                    <Input
+                      value={drafts.recipientName !== undefined ? drafts.recipientName : (data.recipientName || '')}
+                      onChange={(e) => setDraft('recipientName', e.target.value)}
+                      placeholder="수령인 이름"
+                    />
+                  </div>
+                  <Button
+                    variant={(drafts.recipientName !== undefined && drafts.recipientName !== (data.recipientName || '')) ? undefined : 'secondary'}
+                    onClick={() => handleSaveField('recipientName')}
+                    disabled={drafts.recipientName === undefined || drafts.recipientName === (data.recipientName || '')}
+                  >저장</Button>
+                </div>
+              )
+            } />
+
+            <Field label="휴대폰 번호" value={
+              isTerminal ? (data.recipientPhone || '-') : (
+                <div className="flex items-center gap-2">
+                  <div className="flex-1">
+                    <Input
+                      value={drafts.recipientPhone !== undefined ? drafts.recipientPhone : (data.recipientPhone || '')}
+                      onChange={(e) => setDraft('recipientPhone', e.target.value)}
+                      placeholder="010-0000-0000"
+                    />
+                  </div>
+                  <Button
+                    variant={(drafts.recipientPhone !== undefined && drafts.recipientPhone !== (data.recipientPhone || '')) ? undefined : 'secondary'}
+                    onClick={() => handleSaveField('recipientPhone')}
+                    disabled={drafts.recipientPhone === undefined || drafts.recipientPhone === (data.recipientPhone || '')}
+                  >저장</Button>
                 </div>
               )
             } />
@@ -378,21 +424,7 @@ export default function LostItemsPage({ setActiveKey }) {
           <CardHeader><CardTitle>세차 오더 정보</CardTitle></CardHeader>
           <CardContent className="space-y-4">
             <Field label="파트너 이름" value={data.partnerName} />
-            <Field label="연계 오더 ID" value={
-              <div className="flex items-center gap-2">
-                <div className="flex-1">
-                  <Input
-                    value={drafts.relatedOrderId !== undefined ? drafts.relatedOrderId : data.relatedOrderId}
-                    onChange={(e) => setDraft('relatedOrderId', e.target.value)}
-                  />
-                </div>
-                <Button
-                  variant={(drafts.relatedOrderId !== undefined && drafts.relatedOrderId !== data.relatedOrderId) ? undefined : 'secondary'}
-                  onClick={() => handleSaveField('relatedOrderId')}
-                  disabled={drafts.relatedOrderId === undefined || drafts.relatedOrderId === data.relatedOrderId}
-                >저장</Button>
-              </div>
-            } />
+            <Field label="연계 오더 ID" value={data.relatedOrderId || '-'} />
           </CardContent>
         </Card>
 
@@ -403,6 +435,29 @@ export default function LostItemsPage({ setActiveKey }) {
             <Field label="카드 접수 번호" value={data.lostItemCardReceiptNumber || '-'} />
           </CardContent>
         </Card>
+      </div>
+    );
+  };
+
+  // Drawer footer with action buttons
+  const renderDrawerFooter = () => {
+    if (!selectedItem) return null;
+    const data = selectedItem;
+    const isTerminal = TERMINAL_STATUSES.includes(data.status);
+    const showShipComplete = data.itemCategory === '일반' && data.status === '발송 대기';
+    const showDispose = !isTerminal;
+
+    return (
+      <div className="flex justify-between">
+        <div className="flex gap-2">
+          {showShipComplete && (
+            <Button onClick={handleShipComplete}>발송 완료</Button>
+          )}
+          {showDispose && (
+            <Button variant="danger" onClick={handleDispose}>폐기 완료</Button>
+          )}
+        </div>
+        <Button variant="secondary" onClick={closeDrawer}>닫기</Button>
       </div>
     );
   };
@@ -495,11 +550,7 @@ export default function LostItemsPage({ setActiveKey }) {
         subtitle="분실물 상세 및 처리 상태 관리"
         open={drawerVisible}
         onClose={closeDrawer}
-        footer={
-          <div className="flex justify-end">
-            <Button variant="secondary" onClick={closeDrawer}>닫기</Button>
-          </div>
-        }
+        footer={renderDrawerFooter()}
       >
         {renderDrawerContent()}
       </Drawer>

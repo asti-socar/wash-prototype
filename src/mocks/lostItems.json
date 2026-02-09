@@ -17,7 +17,9 @@
     "relatedOrderId": "ORD456",
     "lostItemCardReceiptNumber": "LCRN001",
     "deliveryAddress1": "",
-    "deliveryAddress2": ""
+    "deliveryAddress2": "",
+    "recipientName": "",
+    "recipientPhone": ""
   },
   {
     "id": "LI0002",
@@ -37,7 +39,9 @@
     "relatedOrderId": "ORD457",
     "lostItemCardReceiptNumber": "LCRN002",
     "deliveryAddress1": "",
-    "deliveryAddress2": ""
+    "deliveryAddress2": "",
+    "recipientName": "",
+    "recipientPhone": ""
   },
   {
     "id": "LI0003",
@@ -57,7 +61,9 @@
     "relatedOrderId": "ORD458",
     "lostItemCardReceiptNumber": "LCRN003",
     "deliveryAddress1": "서울 강남구 테헤란로 123",
-    "deliveryAddress2": "4층 401호"
+    "deliveryAddress2": "4층 401호",
+    "recipientName": "김고객",
+    "recipientPhone": "010-1234-5678"
   },
   {
     "id": "LI0004",
@@ -76,8 +82,10 @@
     "partnerName": "클린카",
     "relatedOrderId": "ORD459",
     "lostItemCardReceiptNumber": "LCRN004",
-    "deliveryAddress1": "",
-    "deliveryAddress2": ""
+    "deliveryAddress1": "서울 강남구 논현로 571 강남경찰서",
+    "deliveryAddress2": "습득물 보관소",
+    "recipientName": "강남경찰서",
+    "recipientPhone": "02-3461-0691"
   },
   {
     "id": "LI0005",
@@ -97,7 +105,9 @@
     "relatedOrderId": "ORD460",
     "lostItemCardReceiptNumber": "LCRN005",
     "deliveryAddress1": "서울 마포구 월드컵북로 21",
-    "deliveryAddress2": "2층"
+    "deliveryAddress2": "2층",
+    "recipientName": "이고객",
+    "recipientPhone": "010-9876-5432"
   },
   {
     "id": "LI0006",
@@ -117,7 +127,9 @@
     "relatedOrderId": "ORD465",
     "lostItemCardReceiptNumber": "LCRN006",
     "deliveryAddress1": "",
-    "deliveryAddress2": ""
+    "deliveryAddress2": "",
+    "recipientName": "",
+    "recipientPhone": ""
   },
   {
     "id": "LI0007",
@@ -137,7 +149,9 @@
     "relatedOrderId": "ORD461",
     "lostItemCardReceiptNumber": "LCRN007",
     "deliveryAddress1": "",
-    "deliveryAddress2": ""
+    "deliveryAddress2": "",
+    "recipientName": "",
+    "recipientPhone": ""
   },
   {
     "id": "LI0008",
@@ -157,7 +171,9 @@
     "relatedOrderId": "ORD462",
     "lostItemCardReceiptNumber": "LCRN008",
     "deliveryAddress1": "",
-    "deliveryAddress2": ""
+    "deliveryAddress2": "",
+    "recipientName": "",
+    "recipientPhone": ""
   },
   {
     "id": "LI0009",
@@ -177,7 +193,9 @@
     "relatedOrderId": "ORD466",
     "lostItemCardReceiptNumber": "LCRN009",
     "deliveryAddress1": "",
-    "deliveryAddress2": ""
+    "deliveryAddress2": "",
+    "recipientName": "",
+    "recipientPhone": ""
   },
   {
     "id": "LI0010",
@@ -197,7 +215,9 @@
     "relatedOrderId": "ORD463",
     "lostItemCardReceiptNumber": "LCRN010",
     "deliveryAddress1": "",
-    "deliveryAddress2": ""
+    "deliveryAddress2": "",
+    "recipientName": "",
+    "recipientPhone": ""
   },
   {
     "id": "LI0011",
@@ -217,6 +237,8 @@
     "relatedOrderId": "ORD464",
     "lostItemCardReceiptNumber": "LCRN011",
     "deliveryAddress1": "",
-    "deliveryAddress2": ""
+    "deliveryAddress2": "",
+    "recipientName": "",
+    "recipientPhone": ""
   }
 ]
