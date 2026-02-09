@@ -710,15 +710,13 @@ function OrdersPage({ quickFilter, onClearQuickFilter, initialOrderId, orders, s
             {statuses.map((v) => <option key={v} value={v}>{v}</option>)}
           </Select>
         </div>
-        {fStatus === "취소" && (
-          <div className="md:col-span-2">
-            <label htmlFor="fCancelType" className="block text-xs font-semibold text-[#6B778C] mb-1.5">취소 유형</label>
-            <Select id="fCancelType" value={fCancelType} onChange={(e) => { setFCancelType(e.target.value); onClearQuickFilter?.(); }}>
-              <option value="">전체</option>
-              {CANCEL_TYPES.map((v) => <option key={v} value={v}>{v}</option>)}
-            </Select>
-          </div>
-        )}
+        <div className="md:col-span-2">
+          <label htmlFor="fCancelType" className={cn("block text-xs font-semibold mb-1.5", fStatus === "취소" ? "text-[#6B778C]" : "text-[#C1C7CD]")}>취소 유형</label>
+          <Select id="fCancelType" value={fCancelType} onChange={(e) => { setFCancelType(e.target.value); onClearQuickFilter?.(); }} disabled={fStatus !== "취소"} className={fStatus !== "취소" ? "bg-[#F4F5F7]! text-[#C1C7CD] cursor-not-allowed" : ""}>
+            <option value="">전체</option>
+            {CANCEL_TYPES.map((v) => <option key={v} value={v}>{v}</option>)}
+          </Select>
+        </div>
       </FilterPanel>
 
       <DataTable
@@ -830,6 +828,10 @@ function OrdersPage({ quickFilter, onClearQuickFilter, initialOrderId, orders, s
                   
                   <div className="col-span-2 border-t border-[#DFE1E6] my-1"></div>
 
+                  <div className="space-y-1">
+                    <div className="text-xs text-[#6B778C]">차량 ID</div>
+                    <div className="font-medium">{selected.carId}</div>
+                  </div>
                   <div className="space-y-1">
                     <div className="text-xs text-[#6B778C]">차량 번호 / 차종</div>
                     <div className="font-medium">{selected.plate} ({selected.model})</div>

@@ -371,6 +371,10 @@ const MissionsPage = ({ missionPolicies, setMissionPolicies, policyVehicles, set
                     </div>
                   </div>
                 </div>
+                <div className="space-y-1">
+                  <label className="text-xs font-semibold text-[#6B778C]">등록일시</label>
+                  <div className="text-sm text-[#172B4D]">{selectedPolicy.createdAt}</div>
+                </div>
                 <div className="flex items-center gap-2 pt-2">
                   <input type="checkbox" id="reqPhotoEdit" className="h-4 w-4 cursor-not-allowed" checked={selectedPolicy.requiresPhoto} disabled />
                   <label htmlFor="reqPhotoEdit" className="text-sm text-[#6B778C]">수행 시 증빙 사진 필수</label>
@@ -397,7 +401,10 @@ const MissionsPage = ({ missionPolicies, setMissionPolicies, policyVehicles, set
                       />
                     </div>
                     <div className="flex items-center justify-between mb-2">
-                      <div className="text-sm text-[#6B778C]">할당된 차량 목록 ({filteredAssignedVehicles.length} / {assignedVehiclesForSelectedPolicy.length}대)</div>
+                      <div className="flex items-center gap-2 text-sm text-[#6B778C]">
+                        <span>할당된 차량 목록 ({selectedPolicy.completedVehicleCount} / {selectedPolicy.targetVehicleCount}대)</span>
+                        <Badge tone={selectedPolicy.progress >= 1 ? "ok" : selectedPolicy.progress > 0 ? "warn" : "default"}>{Math.round(selectedPolicy.progress * 100)}%</Badge>
+                      </div>
                       {hasPendingVehicles && (
                         <Button variant="danger" size="sm" onClick={handleDeleteAllPendingVehicles}>
                           <Trash2 className="mr-1 h-3 w-3" /> 대기 차량 전체 삭제

@@ -212,6 +212,13 @@ export default function WorkersPage() {
               </CardContent>
             </Card>
             <Card>
+              <CardHeader><CardTitle>배정 지역</CardTitle></CardHeader>
+              <CardContent className="space-y-2 text-sm">
+                <Field label="지역1" value={selected.region1} />
+                <Field label="지역2" value={selected.region2} />
+              </CardContent>
+            </Card>
+            <Card>
               <CardHeader><CardTitle>배정된 쏘카존</CardTitle></CardHeader>
               <CardContent>
                 <div className="rounded-lg bg-slate-50 p-3 text-sm text-[#172B4D]">{selected.zoneName} ({selected.zoneId})</div>

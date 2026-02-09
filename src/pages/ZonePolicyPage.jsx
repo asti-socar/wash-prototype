@@ -88,17 +88,17 @@ const REGION2_POLICIES = {
 };
 
 const RAW_ZONES = [
-    { zoneId: 'Z-1001', zoneName: '강남역 1번존', zoneType: '현장세차존', region1: '서울', region2: '강남구', operationTime: '24시간', parkingType: '건물안', fullAddress: '서울특별시 강남구 강남대로 396', zoneNotes: '지하 3층 B구역 주차장 이용', policy: { cycleWashDays: 7 } },
-    { zoneId: 'Z-1002', zoneName: '역삼역 2번존', zoneType: '현장세차존', region1: '서울', region2: '강남구', operationTime: '09:00~22:00', parkingType: '기계식', fullAddress: '서울특별시 강남구 테헤란로 152', zoneNotes: '기계식 주차장. SUV 입차 불가.', policy: { isLightWash: false } },
-    { zoneId: 'Z-1003', zoneName: '판교역 3번존', zoneType: '주기세차존', region1: '경기', region2: '성남시', operationTime: '24시간', parkingType: '건물안', fullAddress: '경기도 성남시 분당구 판교역로 166', zoneNotes: '', policy: {} },
-    { zoneId: 'Z-1004', zoneName: '해운대 1번존', zoneType: '현장세차존', region1: '부산', region2: '해운대구', operationTime: '10:00~20:00', parkingType: '노상', fullAddress: '부산광역시 해운대구 해운대해변로 266', zoneNotes: '해변가 공영주차장, 주말 혼잡', policy: { cycleWashDays: 5 } },
-    { zoneId: 'Z-1005', zoneName: '수원시청역', zoneType: '현장세차 불가존', region1: '경기', region2: '수원시', operationTime: '24시간', parkingType: '건물외', fullAddress: '경기도 수원시 팔달구 효원로 241', zoneNotes: '주차장 협소, 세차 불가', policy: { cycleWashDays: 999 } },
-    { zoneId: 'Z-1006', zoneName: '광화문 D타워', zoneType: '주기세차존', region1: '서울', region2: '종로구', operationTime: '08:00~23:00', parkingType: '건물안', fullAddress: '서울특별시 종로구 종로3길 17', zoneNotes: '방문객 주차 할인권 필요', policy: {} },
-    { zoneId: 'Z-1007', zoneName: '대전 시청', zoneType: '현장세차존', region1: '대전', region2: '서구', operationTime: '24시간', parkingType: '건물외', fullAddress: '대전광역시 서구 둔산로 100', zoneNotes: '', policy: {} },
-    { zoneId: 'Z-1008', zoneName: '동성로', zoneType: '현장세차 불가존', region1: '대구', region2: '중구', operationTime: '24시간', parkingType: '노상', fullAddress: '대구광역시 중구 동성로2길 81', zoneNotes: '유동인구 많아 세차 불가', policy: { cycleWashDays: 999 } },
-    { zoneId: 'Z-1009', zoneName: '상무지구', zoneType: '현장세차존', region1: '광주', region2: '서구', operationTime: '24시간', parkingType: '건물안', fullAddress: '광주광역시 서구 상무중앙로 7', zoneNotes: '', policy: { cycleWashDays: 8, isLightWash: false } },
-    { zoneId: 'Z-1010', zoneName: '인천공항 T1', zoneType: '주기세차존', region1: '인천', region2: '중구', operationTime: '24시간', parkingType: '건물안', fullAddress: '인천광역시 중구 공항로 272', zoneNotes: '장기주차장 P1 구역에서만 서비스 가능', policy: {} },
-    { zoneId: 'Z-1011', zoneName: '서울역', zoneType: '현장세차존', region1: '서울', region2: '용산구', operationTime: '06:00~24:00', parkingType: '건물안', fullAddress: '서울특별시 용산구 한강대로 405', zoneNotes: '롯데마트 주차장 이용, 주말 혼잡도 높음', policy: {} },
+    { zoneId: 'Z-1001', zoneName: '강남역 1번존', zoneType: '현장세차존', region1: '서울', region2: '강남구', operationTime: '24시간', parkingType: '건물안', fullAddress: '서울특별시 강남구 강남대로 396', zoneNotes: '지하 3층 B구역 주차장 이용', vehicleCount: 18, policy: { cycleWashDays: 7 } },
+    { zoneId: 'Z-1002', zoneName: '역삼역 2번존', zoneType: '현장세차존', region1: '서울', region2: '강남구', operationTime: '09:00~22:00', parkingType: '기계식', fullAddress: '서울특별시 강남구 테헤란로 152', zoneNotes: '기계식 주차장. SUV 입차 불가.', vehicleCount: 8, policy: { isLightWash: false } },
+    { zoneId: 'Z-1003', zoneName: '판교역 3번존', zoneType: '주기세차존', region1: '경기', region2: '성남시', operationTime: '24시간', parkingType: '건물안', fullAddress: '경기도 성남시 분당구 판교역로 166', zoneNotes: '', vehicleCount: 15, policy: {} },
+    { zoneId: 'Z-1004', zoneName: '해운대 1번존', zoneType: '현장세차존', region1: '부산', region2: '해운대구', operationTime: '10:00~20:00', parkingType: '노상', fullAddress: '부산광역시 해운대구 해운대해변로 266', zoneNotes: '해변가 공영주차장, 주말 혼잡', vehicleCount: 12, policy: { cycleWashDays: 5 } },
+    { zoneId: 'Z-1005', zoneName: '수원시청역', zoneType: '현장세차 불가존', region1: '경기', region2: '수원시', operationTime: '24시간', parkingType: '건물외', fullAddress: '경기도 수원시 팔달구 효원로 241', zoneNotes: '주차장 협소, 세차 불가', vehicleCount: 5, policy: { cycleWashDays: 999 } },
+    { zoneId: 'Z-1006', zoneName: '광화문 D타워', zoneType: '주기세차존', region1: '서울', region2: '종로구', operationTime: '08:00~23:00', parkingType: '건물안', fullAddress: '서울특별시 종로구 종로3길 17', zoneNotes: '방문객 주차 할인권 필요', vehicleCount: 11, policy: {} },
+    { zoneId: 'Z-1007', zoneName: '대전 시청', zoneType: '현장세차존', region1: '대전', region2: '서구', operationTime: '24시간', parkingType: '건물외', fullAddress: '대전광역시 서구 둔산로 100', zoneNotes: '', vehicleCount: 9, policy: {} },
+    { zoneId: 'Z-1008', zoneName: '동성로', zoneType: '현장세차 불가존', region1: '대구', region2: '중구', operationTime: '24시간', parkingType: '노상', fullAddress: '대구광역시 중구 동성로2길 81', zoneNotes: '유동인구 많아 세차 불가', vehicleCount: 3, policy: { cycleWashDays: 999 } },
+    { zoneId: 'Z-1009', zoneName: '상무지구', zoneType: '현장세차존', region1: '광주', region2: '서구', operationTime: '24시간', parkingType: '건물안', fullAddress: '광주광역시 서구 상무중앙로 7', zoneNotes: '', vehicleCount: 7, policy: { cycleWashDays: 8, isLightWash: false } },
+    { zoneId: 'Z-1010', zoneName: '인천공항 T1', zoneType: '주기세차존', region1: '인천', region2: '중구', operationTime: '24시간', parkingType: '건물안', fullAddress: '인천광역시 중구 공항로 272', zoneNotes: '장기주차장 P1 구역에서만 서비스 가능', vehicleCount: 22, policy: {} },
+    { zoneId: 'Z-1011', zoneName: '서울역', zoneType: '현장세차존', region1: '서울', region2: '용산구', operationTime: '06:00~24:00', parkingType: '건물안', fullAddress: '서울특별시 용산구 한강대로 405', zoneNotes: '롯데마트 주차장 이용, 주말 혼잡도 높음', vehicleCount: 20, policy: {} },
 ];
 
 function generateMockData() {
@@ -238,6 +238,7 @@ export default function ZonePolicyPage() {
     { key: 'zoneId', header: 'Zone ID' },
     { key: 'zoneName', header: '존 이름' },
     { key: 'zoneType', header: '존 유형' },
+    { key: 'vehicleCount', header: '차량 대수', align: 'center', render: r => `${r.vehicleCount}대` },
     { key: 'cycleWashDays', header: '주기세차(일)', render: r => r.cycleWashDays.value },
     { key: 'isLightWash', header: '라이트세차', render: r => r.isLightWash.value ? 'Y' : 'N' },
     { key: 'hasZonePolicy', header: '개별 정책', render: r => r.hasZonePolicy ? 'O' : 'X' },
@@ -432,6 +433,7 @@ function ZonePolicyDrawer({ policy, onClose, onSave }) {
                       </Select>
                   ) : formData.zoneType}
                 </Field>
+                <Field label="차량 대수">{formData.vehicleCount}대</Field>
               </CardContent>
             </Card>
 
