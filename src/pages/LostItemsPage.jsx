@@ -1,231 +1,10 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { Search, Plus, X, ArrowUpDown, Trash2, MapPin, ExternalLink } from 'lucide-react';
-
-// --- Custom Component Definitions ---
-
-const styleVariables = {
-  borderColor: '#e5e7eb',
-  primaryColor: '#3b82f6',
-  textColor: '#111827',
-  mutedTextColor: '#6b7280',
-  bgColor: '#fff',
-  hoverBgColor: '#f9fafb',
-  dangerColor: '#ef4444',
-};
-
-const Card = ({ children }) => <div style={{ border: `1px solid ${styleVariables.borderColor}`, borderRadius: '0.5rem', backgroundColor: styleVariables.bgColor, marginBottom: '1rem' }}>{children}</div>;
-const CardHeader = ({ children }) => <div style={{ padding: '1rem', borderBottom: `1px solid ${styleVariables.borderColor}` }}>{children}</div>;
-const CardTitle = ({ children }) => <h2 style={{ fontSize: '1.25rem', fontWeight: 600, margin: 0, color: styleVariables.textColor }}>{children}</h2>;
-const CardContent = ({ children }) => <div style={{ padding: '1rem' }}>{children}</div>;
-
-const Button = ({ children, onClick, variant = 'default', className = '', disabled = false, style: extraStyle }) => {
-  const baseStyle = {
-    display: 'inline-flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: '0.5rem 1rem',
-    borderRadius: '0.375rem',
-    border: '1px solid transparent',
-    fontSize: '0.875rem',
-    fontWeight: 500,
-    cursor: disabled ? 'not-allowed' : 'pointer',
-    transition: 'background-color 0.2s',
-    marginRight: '0.5rem',
-    opacity: disabled ? 0.5 : 1,
-  };
-  const styles = {
-    default: {
-      backgroundColor: styleVariables.bgColor,
-      borderColor: styleVariables.borderColor,
-      color: styleVariables.textColor,
-    },
-    primary: {
-      backgroundColor: styleVariables.primaryColor,
-      color: '#fff',
-    },
-    danger: {
-      backgroundColor: styleVariables.dangerColor,
-      color: '#fff',
-    }
-  };
-  return <button style={{ ...baseStyle, ...styles[variant], ...extraStyle }} onClick={disabled ? undefined : onClick} disabled={disabled} className={className}>{children}</button>;
-};
-
-const Input = ({ value, onChange, placeholder, icon, readOnly = false }) => (
-  <div style={{ position: 'relative', display: 'flex', alignItems: 'center', width: '100%' }}>
-    {icon && <div style={{ position: 'absolute', left: '0.75rem', color: styleVariables.mutedTextColor }}>{icon}</div>}
-    <input
-      type="text"
-      value={value}
-      onChange={onChange}
-      placeholder={placeholder}
-      readOnly={readOnly}
-      style={{
-        width: '100%',
-        padding: `0.5rem ${icon ? '2.25rem' : '0.75rem'}`,
-        borderRadius: '0.375rem',
-        border: `1px solid ${styleVariables.borderColor}`,
-        fontSize: '0.875rem',
-        backgroundColor: readOnly ? '#f3f4f6' : '#fff',
-      }}
-    />
-  </div>
-);
-
-const Textarea = ({ value, onChange, rows = 3 }) => (
-    <textarea
-        value={value}
-        onChange={onChange}
-        rows={rows}
-        style={{
-            width: '100%',
-            padding: '0.5rem 0.75rem',
-            borderRadius: '0.375rem',
-            border: `1px solid ${styleVariables.borderColor}`,
-            fontSize: '0.875rem',
-            lineHeight: '1.25rem',
-            fontFamily: 'inherit'
-        }}
-    />
-);
-
-
-const Select = ({ value, onChange, children, placeholder, allowClear }) => (
-  <select
-    value={value || ''}
-    onChange={onChange}
-    style={{
-      padding: '0.5rem',
-      borderRadius: '0.375rem',
-      border: `1px solid ${styleVariables.borderColor}`,
-      fontSize: '0.875rem',
-      marginRight: '0.5rem',
-      minWidth: '150px'
-    }}
-  >
-    {placeholder && <option value="">{placeholder}</option>}
-    {children}
-  </select>
-);
-Select.Option = ({ value, children }) => <option value={value}>{children}</option>;
-
-const Badge = ({ text, status }) => {
-  const colors = {
-    processing: { bg: '#e0f2fe', text: '#0ea5e9' },
-    warning: { bg: '#fef3c7', text: '#f59e0b' },
-    error: { bg: '#fee2e2', text: '#ef4444' },
-    success: { bg: '#dcfce7', text: '#22c55e' },
-  };
-  const style = colors[status] || { bg: '#f3f4f6', text: '#6b7280' };
-  return <span style={{ backgroundColor: style.bg, color: style.text, padding: '0.25rem 0.75rem', borderRadius: '9999px', fontSize: '0.75rem', fontWeight: 500 }}>{text}</span>
-};
-
-const Drawer = ({ title, open, onClose, children, footer }) => {
-  const [width, setWidth] = useState(600);
-  const [isResizing, setIsResizing] = useState(false);
-
-  useEffect(() => {
-    if (open) {
-      document.body.style.overflow = 'hidden';
-      document.body.classList.add('drawer-open');
-    } else {
-      document.body.style.overflow = 'auto';
-      document.body.classList.remove('drawer-open');
-    }
-    return () => {
-      document.body.style.overflow = 'auto';
-      document.body.classList.remove('drawer-open');
-    };
-  }, [open]);
-
-  useEffect(() => {
-    const handleMouseMove = (e) => {
-      if (!isResizing) return;
-      const newWidth = window.innerWidth - e.clientX;
-      const minWidth = window.innerWidth * 0.3;
-      const maxWidth = window.innerWidth * 0.9;
-      if (newWidth >= minWidth && newWidth <= maxWidth) {
-        setWidth(newWidth);
-      }
-    };
-    const handleMouseUp = () => {
-      setIsResizing(false);
-      document.body.style.cursor = "default";
-    };
-    if (isResizing) {
-      document.addEventListener("mousemove", handleMouseMove);
-      document.addEventListener("mouseup", handleMouseUp);
-      document.body.style.cursor = "col-resize";
-    }
-    return () => {
-      document.removeEventListener("mousemove", handleMouseMove);
-      document.removeEventListener("mouseup", handleMouseUp);
-      document.body.style.cursor = "default";
-    };
-  }, [isResizing]);
-
-  if (!open) return null;
-  return (
-    <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 1000 }}>
-      <div onClick={onClose} style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)' }}></div>
-       <div style={{ position: 'fixed', top: 0, right: 0, height: '100%', backgroundColor: '#f9fafb', display: 'flex', flexDirection: 'column', zIndex: 1000, boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)', width, maxWidth: '100vw' }}>
-        <div
-          style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: '6px', cursor: 'col-resize', zIndex: 1001 }}
-          onMouseDown={(e) => {
-            e.preventDefault();
-            setIsResizing(true);
-          }}
-        />
-        <div style={{ padding: '1rem', borderBottom: `1px solid ${styleVariables.borderColor}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <h2 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 600 }}>{title}</h2>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0.5rem' }}><X size={20} /></button>
-        </div>
-        <div style={{ flex: 1, padding: '1.5rem', overflowY: 'auto' }}>{children}</div>
-        <div style={{ padding: '1rem', borderTop: `1px solid ${styleVariables.borderColor}`, backgroundColor: styleVariables.bgColor }}>{footer}</div>
-      </div>
-    </div>
-  );
-};
-
-const DataTable = ({ columns, dataSource, onRowClick }) => {
-  return (
-    <div style={{ overflowX: 'auto' }}>
-      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-        <thead>
-          <tr>
-            {columns.map(col => (
-              <th key={col.key} style={{ padding: '0.75rem 1rem', borderBottom: `2px solid ${styleVariables.borderColor}`, textAlign: 'left', fontWeight: 600, color: styleVariables.mutedTextColor, fontSize: '0.875rem' }}>
-                <div style={{ display: 'flex', alignItems: 'center' }}>
-                  {col.title}
-                  <ArrowUpDown size={14} style={{ marginLeft: '0.5rem', color: styleVariables.mutedTextColor }}/>
-                </div>
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {dataSource.map(row => (
-            <tr key={row.id} onClick={() => onRowClick(row)} style={{ cursor: 'pointer', borderBottom: `1px solid ${styleVariables.borderColor}` }} className="hover:bg-gray-50">
-              {columns.map(col => (
-                <td key={col.key} style={{ padding: '0.75rem 1rem', fontSize: '0.875rem' }}>
-                  {col.render ? col.render(row[col.dataIndex], row) : (row[col.dataIndex] || '-')}
-                </td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
-};
-
-const Field = ({ label, children, isBlock = false }) => (
-    <div style={{ display: isBlock ? 'block' : 'grid', gridTemplateColumns: '150px 1fr', alignItems: 'start', padding: '1rem 0', borderBottom: `1px solid ${styleVariables.borderColor}` }}>
-        <p style={{ margin: 0, fontWeight: 500, color: styleVariables.mutedTextColor }}>{label}</p>
-        <div>{children}</div>
-    </div>
-);
-
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
+import { Plus, X, MapPin, ChevronLeft, ChevronRight } from 'lucide-react';
+import {
+  cn, toYmd, Card, CardHeader, CardTitle, CardContent,
+  Button, Input, Select, Badge, Chip, FilterPanel,
+  Drawer, Field, DataTable, usePagination,
+} from '../components/ui';
 
 // --- CONSTANTS ---
 const STATUS_BY_CATEGORY = {
@@ -236,9 +15,9 @@ const STATUS_BY_CATEGORY = {
 const TERMINAL_STATUSES = ['발송 완료', '경찰서 인계', '폐기 완료'];
 
 const statusBadgeMap = {
-  '배송지 미입력': 'warning',
-  '발송 대기': 'processing',
-  '발송 완료': 'success',
+  '배송지 미입력': 'warn',
+  '발송 대기': 'info',
+  '발송 완료': 'ok',
   '폐기 완료': 'default',
   '경찰서 인계': 'default',
 };
@@ -250,7 +29,7 @@ const allStatusOptions = ['배송지 미입력', '발송 대기', '발송 완료
 const initialMockLostItems = [
   {
     id: 'LI0001',
-    createdAt: '2024-07-21 10:30:00',
+    createdAt: '2026-02-05 10:30:00',
     itemCategory: '일반',
     status: '배송지 미입력',
     itemDetails: '검은색 스마트폰, 최신 모델',
@@ -270,7 +49,7 @@ const initialMockLostItems = [
   },
   {
     id: 'LI0002',
-    createdAt: '2024-07-20 15:00:00',
+    createdAt: '2026-01-28 15:00:00',
     itemCategory: '귀중품',
     status: '배송지 미입력',
     itemDetails: '갈색 가죽 지갑, 신분증 포함',
@@ -290,7 +69,7 @@ const initialMockLostItems = [
   },
   {
     id: 'LI0003',
-    createdAt: '2024-07-19 09:15:00',
+    createdAt: '2026-01-20 09:15:00',
     itemCategory: '일반',
     status: '발송 대기',
     itemDetails: '검은색 우산',
@@ -310,7 +89,7 @@ const initialMockLostItems = [
   },
   {
     id: 'LI0004',
-    createdAt: '2024-07-18 14:20:00',
+    createdAt: '2026-01-10 14:20:00',
     itemCategory: '귀중품',
     status: '경찰서 인계',
     itemDetails: '노트북 가방 (노트북 포함)',
@@ -330,7 +109,7 @@ const initialMockLostItems = [
   },
   {
     id: 'LI0005',
-    createdAt: '2024-07-17 11:45:00',
+    createdAt: '2025-12-25 11:45:00',
     itemCategory: '일반',
     status: '발송 완료',
     itemDetails: '파란색 텀블러',
@@ -350,7 +129,7 @@ const initialMockLostItems = [
   },
   {
     id: 'LI0006',
-    createdAt: '2024-07-16 16:30:00',
+    createdAt: '2025-12-15 16:30:00',
     itemCategory: '귀중품',
     status: '폐기 완료',
     itemDetails: '고급 선글라스 케이스',
@@ -381,12 +160,23 @@ const loadDaumPostcode = () => new Promise((resolve, reject) => {
 });
 
 // --- MAIN COMPONENT ---
-const LostItemsPage = ({ setActiveKey }) => {
+export default function LostItemsPage({ setActiveKey }) {
   const [items, setItems] = useState(initialMockLostItems);
-  const [filteredData, setFilteredData] = useState(items);
-  const [statusFilter, setStatusFilter] = useState('');
-  const [searchText, setSearchText] = useState('');
 
+  // Filter states
+  const [searchField, setSearchField] = useState('carNumber');
+  const [searchText, setSearchText] = useState('');
+  const [fPartner, setFPartner] = useState('');
+  const [fStatus, setFStatus] = useState('');
+  const [periodFrom, setPeriodFrom] = useState(() => {
+    const d = new Date(); d.setMonth(d.getMonth() - 2); return toYmd(d);
+  });
+  const [periodTo, setPeriodTo] = useState(() => toYmd(new Date()));
+
+  // Sort
+  const [sortConfig, setSortConfig] = useState({ key: 'id', direction: 'desc' });
+
+  // Drawer
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
 
@@ -399,6 +189,41 @@ const LostItemsPage = ({ setActiveKey }) => {
   const [draftAddr2, setDraftAddr2] = useState('');
   const [addressInputMode, setAddressInputMode] = useState('postcode');
 
+  // Partner names for filter
+  const partnerNames = useMemo(() => [...new Set(items.map(i => i.partnerName).filter(Boolean))], [items]);
+
+  // Filter
+  const filteredData = useMemo(() => {
+    return items.filter(item => {
+      if (searchText && !item[searchField]?.toLowerCase().includes(searchText.toLowerCase())) return false;
+      if (fPartner && item.partnerName !== fPartner) return false;
+      if (fStatus && item.status !== fStatus) return false;
+      const d = item.createdAt?.slice(0, 10);
+      if (periodFrom && d < periodFrom) return false;
+      if (periodTo && d > periodTo) return false;
+      return true;
+    });
+  }, [items, searchField, searchText, fPartner, fStatus, periodFrom, periodTo]);
+
+  // Sort
+  const handleSort = (key) => {
+    setSortConfig(prev => ({ key, direction: prev.key === key && prev.direction === 'asc' ? 'desc' : 'asc' }));
+  };
+
+  const sortedData = useMemo(() => {
+    if (!sortConfig.key) return filteredData;
+    return [...filteredData].sort((a, b) => {
+      const aVal = a[sortConfig.key] || '';
+      const bVal = b[sortConfig.key] || '';
+      if (aVal < bVal) return sortConfig.direction === 'asc' ? -1 : 1;
+      if (aVal > bVal) return sortConfig.direction === 'asc' ? 1 : -1;
+      return 0;
+    });
+  }, [filteredData, sortConfig]);
+
+  // Pagination
+  const { currentData, currentPage, totalPages, setCurrentPage, totalItems } = usePagination(sortedData, 40);
+
   // Sync selectedItem when items change
   useEffect(() => {
     if (selectedItem) {
@@ -406,17 +231,6 @@ const LostItemsPage = ({ setActiveKey }) => {
       if (updated) setSelectedItem(updated);
     }
   }, [items]);
-
-  useEffect(() => {
-    let data = items;
-    if (statusFilter) {
-      data = data.filter(item => item.status === statusFilter);
-    }
-    if (searchText) {
-      data = data.filter(item => item.lostItemCardReceiptNumber.toLowerCase().includes(searchText.toLowerCase()));
-    }
-    setFilteredData(data);
-  }, [statusFilter, searchText, items]);
 
   const showDrawer = (item) => {
     setSelectedItem(item);
@@ -435,7 +249,6 @@ const LostItemsPage = ({ setActiveKey }) => {
     }, 300);
   }, []);
 
-  // Update fields in items
   const updateItemField = (id, updates) => {
     setItems(prev => prev.map(item => item.id === id ? { ...item, ...updates } : item));
   };
@@ -477,7 +290,6 @@ const LostItemsPage = ({ setActiveKey }) => {
   // Address save
   const handleSaveAddress = () => {
     const updates = { deliveryAddress1: draftAddr1, deliveryAddress2: draftAddr2 };
-    // 일반 + 배송지 미입력 + 주소 입력 → 발송 대기 자동 전이
     if (selectedItem.itemCategory === '일반' && selectedItem.status === '배송지 미입력' && draftAddr1.trim()) {
       updates.status = '발송 대기';
     }
@@ -498,7 +310,7 @@ const LostItemsPage = ({ setActiveKey }) => {
     }
   };
 
-  // Photo handlers (즉시 반영)
+  // Photo handlers
   const handleAddPhoto = () => {
     const newPhoto = prompt("추가할 사진 URL을 입력하세요:", "https://via.placeholder.com/150");
     if (newPhoto) {
@@ -509,27 +321,42 @@ const LostItemsPage = ({ setActiveKey }) => {
     updateItemField(selectedItem.id, { itemPhotos: selectedItem.itemPhotos.filter((_, i) => i !== index) });
   };
 
-  // Get status options for current item
   const getStatusOptions = (item) => {
     if (!item) return [];
     if (TERMINAL_STATUSES.includes(item.status)) return [item.status];
     return STATUS_BY_CATEGORY[item.itemCategory] || [];
   };
 
+  const handleResetFilters = () => {
+    setSearchField('carNumber');
+    setSearchText('');
+    setFPartner('');
+    setFStatus('');
+    const d = new Date(); d.setMonth(d.getMonth() - 2);
+    setPeriodFrom(toYmd(d));
+    setPeriodTo(toYmd(new Date()));
+  };
+
+  const searchFieldLabel = searchField === 'carNumber' ? '차량 번호' : '분실물 카드';
+
   const columns = [
-    { title: '분실물 ID', dataIndex: 'id', key: 'id' },
-    { title: '파트너사', dataIndex: 'partnerName', key: 'partnerName' },
-    { title: '차량 번호', dataIndex: 'carNumber', key: 'carNumber' },
-    { title: '존 이름', dataIndex: 'zoneName', key: 'zoneName' },
+    { key: 'id', header: '분실물 ID' },
+    { key: 'partnerName', header: '파트너 이름' },
+    { key: 'carNumber', header: '차량 번호' },
+    { key: 'zoneName', header: '존 이름' },
     {
-      title: '오더 ID', dataIndex: 'relatedOrderId', key: 'relatedOrderId',
-      render: (text) => <a onClick={(e) => { e.stopPropagation(); setActiveKey('orders'); }} className="text-blue-500 hover:underline">{text || '-'}</a>,
+      key: 'relatedOrderId', header: '오더 ID',
+      render: (row) => (
+        <a onClick={(e) => { e.stopPropagation(); setActiveKey('orders'); }} className="text-blue-500 hover:underline cursor-pointer">
+          {row.relatedOrderId || '-'}
+        </a>
+      ),
     },
-    { title: '접수 일시', dataIndex: 'createdAt', key: 'createdAt' },
-    { title: '분실물 카드 번호', dataIndex: 'lostItemCardReceiptNumber', key: 'lostItemCardReceiptNumber' },
+    { key: 'createdAt', header: '접수 일시' },
+    { key: 'lostItemCardReceiptNumber', header: '분실물 카드 번호' },
     {
-      title: '처리상태', dataIndex: 'status', key: 'status',
-      render: (status) => <Badge status={statusBadgeMap[status]} text={status} />,
+      key: 'status', header: '처리 상태',
+      render: (row) => <Badge tone={statusBadgeMap[row.status]}>{row.status}</Badge>,
     },
   ];
 
@@ -539,62 +366,55 @@ const LostItemsPage = ({ setActiveKey }) => {
     const isTerminal = TERMINAL_STATUSES.includes(data.status);
     const isAddressChanged = draftAddr1 !== (data.deliveryAddress1 || '') || draftAddr2 !== (data.deliveryAddress2 || '');
 
-    const renderFieldView = (label, content) => <Field label={label}>{content || '-'}</Field>;
-
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+      <div className="space-y-6">
         {/* 분실물 정보 */}
         <Card>
           <CardHeader><CardTitle>분실물 정보</CardTitle></CardHeader>
-          <CardContent>
-            {renderFieldView("분실물 ID", data.id)}
-            {renderFieldView("접수 일시", data.createdAt)}
+          <CardContent className="space-y-4">
+            <Field label="분실물 ID" value={data.id} />
+            <Field label="접수 일시" value={data.createdAt} />
 
-            {/* 분실물 구분 — Select (종결 상태면 텍스트) */}
-            <Field label="분실물 구분">
-              {isTerminal ? (
-                <span>{data.itemCategory}</span>
-              ) : (
+            <Field label="분실물 구분" value={
+              isTerminal ? data.itemCategory : (
                 <Select value={data.itemCategory} onChange={handleCategoryChange}>
-                  {itemClassificationOptions.map(opt => <Select.Option key={opt} value={opt}>{opt}</Select.Option>)}
+                  {itemClassificationOptions.map(opt => <option key={opt} value={opt}>{opt}</option>)}
                 </Select>
-              )}
-            </Field>
+              )
+            } />
 
-            {/* 처리 상태 — Select (종결 상태면 Badge) */}
-            <Field label="처리상태">
-              {isTerminal ? (
-                <Badge status={statusBadgeMap[data.status]} text={data.status} />
+            <Field label="처리 상태" value={
+              isTerminal ? (
+                <Badge tone={statusBadgeMap[data.status]}>{data.status}</Badge>
               ) : (
                 <Select value={data.status} onChange={handleStatusChange}>
-                  {getStatusOptions(data).map(opt => <Select.Option key={opt} value={opt}>{opt}</Select.Option>)}
+                  {getStatusOptions(data).map(opt => <option key={opt} value={opt}>{opt}</option>)}
                 </Select>
-              )}
-            </Field>
+              )
+            } />
 
-            {/* 배송 주소 */}
-            <Field label="배송 주소" isBlock>
-              {isTerminal ? (
-                <div style={{ marginTop: '0.5rem' }}>
-                  <div style={{ fontSize: '0.875rem' }}>{data.deliveryAddress1 || '-'}</div>
-                  {data.deliveryAddress2 && <div style={{ fontSize: '0.875rem', color: styleVariables.mutedTextColor }}>{data.deliveryAddress2}</div>}
+            <Field label="배송 주소" value={
+              isTerminal ? (
+                <div>
+                  <div className="text-sm">{data.deliveryAddress1 || '-'}</div>
+                  {data.deliveryAddress2 && <div className="text-sm text-[#6B778C]">{data.deliveryAddress2}</div>}
                 </div>
               ) : (
-                <div style={{ marginTop: '0.5rem' }}>
-                  <div style={{ display: 'flex', gap: '1rem', marginBottom: '0.75rem' }}>
-                    <label style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.875rem', cursor: 'pointer' }}>
+                <div className="space-y-3">
+                  <div className="flex gap-4">
+                    <label className="flex items-center gap-1 text-sm cursor-pointer">
                       <input type="radio" name="addressMode" value="postcode" checked={addressInputMode === 'postcode'} onChange={() => setAddressInputMode('postcode')} />
                       우편번호 검색
                     </label>
-                    <label style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.875rem', cursor: 'pointer' }}>
+                    <label className="flex items-center gap-1 text-sm cursor-pointer">
                       <input type="radio" name="addressMode" value="manual" checked={addressInputMode === 'manual'} onChange={() => setAddressInputMode('manual')} />
                       직접 입력
                     </label>
                   </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                    <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-                      <span style={{ width: '50px', fontSize: '0.8rem', color: styleVariables.mutedTextColor, flexShrink: 0 }}>주소1</span>
-                      <div style={{ flex: 1 }}>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <span className="w-12 shrink-0 text-xs text-[#6B778C]">주소1</span>
+                      <div className="flex-1">
                         <Input
                           value={draftAddr1}
                           onChange={(e) => setDraftAddr1(e.target.value)}
@@ -603,94 +423,107 @@ const LostItemsPage = ({ setActiveKey }) => {
                         />
                       </div>
                       {addressInputMode === 'postcode' && (
-                        <Button onClick={handleSearchAddress} style={{ flexShrink: 0 }}><MapPin size={16} style={{ marginRight: '0.25rem' }} /> 주소 검색</Button>
+                        <Button onClick={handleSearchAddress} className="shrink-0">
+                          <MapPin className="mr-1 h-4 w-4" /> 주소 검색
+                        </Button>
                       )}
                     </div>
-                    <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-                      <span style={{ width: '50px', fontSize: '0.8rem', color: styleVariables.mutedTextColor, flexShrink: 0 }}>주소2</span>
-                      <div style={{ flex: 1 }}>
+                    <div className="flex items-center gap-2">
+                      <span className="w-12 shrink-0 text-xs text-[#6B778C]">주소2</span>
+                      <div className="flex-1">
                         <Input value={draftAddr2} onChange={(e) => setDraftAddr2(e.target.value)} placeholder="상세 주소를 입력하세요" />
                       </div>
-                      <Button variant={isAddressChanged ? 'primary' : 'default'} onClick={handleSaveAddress} disabled={!isAddressChanged} style={{ flexShrink: 0 }}>저장</Button>
+                      <Button
+                        variant={isAddressChanged ? undefined : 'secondary'}
+                        onClick={handleSaveAddress}
+                        disabled={!isAddressChanged}
+                        className="shrink-0"
+                      >저장</Button>
                     </div>
                   </div>
                 </div>
-              )}
-            </Field>
+              )
+            } />
 
-            {/* 상세 정보 — Textarea + 개별 저장 */}
-            <Field label="상세 정보" isBlock>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '0.5rem' }}>
-                <Textarea
+            <Field label="상세 정보" value={
+              <div className="space-y-2">
+                <textarea
+                  className="w-full rounded-lg border border-[#E2E8F0] p-2 text-sm"
                   rows={3}
                   value={drafts.itemDetails !== undefined ? drafts.itemDetails : data.itemDetails}
                   onChange={(e) => setDraft('itemDetails', e.target.value)}
                 />
-                <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                <div className="flex justify-end">
                   <Button
-                    variant={(drafts.itemDetails !== undefined && drafts.itemDetails !== data.itemDetails) ? 'primary' : 'default'}
+                    variant={(drafts.itemDetails !== undefined && drafts.itemDetails !== data.itemDetails) ? undefined : 'secondary'}
                     onClick={() => handleSaveField('itemDetails')}
                     disabled={drafts.itemDetails === undefined || drafts.itemDetails === data.itemDetails}
                   >저장</Button>
                 </div>
               </div>
-            </Field>
+            } />
 
-            {/* 습득물 사진 — 즉시 추가/삭제 */}
-            <Field label="습득물 사진" isBlock>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginTop: '0.5rem' }}>
-                {data.itemPhotos?.map((photo, index) => (
-                  <div key={index} style={{ position: 'relative' }}>
-                    <img src={photo} alt={`p-${index}`} style={{ width: 80, height: 80, objectFit: 'cover', borderRadius: '0.25rem' }} />
-                    <button style={{position:'absolute',top:'-5px',right:'-5px',background:'red',color:'white',border:'none',borderRadius:'50%',width:20,height:20,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center'}} onClick={() => handleRemovePhoto(index)}><X size={14}/></button>
-                  </div>
-                ))}
+            <Field label="습득물 사진" value={
+              <div>
+                <div className="flex flex-wrap gap-2">
+                  {data.itemPhotos?.map((photo, index) => (
+                    <div key={index} className="relative">
+                      <img src={photo} alt={`p-${index}`} className="w-20 h-20 object-cover rounded" />
+                      <button
+                        className="absolute -top-1.5 -right-1.5 bg-red-500 text-white border-none rounded-full w-5 h-5 flex items-center justify-center cursor-pointer"
+                        onClick={() => handleRemovePhoto(index)}
+                      ><X className="h-3 w-3" /></button>
+                    </div>
+                  ))}
+                </div>
+                <Button onClick={handleAddPhoto} className="mt-2">
+                  <Plus className="mr-1 h-4 w-4" /> 사진 추가
+                </Button>
               </div>
-              <Button onClick={handleAddPhoto} style={{ marginTop: '0.5rem' }}><Plus size={16} style={{marginRight: '0.25rem'}} /> 사진 추가</Button>
-            </Field>
+            } />
           </CardContent>
         </Card>
 
         {/* 차량 정보 */}
         <Card>
           <CardHeader><CardTitle>차량 정보</CardTitle></CardHeader>
-          <CardContent>
-            {renderFieldView("차량 번호", data.carNumber)}
-            {renderFieldView("존 이름", data.zoneName)}
-            {renderFieldView("지역1", data.region1)}
-            {renderFieldView("지역2", data.region2)}
-            {renderFieldView("존 ID", data.zoneId)}
+          <CardContent className="space-y-4">
+            <Field label="차량 번호" value={data.carNumber} />
+            <Field label="존 이름" value={data.zoneName} />
+            <Field label="지역1" value={data.region1} />
+            <Field label="지역2" value={data.region2} />
+            <Field label="존 ID" value={data.zoneId} />
           </CardContent>
         </Card>
 
         {/* 세차 오더 정보 */}
         <Card>
           <CardHeader><CardTitle>세차 오더 정보</CardTitle></CardHeader>
-          <CardContent>
-            {renderFieldView("파트너사", data.partnerName)}
-            <Field label="연계 오더 ID">
-              <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-                <div style={{ flex: 1 }}>
+          <CardContent className="space-y-4">
+            <Field label="파트너 이름" value={data.partnerName} />
+            <Field label="연계 오더 ID" value={
+              <div className="flex items-center gap-2">
+                <div className="flex-1">
                   <Input
                     value={drafts.relatedOrderId !== undefined ? drafts.relatedOrderId : data.relatedOrderId}
                     onChange={(e) => setDraft('relatedOrderId', e.target.value)}
                   />
                 </div>
                 <Button
-                  variant={(drafts.relatedOrderId !== undefined && drafts.relatedOrderId !== data.relatedOrderId) ? 'primary' : 'default'}
+                  variant={(drafts.relatedOrderId !== undefined && drafts.relatedOrderId !== data.relatedOrderId) ? undefined : 'secondary'}
                   onClick={() => handleSaveField('relatedOrderId')}
                   disabled={drafts.relatedOrderId === undefined || drafts.relatedOrderId === data.relatedOrderId}
                 >저장</Button>
               </div>
-            </Field>
+            } />
           </CardContent>
         </Card>
 
         {/* 분실물 카드 정보 */}
         <Card>
           <CardHeader><CardTitle>분실물 카드 정보</CardTitle></CardHeader>
-          <CardContent>
-            {renderFieldView("카드 접수 번호", data.lostItemCardReceiptNumber)}
+          <CardContent className="space-y-4">
+            <Field label="카드 접수 번호" value={data.lostItemCardReceiptNumber || '-'} />
           </CardContent>
         </Card>
       </div>
@@ -698,39 +531,101 @@ const LostItemsPage = ({ setActiveKey }) => {
   };
 
   return (
-    <>
+    <div className="space-y-4">
+      <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+        <div>
+          <div className="text-base font-bold text-[#172B4D]">분실물 관리</div>
+          <div className="mt-1 text-sm text-[#6B778C]">분실물 접수 현황 및 처리 상태 관리</div>
+        </div>
+      </div>
+
+      <FilterPanel
+        chips={<>
+          {searchText ? <Chip onRemove={() => setSearchText('')}>{searchFieldLabel}: {searchText}</Chip> : null}
+          {fPartner ? <Chip onRemove={() => setFPartner('')}>파트너: {fPartner}</Chip> : null}
+          {fStatus ? <Chip onRemove={() => setFStatus('')}>상태: {fStatus}</Chip> : null}
+          {periodFrom ? <Chip onRemove={() => setPeriodFrom('')}>시작일: {periodFrom}</Chip> : null}
+          {periodTo ? <Chip onRemove={() => setPeriodTo('')}>종료일: {periodTo}</Chip> : null}
+        </>}
+        onReset={handleResetFilters}
+      >
+        <div className="md:col-span-2">
+          <label htmlFor="searchField" className="block text-xs font-semibold text-[#6B778C] mb-1.5">검색 항목</label>
+          <Select id="searchField" value={searchField} onChange={(e) => setSearchField(e.target.value)}>
+            <option value="carNumber">차량 번호</option>
+            <option value="lostItemCardReceiptNumber">분실물 카드</option>
+          </Select>
+        </div>
+        <div className="md:col-span-2">
+          <label htmlFor="searchText" className="block text-xs font-semibold text-[#6B778C] mb-1.5">검색어</label>
+          <Input id="searchText" value={searchText} onChange={(e) => setSearchText(e.target.value)} placeholder="검색어 입력" />
+        </div>
+        <div className="md:col-span-2">
+          <label htmlFor="fPartner" className="block text-xs font-semibold text-[#6B778C] mb-1.5">파트너 이름</label>
+          <Select id="fPartner" value={fPartner} onChange={(e) => setFPartner(e.target.value)}>
+            <option value="">전체</option>
+            {partnerNames.map(n => <option key={n} value={n}>{n}</option>)}
+          </Select>
+        </div>
+        <div className="md:col-span-2">
+          <label htmlFor="fStatus" className="block text-xs font-semibold text-[#6B778C] mb-1.5">처리 상태</label>
+          <Select id="fStatus" value={fStatus} onChange={(e) => setFStatus(e.target.value)}>
+            <option value="">전체</option>
+            {allStatusOptions.map(s => <option key={s} value={s}>{s}</option>)}
+          </Select>
+        </div>
+        <div className="md:col-span-2">
+          <label htmlFor="periodFrom" className="block text-xs font-semibold text-[#6B778C] mb-1.5">접수일 시작</label>
+          <Input id="periodFrom" type="date" value={periodFrom} onChange={(e) => setPeriodFrom(e.target.value)} />
+        </div>
+        <div className="md:col-span-2">
+          <label htmlFor="periodTo" className="block text-xs font-semibold text-[#6B778C] mb-1.5">접수일 종료</label>
+          <Input id="periodTo" type="date" value={periodTo} onChange={(e) => setPeriodTo(e.target.value)} />
+        </div>
+      </FilterPanel>
+
       <Card>
-        <CardHeader><CardTitle>분실물 관리</CardTitle></CardHeader>
-        <CardContent>
-          <div style={{ marginBottom: '1rem', display: 'flex' }}>
-            <Select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} placeholder="처리상태 선택" allowClear>
-              {allStatusOptions.map(option => <Select.Option key={option} value={option}>{option}</Select.Option>)}
-            </Select>
-            <Input
-              placeholder="장애카드접수번호 검색..."
-              value={searchText}
-              onChange={e => setSearchText(e.target.value)}
-              icon={<Search size={16}/>}
-            />
-          </div>
-          <DataTable dataSource={filteredData} columns={columns} onRowClick={showDrawer} />
-        </CardContent>
+        <DataTable
+          columns={columns}
+          rows={currentData}
+          rowKey={(r) => r.id}
+          onRowClick={showDrawer}
+          sortConfig={sortConfig}
+          onSort={handleSort}
+        />
       </Card>
+
+      <div className="flex items-center justify-end pt-2">
+        <div className="flex items-center gap-2 text-sm text-[#6B778C]">
+          <span>
+            {totalItems > 0
+              ? `${(currentPage - 1) * 40 + 1} - ${Math.min(currentPage * 40, totalItems)} / ${totalItems.toLocaleString()}`
+              : '0 - 0 / 0'}
+          </span>
+          <div className="flex items-center">
+            <Button variant="ghost" size="sm" onClick={() => setCurrentPage(currentPage - 1)} disabled={currentPage === 1} className="p-1 h-auto">
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+            <Button variant="ghost" size="sm" onClick={() => setCurrentPage(currentPage + 1)} disabled={currentPage === totalPages} className="p-1 h-auto">
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+      </div>
 
       <Drawer
         title="분실물 상세 정보"
+        subtitle="분실물 상세 및 처리 상태 관리"
         open={drawerVisible}
         onClose={closeDrawer}
         footer={
-          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-            <Button variant="default" onClick={closeDrawer}>닫기</Button>
+          <div className="flex justify-end">
+            <Button variant="secondary" onClick={closeDrawer}>닫기</Button>
           </div>
         }
       >
         {renderDrawerContent()}
       </Drawer>
-    </>
+    </div>
   );
-};
-
-export default LostItemsPage;
+}

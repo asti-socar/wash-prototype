@@ -22,8 +22,8 @@
 | `zoneName` | 존 이름 | String | 존 명칭 (예: 성수 비즈밸리) | 불가 |
 | `region1` | 지역1 | String | 존의 상위 지역 (예: 서울) | 불가 |
 | `region2` | 지역2 | String | 존의 하위 지역 (예: 성동구) | 불가 |
-| `partnerId` | 파트너사 ID | Number | 세차를 수행한 파트너사의 고유 ID | 불가 |
-| `partnerName` | 파트너사 | String | 파트너사 명칭 | 불가 |
+| `partnerId` | 파트너 ID | Number | 세차를 수행한 파트너의 고유 ID | 불가 |
+| `partnerName` | 파트너 이름 | String | 파트너 명칭 | 불가 |
 | `relatedOrderId` | 연계 오더 ID | Number | 분실물이 발견된 세차 오더의 ID | **가능** |
 | `lostItemCardReceiptNumber` | 분실물 카드 접수 번호 | String | 옥스트라 시스템과 연동되는 접수 번호 | 불가 |
 | `deliveryAddress1` | 배송 주소1 | String | 배송지 기본 주소 (도로명 또는 지번) | **가능** |
@@ -78,23 +78,32 @@
 
 ### 4.1. 리스트 (DataTable)
 
-- **필터 (Filter)**
-  - [분실물 처리 상태] `Select` 필터를 통해 특정 상태의 분실물만 조회할 수 있습니다.
-  - 필터 옵션: 배송지 미입력, 발송 대기, 발송 완료, 경찰서 인계, 폐기 완료
+- **조회 조건 설정 (FilterPanel)**
+  - 공용 `FilterPanel` 컴포넌트 사용 (12-col 그리드, 칩 표시, 설정 초기화)
+  - 필터 필드:
+    1. **검색 항목** (Select): `차량 번호` / `분실물 카드` 선택
+    2. **검색어** (Input): 선택한 검색 항목 기준 텍스트 검색
+    3. **파트너 이름** (Select): 기본값 `전체`
+    4. **처리 상태** (Select): 기본값 `전체`, 옵션: 배송지 미입력, 발송 대기, 발송 완료, 경찰서 인계, 폐기 완료
+    5. **접수일 시작** (Date): 기본값 현재 기준 2개월 전
+    6. **접수일 종료** (Date): 기본값 오늘
 
 - **컬럼 (Columns)**
   1. **분실물 ID**: `id`
-  2. **파트너사**: `partnerName`
+  2. **파트너 이름**: `partnerName`
   3. **차량 번호**: `carNumber`
   4. **존 이름**: `zoneName`
   5. **오더 ID**: `relatedOrderId` (클릭 시 해당 세차 오더 상세 페이지로 이동)
   6. **접수 일시**: `createdAt`
-  7. **분실물 카드 접수 번호**: `lostItemCardReceiptNumber` (값이 없으면 빈 칸으로 표시)
-  8. **처리상태**: `status` (Badge 적용)
+  7. **분실물 카드 번호**: `lostItemCardReceiptNumber` (값이 없으면 빈 칸으로 표시)
+  8. **처리 상태**: `status` (Badge 적용)
+
+- **정렬**: 컬럼 헤더 클릭 시 오름차순/내림차순 정렬 (기본: ID 내림차순)
+- **페이지네이션**: 40건 단위 페이지네이션
 
 ### 4.2. 상세 조회 (Drawer)
 
-- **Drawer 제목**: 항상 `"분실물 상세 정보"`
+- **Drawer 제목**: `"분실물 상세 정보"` / 부제: `"분실물 상세 및 처리 상태 관리"`
 - **Footer**: `[닫기]` 버튼만 표시 (수정 버튼 없음)
 - **인라인 편집**: 수정 가능한 필드는 처음부터 Select / Input / Textarea로 표시되며, 별도의 수정 모드 진입 없이 즉시 편집 가능합니다.
 
@@ -116,7 +125,7 @@
       - `존 ID` (수정 불가)
 
   3.  **세차 오더 정보**
-      - `파트너사` (수정 불가)
+      - `파트너 이름` (수정 불가)
       - `연계 오더 ID`: `Input` + 개별 [저장] 버튼
 
   4.  **분실물 카드 정보 (옥스트라 연동)**
@@ -150,6 +159,6 @@
 
 ## 5. 기술 가이드 (Tech Guide)
 
-- **컴포넌트**: 이 페이지는 로컬 인라인 스타일 컴포넌트(Card, Button, Input, Select, Badge, Drawer, DataTable, Field)를 사용합니다.
+- **컴포넌트**: 공용 `ui.jsx` 컴포넌트를 사용합니다 (Card, CardHeader, CardTitle, CardContent, Button, Input, Select, Badge, Chip, FilterPanel, Drawer, Field, DataTable, usePagination).
 - **Daum Postcode API**: `//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js` 동적 로드, `new daum.Postcode({ oncomplete }).open()` 패턴으로 주소 검색
 - **모킹 (Mocking)**: '오더 ID' 검색 기능은 실제 API 연동 없이, 사용자 인터랙션이 가능한 수준의 프로토타입으로 구현합니다.

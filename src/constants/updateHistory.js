@@ -1,4 +1,5 @@
 export const BROWN_HISTORY = [
+  { id: 99, date: "2026-02-09 16:00", content: "[UI] 분실물 관리 스타일 통일: 공용 ui.jsx 컴포넌트 전환(로컬 인라인 228줄 제거), FilterPanel 적용(검색항목+검색어/파트너이름/처리상태/접수일 기간), 정렬·페이지네이션 추가, '파트너사'→'파트너 이름'·'처리상태'→'처리 상태' 용어 변경", isPolicyChange: false, links: [{ label: "분실물 관리", page: "lostfound" }] },
   { id: 98, date: "2026-02-09 15:00", content: "[기능] 존 배정 관리 상세 고도화: 배정된 수행원 정보 영역 추가(수행원 ID/이름/벌점), 파트너 변경 시 Select 즉시 컨펌 방식(저장 버튼 제거), 수행원 초기화 안내 메시지, 파트너 미배정 존 수행원 비표시", isPolicyChange: false, links: [{ label: "존 배정 관리", page: "zone-assignment" }] },
   { id: 97, date: "2026-02-09 14:00", content: "[UI] 수행원 조회 개편: 지역1/지역2 필터 및 컬럼 삭제, 배정된 쏘카존 컬럼→배정 존 개수로 변경, 상세 화면 배정 지역 영역 제거, 배정된 쏘카존 다건 존 정보 리스트(존 이름/ID/지역) 표시", isPolicyChange: false, links: [{ label: "수행원 조회", page: "workers" }] },
   { id: 96, date: "2026-02-09 13:00", content: "[정책] 분실물 관리 고도화: 인라인 편집 구조(수정 모드 제거, Select 컨펌, Input 개별 저장), 구분별 상태 흐름 분리(일반/귀중품), 배송 주소 Daum 우편번호 검색 연동, 송장번호·고객 신고 물품 필드 제거, 지역1/지역2 분리, mock 데이터 6건 확장", isPolicyChange: true, links: [{ label: "분실물 관리", page: "lostfound" }] },
