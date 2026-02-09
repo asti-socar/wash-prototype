@@ -217,7 +217,7 @@ const generateMockDeliveryInfo = (orders) => {
   return deliveryInfo;
 };
 
-const CANCEL_TYPES = ["변경취소", "미예약취소", "노쇼취소", "수행원취소", "우천취소"];
+const CANCEL_TYPES = ["변경 취소", "미예약 취소", "노쇼 취소", "수행원 취소(차량 없음)", "수행원 취소(예약 불가)", "수행원 취소(주차장 문제)", "수행원 취소(기타)", "수행원 취소(개인 사유)", "우천 취소"];
 
 function OrdersPage({ quickFilter, onClearQuickFilter, initialOrderId, orders, setOrders, missions, setMissions }) {
   const today = new Date();
@@ -863,6 +863,10 @@ function OrdersPage({ quickFilter, onClearQuickFilter, initialOrderId, orders, s
                   <div className="space-y-1">
                     <div className="text-xs text-[#6B778C]">진행 상태</div>
                     <Badge tone={getStatusBadgeTone(selected.status)}>{selected.status}</Badge>
+                  </div>
+                  <div className="space-y-1">
+                    <div className="text-xs text-[#6B778C]">취소 유형</div>
+                    <div>{selected.status === "취소" && selected.cancelType ? <Badge tone="default">{selected.cancelType}</Badge> : <span className="text-[#94A3B8]">-</span>}</div>
                   </div>
                   <div className="col-span-2 border-t border-[#DFE1E6] my-1"></div>
                   <div className="space-y-1">

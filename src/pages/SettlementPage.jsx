@@ -51,11 +51,6 @@ export default function SettlementPage() {
     { key: "requestType", header: "요청 유형" },
     { key: "requestedAt", header: "요청 일시" },
     { key: "approvalType", header: "합의 유형" },
-    { key: "processorType", header: "처리 주체", render: (r) => {
-      const type = getProcessorType(r.processor);
-      return type ? <Badge tone={type === "인터널" ? "ok" : "default"}>{type}</Badge> : <span className="text-[#94A3B8]">-</span>;
-    }},
-    { key: "processedAt", header: "처리 일시", render: (r) => r.processedAt || <span className="text-[#94A3B8]">-</span> },
     {
       key: "status",
       header: "상태",
@@ -64,6 +59,11 @@ export default function SettlementPage() {
         return <Badge tone={tone}>{r.status}</Badge>;
       },
     },
+    { key: "processorType", header: "처리 주체", render: (r) => {
+      const type = getProcessorType(r.processor);
+      return type ? <Badge tone={type === "인터널" ? "ok" : "default"}>{type}</Badge> : <span className="text-[#94A3B8]">-</span>;
+    }},
+    { key: "processedAt", header: "처리 일시", render: (r) => r.processedAt || <span className="text-[#94A3B8]">-</span> },
   ];
 
   const handleUpdateStatus = (newStatus, rejectCommentText = "") => {
@@ -253,6 +253,7 @@ export default function SettlementPage() {
                 <Field label="요청 유형" value={selected.requestType} />
                 <Field label="요청 일시" value={selected.requestedAt} />
                 <Field label="합의 유형" value={<Badge tone={selected.approvalType === "1단계 승인" ? "ok" : "warn"}>{selected.approvalType}</Badge>} />
+                <Field label="상태" value={<Badge tone={selected.status === "요청" ? "warn" : selected.status === "승인" ? "ok" : selected.status === "반려" ? "danger" : "default"}>{selected.status}</Badge>} />
                 {selected.approvalType === "2단계 승인" ? (
                   <>
                     <Field label="1차 처리자" value={selected.primaryProcessor || <span className="text-[#94A3B8]">-</span>} />
@@ -265,7 +266,6 @@ export default function SettlementPage() {
                   </>
                 )}
                 <Field label="처리 일시" value={selected.processedAt || <span className="text-[#94A3B8]">-</span>} />
-                <Field label="상태" value={<Badge tone={selected.status === "요청" ? "warn" : selected.status === "승인" ? "ok" : selected.status === "반려" ? "danger" : "default"}>{selected.status}</Badge>} />
                 <div className="border-t border-[#E2E8F0] my-3" />
                 <div className="flex items-center justify-between gap-3">
                   <div className="w-36 shrink-0 text-xs font-semibold text-[#6B778C]">청구 금액</div>
