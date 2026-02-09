@@ -29,6 +29,11 @@
 | `deliveryAddress1` | 배송 주소1 | String | 배송지 기본 주소 (도로명 또는 지번) | **가능** |
 | `deliveryAddress2` | 배송 주소2 | String | 배송지 상세 주소 | **가능** |
 
+### 1.1 필수 데이터 제약
+
+- **연계 오더 ID (`relatedOrderId`)**: 모든 분실물은 세차 오더와 연계되어야 하며, 유효한 오더 ID를 가져야 합니다.
+- **분실물 카드 접수 번호 (`lostItemCardReceiptNumber`)**: 모든 분실물은 옥스트라 시스템의 분실물 카드와 연동되어야 하며, 유효한 접수 번호를 가져야 합니다.
+
 ---
 
 ## 2. 처리 상태 정의 (Status Definition)
