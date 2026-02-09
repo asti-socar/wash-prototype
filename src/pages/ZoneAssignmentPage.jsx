@@ -16,6 +16,20 @@ const MOCK_PARTNERS = [
 
 const partnerMap = new Map(MOCK_PARTNERS.map(p => [p.partnerId, p.partnerName]));
 
+// ============== MOCK WORKERS (수행원 조회 참고) ==============
+const MOCK_WORKERS = [
+  { id: 'W-001', name: '최수행', partnerId: 'P-001', penalty: 0, zoneIds: ['Z-1001', 'Z-1003', 'Z-1048'] },
+  { id: 'W-002', name: '강수행', partnerId: 'P-002', penalty: 2, zoneIds: ['Z-1006', 'Z-1007', 'Z-1050'] },
+  { id: 'W-003', name: '한수행', partnerId: 'P-003', penalty: 0, zoneIds: ['Z-1008', 'Z-1032', 'Z-1044'] },
+  { id: 'W-004', name: '오수행', partnerId: 'P-004', penalty: 1, zoneIds: ['Z-1035', 'Z-1037', 'Z-1046'] },
+  { id: 'W-005', name: '박수행', partnerId: 'P-001', penalty: 0, zoneIds: ['Z-1012', 'Z-1040'] },
+  { id: 'W-006', name: '이수행', partnerId: 'P-002', penalty: 3, zoneIds: ['Z-1014', 'Z-1042', 'Z-1050'] },
+  { id: 'W-007', name: '김수행', partnerId: 'P-003', penalty: 0, zoneIds: ['Z-1010', 'Z-1034', 'Z-1044'] },
+  { id: 'W-008', name: '정수행', partnerId: 'P-001', penalty: 1, zoneIds: ['Z-1019', 'Z-1048'] },
+  { id: 'W-009', name: '조수행', partnerId: 'P-004', penalty: 0, zoneIds: ['Z-1021', 'Z-1035', 'Z-1046'] },
+  { id: 'W-010', name: '윤수행', partnerId: 'P-002', penalty: 2, zoneIds: ['Z-1029', 'Z-1042'] },
+];
+
 // ============== MAIN PAGE COMPONENT ==============
 export default function ZoneAssignmentPage() {
   const [zones, setZones] = useState(zoneAssignmentsData);
@@ -107,9 +121,10 @@ export default function ZoneAssignmentPage() {
     }));
   };
 
-  const handleSaveAssignment = (zoneId, partnerId) => {
-    setZones(prev => prev.map(z => z.zoneId === zoneId ? { ...z, assignedPartnerId: partnerId || null } : z));
-    setSelectedZone(null);
+  const handlePartnerChange = (zoneId, partnerId) => {
+    const newPartnerId = partnerId || null;
+    setZones(prev => prev.map(z => z.zoneId === zoneId ? { ...z, assignedPartnerId: newPartnerId } : z));
+    setSelectedZone(prev => prev && prev.zoneId === zoneId ? { ...prev, assignedPartnerId: newPartnerId } : prev);
   };
 
   const handleBulkAssignment = (assignments) => {
@@ -250,7 +265,7 @@ export default function ZoneAssignmentPage() {
         <ZoneDetailDrawer
           zone={selectedZone}
           onClose={() => setSelectedZone(null)}
-          onSave={handleSaveAssignment}
+          onPartnerChange={handlePartnerChange}
         />
       )}
 
@@ -266,26 +281,32 @@ export default function ZoneAssignmentPage() {
   );
 }
 
-function ZoneDetailDrawer({ zone, onClose, onSave }) {
-  const [selectedPartnerId, setSelectedPartnerId] = useState(zone.assignedPartnerId || "");
+function ZoneDetailDrawer({ zone, onClose, onPartnerChange }) {
+  const zoneWorkers = useMemo(() => {
+    if (!zone.assignedPartnerId) return [];
+    return MOCK_WORKERS.filter(w => w.partnerId === zone.assignedPartnerId && w.zoneIds.includes(zone.zoneId));
+  }, [zone.assignedPartnerId, zone.zoneId]);
 
-  const handleSave = () => {
-    onSave(zone.zoneId, selectedPartnerId || null);
+  const handlePartnerSelect = (e) => {
+    const newPartnerId = e.target.value || null;
+    const currentPartnerId = zone.assignedPartnerId || null;
+    if (newPartnerId === currentPartnerId) return;
+    const newPartnerName = newPartnerId ? partnerMap.get(newPartnerId) : '미배정';
+    const hasWorkers = zoneWorkers.length > 0;
+    const message = hasWorkers
+      ? `배정 파트너를 '${newPartnerName}'(으)로 변경하시겠습니까?\n\n배정된 수행원 정보가 초기화됩니다.`
+      : `배정 파트너를 '${newPartnerName}'(으)로 변경하시겠습니까?`;
+    if (window.confirm(message)) {
+      onPartnerChange(zone.zoneId, newPartnerId);
+    }
   };
-
-  const hasChanges = selectedPartnerId !== (zone.assignedPartnerId || "");
 
   return (
     <Drawer
       open={!!zone}
       title={`존 배정 상세 - ${zone.zoneId}`}
       onClose={onClose}
-      footer={
-        <div className="flex w-full flex-col-reverse sm:flex-row sm:justify-end gap-2">
-          <Button variant="secondary" onClick={onClose} className="w-full sm:w-auto">닫기</Button>
-          <Button onClick={handleSave} disabled={!hasChanges} className="w-full sm:w-auto">저장</Button>
-        </div>
-      }
+      footer={<Button variant="secondary" onClick={onClose}>닫기</Button>}
     >
       <div className="space-y-4">
         {/* Zone Info Section */}
@@ -320,21 +341,13 @@ function ZoneDetailDrawer({ zone, onClose, onSave }) {
           <CardHeader>
             <CardTitle>파트너 배정</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-3">
-            <Field
-              label="현재 배정"
-              value={
-                zone.assignedPartnerId
-                  ? <span className="font-medium">{partnerMap.get(zone.assignedPartnerId)}</span>
-                  : <Badge tone="warn">미배정</Badge>
-              }
-            />
-            <div className="flex items-start justify-between gap-3 py-2">
-              <div className="w-28 shrink-0 text-xs font-semibold text-[#6B778C]">파트너 변경</div>
+          <CardContent>
+            <div className="flex items-start justify-between gap-3">
+              <div className="w-28 shrink-0 text-xs font-semibold text-[#6B778C] pt-2">배정 파트너</div>
               <div className="min-w-0 flex-1">
                 <Select
-                  value={selectedPartnerId}
-                  onChange={(e) => setSelectedPartnerId(e.target.value)}
+                  value={zone.assignedPartnerId || ""}
+                  onChange={handlePartnerSelect}
                 >
                   <option value="">미배정</option>
                   {MOCK_PARTNERS.map(p => (
@@ -343,6 +356,46 @@ function ZoneDetailDrawer({ zone, onClose, onSave }) {
                 </Select>
               </div>
             </div>
+          </CardContent>
+        </Card>
+
+        {/* Workers Section */}
+        <Card>
+          <CardHeader>
+            <CardTitle>배정된 수행원 정보</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {!zone.assignedPartnerId ? (
+              <div className="text-sm text-[#94A3B8] py-2">파트너가 배정되지 않은 존입니다.</div>
+            ) : zoneWorkers.length === 0 ? (
+              <div className="text-sm text-[#94A3B8] py-2">배정된 수행원이 없습니다.</div>
+            ) : (
+              <div className="overflow-x-auto rounded-lg border border-[#E2E8F0]">
+                <table className="min-w-full text-sm">
+                  <thead className="bg-[#F8FAFC] border-b border-[#E2E8F0]">
+                    <tr>
+                      <th className="px-4 py-2.5 text-left text-xs font-semibold text-[#475569]">수행원 ID</th>
+                      <th className="px-4 py-2.5 text-left text-xs font-semibold text-[#475569]">이름</th>
+                      <th className="px-4 py-2.5 text-left text-xs font-semibold text-[#475569]">벌점</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-[#E2E8F0]">
+                    {zoneWorkers.map(w => (
+                      <tr key={w.id} className="hover:bg-[#F8FAFC]">
+                        <td className="px-4 py-2.5 text-[#172B4D]">{w.id}</td>
+                        <td className="px-4 py-2.5 text-[#172B4D]">{w.name}</td>
+                        <td className="px-4 py-2.5">
+                          {w.penalty === 0
+                            ? <span className="text-[#94A3B8]">0</span>
+                            : <Badge tone="danger">{w.penalty}</Badge>
+                          }
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
