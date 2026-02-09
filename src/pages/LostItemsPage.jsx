@@ -18,7 +18,7 @@ const CardHeader = ({ children }) => <div style={{ padding: '1rem', borderBottom
 const CardTitle = ({ children }) => <h2 style={{ fontSize: '1.25rem', fontWeight: 600, margin: 0, color: styleVariables.textColor }}>{children}</h2>;
 const CardContent = ({ children }) => <div style={{ padding: '1rem' }}>{children}</div>;
 
-const Button = ({ children, onClick, variant = 'default', className = '' }) => {
+const Button = ({ children, onClick, variant = 'default', className = '', disabled = false, style: extraStyle }) => {
   const baseStyle = {
     display: 'inline-flex',
     alignItems: 'center',
@@ -28,9 +28,10 @@ const Button = ({ children, onClick, variant = 'default', className = '' }) => {
     border: '1px solid transparent',
     fontSize: '0.875rem',
     fontWeight: 500,
-    cursor: 'pointer',
+    cursor: disabled ? 'not-allowed' : 'pointer',
     transition: 'background-color 0.2s',
     marginRight: '0.5rem',
+    opacity: disabled ? 0.5 : 1,
   };
   const styles = {
     default: {
@@ -47,10 +48,10 @@ const Button = ({ children, onClick, variant = 'default', className = '' }) => {
       color: '#fff',
     }
   };
-  return <button style={{ ...baseStyle, ...styles[variant] }} onClick={onClick} className={className}>{children}</button>;
+  return <button style={{ ...baseStyle, ...styles[variant], ...extraStyle }} onClick={disabled ? undefined : onClick} disabled={disabled} className={className}>{children}</button>;
 };
 
-const Input = ({ value, onChange, placeholder, icon }) => (
+const Input = ({ value, onChange, placeholder, icon, readOnly = false }) => (
   <div style={{ position: 'relative', display: 'flex', alignItems: 'center', width: '100%' }}>
     {icon && <div style={{ position: 'absolute', left: '0.75rem', color: styleVariables.mutedTextColor }}>{icon}</div>}
     <input
@@ -58,12 +59,14 @@ const Input = ({ value, onChange, placeholder, icon }) => (
       value={value}
       onChange={onChange}
       placeholder={placeholder}
+      readOnly={readOnly}
       style={{
         width: '100%',
         padding: `0.5rem ${icon ? '2.25rem' : '0.75rem'}`,
         borderRadius: '0.375rem',
         border: `1px solid ${styleVariables.borderColor}`,
         fontSize: '0.875rem',
+        backgroundColor: readOnly ? '#f3f4f6' : '#fff',
       }}
     />
   </div>
@@ -224,16 +227,32 @@ const Field = ({ label, children, isBlock = false }) => (
 );
 
 
-// --- INITIAL MOCK DATA ---
-const newStatusOptions = ['배송지 미입력', '발송 대기', '발송 완료', '폐기 완료', '경찰서인계'];
+// --- CONSTANTS ---
+const STATUS_BY_CATEGORY = {
+  '일반': ['배송지 미입력', '발송 대기', '발송 완료', '폐기 완료'],
+  '귀중품': ['배송지 미입력', '경찰서 인계', '폐기 완료'],
+};
 
+const TERMINAL_STATUSES = ['발송 완료', '경찰서 인계', '폐기 완료'];
+
+const statusBadgeMap = {
+  '배송지 미입력': 'warning',
+  '발송 대기': 'processing',
+  '발송 완료': 'success',
+  '폐기 완료': 'default',
+  '경찰서 인계': 'default',
+};
+
+const itemClassificationOptions = ['일반', '귀중품'];
+const allStatusOptions = ['배송지 미입력', '발송 대기', '발송 완료', '경찰서 인계', '폐기 완료'];
+
+// --- MOCK DATA ---
 const initialMockLostItems = [
-    // ... (data is the same)
-      {
+  {
     id: 'LI0001',
     createdAt: '2024-07-21 10:30:00',
-    itemCategory: '전자기기',
-    status: '접수',
+    itemCategory: '일반',
+    status: '배송지 미입력',
     itemDetails: '검은색 스마트폰, 최신 모델',
     itemPhotos: ['https://placehold.co/20x20?text=Hello\nWorld'],
     carId: 'CAR001',
@@ -246,14 +265,14 @@ const initialMockLostItems = [
     partnerName: '워시 파트너스',
     relatedOrderId: 'ORD456',
     lostItemCardReceiptNumber: 'LCRN001',
-    deliveryAddress: '',
-    customerReportedItemDetails: '고객이 분실물 신고함'
+    deliveryAddress1: '',
+    deliveryAddress2: '',
   },
   {
     id: 'LI0002',
     createdAt: '2024-07-20 15:00:00',
-    itemCategory: '지갑',
-    status: '보관중',
+    itemCategory: '귀중품',
+    status: '배송지 미입력',
     itemDetails: '갈색 가죽 지갑, 신분증 포함',
     itemPhotos: [],
     carId: 'CAR002',
@@ -266,35 +285,127 @@ const initialMockLostItems = [
     partnerName: '클린카',
     relatedOrderId: 'ORD457',
     lostItemCardReceiptNumber: '',
-    deliveryAddress: '',
-    customerReportedItemDetails: ''
+    deliveryAddress1: '',
+    deliveryAddress2: '',
+  },
+  {
+    id: 'LI0003',
+    createdAt: '2024-07-19 09:15:00',
+    itemCategory: '일반',
+    status: '발송 대기',
+    itemDetails: '검은색 우산',
+    itemPhotos: [],
+    carId: 'CAR003',
+    carNumber: '56다7890',
+    zoneId: 'ZONE03',
+    zoneName: '판교존',
+    region1: '경기',
+    region2: '성남시',
+    partnerId: 'P001',
+    partnerName: '워시 파트너스',
+    relatedOrderId: 'ORD458',
+    lostItemCardReceiptNumber: 'LCRN003',
+    deliveryAddress1: '서울 강남구 테헤란로 123',
+    deliveryAddress2: '4층 401호',
+  },
+  {
+    id: 'LI0004',
+    createdAt: '2024-07-18 14:20:00',
+    itemCategory: '귀중품',
+    status: '경찰서 인계',
+    itemDetails: '노트북 가방 (노트북 포함)',
+    itemPhotos: ['https://placehold.co/20x20?text=Bag'],
+    carId: 'CAR004',
+    carNumber: '78라1234',
+    zoneId: 'ZONE04',
+    zoneName: '역삼존',
+    region1: '서울',
+    region2: '강남구',
+    partnerId: 'P002',
+    partnerName: '클린카',
+    relatedOrderId: 'ORD459',
+    lostItemCardReceiptNumber: 'LCRN004',
+    deliveryAddress1: '',
+    deliveryAddress2: '',
+  },
+  {
+    id: 'LI0005',
+    createdAt: '2024-07-17 11:45:00',
+    itemCategory: '일반',
+    status: '발송 완료',
+    itemDetails: '파란색 텀블러',
+    itemPhotos: [],
+    carId: 'CAR005',
+    carNumber: '90마5678',
+    zoneId: 'ZONE01',
+    zoneName: '강남존',
+    region1: '서울',
+    region2: '강남구',
+    partnerId: 'P001',
+    partnerName: '워시 파트너스',
+    relatedOrderId: 'ORD460',
+    lostItemCardReceiptNumber: 'LCRN005',
+    deliveryAddress1: '서울 마포구 월드컵북로 21',
+    deliveryAddress2: '2층',
+  },
+  {
+    id: 'LI0006',
+    createdAt: '2024-07-16 16:30:00',
+    itemCategory: '귀중품',
+    status: '폐기 완료',
+    itemDetails: '고급 선글라스 케이스',
+    itemPhotos: [],
+    carId: 'CAR006',
+    carNumber: '12바9012',
+    zoneId: 'ZONE02',
+    zoneName: '홍대존',
+    region1: '서울',
+    region2: '마포구',
+    partnerId: 'P002',
+    partnerName: '클린카',
+    relatedOrderId: '',
+    lostItemCardReceiptNumber: 'LCRN006',
+    deliveryAddress1: '',
+    deliveryAddress2: '',
   },
 ];
 
-const statusOptions = newStatusOptions;
-const itemClassificationOptions = ['일반', '귀중품'];
+// --- Daum Postcode API ---
+const loadDaumPostcode = () => new Promise((resolve, reject) => {
+  if (window.daum?.Postcode) return resolve();
+  const s = document.createElement('script');
+  s.src = '//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js';
+  s.onload = resolve;
+  s.onerror = () => reject(new Error('Daum Postcode API 로드 실패'));
+  document.head.appendChild(s);
+});
 
-const statusBadgeMap = {
-  '배송지 미입력': 'warning',
-  '발송 대기': 'processing', // 'info'에 해당하는 'processing' 사용 (청색 계열)
-  '발송 완료': 'success',
-  '폐기 완료': 'default',
-  '경찰서인계': 'default',
-};
-
-const valuableCategories = ['전자기기', '지갑'];
-const isValuable = (category) => valuableCategories.includes(category);
-
+// --- MAIN COMPONENT ---
 const LostItemsPage = ({ setActiveKey }) => {
   const [items, setItems] = useState(initialMockLostItems);
   const [filteredData, setFilteredData] = useState(items);
   const [statusFilter, setStatusFilter] = useState('');
   const [searchText, setSearchText] = useState('');
-  
+
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
-  const [isEditing, setIsEditing] = useState(false);
-  const [formData, setFormData] = useState(null);
+
+  // Draft states for inline Input editing
+  const [drafts, setDrafts] = useState({});
+  const setDraft = (key, val) => setDrafts(p => ({ ...p, [key]: val }));
+
+  // Address states
+  const [draftAddr1, setDraftAddr1] = useState('');
+  const [draftAddr2, setDraftAddr2] = useState('');
+  const [addressInputMode, setAddressInputMode] = useState('postcode');
+
+  // Sync selectedItem when items change
+  useEffect(() => {
+    if (selectedItem) {
+      const updated = items.find(i => i.id === selectedItem.id);
+      if (updated) setSelectedItem(updated);
+    }
+  }, [items]);
 
   useEffect(() => {
     let data = items;
@@ -309,44 +420,101 @@ const LostItemsPage = ({ setActiveKey }) => {
 
   const showDrawer = (item) => {
     setSelectedItem(item);
-    setFormData(JSON.parse(JSON.stringify(item))); // Deep copy
+    setDrafts({});
+    setDraftAddr1(item.deliveryAddress1 || '');
+    setDraftAddr2(item.deliveryAddress2 || '');
+    setAddressInputMode('postcode');
     setDrawerVisible(true);
   };
 
   const closeDrawer = useCallback(() => {
     setDrawerVisible(false);
-    setIsEditing(false);
-    setTimeout(() => { // allow for animation
-        setSelectedItem(null);
-        setFormData(null);
+    setTimeout(() => {
+      setSelectedItem(null);
+      setDrafts({});
     }, 300);
   }, []);
 
-  const handleEdit = () => setIsEditing(true);
-  const handleCancel = () => setIsEditing(false);
+  // Update fields in items
+  const updateItemField = (id, updates) => {
+    setItems(prev => prev.map(item => item.id === id ? { ...item, ...updates } : item));
+  };
 
-  const handleSave = () => {
-    if (formData.status === '발송 완료' && !formData.trackingNumber) {
-        alert("발송 완료 처리를 위해 송장번호를 입력해주세요.");
-        return;
+  // Select confirm: 분실물 구분
+  const handleCategoryChange = (e) => {
+    const newCategory = e.target.value;
+    if (newCategory === selectedItem.itemCategory) return;
+
+    const validStatuses = STATUS_BY_CATEGORY[newCategory];
+    const currentStatus = selectedItem.status;
+    let statusReset = {};
+
+    if (!validStatuses.includes(currentStatus)) {
+      if (!confirm(`분실물 구분을 '${newCategory}'(으)로 변경하시겠습니까?\n현재 처리 상태 '${currentStatus}'는 '${newCategory}' 구분에서 유효하지 않아 '배송지 미입력'으로 초기화됩니다.`)) return;
+      statusReset = { status: '배송지 미입력' };
+    } else {
+      if (!confirm(`분실물 구분을 '${newCategory}'(으)로 변경하시겠습니까?`)) return;
     }
-    const newItems = items.map(item => (item.id === formData.id ? formData : item));
-    setItems(newItems);
-    setSelectedItem(formData);
-    alert("옥스트라 시스템과 정보가 동기화되었습니다");
-    setIsEditing(false);
+
+    updateItemField(selectedItem.id, { itemCategory: newCategory, ...statusReset });
   };
 
-  const handleFormChange = (key, value) => setFormData(prev => ({ ...prev, [key]: value }));
-  const handleItemClassificationChange = (e) => {
-    const newItemCategory = e.target.value === '귀중품' ? '전자기기' : '기타';
-    handleFormChange('itemCategory', newItemCategory);
+  // Select confirm: 처리 상태
+  const handleStatusChange = (e) => {
+    const newStatus = e.target.value;
+    if (newStatus === selectedItem.status) return;
+    if (!confirm(`처리 상태를 '${newStatus}'(으)로 변경하시겠습니까?`)) return;
+    updateItemField(selectedItem.id, { status: newStatus });
   };
+
+  // Input individual save
+  const handleSaveField = (key) => {
+    if (drafts[key] === undefined || drafts[key] === selectedItem[key]) return;
+    updateItemField(selectedItem.id, { [key]: drafts[key] });
+    setDrafts(p => { const n = { ...p }; delete n[key]; return n; });
+  };
+
+  // Address save
+  const handleSaveAddress = () => {
+    const updates = { deliveryAddress1: draftAddr1, deliveryAddress2: draftAddr2 };
+    // 일반 + 배송지 미입력 + 주소 입력 → 발송 대기 자동 전이
+    if (selectedItem.itemCategory === '일반' && selectedItem.status === '배송지 미입력' && draftAddr1.trim()) {
+      updates.status = '발송 대기';
+    }
+    updateItemField(selectedItem.id, updates);
+  };
+
+  // Daum postcode search
+  const handleSearchAddress = async () => {
+    try {
+      await loadDaumPostcode();
+      new window.daum.Postcode({
+        oncomplete: (data) => {
+          setDraftAddr1(data.roadAddress || data.jibunAddress);
+        }
+      }).open();
+    } catch (err) {
+      alert(err.message);
+    }
+  };
+
+  // Photo handlers (즉시 반영)
   const handleAddPhoto = () => {
     const newPhoto = prompt("추가할 사진 URL을 입력하세요:", "https://via.placeholder.com/150");
-    if (newPhoto) handleFormChange('itemPhotos', [...formData.itemPhotos, newPhoto]);
+    if (newPhoto) {
+      updateItemField(selectedItem.id, { itemPhotos: [...selectedItem.itemPhotos, newPhoto] });
+    }
   };
-  const handleRemovePhoto = (index) => handleFormChange('itemPhotos', formData.itemPhotos.filter((_, i) => i !== index));
+  const handleRemovePhoto = (index) => {
+    updateItemField(selectedItem.id, { itemPhotos: selectedItem.itemPhotos.filter((_, i) => i !== index) });
+  };
+
+  // Get status options for current item
+  const getStatusOptions = (item) => {
+    if (!item) return [];
+    if (TERMINAL_STATUSES.includes(item.status)) return [item.status];
+    return STATUS_BY_CATEGORY[item.itemCategory] || [];
+  };
 
   const columns = [
     { title: '분실물 ID', dataIndex: 'id', key: 'id' },
@@ -364,144 +532,198 @@ const LostItemsPage = ({ setActiveKey }) => {
       render: (status) => <Badge status={statusBadgeMap[status]} text={status} />,
     },
   ];
-  
+
   const renderDrawerContent = () => {
-    const data = isEditing ? formData : selectedItem;
-    if (!data) return null;
+    if (!selectedItem) return null;
+    const data = selectedItem;
+    const isTerminal = TERMINAL_STATUSES.includes(data.status);
+    const isAddressChanged = draftAddr1 !== (data.deliveryAddress1 || '') || draftAddr2 !== (data.deliveryAddress2 || '');
 
     const renderFieldView = (label, content) => <Field label={label}>{content || '-'}</Field>;
 
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+        {/* 분실물 정보 */}
         <Card>
           <CardHeader><CardTitle>분실물 정보</CardTitle></CardHeader>
           <CardContent>
-            {isEditing ? (
-              <>
-                <Field label="분실물 ID">{data.id}</Field>
-                <Field label="접수 일시">{data.createdAt}</Field>
-                <Field label="분실물 구분"><Select value={isValuable(data.itemCategory) ? '귀중품' : '일반'} onChange={handleItemClassificationChange}>{itemClassificationOptions.map(opt => <Select.Option key={opt} value={opt}>{opt}</Select.Option>)}</Select></Field>
-                <Field label="처리상태"><Select value={data.status} onChange={(e) => handleFormChange('status', e.target.value)}>{statusOptions.map(opt => <Select.Option key={opt} value={opt}>{opt}</Select.Option>)}</Select></Field>
-                 <Field label="송장번호">
-                    <Input
-                        value={data.trackingNumber}
-                        onChange={(e) => handleFormChange('trackingNumber', e.target.value)}
-                        disabled={data.status !== '발송 완료'}
-                        placeholder={data.status === '발송 완료' ? '송장번호를 입력하세요' : ''}
-                    />
-                </Field>
-                <Field label="상세 정보" isBlock><Textarea rows={3} value={data.itemDetails} onChange={(e) => handleFormChange('itemDetails', e.target.value)} /></Field>
-                <Field label="사진" isBlock>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
-                        {data.itemPhotos?.map((photo, index) => (
-                            <div key={index} style={{ position: 'relative' }}>
-                                <img src={photo} alt={`p-${index}`} style={{ width: 80, height: 80, objectFit: 'cover', borderRadius: '0.25rem' }} />
-                                <button style={{position:'absolute',top:'-5px',right:'-5px',background:'red',color:'white',border:'none',borderRadius:'50%',width:20,height:20,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center'}} onClick={() => handleRemovePhoto(index)}><X size={14}/></button>
-                            </div>
-                        ))}
+            {renderFieldView("분실물 ID", data.id)}
+            {renderFieldView("접수 일시", data.createdAt)}
+
+            {/* 분실물 구분 — Select (종결 상태면 텍스트) */}
+            <Field label="분실물 구분">
+              {isTerminal ? (
+                <span>{data.itemCategory}</span>
+              ) : (
+                <Select value={data.itemCategory} onChange={handleCategoryChange}>
+                  {itemClassificationOptions.map(opt => <Select.Option key={opt} value={opt}>{opt}</Select.Option>)}
+                </Select>
+              )}
+            </Field>
+
+            {/* 처리 상태 — Select (종결 상태면 Badge) */}
+            <Field label="처리상태">
+              {isTerminal ? (
+                <Badge status={statusBadgeMap[data.status]} text={data.status} />
+              ) : (
+                <Select value={data.status} onChange={handleStatusChange}>
+                  {getStatusOptions(data).map(opt => <Select.Option key={opt} value={opt}>{opt}</Select.Option>)}
+                </Select>
+              )}
+            </Field>
+
+            {/* 배송 주소 */}
+            <Field label="배송 주소" isBlock>
+              {isTerminal ? (
+                <div style={{ marginTop: '0.5rem' }}>
+                  <div style={{ fontSize: '0.875rem' }}>{data.deliveryAddress1 || '-'}</div>
+                  {data.deliveryAddress2 && <div style={{ fontSize: '0.875rem', color: styleVariables.mutedTextColor }}>{data.deliveryAddress2}</div>}
+                </div>
+              ) : (
+                <div style={{ marginTop: '0.5rem' }}>
+                  <div style={{ display: 'flex', gap: '1rem', marginBottom: '0.75rem' }}>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.875rem', cursor: 'pointer' }}>
+                      <input type="radio" name="addressMode" value="postcode" checked={addressInputMode === 'postcode'} onChange={() => setAddressInputMode('postcode')} />
+                      우편번호 검색
+                    </label>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.875rem', cursor: 'pointer' }}>
+                      <input type="radio" name="addressMode" value="manual" checked={addressInputMode === 'manual'} onChange={() => setAddressInputMode('manual')} />
+                      직접 입력
+                    </label>
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                    <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                      <span style={{ width: '50px', fontSize: '0.8rem', color: styleVariables.mutedTextColor, flexShrink: 0 }}>주소1</span>
+                      <div style={{ flex: 1 }}>
+                        <Input
+                          value={draftAddr1}
+                          onChange={(e) => setDraftAddr1(e.target.value)}
+                          placeholder="주소를 입력하세요"
+                          readOnly={addressInputMode === 'postcode'}
+                        />
+                      </div>
+                      {addressInputMode === 'postcode' && (
+                        <Button onClick={handleSearchAddress} style={{ flexShrink: 0 }}><MapPin size={16} style={{ marginRight: '0.25rem' }} /> 주소 검색</Button>
+                      )}
                     </div>
-                    <Button onClick={handleAddPhoto}><Plus size={16} style={{marginRight: '0.25rem'}} /> 사진 추가</Button>
-                </Field>
-              </>
-            ) : (
-              <>
-                {renderFieldView("분실물 ID", data.id)}
-                {renderFieldView("접수 일시", data.createdAt)}
-                {renderFieldView("분실물 구분", isValuable(data.itemCategory) ? '귀중품' : '일반')}
-                {renderFieldView("처리상태", <Badge status={statusBadgeMap[data.status]} text={data.status} />)}
-                {data.status === '발송 완료' && renderFieldView("송장번호", data.trackingNumber)}
-                {renderFieldView("상세 정보", data.itemDetails)}
-                {renderFieldView("사진", data.itemPhotos?.length > 0 ? data.itemPhotos.map((p, i) => <img key={i} src={p} style={{ width: 80, height: 80, objectFit: 'cover', borderRadius: '0.25rem', marginRight: '0.5rem' }}/>) : '사진 없음')}
-              </>
-            )}
+                    <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                      <span style={{ width: '50px', fontSize: '0.8rem', color: styleVariables.mutedTextColor, flexShrink: 0 }}>주소2</span>
+                      <div style={{ flex: 1 }}>
+                        <Input value={draftAddr2} onChange={(e) => setDraftAddr2(e.target.value)} placeholder="상세 주소를 입력하세요" />
+                      </div>
+                      <Button variant={isAddressChanged ? 'primary' : 'default'} onClick={handleSaveAddress} disabled={!isAddressChanged} style={{ flexShrink: 0 }}>저장</Button>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </Field>
+
+            {/* 상세 정보 — Textarea + 개별 저장 */}
+            <Field label="상세 정보" isBlock>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '0.5rem' }}>
+                <Textarea
+                  rows={3}
+                  value={drafts.itemDetails !== undefined ? drafts.itemDetails : data.itemDetails}
+                  onChange={(e) => setDraft('itemDetails', e.target.value)}
+                />
+                <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                  <Button
+                    variant={(drafts.itemDetails !== undefined && drafts.itemDetails !== data.itemDetails) ? 'primary' : 'default'}
+                    onClick={() => handleSaveField('itemDetails')}
+                    disabled={drafts.itemDetails === undefined || drafts.itemDetails === data.itemDetails}
+                  >저장</Button>
+                </div>
+              </div>
+            </Field>
+
+            {/* 습득물 사진 — 즉시 추가/삭제 */}
+            <Field label="습득물 사진" isBlock>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginTop: '0.5rem' }}>
+                {data.itemPhotos?.map((photo, index) => (
+                  <div key={index} style={{ position: 'relative' }}>
+                    <img src={photo} alt={`p-${index}`} style={{ width: 80, height: 80, objectFit: 'cover', borderRadius: '0.25rem' }} />
+                    <button style={{position:'absolute',top:'-5px',right:'-5px',background:'red',color:'white',border:'none',borderRadius:'50%',width:20,height:20,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center'}} onClick={() => handleRemovePhoto(index)}><X size={14}/></button>
+                  </div>
+                ))}
+              </div>
+              <Button onClick={handleAddPhoto} style={{ marginTop: '0.5rem' }}><Plus size={16} style={{marginRight: '0.25rem'}} /> 사진 추가</Button>
+            </Field>
           </CardContent>
         </Card>
 
+        {/* 차량 정보 */}
         <Card>
-            <CardHeader><CardTitle>차량 정보</CardTitle></CardHeader>
-            <CardContent>
-                {renderFieldView("차량 번호", data.carNumber)}
-                {renderFieldView("존 이름", data.zoneName)}
-                {renderFieldView("지역", `${data.region1} ${data.region2}`)}
-                {renderFieldView("존 ID", data.zoneId)}
-            </CardContent>
+          <CardHeader><CardTitle>차량 정보</CardTitle></CardHeader>
+          <CardContent>
+            {renderFieldView("차량 번호", data.carNumber)}
+            {renderFieldView("존 이름", data.zoneName)}
+            {renderFieldView("지역1", data.region1)}
+            {renderFieldView("지역2", data.region2)}
+            {renderFieldView("존 ID", data.zoneId)}
+          </CardContent>
         </Card>
 
+        {/* 세차 오더 정보 */}
         <Card>
-            <CardHeader><CardTitle>세차 오더 정보</CardTitle></CardHeader>
-            <CardContent>
-                {renderFieldView("파트너사", data.partnerName)}
-                <Field label="연계 오더 ID">
-                    {isEditing ? (
-                        <div style={{display: 'flex', gap: '0.5rem'}}>
-                            <Input value={data.relatedOrderId} onChange={(e) => handleFormChange('relatedOrderId', e.target.value)} />
-                            <Button onClick={() => alert("연계 가능한 오더 리스트를 조회합니다. (프로토타입)")}><Search size={16}/></Button>
-                        </div>
-                    ) : (
-                        <a onClick={() => setActiveKey('orders')} style={{display: 'flex', alignItems: 'center', gap: '0.25rem', color: styleVariables.primaryColor}}>{data.relatedOrderId || '-'} <ExternalLink size={16}/></a>
-                    )}
-                </Field>
-            </CardContent>
+          <CardHeader><CardTitle>세차 오더 정보</CardTitle></CardHeader>
+          <CardContent>
+            {renderFieldView("파트너사", data.partnerName)}
+            <Field label="연계 오더 ID">
+              <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                <div style={{ flex: 1 }}>
+                  <Input
+                    value={drafts.relatedOrderId !== undefined ? drafts.relatedOrderId : data.relatedOrderId}
+                    onChange={(e) => setDraft('relatedOrderId', e.target.value)}
+                  />
+                </div>
+                <Button
+                  variant={(drafts.relatedOrderId !== undefined && drafts.relatedOrderId !== data.relatedOrderId) ? 'primary' : 'default'}
+                  onClick={() => handleSaveField('relatedOrderId')}
+                  disabled={drafts.relatedOrderId === undefined || drafts.relatedOrderId === data.relatedOrderId}
+                >저장</Button>
+              </div>
+            </Field>
+          </CardContent>
         </Card>
-        
+
+        {/* 분실물 카드 정보 */}
         <Card>
-            <CardHeader><CardTitle>분실물 카드 정보</CardTitle></CardHeader>
-            <CardContent>
-                {renderFieldView("카드 접수 번호", data.lostItemCardReceiptNumber)}
-                <Field label="배송 주소">
-                    {isEditing ? (
-                        <div style={{display: 'flex', gap: '0.5rem'}}>
-                            <Input value={data.deliveryAddress} onChange={(e) => handleFormChange('deliveryAddress', e.target.value)} />
-                            <Button onClick={() => alert("주소 검색 창이 열립니다. (프로토타입)")}><MapPin size={16}/></Button>
-                        </div>
-                    ) : (data.deliveryAddress || '-')}
-                </Field>
-                {renderFieldView("고객 신고 물품", data.customerReportedItemDetails)}
-            </CardContent>
+          <CardHeader><CardTitle>분실물 카드 정보</CardTitle></CardHeader>
+          <CardContent>
+            {renderFieldView("카드 접수 번호", data.lostItemCardReceiptNumber)}
+          </CardContent>
         </Card>
       </div>
     );
-  }
+  };
 
   return (
     <>
       <Card>
         <CardHeader><CardTitle>분실물 관리</CardTitle></CardHeader>
         <CardContent>
-            <div style={{ marginBottom: '1rem', display: 'flex' }}>
-                <Select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} placeholder="처리상태 선택" allowClear>
-                    {statusOptions.map(option => <Select.Option key={option} value={option}>{option}</Select.Option>)}
-                </Select>
-                <Input
-                    placeholder="장애카드접수번호 검색..."
-                    value={searchText}
-                    onChange={e => setSearchText(e.target.value)}
-                    icon={<Search size={16}/>}
-                />
-            </div>
-            <DataTable dataSource={filteredData} columns={columns} onRowClick={showDrawer} />
+          <div style={{ marginBottom: '1rem', display: 'flex' }}>
+            <Select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} placeholder="처리상태 선택" allowClear>
+              {allStatusOptions.map(option => <Select.Option key={option} value={option}>{option}</Select.Option>)}
+            </Select>
+            <Input
+              placeholder="장애카드접수번호 검색..."
+              value={searchText}
+              onChange={e => setSearchText(e.target.value)}
+              icon={<Search size={16}/>}
+            />
+          </div>
+          <DataTable dataSource={filteredData} columns={columns} onRowClick={showDrawer} />
         </CardContent>
       </Card>
 
       <Drawer
-        title={isEditing ? "분실물 정보 수정" : "분실물 상세 정보"}
+        title="분실물 상세 정보"
         open={drawerVisible}
         onClose={closeDrawer}
         footer={
           <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-            <div style={{display: 'flex'}}>
-              {isEditing ? (
-                <>
-                  <Button variant="default" onClick={handleCancel}>취소</Button>
-                  <Button variant="primary" onClick={handleSave}>저장</Button>
-                </>
-              ) : (
-                <>
-                  <Button variant="default" onClick={closeDrawer}>닫기</Button>
-                  <Button variant="primary" onClick={handleEdit}>수정</Button>
-                </>
-              )}
-            </div>
+            <Button variant="default" onClick={closeDrawer}>닫기</Button>
           </div>
         }
       >

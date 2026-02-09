@@ -1,4 +1,6 @@
 export const BROWN_HISTORY = [
+  { id: 97, date: "2026-02-09 14:00", content: "[UI] 수행원 조회 개편: 지역1/지역2 필터 및 컬럼 삭제, 배정된 쏘카존 컬럼→배정 존 개수로 변경, 상세 화면 배정 지역 영역 제거, 배정된 쏘카존 다건 존 정보 리스트(존 이름/ID/지역) 표시", isPolicyChange: false, links: [{ label: "수행원 조회", page: "workers" }] },
+  { id: 96, date: "2026-02-09 13:00", content: "[정책] 분실물 관리 고도화: 인라인 편집 구조(수정 모드 제거, Select 컨펌, Input 개별 저장), 구분별 상태 흐름 분리(일반/귀중품), 배송 주소 Daum 우편번호 검색 연동, 송장번호·고객 신고 물품 필드 제거, 지역1/지역2 분리, mock 데이터 6건 확장", isPolicyChange: true, links: [{ label: "분실물 관리", page: "lostfound" }] },
   { id: 95, date: "2026-02-09 11:14", content: "[UI] 리스트-상세 필드 정합성 보완: 오더 관리 상세에 차량 ID 추가, 미션 정책 상세에 등록일시/진행률 추가, 수행원 상세에 배정 지역(지역1/지역2) 추가", isPolicyChange: false, links: [{ label: "오더 관리", page: "orders" }, { label: "미션 관리", page: "missions" }, { label: "수행원 조회", page: "workers" }] },
   { id: 94, date: "2026-02-09 11:07", content: "[UI] 오더 관리 취소 유형 필터 항상 표시: 진행 상태 '취소' 선택 전까지 비활성화(회색 처리), 취소 선택 시 활성화", isPolicyChange: false, links: [{ label: "오더 관리", page: "orders" }] },
   { id: 93, date: "2026-02-09 10:25", content: "[UI] 존 정책 관리 차량 대수 필드 추가: 리스트 및 상세 화면에 존별 차량 대수 표시", isPolicyChange: false, links: [{ label: "존 정책 관리", page: "zone-policy" }] },

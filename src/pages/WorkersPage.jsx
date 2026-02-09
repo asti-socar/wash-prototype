@@ -1,7 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { ChevronLeft, ChevronRight, ExternalLink } from 'lucide-react';
 import {
-  cn,
   Card,
   CardHeader,
   CardTitle,
@@ -20,85 +19,128 @@ import {
 export default function WorkersPage() {
   const [workers] = useState([
     {
-      id: 'W-001', name: '최수행', partner: 'A파트너', zoneName: '강남역 1번존', zoneId: 'Z-1001', region1: '서울', region2: '강남', penalty: 0,
+      id: 'W-001', name: '최수행', partner: 'A파트너', penalty: 0,
       penaltyHistory: [],
+      zones: [
+        { zoneName: '강남역 1번존', zoneId: 'Z-1001', region1: '서울', region2: '강남' },
+        { zoneName: '역삼역 1번존', zoneId: 'Z-1003', region1: '서울', region2: '강남' },
+      ],
     },
     {
-      id: 'W-002', name: '강수행', partner: 'B파트너', zoneName: '잠실역 2번존', zoneId: 'Z-1002', region1: '서울', region2: '송파', penalty: 2,
+      id: 'W-002', name: '강수행', partner: 'B파트너', penalty: 2,
       penaltyHistory: [
         { orderId: 'O-90015', reason: '지연', date: '2026-01-15' },
         { orderId: 'O-90022', reason: '노쇼', date: '2026-01-22' },
       ],
-    },
-    {
-      id: 'W-003', name: '한수행', partner: 'C파트너', zoneName: '판교 1번존', zoneId: 'Z-2001', region1: '경기', region2: '성남', penalty: 0,
-      penaltyHistory: [],
-    },
-    {
-      id: 'W-004', name: '오수행', partner: 'D파트너', zoneName: '해운대 2번존', zoneId: 'Z-3002', region1: '부산', region2: '해운대', penalty: 1,
-      penaltyHistory: [
-        { orderId: 'O-90038', reason: '지연', date: '2026-02-03' },
+      zones: [
+        { zoneName: '잠실역 2번존', zoneId: 'Z-1002', region1: '서울', region2: '송파' },
+        { zoneName: '잠실새내역 1번존', zoneId: 'Z-1006', region1: '서울', region2: '송파' },
+        { zoneName: '석촌역 1번존', zoneId: 'Z-1007', region1: '서울', region2: '송파' },
       ],
     },
     {
-      id: 'W-005', name: '박수행', partner: 'A파트너', zoneName: '역삼역 1번존', zoneId: 'Z-1003', region1: '서울', region2: '강남', penalty: 0,
+      id: 'W-003', name: '한수행', partner: 'C파트너', penalty: 0,
       penaltyHistory: [],
+      zones: [
+        { zoneName: '판교 1번존', zoneId: 'Z-2001', region1: '경기', region2: '성남' },
+      ],
     },
     {
-      id: 'W-006', name: '이수행', partner: 'B파트너', zoneName: '건대입구 1번존', zoneId: 'Z-1004', region1: '서울', region2: '광진', penalty: 3,
+      id: 'W-004', name: '오수행', partner: 'D파트너', penalty: 1,
+      penaltyHistory: [
+        { orderId: 'O-90038', reason: '지연', date: '2026-02-03' },
+      ],
+      zones: [
+        { zoneName: '해운대 2번존', zoneId: 'Z-3002', region1: '부산', region2: '해운대' },
+        { zoneName: '해운대 1번존', zoneId: 'Z-3003', region1: '부산', region2: '해운대' },
+        { zoneName: '광안리 1번존', zoneId: 'Z-3004', region1: '부산', region2: '수영' },
+        { zoneName: '센텀시티 1번존', zoneId: 'Z-3005', region1: '부산', region2: '해운대' },
+      ],
+    },
+    {
+      id: 'W-005', name: '박수행', partner: 'A파트너', penalty: 0,
+      penaltyHistory: [],
+      zones: [],
+    },
+    {
+      id: 'W-006', name: '이수행', partner: 'B파트너', penalty: 3,
       penaltyHistory: [
         { orderId: 'O-90008', reason: '노쇼', date: '2026-01-08' },
         { orderId: 'O-90019', reason: '지연', date: '2026-01-19' },
         { orderId: 'O-90033', reason: '노쇼', date: '2026-02-01' },
       ],
-    },
-    {
-      id: 'W-007', name: '김수행', partner: 'C파트너', zoneName: '수원역 1번존', zoneId: 'Z-2002', region1: '경기', region2: '수원', penalty: 0,
-      penaltyHistory: [],
-    },
-    {
-      id: 'W-008', name: '정수행', partner: 'A파트너', zoneName: '서면역 1번존', zoneId: 'Z-3001', region1: '부산', region2: '부산진', penalty: 1,
-      penaltyHistory: [
-        { orderId: 'O-90028', reason: '지연', date: '2026-01-28' },
+      zones: [
+        { zoneName: '건대입구 1번존', zoneId: 'Z-1004', region1: '서울', region2: '광진' },
+        { zoneName: '성수역 1번존', zoneId: 'Z-1008', region1: '서울', region2: '성동' },
+        { zoneName: '왕십리역 1번존', zoneId: 'Z-1009', region1: '서울', region2: '성동' },
+        { zoneName: '어린이대공원 1번존', zoneId: 'Z-1010', region1: '서울', region2: '광진' },
+        { zoneName: '군자역 1번존', zoneId: 'Z-1011', region1: '서울', region2: '광진' },
       ],
     },
     {
-      id: 'W-009', name: '조수행', partner: 'D파트너', zoneName: '분당 1번존', zoneId: 'Z-2003', region1: '경기', region2: '성남', penalty: 0,
+      id: 'W-007', name: '김수행', partner: 'C파트너', penalty: 0,
       penaltyHistory: [],
+      zones: [
+        { zoneName: '수원역 1번존', zoneId: 'Z-2002', region1: '경기', region2: '수원' },
+        { zoneName: '영통역 1번존', zoneId: 'Z-2004', region1: '경기', region2: '수원' },
+        { zoneName: '광교 1번존', zoneId: 'Z-2005', region1: '경기', region2: '수원' },
+      ],
     },
     {
-      id: 'W-010', name: '윤수행', partner: 'B파트너', zoneName: '홍대입구 1번존', zoneId: 'Z-1005', region1: '서울', region2: '마포', penalty: 2,
+      id: 'W-008', name: '정수행', partner: 'A파트너', penalty: 1,
+      penaltyHistory: [
+        { orderId: 'O-90028', reason: '지연', date: '2026-01-28' },
+      ],
+      zones: [
+        { zoneName: '서면역 1번존', zoneId: 'Z-3001', region1: '부산', region2: '부산진' },
+      ],
+    },
+    {
+      id: 'W-009', name: '조수행', partner: 'D파트너', penalty: 0,
+      penaltyHistory: [],
+      zones: [
+        { zoneName: '분당 1번존', zoneId: 'Z-2003', region1: '경기', region2: '성남' },
+        { zoneName: '정자역 1번존', zoneId: 'Z-2006', region1: '경기', region2: '성남' },
+      ],
+    },
+    {
+      id: 'W-010', name: '윤수행', partner: 'B파트너', penalty: 2,
       penaltyHistory: [
         { orderId: 'O-90012', reason: '노쇼', date: '2026-01-12' },
         { orderId: 'O-90042', reason: '지연', date: '2026-02-05' },
+      ],
+      zones: [
+        { zoneName: '홍대입구 1번존', zoneId: 'Z-1005', region1: '서울', region2: '마포' },
+        { zoneName: '합정역 1번존', zoneId: 'Z-1012', region1: '서울', region2: '마포' },
+        { zoneName: '상수역 1번존', zoneId: 'Z-1013', region1: '서울', region2: '마포' },
       ],
     },
   ]);
 
   const [selected, setSelected] = useState(null);
-  const [fRegion1, setFRegion1] = useState("");
-  const [fRegion2, setFRegion2] = useState("");
   const [fPartner, setFPartner] = useState("");
   const [sortConfig, setSortConfig] = useState({ key: 'id', direction: 'desc' });
 
-  const regions1 = useMemo(() => Array.from(new Set(workers.map(w => w.region1))), [workers]);
-  const regions2 = useMemo(() => Array.from(new Set(workers.filter(w => fRegion1 ? w.region1 === fRegion1 : true).map(w => w.region2))), [workers, fRegion1]);
   const partners = useMemo(() => Array.from(new Set(workers.map(w => w.partner))), [workers]);
 
   const filteredData = useMemo(() => {
     return workers.filter(w => {
-      const matchRegion1 = !fRegion1 || w.region1 === fRegion1;
-      const matchRegion2 = !fRegion2 || w.region2 === fRegion2;
       const matchPartner = !fPartner || w.partner === fPartner;
-      return matchRegion1 && matchRegion2 && matchPartner;
+      return matchPartner;
     });
-  }, [workers, fRegion1, fRegion2, fPartner]);
+  }, [workers, fPartner]);
 
   const sortedData = useMemo(() => {
     if (!sortConfig.key) return filteredData;
     return [...filteredData].sort((a, b) => {
-      const aVal = a[sortConfig.key] ?? "";
-      const bVal = b[sortConfig.key] ?? "";
+      let aVal, bVal;
+      if (sortConfig.key === 'zoneCount') {
+        aVal = a.zones.length;
+        bVal = b.zones.length;
+      } else {
+        aVal = a[sortConfig.key] ?? "";
+        bVal = b[sortConfig.key] ?? "";
+      }
       if (aVal < bVal) return sortConfig.direction === 'asc' ? -1 : 1;
       if (aVal > bVal) return sortConfig.direction === 'asc' ? 1 : -1;
       return 0;
@@ -118,9 +160,7 @@ export default function WorkersPage() {
     { key: 'id', header: '수행원 ID' },
     { key: 'name', header: '이름' },
     { key: 'partner', header: '파트너 이름' },
-    { key: 'region1', header: '지역1' },
-    { key: 'region2', header: '지역2' },
-    { key: 'zoneName', header: '배정된 쏘카존' },
+    { key: 'zoneCount', header: '배정 존 개수', render: (r) => r.zones.length },
     { key: 'penalty', header: '벌점', render: (r) => {
       if (r.penalty === 0) return <span className="text-[#94A3B8]">0</span>;
       return <Badge tone="danger">{r.penalty}</Badge>;
@@ -137,30 +177,14 @@ export default function WorkersPage() {
       <FilterPanel
         chips={<>
           {fPartner ? <Chip onRemove={() => setFPartner("")}>파트너: {fPartner}</Chip> : null}
-          {fRegion1 ? <Chip onRemove={() => { setFRegion1(""); setFRegion2(""); }}>지역1: {fRegion1}</Chip> : null}
-          {fRegion2 ? <Chip onRemove={() => setFRegion2("")}>지역2: {fRegion2}</Chip> : null}
         </>}
-        onReset={() => { setFPartner(""); setFRegion1(""); setFRegion2(""); }}
+        onReset={() => { setFPartner(""); }}
       >
         <div className="md:col-span-2">
           <label htmlFor="fPartner" className="block text-xs font-semibold text-[#6B778C] mb-1.5">파트너 이름</label>
           <Select id="fPartner" value={fPartner} onChange={e => setFPartner(e.target.value)}>
             <option value="">전체</option>
             {partners.map(p => <option key={p} value={p}>{p}</option>)}
-          </Select>
-        </div>
-        <div className="md:col-span-2">
-          <label htmlFor="fRegion1" className="block text-xs font-semibold text-[#6B778C] mb-1.5">지역1</label>
-          <Select id="fRegion1" value={fRegion1} onChange={e => { setFRegion1(e.target.value); setFRegion2(""); }}>
-            <option value="">전체</option>
-            {regions1.map(r => <option key={r} value={r}>{r}</option>)}
-          </Select>
-        </div>
-        <div className="md:col-span-2">
-          <label htmlFor="fRegion2" className={cn("block text-xs font-semibold mb-1.5", fRegion1 ? "text-[#6B778C]" : "text-[#C1C7CD]")}>지역2</label>
-          <Select id="fRegion2" value={fRegion2} onChange={e => setFRegion2(e.target.value)} disabled={!fRegion1} className={!fRegion1 ? "bg-[#F4F5F7]! text-[#C1C7CD] cursor-not-allowed" : ""}>
-            <option value="">전체</option>
-            {regions2.map(r => <option key={r} value={r}>{r}</option>)}
           </Select>
         </div>
       </FilterPanel>
@@ -212,16 +236,20 @@ export default function WorkersPage() {
               </CardContent>
             </Card>
             <Card>
-              <CardHeader><CardTitle>배정 지역</CardTitle></CardHeader>
-              <CardContent className="space-y-2 text-sm">
-                <Field label="지역1" value={selected.region1} />
-                <Field label="지역2" value={selected.region2} />
-              </CardContent>
-            </Card>
-            <Card>
               <CardHeader><CardTitle>배정된 쏘카존</CardTitle></CardHeader>
               <CardContent>
-                <div className="rounded-lg bg-slate-50 p-3 text-sm text-[#172B4D]">{selected.zoneName} ({selected.zoneId})</div>
+                {selected.zones.length === 0 ? (
+                  <div className="text-sm text-[#94A3B8] py-2">배정된 쏘카존이 없습니다.</div>
+                ) : (
+                  <div className="space-y-2">
+                    {selected.zones.map((z, idx) => (
+                      <div key={idx} className="rounded-lg bg-slate-50 p-3 text-sm text-[#172B4D] flex items-center justify-between">
+                        <span>{z.zoneName} ({z.zoneId})</span>
+                        <span className="text-xs text-[#6B778C]">{z.region1}/{z.region2}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </CardContent>
             </Card>
             <Card>

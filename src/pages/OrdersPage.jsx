@@ -81,8 +81,11 @@ const MOCK_VEHICLES = [
 // 분실물 Mock 데이터 (오더 ID별) - 전체 오더의 50%에 분실물 할당
 const generateMockLostItems = () => {
   const items = {};
-  const categories = ["전자기기", "지갑", "의류", "일반", "귀중품"];
-  const statuses = ["접수", "보관중", "발송 완료"];
+  const categories = ["일반", "귀중품"];
+  const statusesByCategory = {
+    "일반": ["배송지 미입력", "발송 대기", "발송 완료"],
+    "귀중품": ["배송지 미입력", "경찰서 인계"],
+  };
   const details = [
     "검은색 스마트폰", "갈색 가죽 지갑", "회색 후드티", "검정 선글라스", "에어팟",
     "블루투스 이어폰", "손목시계", "우산", "노트북", "충전기"
@@ -96,7 +99,8 @@ const generateMockLostItems = () => {
 
     for (let j = 0; j < itemCount; j++) {
       const category = categories[Math.floor(Math.random() * categories.length)];
-      const status = statuses[Math.floor(Math.random() * statuses.length)];
+      const validStatuses = statusesByCategory[category];
+      const status = validStatuses[Math.floor(Math.random() * validStatuses.length)];
       const detail = details[Math.floor(Math.random() * details.length)];
       const date = new Date(2026, 0, Math.floor(Math.random() * 28) + 1);
 
@@ -1179,7 +1183,7 @@ function OrdersPage({ quickFilter, onClearQuickFilter, initialOrderId, orders, s
                               {item.id}
                               <ExternalLink className="h-3 w-3" />
                             </button>
-                            <Badge tone={item.status === "발송 완료" ? "ok" : item.status === "접수" ? "warn" : "default"}>
+                            <Badge tone={item.status === "발송 완료" ? "ok" : item.status === "배송지 미입력" ? "warn" : item.status === "발송 대기" ? "info" : "default"}>
                               {item.status}
                             </Badge>
                           </div>
