@@ -194,8 +194,8 @@ export default function ZoneAssignmentPage() {
           </Select>
         </div>
         <div className="md:col-span-2">
-          <label className="block text-xs font-semibold text-[#6B778C] mb-1.5">지역2</label>
-          <Select value={region2Filter} onChange={(e) => setRegion2Filter(e.target.value)} disabled={!region1Filter}>
+          <label className={cn("block text-xs font-semibold mb-1.5", region1Filter ? "text-[#6B778C]" : "text-[#C1C7CD]")}>지역2</label>
+          <Select value={region2Filter} onChange={(e) => setRegion2Filter(e.target.value)} disabled={!region1Filter} className={!region1Filter ? "bg-[#F4F5F7]! text-[#C1C7CD] cursor-not-allowed" : ""}>
             <option value="">전체</option>
             {region2Options.map(r => <option key={r} value={r}>{r}</option>)}
           </Select>

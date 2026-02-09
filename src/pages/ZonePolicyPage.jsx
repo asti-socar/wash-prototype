@@ -295,8 +295,8 @@ export default function ZonePolicyPage() {
           </Select>
         </div>
         <div className="md:col-span-2">
-          <label className="block text-xs font-semibold text-[#6B778C] mb-1.5">지역2</label>
-          <Select value={fRegion2} onChange={e => setFRegion2(e.target.value)} disabled={!fRegion1}>
+          <label className={cn("block text-xs font-semibold mb-1.5", fRegion1 ? "text-[#6B778C]" : "text-[#C1C7CD]")}>지역2</label>
+          <Select value={fRegion2} onChange={e => setFRegion2(e.target.value)} disabled={!fRegion1} className={!fRegion1 ? "bg-[#F4F5F7]! text-[#C1C7CD] cursor-not-allowed" : ""}>
             <option value="">전체</option>
             {region2Options.map(r => <option key={r} value={r}>{r}</option>)}
           </Select>

@@ -167,8 +167,8 @@ function CarsPage() {
           </Select>
         </div>
         <div className="md:col-span-2">
-          <label htmlFor="fRegion2" className="block text-xs font-semibold text-[#6B778C] mb-1.5">지역2</label>
-          <Select id="fRegion2" value={fRegion2} onChange={(e) => setFRegion2(e.target.value)}>
+          <label htmlFor="fRegion2" className={cn("block text-xs font-semibold mb-1.5", fRegion1 ? "text-[#6B778C]" : "text-[#C1C7CD]")}>지역2</label>
+          <Select id="fRegion2" value={fRegion2} onChange={(e) => setFRegion2(e.target.value)} disabled={!fRegion1} className={!fRegion1 ? "bg-[#F4F5F7]! text-[#C1C7CD] cursor-not-allowed" : ""}>
             <option value="">전체</option>
             {regions2.map((v) => <option key={v} value={v}>{v}</option>)}
           </Select>
