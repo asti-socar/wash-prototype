@@ -353,7 +353,7 @@ export default function PartnersPage() {
       <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
         <div>
           <div className="text-base font-bold text-[#172B4D]">파트너 관리</div>
-          <div className="mt-1 text-sm text-[#6B778C]">계약된 파트너사의 상태와 담당 구역을 설정하고 관리합니다.</div>
+          <div className="mt-1 text-sm text-[#6B778C]">세차 파트너사의 정보 및 단가 정책을 관리합니다.</div>
         </div>
         <Button onClick={handleCreate}><Plus className="mr-2 h-4 w-4" /> 신규 파트너 등록</Button>
       </div>
