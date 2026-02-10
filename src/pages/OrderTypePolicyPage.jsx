@@ -642,7 +642,7 @@ function DataTable({ columns, rows, onRowClick, rowKey, sortConfig, onSort }) {
 
 
 
-              <th key={c.key} className={cn("whitespace-nowrap px-4 py-3.5 text-[13px] font-semibold text-[#475569] cursor-pointer hover:bg-slate-100", c.align === 'center' && 'text-center')} onClick={() => onSort && onSort(c.key)}>
+              <th key={c.key} className={cn("whitespace-nowrap px-4 py-3.5 text-[13px] font-semibold text-[#475569]", c.sortable && "cursor-pointer hover:bg-slate-100", c.align === 'center' && 'text-center')} onClick={() => c.sortable && onSort && onSort(c.key)}>
 
 
 
@@ -654,7 +654,7 @@ function DataTable({ columns, rows, onRowClick, rowKey, sortConfig, onSort }) {
 
 
 
-                  {onSort && <ArrowUpDown className={cn("h-3 w-3", sortConfig?.key === c.key ? "text-[#0052CC]" : "text-slate-400", sortConfig?.direction === 'desc' && 'rotate-180')} />}
+                  {c.sortable && <ArrowUpDown className={cn("h-3 w-3", sortConfig?.key === c.key ? "text-[#0052CC]" : "text-[#C1C7CD]")} />}
 
 
 
@@ -5206,39 +5206,39 @@ export default function OrderTypePolicyPage() {
 
 
 
-      { key: 'id', header: '정책 ID', align: 'center' },
+      { key: 'id', header: '정책 ID', align: 'center', sortable: true },
 
 
 
-      { key: 'rank', header: '순위', align: 'center' },
+      { key: 'rank', header: '순위', align: 'center', sortable: true },
 
 
 
-      { key: 'order_division', header: '오더 구분' },
+      { key: 'order_division', header: '오더 구분', sortable: true },
 
 
 
-      { key: 'order_type_name', header: '발행 유형' },
+      { key: 'order_type_name', header: '발행 유형', sortable: true },
 
 
 
-      { key: 'wash_type', header: '세차 유형' },
+      { key: 'wash_type', header: '세차 유형', sortable: true },
 
 
 
-      { key: 'zone_type', header: '존유형' },
+      { key: 'zone_type', header: '존유형', sortable: true },
 
 
 
-      { key: 'total_block_time', header: '블락시간', align: 'center', render: r => `${r.total_block_time || 0}분` },
+      { key: 'total_block_time', header: '블락시간', align: 'center', sortable: true, render: r => `${r.total_block_time || 0}분` },
 
 
 
-      { key: 'order_issuance', header: '발행여부', align: 'center', render: r => <Badge tone={getIssuanceTone(r.order_issuance)}>{r.order_issuance}</Badge> },
+      { key: 'order_issuance', header: '발행여부', align: 'center', sortable: true, render: r => <Badge tone={getIssuanceTone(r.order_issuance)}>{r.order_issuance}</Badge> },
 
 
 
-      { key: 'partner_type', header: '파트너 유형', render: r => r.partner_type ? <Badge>{r.partner_type}</Badge> : '-' }
+      { key: 'partner_type', header: '파트너 유형', sortable: true, render: r => r.partner_type ? <Badge>{r.partner_type}</Badge> : '-' }
 
 
 

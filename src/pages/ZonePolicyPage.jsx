@@ -238,8 +238,8 @@ export default function ZonePolicyPage() {
     { key: 'zoneId', header: 'Zone ID' },
     { key: 'zoneName', header: '존 이름' },
     { key: 'zoneType', header: '존 유형' },
-    { key: 'vehicleCount', header: '차량 대수', align: 'center', render: r => `${r.vehicleCount}대` },
-    { key: 'cycleWashDays', header: '주기세차(일)', render: r => r.cycleWashDays.value },
+    { key: 'vehicleCount', header: '차량 대수', align: 'center', sortable: true, render: r => `${r.vehicleCount}대` },
+    { key: 'cycleWashDays', header: '주기세차(일)', sortable: true, render: r => r.cycleWashDays.value },
     { key: 'isLightWash', header: '라이트세차', render: r => r.isLightWash.value ? 'Y' : 'N' },
     { key: 'hasZonePolicy', header: '개별 정책', render: r => r.hasZonePolicy ? 'O' : 'X' },
   ];

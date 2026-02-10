@@ -161,7 +161,7 @@ export default function WorkersPage() {
     { key: 'name', header: '이름' },
     { key: 'partner', header: '파트너 이름' },
     { key: 'zoneCount', header: '배정 존 개수', render: (r) => r.zones.length },
-    { key: 'penalty', header: '벌점', render: (r) => {
+    { key: 'penalty', header: '벌점', sortable: true, render: (r) => {
       if (r.penalty === 0) return <span className="text-[#94A3B8]">0</span>;
       return <Badge tone="danger">{r.penalty}</Badge>;
     }},

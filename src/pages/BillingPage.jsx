@@ -126,11 +126,11 @@ function DataTable({ columns, rows, onRowClick, rowKey, sortConfig, onSort }) {
         <thead className="bg-[#F8FAFC] border-b border-[#E2E8F0]">
           <tr>
             {columns.map(c => (
-              <th key={c.key} className="whitespace-nowrap px-4 py-3.5 text-[13px] font-semibold text-[#475569] cursor-pointer hover:bg-slate-100" onClick={() => onSort && onSort(c.key)}>
+              <th key={c.key} className={cn("whitespace-nowrap px-4 py-3.5 text-[13px] font-semibold text-[#475569]", c.sortable && "cursor-pointer hover:bg-slate-100")} onClick={() => c.sortable && onSort && onSort(c.key)}>
                 <div className="flex items-center gap-1">
                   {c.header}
-                  {sortConfig?.key === c.key && (
-                    <ArrowUpDown className={cn("h-3 w-3", sortConfig.direction === 'asc' ? "text-[#0052CC]" : "text-[#0052CC] rotate-180")} />
+                  {c.sortable && (
+                    <ArrowUpDown className={cn("h-3 w-3", sortConfig?.key === c.key ? "text-[#0052CC]" : "text-[#C1C7CD]")} />
                   )}
                 </div>
               </th>

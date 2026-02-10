@@ -6,6 +6,32 @@ import {
   FilterPanel, Chip, usePagination,
 } from '../components/ui';
 
+// 리스트 마스킹 함수
+function maskName(name) {
+  if (!name) return '';
+  if (name.length <= 2) return name[0] + '*';
+  if (name.length === 3) return name[0] + '*' + name[2];
+  return name[0] + '*'.repeat(name.length - 2) + name[name.length - 1];
+}
+
+function maskPhone(phone) {
+  if (!phone) return '';
+  const parts = phone.split('-');
+  if (parts.length === 3) return parts[0] + '-' + '*'.repeat(parts[1].length) + '-' + parts[2];
+  // 하이픈 없는 경우
+  if (phone.length >= 10) return phone.slice(0, 3) + '*'.repeat(phone.length - 7) + phone.slice(-4);
+  return phone;
+}
+
+function maskEmail(email) {
+  if (!email) return '';
+  const [local, domain] = email.split('@');
+  if (!domain) return email;
+  const maskedLocal = local.length <= 3 ? local : local.slice(0, 3) + '*'.repeat(local.length - 3);
+  const maskedDomain = domain.length <= 1 ? domain : domain[0] + '*'.repeat(domain.length - 1);
+  return maskedLocal + '@' + maskedDomain;
+}
+
 export default function PartnerManagersPage() {
   const [managers, setManagers] = useState([
     { id: 'PM-001', partner: '강남모빌리티', role: '세차 담당', name: '김담당', phone: '010-1234-5678', email: 'kim@gangnammob.com' },
@@ -17,7 +43,7 @@ export default function PartnerManagersPage() {
   const [editingManager, setEditingManager] = useState(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [fPartner, setFPartner] = useState("");
-  const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
+  const [sortConfig, setSortConfig] = useState({ key: 'id', direction: 'desc' });
 
   const partners = useMemo(() => Array.from(new Set(managers.map(m => m.partner))), [managers]);
 
@@ -81,9 +107,9 @@ export default function PartnerManagersPage() {
     { key: 'id', header: '담당자 ID', align: 'center' },
     { key: 'partner', header: '파트너 이름' },
     { key: 'role', header: '직무' },
-    { key: 'name', header: '이름' },
-    { key: 'phone', header: '휴대전화' },
-    { key: 'email', header: '이메일' },
+    { key: 'name', header: '이름', render: r => maskName(r.name) },
+    { key: 'phone', header: '휴대전화', render: r => maskPhone(r.phone) },
+    { key: 'email', header: '이메일', render: r => maskEmail(r.email) },
   ];
 
   return (
@@ -179,8 +205,8 @@ function ManagerFormDrawer({ isOpen, manager, onClose, onSave, onDelete, allPart
 
   const handleSubmit = () => {
     // Basic validation
-    if (!formData.partner || !formData.name || !formData.email) {
-      alert("파트너, 이름, 이메일은 필수 항목입니다.");
+    if (!formData.partner || !formData.role || !formData.name || !formData.email || !formData.phone) {
+      alert("모든 항목은 필수 입력입니다.");
       return;
     }
     onSave(formData);
@@ -225,7 +251,7 @@ function ManagerFormDrawer({ isOpen, manager, onClose, onSave, onDelete, allPart
               </Select>
             </div>
             <div className="space-y-1">
-              <label className="text-xs font-semibold text-[#6B778C]">직무</label>
+              <label className="text-xs font-semibold text-[#6B778C]">직무 <span className="text-rose-500 ml-1">*</span></label>
               <Select name="role" value={formData.role || '세차 담당'} onChange={handleInputChange}>
                 <option value="세차 담당">세차 담당</option>
                 <option value="행정 담당">행정 담당</option>
@@ -247,7 +273,7 @@ function ManagerFormDrawer({ isOpen, manager, onClose, onSave, onDelete, allPart
               <Input name="email" type="email" value={formData.email || ''} onChange={handleInputChange} placeholder="이메일 입력" />
             </div>
             <div className="space-y-1">
-              <label className="text-xs font-semibold text-[#6B778C]">휴대전화</label>
+              <label className="text-xs font-semibold text-[#6B778C]">휴대전화 <span className="text-rose-500 ml-1">*</span></label>
               <Input name="phone" value={formData.phone || ''} onChange={handleInputChange} placeholder="휴대전화 입력" />
             </div>
           </CardContent>

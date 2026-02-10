@@ -51,7 +51,7 @@ function CarsPage() {
 
   const [q, setQ] = useState("");
   const [searchField, setSearchField] = useState("plate");
-  const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
+  const [sortConfig, setSortConfig] = useState({ key: 'lastWash', direction: 'asc' });
   const [fRegion1, setFRegion1] = useState("");
   const [fRegion2, setFRegion2] = useState("");
   const [fPartner, setFPartner] = useState("");
@@ -108,7 +108,7 @@ function CarsPage() {
     { key: "zoneId", header: "존 ID" },
     { key: "region1", header: "지역1" },
     { key: "region2", header: "지역2" },
-    { key: "lastWash", header: "마지막 세차일" },
+    { key: "lastWash", header: "마지막 세차일", sortable: true },
     { key: "elapsedDays", header: "세차 경과일", render: (r) => <span className="font-medium">{getElapsedDays(r.lastWash)}일</span> },
   ];
 

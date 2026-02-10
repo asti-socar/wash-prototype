@@ -20,6 +20,25 @@ import initialRegion2Data from "../mocks/region2policy.json";
 const Region1PolicyTab = () => {
   const [isEditMode, setIsEditMode] = useState(false);
   const [editedData, setEditedData] = useState(initialRegion1Data);
+  const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
+
+  const handleSort = (key) => {
+    setSortConfig(prev => ({
+      key,
+      direction: prev.key === key && prev.direction === 'asc' ? 'desc' : 'asc',
+    }));
+  };
+
+  const sortedData = useMemo(() => {
+    if (!sortConfig.key) return editedData;
+    return [...editedData].sort((a, b) => {
+      const aVal = a[sortConfig.key] ?? "";
+      const bVal = b[sortConfig.key] ?? "";
+      if (aVal < bVal) return sortConfig.direction === 'asc' ? -1 : 1;
+      if (aVal > bVal) return sortConfig.direction === 'asc' ? 1 : -1;
+      return 0;
+    });
+  }, [editedData, sortConfig]);
 
   const handleUpdateData = (regionId, field, value) => {
     setEditedData((prevData) =>
@@ -45,7 +64,8 @@ const Region1PolicyTab = () => {
     {
       key: "주기세차(일)",
       header: "주기세차(일)",
-      render: (row) => 
+      sortable: true,
+      render: (row) =>
         isEditMode ? (
           <Input
             type="number"
@@ -84,10 +104,12 @@ const Region1PolicyTab = () => {
           <Button variant="outline" onClick={() => setIsEditMode(true)}>수정</Button>
         )}
       </div>
-      <DataTable 
-        columns={columns} 
-        rows={editedData} 
-        rowKey={(row) => row.Region1ID} 
+      <DataTable
+        columns={columns}
+        rows={sortedData}
+        rowKey={(row) => row.Region1ID}
+        sortConfig={sortConfig}
+        onSort={handleSort}
       />
     </div>
   );
@@ -99,6 +121,14 @@ const Region2PolicyTab = () => {
   const [editedData2, setEditedData2] = useState(initialRegion2Data);
   const [filterSido, setFilterSido] = useState("all");
   const [searchSigungu, setSearchSigungu] = useState("");
+  const [sortConfig2, setSortConfig2] = useState({ key: null, direction: 'asc' });
+
+  const handleSort2 = (key) => {
+    setSortConfig2(prev => ({
+      key,
+      direction: prev.key === key && prev.direction === 'asc' ? 'desc' : 'asc',
+    }));
+  };
 
   const sidoOptions = useMemo(() => 
     ["all", ...new Set(initialRegion2Data.map(d => d.시도))]
@@ -115,8 +145,19 @@ const Region2PolicyTab = () => {
     }
     return data;
   }, [editedData2, filterSido, searchSigungu]);
-  
-  const { currentPage, setCurrentPage, totalPages, currentData } = usePagination(filteredRows, 100);
+
+  const sortedRows = useMemo(() => {
+    if (!sortConfig2.key) return filteredRows;
+    return [...filteredRows].sort((a, b) => {
+      const aVal = a[sortConfig2.key] ?? "";
+      const bVal = b[sortConfig2.key] ?? "";
+      if (aVal < bVal) return sortConfig2.direction === 'asc' ? -1 : 1;
+      if (aVal > bVal) return sortConfig2.direction === 'asc' ? 1 : -1;
+      return 0;
+    });
+  }, [filteredRows, sortConfig2]);
+
+  const { currentPage, setCurrentPage, totalPages, currentData } = usePagination(sortedRows, 100);
 
   const handleUpdateData2 = (regionId, field, value) => {
     setEditedData2((prevData) =>
@@ -143,6 +184,7 @@ const Region2PolicyTab = () => {
     {
       key: "주기세차(일)",
       header: "주기세차(일)",
+      sortable: true,
       render: (row) => isEditMode2 ? (
         <Input
           type="number"
@@ -196,10 +238,12 @@ const Region2PolicyTab = () => {
           )}
         </div>
       </div>
-      <DataTable 
-        columns={columns2} 
-        rows={currentData} 
-        rowKey={(row) => row.Region2ID} 
+      <DataTable
+        columns={columns2}
+        rows={currentData}
+        rowKey={(row) => row.Region2ID}
+        sortConfig={sortConfig2}
+        onSort={handleSort2}
       />
       <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
     </div>

@@ -154,7 +154,7 @@ export default function ZoneAssignmentPage() {
     { key: 'region2', header: '지역2' },
     { key: 'zoneName', header: '존 이름' },
     { key: 'zoneType', header: '존 유형' },
-    { key: 'vehicleCount', header: '차량 대수', align: 'center', render: r => `${r.vehicleCount}대` },
+    { key: 'vehicleCount', header: '차량 대수', align: 'center', sortable: true, render: r => `${r.vehicleCount}대` },
     { key: 'assignedPartnerId', header: '배정 파트너', render: r =>
       r.assignedPartnerId
         ? <span className="text-[#172B4D]">{partnerMap.get(r.assignedPartnerId)}</span>
