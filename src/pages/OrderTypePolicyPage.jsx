@@ -18,7 +18,7 @@ const PARTNER_TYPES = ["현장", "입고"];
 
 const BLOCK_TYPES = ["세차블락", "장애블락"];
 
-const YN_OPTIONS = ["Y", "N"];
+const OX_OPTIONS = ["O", "X"];
 
 
 
@@ -974,11 +974,11 @@ const getIssuanceTone = (issuance) => {
 
 
 
-    if (issuance === 'Y') return 'ok';
+    if (issuance === 'O') return 'ok';
 
 
 
-    if (issuance === 'N') return 'danger';
+    if (issuance === 'X') return 'danger';
 
 
 
@@ -3818,7 +3818,7 @@ const DetailDrawer = ({ policy, onClose, onSave, policies, mode }) => {
 
 
 
-                        <Field label="오더발행 여부">{isEditing ? <Select value={formData.order_issuance} onChange={e => handleFormDataChange('order_issuance', e.target.value)}>{YN_OPTIONS.map(o => <option key={o} value={o}>{o}</option>)}</Select> : <ReadOnlyValue>{formData.order_issuance}</ReadOnlyValue>}</Field>
+                        <Field label="오더발행 여부">{isEditing ? <Select value={formData.order_issuance} onChange={e => handleFormDataChange('order_issuance', e.target.value)}>{OX_OPTIONS.map(o => <option key={o} value={o}>{o}</option>)}</Select> : <ReadOnlyValue>{formData.order_issuance}</ReadOnlyValue>}</Field>
 
 
 
@@ -4346,7 +4346,7 @@ const DetailDrawer = ({ policy, onClose, onSave, policies, mode }) => {
 
 
 
-                        <Field label="미션등록 여부">{isEditing ? <Select value={formData.mission_registration} onChange={e => handleFormDataChange('mission_registration', e.target.value)}>{YN_OPTIONS.map(o => <option key={o} value={o}>{o}</option>)}</Select> : <ReadOnlyValue>{formData.mission_registration}</ReadOnlyValue>}</Field>
+                        <Field label="미션등록 여부">{isEditing ? <Select value={formData.mission_registration} onChange={e => handleFormDataChange('mission_registration', e.target.value)}>{OX_OPTIONS.map(o => <option key={o} value={o}>{o}</option>)}</Select> : <ReadOnlyValue>{formData.mission_registration}</ReadOnlyValue>}</Field>
 
 
 
@@ -4378,7 +4378,7 @@ const DetailDrawer = ({ policy, onClose, onSave, policies, mode }) => {
 
 
 
-                        <Field label="wait_time 취소 여부">{isEditing ? <Select value={formData.wait_time_cancel} onChange={e => handleFormDataChange('wait_time_cancel', e.target.value)}>{YN_OPTIONS.map(o => <option key={o} value={o}>{o}</option>)}</Select> : <ReadOnlyValue>{formData.wait_time_cancel}</ReadOnlyValue>}</Field>
+                        <Field label="wait_time 취소 여부">{isEditing ? <Select value={formData.wait_time_cancel} onChange={e => handleFormDataChange('wait_time_cancel', e.target.value)}>{OX_OPTIONS.map(o => <option key={o} value={o}>{o}</option>)}</Select> : <ReadOnlyValue>{formData.wait_time_cancel}</ReadOnlyValue>}</Field>
 
 
 
@@ -5112,7 +5112,7 @@ export default function OrderTypePolicyPage() {
 
     zone_type: "일반존", 
 
-    order_issuance: "Y", 
+    order_issuance: "O",
 
     order_type_score: 5, 
 
@@ -5122,11 +5122,11 @@ export default function OrderTypePolicyPage() {
 
     block_type: "", 
 
-    mission_registration: "N", 
+    mission_registration: "X",
 
     wait_time: 0, 
 
-    wait_time_cancel: "N", 
+    wait_time_cancel: "X",
 
     description: "", 
 

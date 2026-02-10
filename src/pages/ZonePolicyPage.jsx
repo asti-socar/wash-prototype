@@ -235,7 +235,7 @@ export default function ZonePolicyPage() {
   };
 
   const columns = [
-    { key: 'zoneId', header: 'Zone ID' },
+    { key: 'zoneId', header: '존 ID' },
     { key: 'zoneName', header: '존 이름' },
     { key: 'zoneType', header: '존 유형' },
     { key: 'vehicleCount', header: '차량 대수', align: 'center', sortable: true, render: r => `${r.vehicleCount}대` },
