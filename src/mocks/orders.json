@@ -3392,7 +3392,7 @@
         "url": "https://placehold.co/600x400?text=Other-10"
       }
     ],
-    "cancelType": "미예약 취소",
+    "cancelType": "시스템(미예약 취소)",
     "rootOrderId": "O-80004",
     "rootCreatedAt": "2026-01-01"
   },
@@ -6153,7 +6153,7 @@
         "url": "https://placehold.co/600x400?text=Other-10"
       }
     ],
-    "cancelType": "미예약 취소",
+    "cancelType": "시스템(미예약 취소)",
     "rootOrderId": null,
     "rootCreatedAt": "2026-01-11"
   },
@@ -7430,7 +7430,7 @@
         "url": "https://placehold.co/600x400?text=Other-5"
       }
     ],
-    "cancelType": "미예약 취소",
+    "cancelType": "시스템(미예약 취소)",
     "rootOrderId": null,
     "rootCreatedAt": "2026-01-21"
   },
@@ -8589,7 +8589,7 @@
         "url": "https://placehold.co/600x400?text=Other-2"
       }
     ],
-    "cancelType": "미예약 취소",
+    "cancelType": "시스템(미예약 취소)",
     "rootOrderId": "O-80010",
     "rootCreatedAt": "2026-01-07"
   },
@@ -10910,7 +10910,7 @@
         "url": "https://placehold.co/600x400?text=Other-8"
       }
     ],
-    "cancelType": "변경 취소",
+    "cancelType": "시스템(변경 취소)",
     "rootOrderId": "O-80012",
     "rootCreatedAt": "2026-01-07"
   },
@@ -13407,7 +13407,7 @@
         "url": "https://placehold.co/600x400?text=Other-8"
       }
     ],
-    "cancelType": "변경 취소",
+    "cancelType": "시스템(변경 취소)",
     "rootOrderId": null,
     "rootCreatedAt": "2026-01-21"
   },
@@ -16235,7 +16235,7 @@
         "url": "https://placehold.co/600x400?text=Other-6"
       }
     ],
-    "cancelType": "변경 취소",
+    "cancelType": "시스템(변경 취소)",
     "rootOrderId": null,
     "rootCreatedAt": "2026-01-04"
   },
@@ -17150,7 +17150,7 @@
         "url": "https://placehold.co/600x400?text=Other-1"
       }
     ],
-    "cancelType": "노쇼 취소",
+    "cancelType": "시스템(노쇼 취소)",
     "rootOrderId": "O-80021",
     "rootCreatedAt": "2026-01-05"
   },
@@ -18518,7 +18518,7 @@
         "url": "https://placehold.co/600x400?text=Other-9"
       }
     ],
-    "cancelType": "노쇼 취소",
+    "cancelType": "시스템(노쇼 취소)",
     "rootOrderId": null,
     "rootCreatedAt": "2026-01-18"
   },
@@ -21347,7 +21347,7 @@
         "url": "https://placehold.co/600x400?text=Other-3"
       }
     ],
-    "cancelType": "수행원 취소(차량 없음)",
+    "cancelType": "수행원(차량 없음)",
     "rootOrderId": "O-80028",
     "rootCreatedAt": "2026-01-06"
   },
@@ -22353,7 +22353,7 @@
         "url": "https://placehold.co/600x400?text=Other-3"
       }
     ],
-    "cancelType": "우천 취소",
+    "cancelType": "시스템(우천 취소)",
     "rootOrderId": "O-80031",
     "rootCreatedAt": "2026-01-12"
   },

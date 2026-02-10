@@ -339,21 +339,21 @@ function Dashboard({ goOrdersWithFilter }) {
                 </button>
                 <div className="mt-2 pt-2 border-t border-[#E2E8F0] space-y-0.5">
                   <button
-                    onClick={() => goToOrders({ status: "취소", cancelType: "변경 취소" })}
+                    onClick={() => goToOrders({ status: "취소", cancelType: "시스템(변경 취소)" })}
                     className="w-full flex justify-between items-center text-xs text-[#6B778C] hover:text-[#D98E8E] transition-colors"
                   >
                     <span>변경</span>
                     <span className="font-semibold">{order_status.cancelled.change}</span>
                   </button>
                   <button
-                    onClick={() => goToOrders({ status: "취소", cancelType: "미예약 취소" })}
+                    onClick={() => goToOrders({ status: "취소", cancelType: "시스템(미예약 취소)" })}
                     className="w-full flex justify-between items-center text-xs text-[#6B778C] hover:text-[#D98E8E] transition-colors"
                   >
                     <span>미예약</span>
                     <span className="font-semibold">{order_status.cancelled.no_reservation}</span>
                   </button>
                   <button
-                    onClick={() => goToOrders({ status: "취소", cancelType: "노쇼 취소" })}
+                    onClick={() => goToOrders({ status: "취소", cancelType: "시스템(노쇼 취소)" })}
                     className="w-full flex justify-between items-center text-xs text-[#6B778C] hover:text-[#D98E8E] transition-colors"
                   >
                     <span>노쇼</span>
@@ -367,7 +367,7 @@ function Dashboard({ goOrdersWithFilter }) {
                     <span className="font-semibold">{order_status.cancelled.agent}</span>
                   </button>
                   <button
-                    onClick={() => goToOrders({ status: "취소", cancelType: "우천 취소" })}
+                    onClick={() => goToOrders({ status: "취소", cancelType: "시스템(우천 취소)" })}
                     className="w-full flex justify-between items-center text-xs text-[#6B778C] hover:text-[#D98E8E] transition-colors"
                   >
                     <span>우천</span>
@@ -533,11 +533,11 @@ function Dashboard({ goOrdersWithFilter }) {
                 {currentRisk.data.cancelled.total > 0 && (
                   <div className="mt-2 pt-2 border-t border-[#E2E8F0] space-y-0.5">
                     {[
-                      { key: "change", label: "변경", filterValue: "변경 취소" },
-                      { key: "no_reservation", label: "미예약", filterValue: "미예약 취소" },
-                      { key: "no_show", label: "노쇼", filterValue: "노쇼 취소" },
+                      { key: "change", label: "변경", filterValue: "시스템(변경 취소)" },
+                      { key: "no_reservation", label: "미예약", filterValue: "시스템(미예약 취소)" },
+                      { key: "no_show", label: "노쇼", filterValue: "시스템(노쇼 취소)" },
                       { key: "agent", label: "수행원", filterValue: null },
-                      { key: "rain", label: "우천", filterValue: "우천 취소" },
+                      { key: "rain", label: "우천", filterValue: "시스템(우천 취소)" },
                     ]
                       .filter((ct) => currentRisk.data.cancelled[ct.key] > 0)
                       .map((ct) => (

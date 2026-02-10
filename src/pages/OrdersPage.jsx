@@ -221,7 +221,7 @@ const generateMockDeliveryInfo = (orders) => {
   return deliveryInfo;
 };
 
-const CANCEL_TYPES = ["변경 취소", "미예약 취소", "노쇼 취소", "수행원 취소(차량 없음)", "수행원 취소(예약 불가)", "수행원 취소(주차장 문제)", "수행원 취소(기타)", "수행원 취소(개인 사유)", "우천 취소"];
+const CANCEL_TYPES = ["시스템(변경 취소)", "시스템(미예약 취소)", "시스템(노쇼 취소)", "시스템(예약 불가)", "시스템(우천 취소)", "수행원(차량 없음)", "수행원(주차장 문제)", "수행원(기타)", "수행원(개인 사유)"];
 
 function OrdersPage({ quickFilter, onClearQuickFilter, initialOrderId, orders, setOrders, missions, setMissions }) {
   const today = new Date();
