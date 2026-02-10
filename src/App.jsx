@@ -39,6 +39,8 @@ import {
   ChevronsRight,
   ArrowUpDown,
   FileSpreadsheet,
+  PanelLeftClose,
+  PanelLeft,
 } from "lucide-react";
 
 import Dashboard from "./pages/Dashboard";
@@ -212,6 +214,7 @@ function AdminApp() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [openAccordion, setOpenAccordion] = useState(() => NAV.find(g => g.items?.some(it => it.key === activeKey))?.key || "");
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   useEffect(() => {
     const observer = new MutationObserver((mutationsList) => {
@@ -421,7 +424,7 @@ function AdminApp() {
         </div>
       )}
       <div className="flex">
-        <Sidebar activeKey={activeKey} onSelect={onNavSelect} openAccordion={openAccordion} setOpenAccordion={setOpenAccordion} />
+        <Sidebar activeKey={activeKey} onSelect={onNavSelect} openAccordion={openAccordion} setOpenAccordion={setOpenAccordion} collapsed={isSidebarCollapsed} onToggle={() => setIsSidebarCollapsed(c => !c)} />
 
         <div className="flex min-w-0 flex-1 flex-col">
           <Header title={pageTitle} activeKey={activeKey} onMenuClick={() => setIsMobileMenuOpen(true)} />
@@ -489,28 +492,32 @@ function AdminApp() {
 /**
  * Layout components
  */
-function Sidebar({ activeKey, onSelect, openAccordion, setOpenAccordion }) {
+function Sidebar({ activeKey, onSelect, openAccordion, setOpenAccordion, collapsed, onToggle }) {
   return (
-    <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col bg-[#0F172A] text-white md:flex">
-      <SidebarContent activeKey={activeKey} onSelect={onSelect} openAccordion={openAccordion} setOpenAccordion={setOpenAccordion} />
+    <aside className={cn("sticky top-0 hidden h-screen shrink-0 flex-col bg-[#0F172A] text-white md:flex transition-[width] duration-300 ease-in-out", collapsed ? "w-16" : "w-64")}>
+      <SidebarContent activeKey={activeKey} onSelect={onSelect} openAccordion={openAccordion} setOpenAccordion={setOpenAccordion} collapsed={collapsed} onToggle={onToggle} />
     </aside>
   );
 }
 
-function SidebarContent({ activeKey, onSelect, openAccordion, setOpenAccordion }) {
+function SidebarContent({ activeKey, onSelect, openAccordion, setOpenAccordion, collapsed, onToggle }) {
   return (
     <>
-      <div className="flex h-16 shrink-0 items-center gap-3 px-6">
-        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#0052CC] text-white shadow-sm">
-          <span className="text-sm font-bold">W</span>
-        </div>
-        <div className="min-w-0">
-          <div className="truncate text-sm font-bold text-white">세차 인터널 어드민</div>
-          <div className="truncate text-xs text-[#B3BAC5]">Ops Console Prototype</div>
-        </div>
+      <div className={cn("flex h-16 shrink-0 items-center gap-3", collapsed ? "justify-center px-2" : "px-6")}>
+        {onToggle && (
+          <button onClick={onToggle} className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-[#B3BAC5] hover:bg-slate-700/50 hover:text-white transition-colors">
+            {collapsed ? <PanelLeft className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
+        )}
+        {!collapsed && (
+          <div className="min-w-0">
+            <div className="truncate text-sm font-bold text-white">세차 인터널 어드민</div>
+            <div className="truncate text-xs text-[#B3BAC5]">Ops Console Prototype</div>
+          </div>
+        )}
       </div>
 
-      <nav className="flex-1 overflow-y-auto px-2 pb-10 no-scrollbar">
+      <nav className={cn("flex-1 overflow-y-auto pb-10 no-scrollbar", collapsed ? "px-1" : "px-2")}>
         <style>{`
           .no-scrollbar::-webkit-scrollbar {
             display: none;
@@ -522,27 +529,36 @@ function SidebarContent({ activeKey, onSelect, openAccordion, setOpenAccordion }
         `}</style>
         {NAV.map((g) => (
           g.type === 'group' ? (
-            <Accordion key={g.key} type="single" collapsible>
-              <AccordionItem value={g.key}>
-                <AccordionTrigger
-                  isOpen={openAccordion === g.key}
-                  onClick={() => setOpenAccordion(openAccordion === g.key ? "" : g.key)}
-                >
-                  <g.icon className="h-4 w-4 shrink-0 text-[#8993A4] group-hover:text-white" />
-                  <span className="truncate">{g.label}</span>
-                </AccordionTrigger>
-                <AccordionContent isOpen={openAccordion === g.key}>
-                  <div className="space-y-1">
-                    {g.items.map((it) => (
-                      <SidebarItem key={it.key} active={it.key === activeKey} icon={it.icon} label={it.label} onClick={() => onSelect(it.key)} isSubItem />
-                    ))}
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
+            collapsed ? (
+              <div key={g.key} className="mt-3 space-y-1">
+                {g.items.map((it) => (
+                  <SidebarItem key={it.key} active={it.key === activeKey} icon={it.icon} label={it.label} onClick={() => onSelect(it.key)} collapsed={collapsed} />
+                ))}
+              </div>
+            ) : (
+              <Accordion key={g.key} type="single" collapsible>
+                <AccordionItem value={g.key}>
+                  <AccordionTrigger
+                    isOpen={openAccordion === g.key}
+                    onClick={() => setOpenAccordion(openAccordion === g.key ? "" : g.key)}
+                  >
+                    <g.icon className="h-4 w-4 shrink-0 text-[#8993A4] group-hover:text-white" />
+                    <span className="truncate">{g.label}</span>
+                  </AccordionTrigger>
+                  <AccordionContent isOpen={openAccordion === g.key}>
+                    <div className="space-y-1">
+                      {g.items.map((it) => (
+                        <SidebarItem key={it.key} active={it.key === activeKey} icon={it.icon} label={it.label} onClick={() => onSelect(it.key)} isSubItem collapsed={collapsed} />
+                      ))}
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
+            )
           ) : (
             <div key={g.group} className="mt-3">
-              <div className="px-4 pb-2 pt-4 text-xs font-bold text-[#8993A4] uppercase tracking-wider">{g.group}</div>
+              {!collapsed && <div className="px-4 pb-2 pt-4 text-xs font-bold text-[#8993A4] uppercase tracking-wider">{g.group}</div>}
+              {collapsed && <div className="my-2 mx-2 border-t border-slate-700" />}
               <div className="space-y-1">
                 {g.items.map((it) => (
                   <SidebarItem
@@ -551,6 +567,7 @@ function SidebarContent({ activeKey, onSelect, openAccordion, setOpenAccordion }
                     icon={it.icon}
                     label={it.label}
                     onClick={() => onSelect(it.key)}
+                    collapsed={collapsed}
                   />
                 ))}
               </div>
@@ -562,18 +579,19 @@ function SidebarContent({ activeKey, onSelect, openAccordion, setOpenAccordion }
   );
 }
 
-function SidebarItem({ active, icon: Icon, label, onClick, isSubItem = false }) {
+function SidebarItem({ active, icon: Icon, label, onClick, isSubItem = false, collapsed = false }) {
   return (
     <button
       onClick={onClick}
+      title={collapsed ? label : undefined}
       className={cn(
-        "group flex w-full items-center gap-3 rounded-lg px-4 text-sm transition-all font-medium",
-        isSubItem ? "py-2" : "py-2.5",
+        "group flex w-full items-center rounded-lg text-sm transition-all font-medium",
+        collapsed ? "justify-center px-0 py-2.5" : cn("gap-3 px-4", isSubItem ? "py-2" : "py-2.5"),
         active ? "bg-[#0052CC] text-white shadow-md" : "text-[#B3BAC5] hover:bg-slate-700/50 hover:text-white"
       )}
     >
       <Icon className={cn("h-4 w-4 shrink-0", active ? "text-white" : "text-[#8993A4] group-hover:text-white")} />
-      <span className="truncate">{label}</span>
+      {!collapsed && <span className="truncate">{label}</span>}
     </button>
   );
 }
