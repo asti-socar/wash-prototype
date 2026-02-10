@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import {
-  Plus, X, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, ArrowUpDown, Trash2
+  Plus, X, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, ArrowUpDown, Trash2, MapPin
 } from 'lucide-react';
 
 /**
@@ -204,33 +204,42 @@ const MOCK_ALL_ZONES = Array.from({ length: 150 }, (_, i) => {
   };
 });
 
+// Daum Postcode API lazy loader
+const loadDaumPostcode = () => new Promise((resolve, reject) => {
+  if (window.daum?.Postcode) return resolve();
+  const s = document.createElement('script');
+  s.src = '//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js';
+  s.onload = resolve;
+  s.onerror = () => reject(new Error('Daum Postcode API 로드 실패'));
+  document.head.appendChild(s);
+});
+
 const MOCK_PARTNERS_V2 = [
   {
     partnerId: 'P-001',
     partnerName: '강남모빌리티',
-    ceoName: '김대표',
-    type: '법인',
-    businessNumber: '123-45-67890',
+    partnerCategory: '세차 파트너',
+    partnerSubCategory: '현장 세차장',
     address: '서울시 강남구 테헤란로 123',
-    phone: '02-1234-5678',
-    fax: '02-1234-5679',
-    businessDescription: '세차 및 차량 관리 전문',
-    email: 'contact@gangnammob.com',
-    contractStartDate: '2025-01-01',
-    contractEndDate: '2026-12-31',
-    contractStatus: '운영중',
+    addressDetail: '4층 401호',
+    contactName: '김담당',
+    contactPhone: '010-1234-5678',
+    businessNumber: '123-45-67890',
+    corpName: '(주)강남모빌리티',
+    ceoName: '김대표',
+    bizType: '서비스업',
+    bizItem: '세차 및 차량 관리',
+    bizAddress: '서울시 강남구 역삼동 123-45',
+    bizAddressDetail: '강남빌딩 5층',
     isActive: true,
     createdAt: '2025-01-01',
-    updatedAt: '2026-01-10',
-    assignedZoneIds: MOCK_ALL_ZONES.slice(0, 60).map(z => z.zoneId), // 60 zones (>50)
+    assignedZoneIds: MOCK_ALL_ZONES.slice(0, 60).map(z => z.zoneId),
     unitPrices: [
-      // 적용 중 (2026-02-03 기준 과거)
       { id: 1, orderGroup: '정규', washType: '내외부', price: 15000, effectiveDate: '2025-01-01' },
       { id: 2, orderGroup: '수시', washType: '외부', price: 12000, effectiveDate: '2025-03-15' },
       { id: 3, orderGroup: '긴급', washType: '내외부', price: 20000, effectiveDate: '2025-06-01' },
       { id: 4, orderGroup: '정규', washType: '내부', price: 10000, effectiveDate: '2025-09-01' },
       { id: 5, orderGroup: '변경', washType: '특수', price: 35000, effectiveDate: '2026-01-15' },
-      // 예정된 (2026-06-01 이후)
       { id: 6, orderGroup: '정규', washType: '내외부', price: 17000, effectiveDate: '2026-06-01' },
       { id: 7, orderGroup: '긴급', washType: '내외부', price: 23000, effectiveDate: '2026-06-01' },
       { id: 8, orderGroup: '수시', washType: '외부', price: 14000, effectiveDate: '2026-07-01' },
@@ -240,27 +249,26 @@ const MOCK_PARTNERS_V2 = [
   {
     partnerId: 'P-002',
     partnerName: '수원카케어',
-    ceoName: '이사장',
-    type: '개인',
-    businessNumber: '987-65-43210',
+    partnerCategory: '세차 파트너',
+    partnerSubCategory: '입고 세차장',
     address: '경기도 수원시 팔달구 인계로 456',
-    phone: '031-987-6543',
-    fax: '031-987-6544',
-    businessDescription: '수원 지역 전문 세차',
-    email: 'master@suwoncare.com',
-    contractStartDate: '2024-06-01',
-    contractEndDate: '2025-05-31',
-    contractStatus: '종료',
-    isActive: false,
+    addressDetail: '2층',
+    contactName: '박매니저',
+    contactPhone: '031-987-6543',
+    businessNumber: '987-65-43210',
+    corpName: '수원카케어',
+    ceoName: '이사장',
+    bizType: '서비스업',
+    bizItem: '수원 지역 전문 세차',
+    bizAddress: '경기도 수원시 팔달구 매산로 789',
+    bizAddressDetail: '',
+    isActive: true,
     createdAt: '2024-06-01',
-    updatedAt: '2025-06-01',
-    assignedZoneIds: MOCK_ALL_ZONES.slice(60, 120).map(z => z.zoneId), // 60 zones (>50)
+    assignedZoneIds: MOCK_ALL_ZONES.slice(60, 120).map(z => z.zoneId),
     unitPrices: [
-      // 적용 중 (2026-02-03 기준 과거)
       { id: 1, orderGroup: '정규', washType: '내외부', price: 16000, effectiveDate: '2024-06-01' },
       { id: 2, orderGroup: '긴급', washType: '내외부', price: 22000, effectiveDate: '2025-01-01' },
       { id: 3, orderGroup: '수시', washType: '내부', price: 11000, effectiveDate: '2025-08-15' },
-      // 예정된 (2026-06-01 이후)
       { id: 4, orderGroup: '정규', washType: '내외부', price: 18000, effectiveDate: '2026-06-15' },
       { id: 5, orderGroup: '긴급', washType: '내외부', price: 25000, effectiveDate: '2026-08-01' },
     ],
@@ -273,7 +281,7 @@ const MOCK_PARTNERS_V2 = [
 export default function PartnersPage() {
   const [partners, setPartners] = useState(MOCK_PARTNERS_V2);
   const [selectedPartner, setSelectedPartner] = useState(null);
-  const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
+  const [sortConfig, setSortConfig] = useState({ key: 'partnerId', direction: 'desc' });
 
   const sortedData = useMemo(() => {
     if (!sortConfig.key) return partners;
@@ -295,18 +303,13 @@ export default function PartnersPage() {
     }));
   };
 
-  const getStatusTone = (status) => {
-    if (status === '운영중') return 'info';
-    if (status === '종료') return 'danger';
-    return 'default';
-  };
-
   const columns = [
+    { key: 'partnerId', header: '파트너 ID' },
+    { key: 'partnerCategory', header: '구분' },
+    { key: 'partnerSubCategory', header: '하위 구분' },
     { key: 'partnerName', header: '파트너 이름' },
-    { key: 'ceoName', header: '대표자' },
-    { key: 'contractStatus', header: '계약 상태', align: 'center', render: r => <Badge tone={getStatusTone(r.contractStatus)}>{r.contractStatus}</Badge> },
-    { key: 'phone', header: '휴대전화' },
-    { key: 'assignedZoneIds', header: '배정 존 개수', align: 'center', render: r => `${r.assignedZoneIds.length}개` },
+    { key: 'address', header: '주소', render: r => [r.address, r.addressDetail].filter(Boolean).join(' ') },
+    { key: 'corpName', header: '법인명' },
   ];
 
   const handleSave = (partnerToSave) => {
@@ -314,12 +317,30 @@ export default function PartnersPage() {
     setSelectedPartner(null);
   };
 
+  const handleDelete = (partnerId) => {
+    if (!window.confirm('해당 파트너를 삭제하시겠습니까?')) return;
+    setPartners(prev => prev.filter(p => p.partnerId !== partnerId));
+    setSelectedPartner(null);
+  };
+
   const handleCreate = () => {
     const newPartner = {
       partnerId: `P-${Date.now()}`,
       partnerName: '',
+      partnerCategory: '세차 파트너',
+      partnerSubCategory: '현장 세차장',
+      address: '',
+      addressDetail: '',
+      contactName: '',
+      contactPhone: '',
+      businessNumber: '',
+      corpName: '',
       ceoName: '',
-      contractStatus: '운영중',
+      bizType: '',
+      bizItem: '',
+      bizAddress: '',
+      bizAddressDetail: '',
+      isActive: true,
       assignedZoneIds: [],
       createdAt: new Date().toISOString().split('T')[0],
       unitPrices: [],
@@ -377,13 +398,72 @@ export default function PartnersPage() {
           partner={selectedPartner}
           onClose={() => setSelectedPartner(null)}
           onSave={handleSave}
+          onDelete={handleDelete}
         />
       )}
     </div>
   );
 }
 
-function PartnerDetailDrawer({ partner, onClose, onSave }) {
+function AddressField({ label, address, addressDetail, addressKey, addressDetailKey, onFieldChange, required }) {
+  const [mode, setMode] = useState('postcode');
+
+  const handleSearchAddress = async () => {
+    try {
+      await loadDaumPostcode();
+      new window.daum.Postcode({
+        oncomplete: (data) => {
+          onFieldChange(addressKey, data.roadAddress || data.jibunAddress);
+        }
+      }).open();
+    } catch (err) {
+      alert(err.message);
+    }
+  };
+
+  return (
+    <>
+      <Field label={required ? <>{label}<span className="text-rose-500 ml-1">*</span></> : label}>
+        <div className="space-y-3">
+          <div className="flex gap-4">
+            <label className="flex items-center gap-1 text-sm cursor-pointer">
+              <input type="radio" name={`addrMode-${addressKey}`} value="postcode" checked={mode === 'postcode'} onChange={() => setMode('postcode')} />
+              우편번호 검색
+            </label>
+            <label className="flex items-center gap-1 text-sm cursor-pointer">
+              <input type="radio" name={`addrMode-${addressKey}`} value="manual" checked={mode === 'manual'} onChange={() => setMode('manual')} />
+              직접 입력
+            </label>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="flex-1">
+              <Input
+                value={address || ''}
+                onChange={(e) => onFieldChange(addressKey, e.target.value)}
+                placeholder="주소를 입력하세요"
+                readOnly={mode === 'postcode'}
+              />
+            </div>
+            {mode === 'postcode' && (
+              <Button variant="secondary" onClick={handleSearchAddress} className="shrink-0">
+                <MapPin className="mr-1 h-4 w-4" /> 주소 검색
+              </Button>
+            )}
+          </div>
+        </div>
+      </Field>
+      <Field label={required ? <>상세 주소<span className="text-rose-500 ml-1">*</span></> : "상세 주소"}>
+        <Input
+          value={addressDetail || ''}
+          onChange={(e) => onFieldChange(addressDetailKey, e.target.value)}
+          placeholder="상세 주소를 입력하세요"
+        />
+      </Field>
+    </>
+  );
+}
+
+function PartnerDetailDrawer({ partner, onClose, onSave, onDelete }) {
   const [activeTab, setActiveTab] = useState("info");
   const [formData, setFormData] = useState({ ...partner });
 
@@ -392,45 +472,116 @@ function PartnerDetailDrawer({ partner, onClose, onSave }) {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
+  const handleFieldChange = (key, value) => {
+    setFormData(prev => ({ ...prev, [key]: value }));
+  };
+
   const isEditing = !!partner?.partnerId && !!partner.partnerName;
 
   return (
     <Drawer open={!!partner} title={partner.partnerName ? `파트너 상세 - ${partner.partnerName}` : "신규 파트너 등록"} onClose={onClose}
       footer={
         activeTab === 'prices' ? (
-          <div className="flex w-full flex-col-reverse sm:flex-row sm:justify-end gap-2">
-            <Button variant="secondary" onClick={onClose} className="w-full sm:w-auto">닫기</Button>
+          <div className="flex w-full flex-col-reverse sm:flex-row sm:justify-between">
+            <div>{isEditing && <Button variant="danger" onClick={() => onDelete(partner.partnerId)}>삭제</Button>}</div>
+            <Button variant="secondary" onClick={onClose}>닫기</Button>
           </div>
         ) : (
-          <div className="flex w-full flex-col-reverse sm:flex-row sm:justify-end gap-2">
-            <Button variant="secondary" onClick={onClose} className="w-full sm:w-auto">닫기</Button>
-            <Button onClick={() => onSave(formData)} className="w-full sm:w-auto">{isEditing ? '수정하기' : '등록하기'}</Button>
+          <div className="flex w-full flex-col-reverse sm:flex-row sm:justify-between">
+            <div>{isEditing && <Button variant="danger" onClick={() => onDelete(partner.partnerId)}>삭제</Button>}</div>
+            <div className="flex gap-2">
+              <Button variant="secondary" onClick={onClose}>닫기</Button>
+              <Button onClick={() => onSave(formData)}>{isEditing ? '수정하기' : '등록하기'}</Button>
+            </div>
           </div>
         )
       }
     >
       <Tabs value={activeTab}>
         <TabsList>
-          <TabsTrigger value="info" currentValue={activeTab} onClick={setActiveTab}>기본 정보</TabsTrigger>
+          <TabsTrigger value="info" currentValue={activeTab} onClick={setActiveTab}>파트너 정보</TabsTrigger>
           <TabsTrigger value="prices" currentValue={activeTab} onClick={setActiveTab}>단가 정책 관리</TabsTrigger>
         </TabsList>
 
         <TabsContent value="info" currentValue={activeTab} className="pt-4">
-          <div className="space-y-2">
-            <Field label={<>파트너 이름<span className="text-rose-500 ml-1">*</span></>}><Input name="partnerName" value={formData.partnerName || ''} onChange={handleInputChange} placeholder="파트너 이름 입력" /></Field>
-            <Field label={<>대표자<span className="text-rose-500 ml-1">*</span></>}><Input name="ceoName" value={formData.ceoName || ''} onChange={handleInputChange} placeholder="대표자 이름 입력" /></Field>
-            <Field label="사업자번호"><Input name="businessNumber" value={formData.businessNumber || ''} onChange={handleInputChange} placeholder="사업자번호 입력" /></Field>
-            <Field label="주소"><Input name="address" value={formData.address || ''} onChange={handleInputChange} placeholder="주소 입력" /></Field>
-            <Field label="휴대전화"><Input name="phone" value={formData.phone || ''} onChange={handleInputChange} placeholder="휴대전화 입력" /></Field>
-            <Field label="이메일"><Input name="email" value={formData.email || ''} onChange={handleInputChange} placeholder="이메일 입력" /></Field>
-            <Field label="계약 시작일"><Input type="date" name="contractStartDate" value={formData.contractStartDate || ''} onChange={handleInputChange} /></Field>
-            <Field label="계약 종료일"><Input type="date" name="contractEndDate" value={formData.contractEndDate || ''} onChange={handleInputChange} /></Field>
-            <Field label="계약 상태">
-              <Select name="contractStatus" value={formData.contractStatus || '운영중'} onChange={handleInputChange}>
-                <option value="운영중">운영중</option>
-                <option value="종료">종료</option>
-              </Select>
-            </Field>
+          <div className="space-y-6">
+            {/* 카드 1: 기본 정보 */}
+            <Card>
+              <CardHeader><CardTitle>기본 정보</CardTitle></CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  <Field label={<>파트너 구분<span className="text-rose-500 ml-1">*</span></>}>
+                    <Input value="세차 파트너" readOnly className="bg-[#F4F5F7]" />
+                  </Field>
+                  <Field label={<>파트너 하위 구분<span className="text-rose-500 ml-1">*</span></>}>
+                    <Select name="partnerSubCategory" value={formData.partnerSubCategory || '현장 세차장'} onChange={handleInputChange}>
+                      <option value="입고 세차장">입고 세차장</option>
+                      <option value="현장 세차장">현장 세차장</option>
+                    </Select>
+                  </Field>
+                  <Field label={<>파트너 이름<span className="text-rose-500 ml-1">*</span></>}>
+                    <Input name="partnerName" value={formData.partnerName || ''} onChange={handleInputChange} placeholder="파트너 이름 입력" />
+                  </Field>
+                  <AddressField
+                    label="주소"
+                    address={formData.address}
+                    addressDetail={formData.addressDetail}
+                    addressKey="address"
+                    addressDetailKey="addressDetail"
+                    onFieldChange={handleFieldChange}
+                    required
+                  />
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* 카드 2: 주 연락처 */}
+            <Card>
+              <CardHeader><CardTitle>주 연락처</CardTitle></CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  <Field label={<>이름<span className="text-rose-500 ml-1">*</span></>}>
+                    <Input name="contactName" value={formData.contactName || ''} onChange={handleInputChange} placeholder="담당자 이름 입력" />
+                  </Field>
+                  <Field label={<>전화번호<span className="text-rose-500 ml-1">*</span></>}>
+                    <Input name="contactPhone" value={formData.contactPhone || ''} onChange={handleInputChange} placeholder="전화번호 입력" />
+                  </Field>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* 카드 3: 사업자 정보 */}
+            <Card>
+              <CardHeader><CardTitle>사업자 정보</CardTitle></CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  <Field label={<>사업자등록번호<span className="text-rose-500 ml-1">*</span></>}>
+                    <Input name="businessNumber" value={formData.businessNumber || ''} onChange={handleInputChange} placeholder="사업자등록번호 입력" />
+                  </Field>
+                  <Field label={<>법인명<span className="text-rose-500 ml-1">*</span></>}>
+                    <Input name="corpName" value={formData.corpName || ''} onChange={handleInputChange} placeholder="법인명 입력" />
+                  </Field>
+                  <Field label={<>대표자<span className="text-rose-500 ml-1">*</span></>}>
+                    <Input name="ceoName" value={formData.ceoName || ''} onChange={handleInputChange} placeholder="대표자 이름 입력" />
+                  </Field>
+                  <Field label={<>업태<span className="text-rose-500 ml-1">*</span></>}>
+                    <Input name="bizType" value={formData.bizType || ''} onChange={handleInputChange} placeholder="업태 입력" />
+                  </Field>
+                  <Field label={<>업종<span className="text-rose-500 ml-1">*</span></>}>
+                    <Input name="bizItem" value={formData.bizItem || ''} onChange={handleInputChange} placeholder="업종 입력" />
+                  </Field>
+                  <AddressField
+                    label="주소"
+                    address={formData.bizAddress}
+                    addressDetail={formData.bizAddressDetail}
+                    addressKey="bizAddress"
+                    addressDetailKey="bizAddressDetail"
+                    onFieldChange={handleFieldChange}
+                    required
+                  />
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </TabsContent>
 
