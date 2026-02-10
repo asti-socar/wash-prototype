@@ -1,4 +1,5 @@
 export const BROWN_HISTORY = [
+  { id: 102, date: "2026-02-09 19:00", content: "[문서] MD 명세 정합성 검증 및 개선: 7개 화면 JSX↔MD 비교 후 불일치 수정(대시보드 적시율/리드타임 컬럼 제거), 섹션 구조 통일(개요→데이터 정책→화면 구성), 중복 내용 제거(오더 412→141줄, 대시보드 505→114줄)", isPolicyChange: false, links: [{ label: "대시보드", page: "dashboard" }, { label: "오더 관리", page: "orders" }, { label: "합의 요청", page: "settlement" }, { label: "분실물 관리", page: "lostfound" }] },
   { id: 101, date: "2026-02-09 18:00", content: "[정책] 분실물 관리 연계 오더 ID 읽기 전용 전환, 분실물 정보 생성 흐름 명세(옥스트라 카드 기반/수행원 현장 발견 2가지 경로) 기술", isPolicyChange: true, links: [{ label: "분실물 관리", page: "lostfound" }] },
   { id: 100, date: "2026-02-09 17:00", content: "[정책] 분실물 관리 상태 전이 개편: 처리 상태 Select 제거→자동 전이(주소 저장 시)+액션 버튼([발송 완료]/[폐기 완료]) 방식, 귀중품 '경찰서 주소' 레이블 매핑, 수령인 정보(이름/휴대폰 번호) 필드 추가", isPolicyChange: true, links: [{ label: "분실물 관리", page: "lostfound" }] },
   { id: 99, date: "2026-02-09 16:00", content: "[UI] 분실물 관리 스타일 통일: 공용 ui.jsx 컴포넌트 전환(로컬 인라인 228줄 제거), FilterPanel 적용(검색항목+검색어/파트너이름/처리상태/접수일 기간), 정렬·페이지네이션 추가, '파트너사'→'파트너 이름'·'처리상태'→'처리 상태' 용어 변경", isPolicyChange: false, links: [{ label: "분실물 관리", page: "lostfound" }] },
