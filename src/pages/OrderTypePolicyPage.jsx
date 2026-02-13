@@ -63,7 +63,7 @@ const HELP_TEXTS = {
 
 
   wait_time: "오더가 취소·완료된 후, 동일 차량에 새 오더가 발행되기까지 대기하는 시간(시간 단위)입니다.\n• 예: 5 설정 시, 오더 완료 후 5시간 이후에 다음 오더 발행 가능\n• 0 설정 시 유예 없이 즉시 발행됩니다.",
-  wait_time_cancel: "긴급세차 등 즉시 발행이 필요한 경우, 오더 발행 유예 시간을 무시하고 바로 오더를 생성합니다.",
+  wait_time_exempt: "긴급세차 등 즉시 발행이 필요한 경우, 오더 발행 유예 시간을 무시하고 바로 오더를 생성합니다.",
   auto_assign: "오더 발생 즉시 지정된 수행원에게 배정됩니다.",
   repeat_cycle: "1주 선택 시 반복 없이 1회만 생성됩니다.",
 
@@ -4302,7 +4302,7 @@ const DetailDrawer = ({ policy, onClose, onSave, policies, mode }) => {
 
                         <Field label="미션등록 여부">{isEditing ? <Select value={formData.mission_registration} onChange={e => handleFormDataChange('mission_registration', e.target.value)}>{OX_OPTIONS.map(o => <option key={o} value={o}>{o}</option>)}</Select> : <ReadOnlyValue>{formData.mission_registration}</ReadOnlyValue>}</Field>
                         <div />
-                        <Field label="유예 면제 여부" tooltip={HELP_TEXTS.wait_time_cancel}>{isEditing ? <Select value={formData.wait_time_cancel} onChange={e => handleFormDataChange('wait_time_cancel', e.target.value)}>{OX_OPTIONS.map(o => <option key={o} value={o}>{o}</option>)}</Select> : <ReadOnlyValue>{formData.wait_time_cancel}</ReadOnlyValue>}</Field>
+                        <Field label="유예 면제 여부" tooltip={HELP_TEXTS.wait_time_exempt}>{isEditing ? <Select value={formData.wait_time_exempt} onChange={e => handleFormDataChange('wait_time_exempt', e.target.value)}>{OX_OPTIONS.map(o => <option key={o} value={o}>{o}</option>)}</Select> : <ReadOnlyValue>{formData.wait_time_exempt}</ReadOnlyValue>}</Field>
                         <Field label="오더 발행 유예 시간" error={errors.wait_time} tooltip={HELP_TEXTS.wait_time}>{isEditing ? <Input type="number" value={formData.wait_time || ''} onChange={e => handleFormDataChange('wait_time', Number(e.target.value))} /> : <ReadOnlyValue>{formData.wait_time}</ReadOnlyValue>}</Field>
                         <Field label="자동 배정" tooltip={HELP_TEXTS.auto_assign}>{isEditing ? <Select value={formData.auto_assign} onChange={e => handleFormDataChange('auto_assign', e.target.value)}>{OX_OPTIONS.map(o => <option key={o} value={o}>{o}</option>)}</Select> : <ReadOnlyValue>{formData.auto_assign}</ReadOnlyValue>}</Field>
                         <Field label="반복 주기" tooltip={HELP_TEXTS.repeat_cycle}>{isEditing && formData.auto_assign === 'O' ? <Select value={formData.repeat_cycle} onChange={e => handleFormDataChange('repeat_cycle', Number(e.target.value))}>{Array.from({ length: 16 }, (_, i) => i + 1).map(w => <option key={w} value={w}>{w === 1 ? '1주 (반복 없음)' : `${w}주`}</option>)}</Select> : <ReadOnlyValue className={formData.auto_assign !== 'O' ? 'opacity-40' : ''}>{formData.repeat_cycle === 1 ? '1주 (반복 없음)' : `${formData.repeat_cycle}주`}</ReadOnlyValue>}</Field>
@@ -5086,7 +5086,7 @@ export default function OrderTypePolicyPage() {
 
     wait_time: 0, 
 
-    wait_time_cancel: "X",
+    wait_time_exempt: "X",
 
     auto_assign: "X",
     repeat_cycle: 1,
