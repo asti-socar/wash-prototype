@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import {
   Plus, X, ArrowUpDown, FileDown, HelpCircle
 } from 'lucide-react';
@@ -62,7 +62,8 @@ const HELP_TEXTS = {
 
 
 
-  wait_time: "오더 발행 전 대기하는 시간(시간 단위)입니다.",
+  wait_time: "오더가 취소·완료된 후, 동일 차량에 새 오더가 발행되기까지 대기하는 시간(시간 단위)입니다.\n• 예: 5 설정 시, 오더 완료 후 5시간 이후에 다음 오더 발행 가능\n• 0 설정 시 유예 없이 즉시 발행됩니다.",
+  wait_time_cancel: "긴급세차 등 즉시 발행이 필요한 경우, 오더 발행 유예 시간을 무시하고 바로 오더를 생성합니다.",
 
 
 
@@ -127,17 +128,17 @@ function cn(...classes) {
 
 
 const Tooltip = ({ content, children }) => {
-
-
-
-
-
-
-
+  const ref = useRef(null);
   const [isHovered, setIsHovered] = useState(false);
+  const [pos, setPos] = useState({ top: 0, left: 0 });
 
-
-
+  const handleMouseEnter = () => {
+    if (ref.current) {
+      const rect = ref.current.getBoundingClientRect();
+      setPos({ top: rect.bottom + 6, left: rect.left + rect.width / 2 });
+    }
+    setIsHovered(true);
+  };
 
 
 
@@ -150,58 +151,20 @@ const Tooltip = ({ content, children }) => {
 
 
 
-    <div 
-
-
-
+    <div
+      ref={ref}
       className="relative flex items-center"
-
-
-
-      onMouseEnter={() => setIsHovered(true)}
-
-
-
+      onMouseEnter={handleMouseEnter}
       onMouseLeave={() => setIsHovered(false)}
-
-
-
     >
-
-
-
       {children}
-
-
-
       {isHovered && (
-
-
-
-        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-max max-w-xs z-10">
-
-
-
-            <div className="bg-slate-800 text-white text-xs rounded-lg py-1.5 px-3 shadow-lg">
-
-
-
+        <div className="fixed z-50 w-max max-w-xs -translate-x-1/2" style={{ top: pos.top, left: pos.left }}>
+            <div className="bg-slate-800 text-white text-xs rounded-lg py-1.5 px-3 shadow-lg whitespace-pre-line">
               {content}
-
-
-
             </div>
-
-
-
         </div>
-
-
-
       )}
-
-
-
     </div>
 
 
@@ -2570,7 +2533,7 @@ const DetailDrawer = ({ policy, onClose, onSave, policies, mode }) => {
 
 
 
-    if (policies.some(p => p.order_type_name === formData.order_type_name && p.id !== formData.id)) newErrors.order_type_name = "이미 존재하는 발행 유형 명칭입니다.";
+    if (isCreating && policies.some(p => p.order_type_name === formData.order_type_name)) newErrors.order_type_name = "이미 존재하는 발행 유형 명칭입니다.";
 
 
 
@@ -2602,7 +2565,7 @@ const DetailDrawer = ({ policy, onClose, onSave, policies, mode }) => {
 
 
 
-    else if (policies.some(p => p.order_division === formData.order_division && p.order_type_score === formData.order_type_score && p.id !== formData.id)) newErrors.order_type_score = "동일 오더 구분 내에 중복된 발행 유형 점수가 있습니다.";
+    else if (isCreating && policies.some(p => p.order_division === formData.order_division && p.order_type_score === formData.order_type_score)) newErrors.order_type_score = "동일 오더 구분 내에 중복된 발행 유형 점수가 있습니다.";
 
 
 
@@ -4347,6 +4310,9 @@ const DetailDrawer = ({ policy, onClose, onSave, policies, mode }) => {
 
 
                         <Field label="미션등록 여부">{isEditing ? <Select value={formData.mission_registration} onChange={e => handleFormDataChange('mission_registration', e.target.value)}>{OX_OPTIONS.map(o => <option key={o} value={o}>{o}</option>)}</Select> : <ReadOnlyValue>{formData.mission_registration}</ReadOnlyValue>}</Field>
+                        <div />
+                        <Field label="유예 면제 여부" tooltip={HELP_TEXTS.wait_time_cancel}>{isEditing ? <Select value={formData.wait_time_cancel} onChange={e => handleFormDataChange('wait_time_cancel', e.target.value)}>{OX_OPTIONS.map(o => <option key={o} value={o}>{o}</option>)}</Select> : <ReadOnlyValue>{formData.wait_time_cancel}</ReadOnlyValue>}</Field>
+                        <Field label="오더 발행 유예 시간" error={errors.wait_time} tooltip={HELP_TEXTS.wait_time}>{isEditing ? <Input type="number" value={formData.wait_time || ''} onChange={e => handleFormDataChange('wait_time', Number(e.target.value))} /> : <ReadOnlyValue>{formData.wait_time}</ReadOnlyValue>}</Field>
 
 
 
@@ -4362,7 +4328,6 @@ const DetailDrawer = ({ policy, onClose, onSave, policies, mode }) => {
 
 
 
-                        <Field label="wait_time (시간)" error={errors.wait_time} tooltip={HELP_TEXTS.wait_time}>{isEditing ? <Input type="number" value={formData.wait_time || ''} onChange={e => handleFormDataChange('wait_time', Number(e.target.value))} /> : <ReadOnlyValue>{formData.wait_time}</ReadOnlyValue>}</Field>
 
 
 
@@ -4372,13 +4337,6 @@ const DetailDrawer = ({ policy, onClose, onSave, policies, mode }) => {
 
 
 
-
-
-
-
-
-
-                        <Field label="wait_time 취소 여부">{isEditing ? <Select value={formData.wait_time_cancel} onChange={e => handleFormDataChange('wait_time_cancel', e.target.value)}>{OX_OPTIONS.map(o => <option key={o} value={o}>{o}</option>)}</Select> : <ReadOnlyValue>{formData.wait_time_cancel}</ReadOnlyValue>}</Field>
 
 
 
