@@ -14,10 +14,16 @@
 ## 프로젝트 구조
 ```
 src/
+├── App.jsx              # 인터널 어드민 (InternalApp) + 어드민 선택 화면
+├── PartnerApp.jsx       # 파트너 어드민
 ├── components/ui.jsx    # 공유 UI 컴포넌트 (전체 페이지 공용)
-├── pages/               # 17개 화면 (각 1파일)
+├── pages/
+│   ├── internal/        # 인터널 어드민 페이지 (17개)
+│   └── partner/         # 파트너 어드민 페이지 (9개)
 ├── mocks/               # Mock 데이터 (JSON)
-├── docs/specs/          # 화면별 기능 명세 (MD)
+├── docs/specs/
+│   ├── internal/        # 인터널 어드민 화면별 기능 명세 (MD)
+│   └── partner/         # 파트너 어드민 화면별 기능 명세 (MD)
 ├── constants/
 │   └── updateHistory.js # 변경 이력 (BROWN_HISTORY, ASTI_HISTORY)
 └── generate-version.js  # updateHistory → version.json 생성
@@ -65,11 +71,24 @@ const [rows, setRows] = useState(() => data.map(d => ({ ...d })));
 - `ok` (emerald/green), `warn` (amber), `danger` (rose), `default` (slate), `info` (blue)
 
 ## 화면 ↔ 명세 정합성
-- 화면(JSX) 수정 시 대응하는 `src/docs/specs/*.md` 명세와 정합성 유지
+- 화면(JSX) 수정 시 대응하는 명세와 정합성 유지
+  - 인터널 어드민: `src/docs/specs/internal/*.md`
+  - 파트너 어드민: `src/docs/specs/partner/*.md`
 - 명세 수정 시 화면 코드의 구현과 일치 여부 확인
 - 주요 검증 항목: 컬럼 구성, 필터 필드, Drawer 필드, Badge 색상, 정렬 설정, 페이지네이션
 
 ## 업데이트 이력 작업 흐름
-1. `src/constants/updateHistory.js`의 BROWN_HISTORY 배열 맨 앞에 새 항목 추가
-2. id는 직전 최대값 + 1 (현재 Brown: 106, Asti: 3)
-3. `npm run update` 실행 → `public/version.json` 재생성
+
+### 등록 위치
+- `src/constants/updateHistory.js`
+- 탭: ASTI_HISTORY (아스티), BROWN_HISTORY (브라운)
+- 해당 배열 맨 앞에 새 항목 추가
+- id는 각 배열 내 직전 최대값 + 1 (현재 Asti: 4, Brown: 106)
+- date는 현재 KST 시각 (`YYYY-MM-DD HH:mm`)
+- 등록 후 `npm run update` 실행 → `public/version.json` 재생성
+
+### 변경내용(content) 작성 규칙
+- **일반 변경**: `페이지명: 변경내용` (예: `오더 관리: 취소 유형 필터 추가`)
+- **제품 정책 변경**: `정책명: 변경내용` (예: `존정책: 주기세차 기본값 변경`)
+- isPolicyChange: 제품 정책 변경이면 `true`, 아니면 `false`
+- links: 관련 페이지 링크 배열 `[{ label: "페이지명", page: "page-key" }]`

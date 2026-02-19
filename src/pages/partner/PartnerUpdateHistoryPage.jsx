@@ -1,21 +1,18 @@
-import React, { useState, useMemo, useEffect } from 'react';
-import { 
+import { useState, useMemo, useEffect } from 'react';
+import {
   ExternalLink, ArrowUpDown, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight
 } from 'lucide-react';
-import { BROWN_HISTORY, ASTI_HISTORY } from '../../constants/updateHistory';
+import { PARTNER_HISTORY } from '../../constants/updateHistory';
 
-/**
- * Utility & UI Components
- */
 function cn(...classes) { return classes.filter(Boolean).join(" "); }
 
 function Card({ className, children }) {
   return <div className={cn("rounded-xl bg-white border border-[#E2E8F0] shadow-[0_2px_4px_rgba(0,0,0,0.02)]", className)}>{children}</div>;
 }
 function Button({ className, variant = "default", size = "md", ...props }) {
-  const base = "inline-flex items-center justify-center rounded-lg font-semibold transition-all focus:outline-none focus:ring-2 focus:ring-[#0052CC] focus:ring-offset-1 disabled:opacity-50 disabled:pointer-events-none active:scale-[0.98]";
+  const base = "inline-flex items-center justify-center rounded-lg font-semibold transition-all focus:outline-none focus:ring-2 focus:ring-[#10B981] focus:ring-offset-1 disabled:opacity-50 disabled:pointer-events-none active:scale-[0.98]";
   const variants = {
-    default: "bg-[#0052CC] text-white hover:bg-[#0047B3] shadow-sm",
+    default: "bg-[#10B981] text-white hover:bg-[#059669] shadow-sm",
     secondary: "bg-white text-[#172B4D] border border-[#E2E8F0] hover:bg-[#F8FAFC] shadow-sm text-[#334155]",
     ghost: "bg-transparent text-[#172B4D] hover:bg-[#F4F5F7]",
   };
@@ -48,7 +45,7 @@ function Pagination({ currentPage, totalPages, onPageChange }) {
   );
 }
 
-function DataTable({ columns, rows, onRowClick, rowKey, sortConfig, onSort }) {
+function DataTable({ columns, rows, rowKey, sortConfig, onSort }) {
   return (
     <div className="overflow-x-auto rounded-xl border border-[#E2E8F0]">
       <table className="min-w-full bg-white text-left text-sm">
@@ -59,7 +56,7 @@ function DataTable({ columns, rows, onRowClick, rowKey, sortConfig, onSort }) {
                 <div className="flex items-center gap-1">
                   {c.header}
                   {sortConfig?.key === c.key && (
-                    <ArrowUpDown className={cn("h-3 w-3", sortConfig.direction === 'asc' ? "text-[#0052CC]" : "text-[#0052CC] rotate-180")} />
+                    <ArrowUpDown className={cn("h-3 w-3", sortConfig.direction === 'asc' ? "text-[#10B981]" : "text-[#10B981] rotate-180")} />
                   )}
                 </div>
               </th>
@@ -68,7 +65,7 @@ function DataTable({ columns, rows, onRowClick, rowKey, sortConfig, onSort }) {
         </thead>
         <tbody className="divide-y divide-[#E2E8F0]">
           {rows.length === 0 ? <tr><td colSpan={columns.length} className="px-4 py-10 text-center text-sm text-[#6B778C]">결과가 없습니다.</td></tr> : rows.map(r => (
-            <tr key={rowKey(r)} className={cn(onRowClick ? "cursor-pointer hover:bg-[#F1F5F9]" : "hover:bg-[#F8FAFC]")} onClick={() => onRowClick?.(r)}>
+            <tr key={rowKey(r)} className="hover:bg-[#F8FAFC]">
               {columns.map(c => <td key={c.key} className="whitespace-nowrap px-4 py-3.5 text-sm text-[#1E293B]">{typeof c.render === "function" ? c.render(r) : r[c.key]}</td>)}
             </tr>
           ))}
@@ -78,44 +75,17 @@ function DataTable({ columns, rows, onRowClick, rowKey, sortConfig, onSort }) {
   );
 }
 
-function Tabs({ value, children }) {
-  return <div className="w-full space-y-4">{children}</div>;
-}
-function TabsList({ children, className }) {
-  return <div className={cn("flex border-b border-[#DFE1E6]", className)}>{children}</div>;
-}
-function TabsTrigger({ value, currentValue, onClick, children }) {
-  const active = value === currentValue;
-  return (
-    <button
-      onClick={() => onClick(value)}
-      className={cn(
-        "relative px-4 py-2.5 text-sm font-medium transition-all",
-        active ? "text-[#0052CC]" : "text-[#6B778C] hover:text-[#172B4D]"
-      )}
-    >
-      {children}
-      {active && (
-        <span className="absolute bottom-0 left-0 h-0.5 w-full bg-[#0052CC]" />
-      )}
-    </button>
-  );
-}
-
-export default function UpdateHistoryPage() {
-  const [activeTab, setActiveTab] = useState("asti");
+export default function PartnerUpdateHistoryPage() {
   const [showPolicyOnly, setShowPolicyOnly] = useState(false);
   const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
 
-  const historyData = activeTab === "brown" ? BROWN_HISTORY : ASTI_HISTORY;
-  
   const filteredHistory = useMemo(() => {
-    let data = [...historyData].sort((a, b) => b.id - a.id);
+    let data = [...PARTNER_HISTORY].sort((a, b) => b.id - a.id);
     if (showPolicyOnly) {
       data = data.filter((item) => item.isPolicyChange);
     }
     return data;
-  }, [historyData, showPolicyOnly]);
+  }, [showPolicyOnly]);
 
   const sortedData = useMemo(() => {
     if (!sortConfig.key) return filteredHistory;
@@ -139,29 +109,15 @@ export default function UpdateHistoryPage() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <div>
-          <div className="text-base font-bold text-[#172B4D]">업데이트 이력 (협업 모드)</div>
-          <div className="mt-1 text-sm text-[#6B778C]">브라운/아스티 작업 내역 이원화 관리</div>
-        </div>
-      </div>
-
-      <Tabs value={activeTab}>
-        <TabsList>
-          <TabsTrigger value="asti" currentValue={activeTab} onClick={setActiveTab}>아스티 (Asti)</TabsTrigger>
-          <TabsTrigger value="brown" currentValue={activeTab} onClick={setActiveTab}>브라운 (Brown)</TabsTrigger>
-        </TabsList>
-      </Tabs>
-
       <div className="flex items-center gap-2 py-2">
-        <input 
-          type="checkbox" 
-          id="policyFilter" 
-          className="h-4 w-4 rounded border-gray-300 text-[#0052CC] focus:ring-[#0052CC]"
+        <input
+          type="checkbox"
+          id="partnerPolicyFilter"
+          className="h-4 w-4 rounded border-gray-300 text-[#10B981] focus:ring-[#10B981]"
           checked={showPolicyOnly}
           onChange={(e) => setShowPolicyOnly(e.target.checked)}
         />
-        <label htmlFor="policyFilter" className="text-sm text-[#172B4D] cursor-pointer select-none">
+        <label htmlFor="partnerPolicyFilter" className="text-sm text-[#172B4D] cursor-pointer select-none">
           제품 정책 변경 건만 보기
         </label>
       </div>
@@ -185,7 +141,7 @@ export default function UpdateHistoryPage() {
             {
               key: "isPolicyChange",
               header: "제품 정책 변경",
-              render: (r) => r.isPolicyChange ? <span className="font-bold text-[#0052CC]">해당</span> : null
+              render: (r) => r.isPolicyChange ? <span className="font-bold text-[#10B981]">해당</span> : null
             },
             {
               key: "links",
@@ -197,10 +153,10 @@ export default function UpdateHistoryPage() {
                       key={idx}
                       variant="ghost"
                       size="sm"
-                      className="h-6 px-2 text-xs text-[#0052CC]"
+                      className="h-6 px-2 text-xs text-[#10B981]"
                       onClick={(e) => {
                         e.stopPropagation();
-                        window.open(`/?page=${link.page}`, "_blank");
+                        window.open(`/?admin=partner&page=${link.page}`, "_blank");
                       }}
                     >
                       {link.label} <ExternalLink className="ml-1 h-3 w-3" />

@@ -104,8 +104,12 @@ export const BROWN_HISTORY = [
   { id: 1, date: "2026-01-13 15:53", content: "기능 명세(Markdown) Drawer 연동 및 렌더러 구현", isPolicyChange: false, links: [] },
 ];
 
+export const PARTNER_HISTORY = [
+];
+
 export const ASTI_HISTORY = [
-  { id: 3, date: "2026-01-20 13:22", content: "발행 유형정책관리", isPolicyChange: false, links: [] },
-  { id: 2, date: "2026-01-20 13:22", content: "정책관리 페이지 업데이트(AI정책관리, 존정책관리)", isPolicyChange: false, links: [] },
-  { id: 1, date: "2026-01-20 13:21", content: "ASTI 업데이트 이력 기록 시작", isPolicyChange: false, links: [] },
+  { id: 4, date: "2026-02-19 18:09", content: "존정책 관리: 상세 화면 라이트세차 표기 Y/N으로 통일 (기존 true/false)", isPolicyChange: false, links: [{ label: "존정책 관리", page: "zone-policy" }] },
+  { id: 3, date: "2026-02-19 18:09", content: "존정책 관리: 라이트세차/주기세차 '상위 정책 따름' 옵션 추가 (존정책 미설정 시 지역2→지역1 순 fallback)", isPolicyChange: true, links: [{ label: "존정책 관리", page: "zone-policy" }] },
+  { id: 2, date: "2026-02-19 18:09", content: "존정책 관리: 상세 Drawer 저장 후 닫힘 방지, 저장 완료 alert 제거", isPolicyChange: false, links: [{ label: "존정책 관리", page: "zone-policy" }] },
+  { id: 1, date: "2026-02-19 17:35", content: "존정책 관리: 정책유형 한글로 변경 (Zone→존정책, Region1→지역1정책, Region2→지역2정책)", isPolicyChange: false, links: [{ label: "존정책 관리", page: "zone-policy" }] },
 ];
