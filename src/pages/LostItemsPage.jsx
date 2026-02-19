@@ -1,7 +1,7 @@
-import React, { useState, useMemo, useEffect, useCallback } from 'react';
-import { Plus, X, MapPin, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import {
-  cn, toYmd, Card, CardHeader, CardTitle, CardContent,
+  toYmd, Card, CardHeader, CardTitle, CardContent,
   Button, Input, Select, Badge, Chip, FilterPanel,
   Drawer, Field, DataTable, usePagination,
 } from '../components/ui';
@@ -26,15 +26,6 @@ const statusBadgeMap = {
 const itemClassificationOptions = ['일반', '귀중품'];
 const allStatusOptions = ['배송지 미입력', '발송 대기', '발송 완료', '경찰서 인계', '폐기 완료'];
 
-// --- Daum Postcode API ---
-const loadDaumPostcode = () => new Promise((resolve, reject) => {
-  if (window.daum?.Postcode) return resolve();
-  const s = document.createElement('script');
-  s.src = '//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js';
-  s.onload = resolve;
-  s.onerror = () => reject(new Error('Daum Postcode API 로드 실패'));
-  document.head.appendChild(s);
-});
 
 // --- MAIN COMPONENT ---
 export default function LostItemsPage({ setActiveKey }) {
@@ -65,7 +56,6 @@ export default function LostItemsPage({ setActiveKey }) {
   // Address states
   const [draftAddr1, setDraftAddr1] = useState('');
   const [draftAddr2, setDraftAddr2] = useState('');
-  const [addressInputMode, setAddressInputMode] = useState('postcode');
 
   // Partner names for filter
   const partnerNames = useMemo(() => [...new Set(items.map(i => i.partnerName).filter(Boolean))], [items]);
@@ -115,7 +105,6 @@ export default function LostItemsPage({ setActiveKey }) {
     setDrafts({});
     setDraftAddr1(item.deliveryAddress1 || '');
     setDraftAddr2(item.deliveryAddress2 || '');
-    setAddressInputMode('postcode');
     setIsEditMode(false);
     setDrawerVisible(true);
   };
@@ -140,7 +129,6 @@ export default function LostItemsPage({ setActiveKey }) {
     });
     setDraftAddr1(selectedItem.deliveryAddress1 || '');
     setDraftAddr2(selectedItem.deliveryAddress2 || '');
-    setAddressInputMode('postcode');
     setIsEditMode(true);
   };
 
@@ -197,30 +185,6 @@ export default function LostItemsPage({ setActiveKey }) {
     updateItemField(selectedItem.id, { status: '발송 완료' });
   };
 
-  // Daum postcode search
-  const handleSearchAddress = async () => {
-    try {
-      await loadDaumPostcode();
-      new window.daum.Postcode({
-        oncomplete: (data) => {
-          setDraftAddr1(data.roadAddress || data.jibunAddress);
-        }
-      }).open();
-    } catch (err) {
-      alert(err.message);
-    }
-  };
-
-  // Photo handlers
-  const handleAddPhoto = () => {
-    const newPhoto = prompt("추가할 사진 URL을 입력하세요:", "https://via.placeholder.com/150");
-    if (newPhoto) {
-      updateItemField(selectedItem.id, { itemPhotos: [...selectedItem.itemPhotos, newPhoto] });
-    }
-  };
-  const handleRemovePhoto = (index) => {
-    updateItemField(selectedItem.id, { itemPhotos: selectedItem.itemPhotos.filter((_, i) => i !== index) });
-  };
 
   const handleResetFilters = () => {
     setSearchField('carNumber');
@@ -314,25 +278,10 @@ export default function LostItemsPage({ setActiveKey }) {
             } />
 
             <Field label="습득물 사진" value={
-              <div>
-                <div className="flex flex-wrap gap-2">
-                  {data.itemPhotos?.map((photo, index) => (
-                    <div key={index} className="relative">
-                      <img src={photo} alt={`p-${index}`} className="w-20 h-20 object-cover rounded" />
-                      {isEditMode && (
-                        <button
-                          className="absolute -top-1.5 -right-1.5 bg-red-500 text-white border-none rounded-full w-5 h-5 flex items-center justify-center cursor-pointer"
-                          onClick={() => handleRemovePhoto(index)}
-                        ><X className="h-3 w-3" /></button>
-                      )}
-                    </div>
-                  ))}
-                </div>
-                {isEditMode && (
-                  <Button onClick={handleAddPhoto} className="mt-2">
-                    <Plus className="mr-1 h-4 w-4" /> 사진 추가
-                  </Button>
-                )}
+              <div className="flex flex-wrap gap-2">
+                {data.itemPhotos?.length > 0 ? data.itemPhotos.map((photo, index) => (
+                  <img key={index} src={photo} alt={`p-${index}`} className="w-20 h-20 object-cover rounded" />
+                )) : <span className="text-sm text-[#6B778C]">-</span>}
               </div>
             } />
           </CardContent>
@@ -364,6 +313,10 @@ export default function LostItemsPage({ setActiveKey }) {
           <CardHeader><CardTitle>분실물 카드 정보</CardTitle></CardHeader>
           <CardContent className="space-y-4">
             <Field label="카드 접수 번호" value={data.lostItemCardReceiptNumber || '-'} />
+
+            <Field label="분실물 상세 정보" value={
+              <div className="text-sm whitespace-pre-wrap">{data.itemDetails || '-'}</div>
+            } />
 
             <Field label={addressLabel} value={
               <div>
