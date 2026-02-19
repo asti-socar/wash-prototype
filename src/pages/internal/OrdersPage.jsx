@@ -41,7 +41,7 @@ import {
   TabsList,
   TabsTrigger,
   TabsContent,
-} from "../components/ui";
+} from "../../components/ui";
 
 const ORDER_GROUPS = ["긴급", "정규", "변경", "수시", "특별"];
 const ORDER_TYPES = [

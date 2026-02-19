@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { 
   ExternalLink, ArrowUpDown, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight
 } from 'lucide-react';
-import { BROWN_HISTORY, ASTI_HISTORY } from '../constants/updateHistory';
+import { BROWN_HISTORY, ASTI_HISTORY } from '../../constants/updateHistory';
 
 /**
  * Utility & UI Components

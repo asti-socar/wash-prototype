@@ -12,9 +12,9 @@ import {
   Select,
   Pagination,
   usePagination
-} from "../components/ui";
-import initialRegion1Data from "../mocks/region1policy.json";
-import initialRegion2Data from "../mocks/region2policy.json";
+} from "../../components/ui";
+import initialRegion1Data from "../../mocks/region1policy.json";
+import initialRegion2Data from "../../mocks/region2policy.json";
 
 // Component for "지역1 정책(시도)" tab
 const Region1PolicyTab = () => {

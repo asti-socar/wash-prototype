@@ -28,7 +28,7 @@ import {
   Pagination,
   DataTable,
   Field,
-} from "../components/ui";
+} from "../../components/ui";
 
 // Mock Data for Vehicles (Shared)
 const MOCK_VEHICLES = [

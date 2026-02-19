@@ -3,8 +3,8 @@ import {
   Search, MapPin,
   Upload, Download, AlertCircle, CheckCircle2, FileSpreadsheet
 } from 'lucide-react';
-import { cn, Card, CardHeader, CardTitle, CardContent, Button, Input, Select, Badge, Chip, FilterPanel, Drawer, Field, usePagination, Pagination, DataTable } from '../components/ui';
-import zoneAssignmentsData from '../mocks/zoneAssignments.json';
+import { cn, Card, CardHeader, CardTitle, CardContent, Button, Input, Select, Badge, Chip, FilterPanel, Drawer, Field, usePagination, Pagination, DataTable } from '../../components/ui';
+import zoneAssignmentsData from '../../mocks/zoneAssignments.json';
 
 // ============== MOCK PARTNERS ==============
 const MOCK_PARTNERS = [

@@ -2,8 +2,8 @@ import React, { useState, useMemo, useEffect } from 'react';
 import {
   X, ArrowUpDown, Trash2, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight
 } from 'lucide-react';
-import { cn, Card, CardHeader, CardTitle, CardContent, Button, Input, Select, Badge, Chip, FilterPanel, Drawer, Field, usePagination, DataTable } from '../components/ui';
-import settlementData from '../mocks/settlement.json';
+import { cn, Card, CardHeader, CardTitle, CardContent, Button, Input, Select, Badge, Chip, FilterPanel, Drawer, Field, usePagination, DataTable } from '../../components/ui';
+import settlementData from '../../mocks/settlement.json';
 
 export default function SettlementPage() {
   const toYmd = (d) => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;

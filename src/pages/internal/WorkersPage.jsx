@@ -14,7 +14,7 @@ import {
   DataTable,
   FilterPanel,
   Chip,
-} from '../components/ui';
+} from '../../components/ui';
 
 export default function WorkersPage() {
   const [workers] = useState([
