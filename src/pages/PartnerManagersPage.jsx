@@ -188,13 +188,16 @@ export default function PartnerManagersPage() {
 
 function ManagerFormDrawer({ isOpen, manager, onClose, onSave, onDelete, allPartners }) {
   const [formData, setFormData] = useState({});
+  const isExisting = !!manager?.id;
+  const [isEditMode, setIsEditMode] = useState(!isExisting);
 
   useEffect(() => {
     if (manager) {
       setFormData(manager);
+      setIsEditMode(false);
     } else {
-      // Reset for new entry
       setFormData({ partner: '', role: '세차 담당', name: '', email: '', phone: '' });
+      setIsEditMode(true);
     }
   }, [manager, isOpen]);
 
@@ -204,59 +207,85 @@ function ManagerFormDrawer({ isOpen, manager, onClose, onSave, onDelete, allPart
   };
 
   const handleSubmit = () => {
-    // Basic validation
     if (!formData.partner || !formData.role || !formData.name || !formData.email || !formData.phone) {
       alert("모든 항목은 필수 입력입니다.");
       return;
     }
     onSave(formData);
+    setIsEditMode(false);
   };
 
-  const isEditing = !!manager?.id;
+  const handleCancel = () => {
+    if (manager) setFormData(manager);
+    setIsEditMode(false);
+  };
 
   const handleDeleteClick = () => {
-    if (isEditing) {
+    if (isExisting) {
       onDelete(manager.id);
     }
   };
 
+  const footer = (() => {
+    if (!isExisting) {
+      return (
+        <>
+          <Button variant="secondary" onClick={onClose}>취소</Button>
+          <Button onClick={handleSubmit}>등록하기</Button>
+        </>
+      );
+    }
+    return (
+      <>
+        {isEditMode && (
+          <Button variant="danger" onClick={handleDeleteClick} className="mr-auto">
+            <Trash2 className="mr-2 h-4 w-4" /> 삭제
+          </Button>
+        )}
+        {isEditMode ? (
+          <>
+            <Button variant="secondary" onClick={handleCancel}>취소</Button>
+            <Button onClick={handleSubmit}>저장하기</Button>
+          </>
+        ) : (
+          <>
+            <Button variant="secondary" onClick={onClose}>닫기</Button>
+            <Button onClick={() => setIsEditMode(true)}>수정하기</Button>
+          </>
+        )}
+      </>
+    );
+  })();
+
   return (
     <Drawer
       open={isOpen}
-      title={isEditing ? "담당자 수정" : "담당자 등록"}
+      title={!isExisting ? "담당자 등록" : isEditMode ? "담당자 수정" : "담당자 상세"}
       onClose={onClose}
-      footer={
-        <>
-          {isEditing && (
-            <Button variant="danger" onClick={handleDeleteClick} className="mr-auto">
-              <Trash2 className="mr-2 h-4 w-4" /> 삭제
-            </Button>
-          )}
-          <Button variant="secondary" onClick={onClose}>취소</Button>
-          <Button onClick={handleSubmit}>
-            {isEditing ? "수정하기" : "등록하기"}
-          </Button>
-        </>
-      }
+      footer={footer}
     >
       <div className="space-y-6">
         <Card>
           <CardHeader><CardTitle>파트너 정보</CardTitle></CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-1">
-              <label className="text-xs font-semibold text-[#6B778C]">파트너 <span className="text-rose-500 ml-1">*</span></label>
-              <Select name="partner" value={formData.partner || ''} onChange={handleInputChange}>
-                <option value="" disabled>파트너사를 선택하세요</option>
-                {allPartners.map(p => <option key={p} value={p}>{p}</option>)}
-              </Select>
+              <label className="text-xs font-semibold text-[#6B778C]">파트너{isEditMode && <span className="text-rose-500 ml-1">*</span>}</label>
+              {isEditMode ? (
+                <Select name="partner" value={formData.partner || ''} onChange={handleInputChange}>
+                  <option value="" disabled>파트너사를 선택하세요</option>
+                  {allPartners.map(p => <option key={p} value={p}>{p}</option>)}
+                </Select>
+              ) : <div className="text-sm pt-1">{formData.partner || '-'}</div>}
             </div>
             <div className="space-y-1">
-              <label className="text-xs font-semibold text-[#6B778C]">직무 <span className="text-rose-500 ml-1">*</span></label>
-              <Select name="role" value={formData.role || '세차 담당'} onChange={handleInputChange}>
-                <option value="세차 담당">세차 담당</option>
-                <option value="행정 담당">행정 담당</option>
-                <option value="기타">기타</option>
-              </Select>
+              <label className="text-xs font-semibold text-[#6B778C]">직무{isEditMode && <span className="text-rose-500 ml-1">*</span>}</label>
+              {isEditMode ? (
+                <Select name="role" value={formData.role || '세차 담당'} onChange={handleInputChange}>
+                  <option value="세차 담당">세차 담당</option>
+                  <option value="행정 담당">행정 담당</option>
+                  <option value="기타">기타</option>
+                </Select>
+              ) : <div className="text-sm pt-1">{formData.role || '-'}</div>}
             </div>
           </CardContent>
         </Card>
@@ -265,16 +294,22 @@ function ManagerFormDrawer({ isOpen, manager, onClose, onSave, onDelete, allPart
           <CardHeader><CardTitle>계정 정보</CardTitle></CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-1">
-              <label className="text-xs font-semibold text-[#6B778C]">이름 <span className="text-rose-500 ml-1">*</span></label>
-              <Input name="name" value={formData.name || ''} onChange={handleInputChange} placeholder="이름 입력" />
+              <label className="text-xs font-semibold text-[#6B778C]">이름{isEditMode && <span className="text-rose-500 ml-1">*</span>}</label>
+              {isEditMode ? (
+                <Input name="name" value={formData.name || ''} onChange={handleInputChange} placeholder="이름 입력" />
+              ) : <div className="text-sm pt-1">{formData.name || '-'}</div>}
             </div>
             <div className="space-y-1">
-              <label className="text-xs font-semibold text-[#6B778C]">이메일 <span className="text-rose-500 ml-1">*</span></label>
-              <Input name="email" type="email" value={formData.email || ''} onChange={handleInputChange} placeholder="이메일 입력" />
+              <label className="text-xs font-semibold text-[#6B778C]">이메일{isEditMode && <span className="text-rose-500 ml-1">*</span>}</label>
+              {isEditMode ? (
+                <Input name="email" type="email" value={formData.email || ''} onChange={handleInputChange} placeholder="이메일 입력" />
+              ) : <div className="text-sm pt-1">{formData.email || '-'}</div>}
             </div>
             <div className="space-y-1">
-              <label className="text-xs font-semibold text-[#6B778C]">휴대전화 <span className="text-rose-500 ml-1">*</span></label>
-              <Input name="phone" value={formData.phone || ''} onChange={handleInputChange} placeholder="휴대전화 입력" />
+              <label className="text-xs font-semibold text-[#6B778C]">휴대전화{isEditMode && <span className="text-rose-500 ml-1">*</span>}</label>
+              {isEditMode ? (
+                <Input name="phone" value={formData.phone || ''} onChange={handleInputChange} placeholder="휴대전화 입력" />
+              ) : <div className="text-sm pt-1">{formData.phone || '-'}</div>}
             </div>
           </CardContent>
         </Card>
