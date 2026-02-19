@@ -122,9 +122,7 @@ function generateMockData() {
       }
     });
 
-    const hasZonePolicy = Object.values(finalPolicy).some(p => p.source === 'Zone');
-
-    return { ...zone, ...finalPolicy, hasZonePolicy };
+    return { ...zone, ...finalPolicy };
   });
 }
 
@@ -239,9 +237,8 @@ export default function ZonePolicyPage() {
     { key: 'zoneName', header: '존 이름' },
     { key: 'zoneType', header: '존 유형' },
     { key: 'vehicleCount', header: '차량 대수', align: 'center', sortable: true, render: r => `${r.vehicleCount}대` },
-    { key: 'cycleWashDays', header: '주기세차(일)', sortable: true, render: r => r.cycleWashDays.value },
-    { key: 'isLightWash', header: '라이트세차', render: r => r.isLightWash.value ? 'Y' : 'N' },
-    { key: 'hasZonePolicy', header: '개별 정책', render: r => r.hasZonePolicy ? 'O' : 'X' },
+    { key: 'cycleWashDays', header: '주기세차(일)', sortable: true, render: r => <span className="inline-flex items-center gap-1.5">{r.cycleWashDays.value}<Badge tone={r.cycleWashDays.source.toLowerCase()}>{r.cycleWashDays.source}</Badge></span> },
+    { key: 'isLightWash', header: '라이트세차', render: r => <span className="inline-flex items-center gap-1.5">{r.isLightWash.value ? 'Y' : 'N'}<Badge tone={r.isLightWash.source.toLowerCase()}>{r.isLightWash.source}</Badge></span> },
   ];
 
   const isFiltered = filteredData.length > 0 && policies.length > filteredData.length;
@@ -369,17 +366,12 @@ function ZonePolicyDrawer({ policy, onClose, onSave }) {
     const handleSave = () => {
         const newFormData = { ...formData };
         const policyFields = ['cycleWashDays', 'isLightWash'];
-        let hasZonePolicy = false;
 
         policyFields.forEach(field => {
           if (newFormData[field].value !== policy[field].value) {
             newFormData[field].source = 'Zone';
           }
-          if (newFormData[field].source === 'Zone') {
-            hasZonePolicy = true;
-          }
         });
-        newFormData.hasZonePolicy = hasZonePolicy;
 
         onSave(newFormData);
         alert("존 정보가 성공적으로 업데이트되었습니다.");

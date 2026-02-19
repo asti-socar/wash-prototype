@@ -270,104 +270,6 @@ export default function LostItemsPage({ setActiveKey }) {
               <Badge tone={statusBadgeMap[data.status]}>{data.status}</Badge>
             } />
 
-            <Field label={addressLabel} value={
-              isTerminal ? (
-                <div>
-                  <div className="text-sm">{data.deliveryAddress1 || '-'}</div>
-                  {data.deliveryAddress2 && <div className="text-sm text-[#6B778C]">{data.deliveryAddress2}</div>}
-                </div>
-              ) : (
-                <div className="space-y-3">
-                  <div className="flex gap-4">
-                    <label className="flex items-center gap-1 text-sm cursor-pointer">
-                      <input type="radio" name="addressMode" value="postcode" checked={addressInputMode === 'postcode'} onChange={() => setAddressInputMode('postcode')} />
-                      우편번호 검색
-                    </label>
-                    <label className="flex items-center gap-1 text-sm cursor-pointer">
-                      <input type="radio" name="addressMode" value="manual" checked={addressInputMode === 'manual'} onChange={() => setAddressInputMode('manual')} />
-                      직접 입력
-                    </label>
-                  </div>
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2">
-                      <span className="w-12 shrink-0 text-xs text-[#6B778C]">주소1</span>
-                      <div className="flex-1">
-                        <Input
-                          value={draftAddr1}
-                          onChange={(e) => setDraftAddr1(e.target.value)}
-                          placeholder="주소를 입력하세요"
-                          readOnly={addressInputMode === 'postcode'}
-                        />
-                      </div>
-                      {addressInputMode === 'postcode' && (
-                        <Button onClick={handleSearchAddress} className="shrink-0">
-                          <MapPin className="mr-1 h-4 w-4" /> 주소 검색
-                        </Button>
-                      )}
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="w-12 shrink-0 text-xs text-[#6B778C]">주소2</span>
-                      <div className="flex-1">
-                        <Input value={draftAddr2} onChange={(e) => setDraftAddr2(e.target.value)} placeholder="상세 주소를 입력하세요" />
-                      </div>
-                      <Button
-                        variant={isAddressChanged ? undefined : 'secondary'}
-                        onClick={handleSaveAddress}
-                        disabled={!isAddressChanged}
-                        className="shrink-0"
-                      >저장</Button>
-                    </div>
-                  </div>
-                  {data.status === '배송지 미입력' && (
-                    <p className="text-xs text-[#6B778C]">
-                      {isValuable
-                        ? '* 주소 저장 시 경찰서 인계 상태로 자동 전환됩니다.'
-                        : '* 주소 저장 시 발송 대기 상태로 자동 전환됩니다.'}
-                    </p>
-                  )}
-                </div>
-              )
-            } />
-
-            {/* 수령인 정보 */}
-            <Field label="수령인 이름" value={
-              isTerminal ? (data.recipientName || '-') : (
-                <div className="flex items-center gap-2">
-                  <div className="flex-1">
-                    <Input
-                      value={drafts.recipientName !== undefined ? drafts.recipientName : (data.recipientName || '')}
-                      onChange={(e) => setDraft('recipientName', e.target.value)}
-                      placeholder="수령인 이름"
-                    />
-                  </div>
-                  <Button
-                    variant={(drafts.recipientName !== undefined && drafts.recipientName !== (data.recipientName || '')) ? undefined : 'secondary'}
-                    onClick={() => handleSaveField('recipientName')}
-                    disabled={drafts.recipientName === undefined || drafts.recipientName === (data.recipientName || '')}
-                  >저장</Button>
-                </div>
-              )
-            } />
-
-            <Field label="휴대폰 번호" value={
-              isTerminal ? (data.recipientPhone || '-') : (
-                <div className="flex items-center gap-2">
-                  <div className="flex-1">
-                    <Input
-                      value={drafts.recipientPhone !== undefined ? drafts.recipientPhone : (data.recipientPhone || '')}
-                      onChange={(e) => setDraft('recipientPhone', e.target.value)}
-                      placeholder="010-0000-0000"
-                    />
-                  </div>
-                  <Button
-                    variant={(drafts.recipientPhone !== undefined && drafts.recipientPhone !== (data.recipientPhone || '')) ? undefined : 'secondary'}
-                    onClick={() => handleSaveField('recipientPhone')}
-                    disabled={drafts.recipientPhone === undefined || drafts.recipientPhone === (data.recipientPhone || '')}
-                  >저장</Button>
-                </div>
-              )
-            } />
-
             <Field label="상세 정보" value={
               <div className="space-y-2">
                 <textarea
@@ -433,6 +335,103 @@ export default function LostItemsPage({ setActiveKey }) {
           <CardHeader><CardTitle>분실물 카드 정보</CardTitle></CardHeader>
           <CardContent className="space-y-4">
             <Field label="카드 접수 번호" value={data.lostItemCardReceiptNumber || '-'} />
+
+            <Field label={addressLabel} value={
+              isTerminal ? (
+                <div>
+                  <div className="text-sm">{data.deliveryAddress1 || '-'}</div>
+                  {data.deliveryAddress2 && <div className="text-sm text-[#6B778C]">{data.deliveryAddress2}</div>}
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  <div className="flex gap-4">
+                    <label className="flex items-center gap-1 text-sm cursor-pointer">
+                      <input type="radio" name="addressMode" value="postcode" checked={addressInputMode === 'postcode'} onChange={() => setAddressInputMode('postcode')} />
+                      우편번호 검색
+                    </label>
+                    <label className="flex items-center gap-1 text-sm cursor-pointer">
+                      <input type="radio" name="addressMode" value="manual" checked={addressInputMode === 'manual'} onChange={() => setAddressInputMode('manual')} />
+                      직접 입력
+                    </label>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <span className="w-12 shrink-0 text-xs text-[#6B778C]">주소1</span>
+                      <div className="flex-1">
+                        <Input
+                          value={draftAddr1}
+                          onChange={(e) => setDraftAddr1(e.target.value)}
+                          placeholder="주소를 입력하세요"
+                          readOnly={addressInputMode === 'postcode'}
+                        />
+                      </div>
+                      {addressInputMode === 'postcode' && (
+                        <Button onClick={handleSearchAddress} className="shrink-0">
+                          <MapPin className="mr-1 h-4 w-4" /> 주소 검색
+                        </Button>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="w-12 shrink-0 text-xs text-[#6B778C]">주소2</span>
+                      <div className="flex-1">
+                        <Input value={draftAddr2} onChange={(e) => setDraftAddr2(e.target.value)} placeholder="상세 주소를 입력하세요" />
+                      </div>
+                      <Button
+                        variant={isAddressChanged ? undefined : 'secondary'}
+                        onClick={handleSaveAddress}
+                        disabled={!isAddressChanged}
+                        className="shrink-0"
+                      >저장</Button>
+                    </div>
+                  </div>
+                  {data.status === '배송지 미입력' && (
+                    <p className="text-xs text-[#6B778C]">
+                      {isValuable
+                        ? '* 주소 저장 시 경찰서 인계 상태로 자동 전환됩니다.'
+                        : '* 주소 저장 시 발송 대기 상태로 자동 전환됩니다.'}
+                    </p>
+                  )}
+                </div>
+              )
+            } />
+
+            <Field label="수령인 이름" value={
+              isTerminal ? (data.recipientName || '-') : (
+                <div className="flex items-center gap-2">
+                  <div className="flex-1">
+                    <Input
+                      value={drafts.recipientName !== undefined ? drafts.recipientName : (data.recipientName || '')}
+                      onChange={(e) => setDraft('recipientName', e.target.value)}
+                      placeholder="수령인 이름"
+                    />
+                  </div>
+                  <Button
+                    variant={(drafts.recipientName !== undefined && drafts.recipientName !== (data.recipientName || '')) ? undefined : 'secondary'}
+                    onClick={() => handleSaveField('recipientName')}
+                    disabled={drafts.recipientName === undefined || drafts.recipientName === (data.recipientName || '')}
+                  >저장</Button>
+                </div>
+              )
+            } />
+
+            <Field label="휴대폰 번호" value={
+              isTerminal ? (data.recipientPhone || '-') : (
+                <div className="flex items-center gap-2">
+                  <div className="flex-1">
+                    <Input
+                      value={drafts.recipientPhone !== undefined ? drafts.recipientPhone : (data.recipientPhone || '')}
+                      onChange={(e) => setDraft('recipientPhone', e.target.value)}
+                      placeholder="010-0000-0000"
+                    />
+                  </div>
+                  <Button
+                    variant={(drafts.recipientPhone !== undefined && drafts.recipientPhone !== (data.recipientPhone || '')) ? undefined : 'secondary'}
+                    onClick={() => handleSaveField('recipientPhone')}
+                    disabled={drafts.recipientPhone === undefined || drafts.recipientPhone === (data.recipientPhone || '')}
+                  >저장</Button>
+                </div>
+              )
+            } />
           </CardContent>
         </Card>
       </div>

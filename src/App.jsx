@@ -142,9 +142,9 @@ const NAV = [
     items: [
       { key: "order-type-policy", label: "발행 유형 정책", icon: Settings, parentKey: 'order-policy' },
       { key: "ai-policy", label: "AI 모델 정책 관리", icon: Settings, parentKey: 'order-policy' },
+      { key: "region-policy", label: "지역 정책 관리", icon: MapPinned, parentKey: 'order-policy' },
       { key: "zone-policy", label: "존 정책 관리", icon: MapPinned, parentKey: 'order-policy' },
       { key: "zone-assignment", label: "존 배정 관리", icon: MapPinned, parentKey: 'order-policy' },
-      { key: "region-policy", label: "지역 정책 관리", icon: MapPinned, parentKey: 'order-policy' },
     ],
   },
   {
