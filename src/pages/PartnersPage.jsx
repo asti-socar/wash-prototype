@@ -611,8 +611,7 @@ function PartnerDetailDrawer({ partner, onClose, onSave, onDelete }) {
   const footer = (() => {
     if (activeTab === 'prices') {
       return (
-        <div className="flex w-full flex-col-reverse sm:flex-row sm:justify-between">
-          <div>{isExisting && <Button variant="danger" onClick={() => onDelete(partner.partnerId)}>삭제</Button>}</div>
+        <div className="flex w-full justify-end">
           <Button variant="secondary" onClick={onClose}>닫기</Button>
         </div>
       );

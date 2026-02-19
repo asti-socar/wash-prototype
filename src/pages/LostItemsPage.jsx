@@ -56,6 +56,7 @@ export default function LostItemsPage({ setActiveKey }) {
   // Drawer
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
+  const [isEditMode, setIsEditMode] = useState(false);
 
   // Draft states for inline Input editing
   const [drafts, setDrafts] = useState({});
@@ -115,58 +116,78 @@ export default function LostItemsPage({ setActiveKey }) {
     setDraftAddr1(item.deliveryAddress1 || '');
     setDraftAddr2(item.deliveryAddress2 || '');
     setAddressInputMode('postcode');
+    setIsEditMode(false);
     setDrawerVisible(true);
   };
 
   const closeDrawer = useCallback(() => {
     setDrawerVisible(false);
+    setIsEditMode(false);
     setTimeout(() => {
       setSelectedItem(null);
       setDrafts({});
     }, 300);
   }, []);
 
-  const updateItemField = (id, updates) => {
-    setItems(prev => prev.map(item => item.id === id ? { ...item, ...updates } : item));
+  const enterEditMode = () => {
+    if (!selectedItem) return;
+    setDrafts({
+      itemCategory: selectedItem.itemCategory,
+      itemDetails: selectedItem.itemDetails || '',
+      recipientName: selectedItem.recipientName || '',
+      recipientPhone: selectedItem.recipientPhone || '',
+      isDisposed: selectedItem.isDisposed || false,
+    });
+    setDraftAddr1(selectedItem.deliveryAddress1 || '');
+    setDraftAddr2(selectedItem.deliveryAddress2 || '');
+    setAddressInputMode('postcode');
+    setIsEditMode(true);
   };
 
-  // Select confirm: 분실물 구분
-  const handleCategoryChange = (e) => {
-    const newCategory = e.target.value;
-    if (newCategory === selectedItem.itemCategory) return;
-
-    const validStatuses = STATUS_BY_CATEGORY[newCategory];
-    const currentStatus = selectedItem.status;
-    let statusReset = {};
-
-    if (!validStatuses.includes(currentStatus)) {
-      if (!confirm(`분실물 구분을 '${newCategory}'(으)로 변경하시겠습니까?\n현재 처리 상태 '${currentStatus}'는 '${newCategory}' 구분에서 유효하지 않아 '배송지 미입력'으로 초기화됩니다.`)) return;
-      statusReset = { status: '배송지 미입력' };
-    } else {
-      if (!confirm(`분실물 구분을 '${newCategory}'(으)로 변경하시겠습니까?`)) return;
-    }
-
-    updateItemField(selectedItem.id, { itemCategory: newCategory, ...statusReset });
+  const handleCancelEdit = () => {
+    setDrafts({});
+    setDraftAddr1(selectedItem?.deliveryAddress1 || '');
+    setDraftAddr2(selectedItem?.deliveryAddress2 || '');
+    setIsEditMode(false);
   };
 
-  // Input individual save
-  const handleSaveField = (key) => {
-    if (drafts[key] === undefined || drafts[key] === selectedItem[key]) return;
-    updateItemField(selectedItem.id, { [key]: drafts[key] });
-    setDrafts(p => { const n = { ...p }; delete n[key]; return n; });
-  };
+  const handleSaveAll = () => {
+    if (!selectedItem) return;
+    const updates = {};
 
-  // Address save — auto status transition
-  const handleSaveAddress = () => {
-    const updates = { deliveryAddress1: draftAddr1, deliveryAddress2: draftAddr2 };
-    if (selectedItem.status === '배송지 미입력' && draftAddr1.trim()) {
-      if (selectedItem.itemCategory === '일반') {
-        updates.status = '발송 대기';
-      } else if (selectedItem.itemCategory === '귀중품') {
-        updates.status = '경찰서 인계';
+    // Category change
+    if (drafts.itemCategory && drafts.itemCategory !== selectedItem.itemCategory) {
+      updates.itemCategory = drafts.itemCategory;
+      const validStatuses = STATUS_BY_CATEGORY[drafts.itemCategory];
+      if (!validStatuses.includes(selectedItem.status)) {
+        updates.status = '배송지 미입력';
       }
     }
+
+    if (drafts.itemDetails !== undefined) updates.itemDetails = drafts.itemDetails;
+    if (drafts.recipientName !== undefined) updates.recipientName = drafts.recipientName;
+    if (drafts.recipientPhone !== undefined) updates.recipientPhone = drafts.recipientPhone;
+    if (drafts.isDisposed !== undefined) updates.isDisposed = drafts.isDisposed;
+
+    // Address
+    updates.deliveryAddress1 = draftAddr1;
+    updates.deliveryAddress2 = draftAddr2;
+
+    // Auto status transition on address fill
+    const currentStatus = updates.status || selectedItem.status;
+    if (currentStatus === '배송지 미입력' && draftAddr1.trim()) {
+      const category = updates.itemCategory || selectedItem.itemCategory;
+      if (category === '일반') updates.status = '발송 대기';
+      else if (category === '귀중품') updates.status = '경찰서 인계';
+    }
+
     updateItemField(selectedItem.id, updates);
+    setIsEditMode(false);
+    setDrafts({});
+  };
+
+  const updateItemField = (id, updates) => {
+    setItems(prev => prev.map(item => item.id === id ? { ...item, ...updates } : item));
   };
 
   // 발송 완료 button handler
@@ -174,13 +195,6 @@ export default function LostItemsPage({ setActiveKey }) {
     if (!selectedItem || selectedItem.status !== '발송 대기') return;
     if (!confirm('발송 완료 처리하시겠습니까?')) return;
     updateItemField(selectedItem.id, { status: '발송 완료' });
-  };
-
-  // 폐기 완료 button handler
-  const handleDispose = () => {
-    if (!selectedItem || TERMINAL_STATUSES.includes(selectedItem.status)) return;
-    if (!confirm('폐기 완료 처리하시겠습니까?\n이 작업은 되돌릴 수 없습니다.')) return;
-    updateItemField(selectedItem.id, { status: '폐기 완료' });
   };
 
   // Daum postcode search
@@ -244,9 +258,7 @@ export default function LostItemsPage({ setActiveKey }) {
   const renderDrawerContent = () => {
     if (!selectedItem) return null;
     const data = selectedItem;
-    const isTerminal = TERMINAL_STATUSES.includes(data.status);
-    const isAddressChanged = draftAddr1 !== (data.deliveryAddress1 || '') || draftAddr2 !== (data.deliveryAddress2 || '');
-    const isValuable = data.itemCategory === '귀중품';
+    const isValuable = (isEditMode ? drafts.itemCategory : data.itemCategory) === '귀중품';
     const addressLabel = isValuable ? '경찰서 주소' : '배송 주소';
 
     return (
@@ -259,33 +271,46 @@ export default function LostItemsPage({ setActiveKey }) {
             <Field label="접수 일시" value={data.createdAt} />
 
             <Field label="분실물 구분" value={
-              isTerminal ? data.itemCategory : (
-                <Select value={data.itemCategory} onChange={handleCategoryChange}>
+              isEditMode ? (
+                <Select value={drafts.itemCategory || data.itemCategory} onChange={(e) => setDraft('itemCategory', e.target.value)}>
                   {itemClassificationOptions.map(opt => <option key={opt} value={opt}>{opt}</option>)}
                 </Select>
-              )
+              ) : data.itemCategory
             } />
 
             <Field label="처리 상태" value={
-              <Badge tone={statusBadgeMap[data.status]}>{data.status}</Badge>
+              isEditMode ? (
+                <div className="space-y-2">
+                  <Badge tone={statusBadgeMap[data.status]}>{data.status}</Badge>
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={drafts.isDisposed || false}
+                      onChange={(e) => setDraft('isDisposed', e.target.checked)}
+                      className="h-4 w-4 rounded border-[#E2E8F0]"
+                    />
+                    <span className="text-sm text-[#172B4D]">보관 30일 경과 폐기</span>
+                  </label>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <Badge tone={statusBadgeMap[data.status]}>{data.status}</Badge>
+                  {data.isDisposed && <Badge tone="danger">폐기완료</Badge>}
+                </div>
+              )
             } />
 
             <Field label="상세 정보" value={
-              <div className="space-y-2">
+              isEditMode ? (
                 <textarea
                   className="w-full rounded-lg border border-[#E2E8F0] p-2 text-sm"
                   rows={3}
                   value={drafts.itemDetails !== undefined ? drafts.itemDetails : data.itemDetails}
                   onChange={(e) => setDraft('itemDetails', e.target.value)}
                 />
-                <div className="flex justify-end">
-                  <Button
-                    variant={(drafts.itemDetails !== undefined && drafts.itemDetails !== data.itemDetails) ? undefined : 'secondary'}
-                    onClick={() => handleSaveField('itemDetails')}
-                    disabled={drafts.itemDetails === undefined || drafts.itemDetails === data.itemDetails}
-                  >저장</Button>
-                </div>
-              </div>
+              ) : (
+                <div className="text-sm whitespace-pre-wrap">{data.itemDetails || '-'}</div>
+              )
             } />
 
             <Field label="습득물 사진" value={
@@ -294,16 +319,20 @@ export default function LostItemsPage({ setActiveKey }) {
                   {data.itemPhotos?.map((photo, index) => (
                     <div key={index} className="relative">
                       <img src={photo} alt={`p-${index}`} className="w-20 h-20 object-cover rounded" />
-                      <button
-                        className="absolute -top-1.5 -right-1.5 bg-red-500 text-white border-none rounded-full w-5 h-5 flex items-center justify-center cursor-pointer"
-                        onClick={() => handleRemovePhoto(index)}
-                      ><X className="h-3 w-3" /></button>
+                      {isEditMode && (
+                        <button
+                          className="absolute -top-1.5 -right-1.5 bg-red-500 text-white border-none rounded-full w-5 h-5 flex items-center justify-center cursor-pointer"
+                          onClick={() => handleRemovePhoto(index)}
+                        ><X className="h-3 w-3" /></button>
+                      )}
                     </div>
                   ))}
                 </div>
-                <Button onClick={handleAddPhoto} className="mt-2">
-                  <Plus className="mr-1 h-4 w-4" /> 사진 추가
-                </Button>
+                {isEditMode && (
+                  <Button onClick={handleAddPhoto} className="mt-2">
+                    <Plus className="mr-1 h-4 w-4" /> 사진 추가
+                  </Button>
+                )}
               </div>
             } />
           </CardContent>
@@ -337,101 +366,15 @@ export default function LostItemsPage({ setActiveKey }) {
             <Field label="카드 접수 번호" value={data.lostItemCardReceiptNumber || '-'} />
 
             <Field label={addressLabel} value={
-              isTerminal ? (
-                <div>
-                  <div className="text-sm">{data.deliveryAddress1 || '-'}</div>
-                  {data.deliveryAddress2 && <div className="text-sm text-[#6B778C]">{data.deliveryAddress2}</div>}
-                </div>
-              ) : (
-                <div className="space-y-3">
-                  <div className="flex gap-4">
-                    <label className="flex items-center gap-1 text-sm cursor-pointer">
-                      <input type="radio" name="addressMode" value="postcode" checked={addressInputMode === 'postcode'} onChange={() => setAddressInputMode('postcode')} />
-                      우편번호 검색
-                    </label>
-                    <label className="flex items-center gap-1 text-sm cursor-pointer">
-                      <input type="radio" name="addressMode" value="manual" checked={addressInputMode === 'manual'} onChange={() => setAddressInputMode('manual')} />
-                      직접 입력
-                    </label>
-                  </div>
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2">
-                      <span className="w-12 shrink-0 text-xs text-[#6B778C]">주소1</span>
-                      <div className="flex-1">
-                        <Input
-                          value={draftAddr1}
-                          onChange={(e) => setDraftAddr1(e.target.value)}
-                          placeholder="주소를 입력하세요"
-                          readOnly={addressInputMode === 'postcode'}
-                        />
-                      </div>
-                      {addressInputMode === 'postcode' && (
-                        <Button onClick={handleSearchAddress} className="shrink-0">
-                          <MapPin className="mr-1 h-4 w-4" /> 주소 검색
-                        </Button>
-                      )}
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="w-12 shrink-0 text-xs text-[#6B778C]">주소2</span>
-                      <div className="flex-1">
-                        <Input value={draftAddr2} onChange={(e) => setDraftAddr2(e.target.value)} placeholder="상세 주소를 입력하세요" />
-                      </div>
-                      <Button
-                        variant={isAddressChanged ? undefined : 'secondary'}
-                        onClick={handleSaveAddress}
-                        disabled={!isAddressChanged}
-                        className="shrink-0"
-                      >저장</Button>
-                    </div>
-                  </div>
-                  {data.status === '배송지 미입력' && (
-                    <p className="text-xs text-[#6B778C]">
-                      {isValuable
-                        ? '* 주소 저장 시 경찰서 인계 상태로 자동 전환됩니다.'
-                        : '* 주소 저장 시 발송 대기 상태로 자동 전환됩니다.'}
-                    </p>
-                  )}
-                </div>
-              )
+              <div>
+                <div className="text-sm">{data.deliveryAddress1 || '-'}</div>
+                {data.deliveryAddress2 && <div className="text-sm text-[#6B778C]">{data.deliveryAddress2}</div>}
+              </div>
             } />
 
-            <Field label="수령인 이름" value={
-              isTerminal ? (data.recipientName || '-') : (
-                <div className="flex items-center gap-2">
-                  <div className="flex-1">
-                    <Input
-                      value={drafts.recipientName !== undefined ? drafts.recipientName : (data.recipientName || '')}
-                      onChange={(e) => setDraft('recipientName', e.target.value)}
-                      placeholder="수령인 이름"
-                    />
-                  </div>
-                  <Button
-                    variant={(drafts.recipientName !== undefined && drafts.recipientName !== (data.recipientName || '')) ? undefined : 'secondary'}
-                    onClick={() => handleSaveField('recipientName')}
-                    disabled={drafts.recipientName === undefined || drafts.recipientName === (data.recipientName || '')}
-                  >저장</Button>
-                </div>
-              )
-            } />
+            <Field label="수령인 이름" value={data.recipientName || '-'} />
 
-            <Field label="휴대폰 번호" value={
-              isTerminal ? (data.recipientPhone || '-') : (
-                <div className="flex items-center gap-2">
-                  <div className="flex-1">
-                    <Input
-                      value={drafts.recipientPhone !== undefined ? drafts.recipientPhone : (data.recipientPhone || '')}
-                      onChange={(e) => setDraft('recipientPhone', e.target.value)}
-                      placeholder="010-0000-0000"
-                    />
-                  </div>
-                  <Button
-                    variant={(drafts.recipientPhone !== undefined && drafts.recipientPhone !== (data.recipientPhone || '')) ? undefined : 'secondary'}
-                    onClick={() => handleSaveField('recipientPhone')}
-                    disabled={drafts.recipientPhone === undefined || drafts.recipientPhone === (data.recipientPhone || '')}
-                  >저장</Button>
-                </div>
-              )
-            } />
+            <Field label="휴대폰 번호" value={data.recipientPhone || '-'} />
           </CardContent>
         </Card>
       </div>
@@ -443,8 +386,17 @@ export default function LostItemsPage({ setActiveKey }) {
     if (!selectedItem) return null;
     const data = selectedItem;
     const isTerminal = TERMINAL_STATUSES.includes(data.status);
+
+    if (isEditMode) {
+      return (
+        <div className="flex justify-end gap-2">
+          <Button variant="secondary" onClick={handleCancelEdit}>취소</Button>
+          <Button onClick={handleSaveAll}>저장하기</Button>
+        </div>
+      );
+    }
+
     const showShipComplete = data.itemCategory === '일반' && data.status === '발송 대기';
-    const showDispose = !isTerminal;
 
     return (
       <div className="flex justify-between">
@@ -452,11 +404,11 @@ export default function LostItemsPage({ setActiveKey }) {
           {showShipComplete && (
             <Button onClick={handleShipComplete}>발송 완료</Button>
           )}
-          {showDispose && (
-            <Button variant="danger" onClick={handleDispose}>폐기 완료</Button>
-          )}
         </div>
-        <Button variant="secondary" onClick={closeDrawer}>닫기</Button>
+        <div className="flex gap-2">
+          <Button variant="secondary" onClick={closeDrawer}>닫기</Button>
+          {!isTerminal && <Button onClick={enterEditMode}>수정하기</Button>}
+        </div>
       </div>
     );
   };
