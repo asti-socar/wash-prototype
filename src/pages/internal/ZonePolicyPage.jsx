@@ -205,7 +205,7 @@ export default function ZonePolicyPage() {
   
   const handleSave = (policyToSave) => {
     setPolicies(prev => prev.map(p => p.zoneId === policyToSave.zoneId ? policyToSave : p));
-    setSelectedPolicy(null);
+    setSelectedPolicy(policyToSave);
   };
   
   const handleBulkSave = (bulkData) => {
@@ -347,15 +347,37 @@ function ZonePolicyDrawer({ policy, onClose, onSave }) {
         const policyFields = ['cycleWashDays', 'isLightWash'];
 
         if (policyFields.includes(name)) {
+          if (value === 'inherit') {
+            // 상위 정책으로 복원
+            const r1Policy = REGION1_POLICIES[formData.region1] || REGION1_POLICIES['기타'];
+            const r2Policy = REGION2_POLICIES[formData.region2] || {};
+            if (r2Policy[name] !== undefined) {
+              setFormData(prev => ({ ...prev, [name]: { value: r2Policy[name], source: '지역2정책' } }));
+            } else {
+              setFormData(prev => ({ ...prev, [name]: { value: r1Policy[name], source: '지역1정책' } }));
+            }
+            return;
+          }
           let processedValue = value;
            if (name === 'isLightWash') {
               processedValue = value === 'true';
           } else if (type === 'number') {
-              processedValue = value === '' ? '' : Number(value);
+              if (value === '') {
+                // 빈 값 → 상위 정책으로 복원
+                const r1Policy = REGION1_POLICIES[formData.region1] || REGION1_POLICIES['기타'];
+                const r2Policy = REGION2_POLICIES[formData.region2] || {};
+                if (r2Policy[name] !== undefined) {
+                  setFormData(prev => ({ ...prev, [name]: { value: r2Policy[name], source: '지역2정책' } }));
+                } else {
+                  setFormData(prev => ({ ...prev, [name]: { value: r1Policy[name], source: '지역1정책' } }));
+                }
+                return;
+              }
+              processedValue = Number(value);
           }
           setFormData(prev => ({
             ...prev,
-            [name]: { ...prev[name], value: processedValue }
+            [name]: { ...prev[name], value: processedValue, source: '존정책' }
           }));
         } else {
            setFormData(prev => ({ ...prev, [name]: value }));
@@ -363,17 +385,7 @@ function ZonePolicyDrawer({ policy, onClose, onSave }) {
     };
 
     const handleSave = () => {
-        const newFormData = { ...formData };
-        const policyFields = ['cycleWashDays', 'isLightWash'];
-
-        policyFields.forEach(field => {
-          if (newFormData[field].value !== policy[field].value) {
-            newFormData[field].source = 'Zone';
-          }
-        });
-
-        onSave(newFormData);
-        alert("존 정보가 성공적으로 업데이트되었습니다.");
+        onSave({ ...formData });
         setIsEditing(false);
     }
     
@@ -382,12 +394,16 @@ function ZonePolicyDrawer({ policy, onClose, onSave }) {
         setIsEditing(false);
     }
     
-    const renderPolicyField = (field, unit = '') => (
-      <div className="flex items-center justify-between">
-        <span>{String(formData[field].value)}{unit}</span>
-        <Badge tone={formData[field].source.toLowerCase()} className="text-xs">{formData[field].source}</Badge>
-      </div>
-    );
+    const renderPolicyField = (field, unit = '') => {
+      const raw = formData[field].value;
+      const display = typeof raw === 'boolean' ? (raw ? 'Y' : 'N') : `${raw}${unit}`;
+      return (
+        <div className="flex items-center justify-between">
+          <span>{display}</span>
+          <Badge tone={formData[field].source.toLowerCase()} className="text-xs">{formData[field].source}</Badge>
+        </div>
+      );
+    };
 
     return (
         <Drawer 
@@ -440,12 +456,13 @@ function ZonePolicyDrawer({ policy, onClose, onSave }) {
               <CardContent>
                   <Field label="주기세차 경과일" isEditing={isEditing}>
                        {isEditing ? (
-                          <Input type="number" name="cycleWashDays" value={formData.cycleWashDays.value} onChange={handleInputChange} />
+                          <Input type="number" name="cycleWashDays" value={formData.cycleWashDays.source === '존정책' ? formData.cycleWashDays.value : ''} onChange={handleInputChange} placeholder={`상위 정책: ${formData.cycleWashDays.value}일`} />
                       ) : renderPolicyField('cycleWashDays', '일')}
                   </Field>
                   <Field label="라이트세차" isEditing={isEditing}>
                        {isEditing ? (
-                          <Select name="isLightWash" value={String(formData.isLightWash.value)} onChange={handleInputChange}>
+                          <Select name="isLightWash" value={formData.isLightWash.source === '존정책' ? String(formData.isLightWash.value) : 'inherit'} onChange={handleInputChange}>
+                              <option value="inherit">선택안함 (상위 정책 따름)</option>
                               <option value="true">Y</option>
                               <option value="false">N</option>
                           </Select>
