@@ -13,9 +13,9 @@ function Badge({ children, tone = "default", className }) {
   const tones = {
     default: "bg-slate-100 text-slate-800",
     // policy source
-    zone: "bg-blue-100 text-blue-800",
-    region2: "bg-slate-200 text-slate-700",
-    region1: "bg-slate-100 text-slate-600",
+    "존정책": "bg-blue-100 text-blue-800",
+    "지역2정책": "bg-slate-200 text-slate-700",
+    "지역1정책": "bg-slate-100 text-slate-600",
   };
   return <span className={cn("inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-bold", tones[tone], className)}>{children}</span>;
 }
@@ -114,11 +114,11 @@ function generateMockData() {
 
     policyFields.forEach(field => {
       if (zone.policy[field] !== undefined) {
-        finalPolicy[field] = { value: zone.policy[field], source: 'Zone' };
+        finalPolicy[field] = { value: zone.policy[field], source: '존정책' };
       } else if (r2Policy[field] !== undefined) {
-        finalPolicy[field] = { value: r2Policy[field], source: 'Region2' };
+        finalPolicy[field] = { value: r2Policy[field], source: '지역2정책' };
       } else {
-        finalPolicy[field] = { value: r1Policy[field], source: 'Region1' };
+        finalPolicy[field] = { value: r1Policy[field], source: '지역1정책' };
       }
     });
 
@@ -219,10 +219,10 @@ export default function ZonePolicyPage() {
         const updatedPolicy = { ...p };
         
         if (bulkData.cycleWashDays !== null) {
-            updatedPolicy.cycleWashDays = { value: bulkData.cycleWashDays, source: 'Zone' };
+            updatedPolicy.cycleWashDays = { value: bulkData.cycleWashDays, source: '존정책' };
         }
         if (bulkData.isLightWash !== null) {
-            updatedPolicy.isLightWash = { value: bulkData.isLightWash, source: 'Zone' };
+            updatedPolicy.isLightWash = { value: bulkData.isLightWash, source: '존정책' };
         }
         
         return updatedPolicy;

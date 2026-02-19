@@ -105,7 +105,5 @@ export const BROWN_HISTORY = [
 ];
 
 export const ASTI_HISTORY = [
-  { id: 3, date: "2026-01-20 13:22", content: "발행 유형정책관리", isPolicyChange: false, links: [] },
-  { id: 2, date: "2026-01-20 13:22", content: "정책관리 페이지 업데이트(AI정책관리, 존정책관리)", isPolicyChange: false, links: [] },
-  { id: 1, date: "2026-01-20 13:21", content: "ASTI 업데이트 이력 기록 시작", isPolicyChange: false, links: [] },
+  { id: 1, date: "2026-02-19 17:35", content: "존정책 관리: 정책유형 한글로 변경 (Zone→존정책, Region1→지역1정책, Region2→지역2정책)", isPolicyChange: false, links: [{ label: "존정책 관리", page: "zone-policy" }] },
 ];

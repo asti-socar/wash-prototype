@@ -103,7 +103,7 @@ function TabsTrigger({ value, currentValue, onClick, children }) {
 }
 
 export default function UpdateHistoryPage() {
-  const [activeTab, setActiveTab] = useState("brown");
+  const [activeTab, setActiveTab] = useState("asti");
   const [showPolicyOnly, setShowPolicyOnly] = useState(false);
   const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
 
@@ -148,8 +148,8 @@ export default function UpdateHistoryPage() {
 
       <Tabs value={activeTab}>
         <TabsList>
-          <TabsTrigger value="brown" currentValue={activeTab} onClick={setActiveTab}>브라운 (Brown)</TabsTrigger>
           <TabsTrigger value="asti" currentValue={activeTab} onClick={setActiveTab}>아스티 (Asti)</TabsTrigger>
+          <TabsTrigger value="brown" currentValue={activeTab} onClick={setActiveTab}>브라운 (Brown)</TabsTrigger>
         </TabsList>
       </Tabs>
 
@@ -175,7 +175,12 @@ export default function UpdateHistoryPage() {
         <DataTable
           columns={[
             { key: "id", header: "ID" },
-            { key: "date", header: "일시", render: (r) => <span className="font-medium text-[#172B4D]">{r.date}</span> },
+            { key: "date", header: "일시", render: (r) => {
+              const d = new Date(r.date.replace(' ', 'T'));
+              const days = ['일', '월', '화', '수', '목', '금', '토'];
+              const formatted = `${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')}(${days[d.getDay()]}) ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+              return <span className="font-medium text-[#172B4D]">{formatted}</span>;
+            }},
             { key: "content", header: "변경내용" },
             {
               key: "isPolicyChange",
