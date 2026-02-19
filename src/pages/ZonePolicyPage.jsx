@@ -139,7 +139,6 @@ const REGION_OPTIONS = {
 };
 
 const ZONE_TYPE_OPTIONS = ['현장세차존', '주기세차존', '현장세차 불가존'];
-const PARKING_TYPE_OPTIONS = ['노상', '건물외', '건물안', '기계식'];
 
 // ============== MAIN PAGE COMPONENT ==============
 export default function ZonePolicyPage() {
@@ -414,9 +413,7 @@ function ZonePolicyDrawer({ policy, onClose, onSave }) {
               <CardHeader><CardTitle>기본 정보</CardTitle></CardHeader>
               <CardContent>
                 <Field label="Zone ID">{formData.zoneId}</Field>
-                <Field label="존 이름" isEditing={isEditing}>
-                  {isEditing ? (<Input name="zoneName" value={formData.zoneName} onChange={handleInputChange} />) : formData.zoneName}
-                </Field>
+                <Field label="존 이름">{formData.zoneName}</Field>
                 <Field label="Region">{formData.region1} &gt; {formData.region2}</Field>
                 <Field label="존 유형" isEditing={isEditing}>
                   {isEditing ? (
@@ -432,19 +429,9 @@ function ZonePolicyDrawer({ policy, onClose, onSave }) {
             <Card>
               <CardHeader><CardTitle>운영 및 위치 정보</CardTitle></CardHeader>
               <CardContent>
-                  <Field label="운영시간" isEditing={isEditing}>
-                    {isEditing ? (<Input name="operationTime" value={formData.operationTime} onChange={handleInputChange} />) : formData.operationTime}
-                  </Field>
-                  <Field label="주차유형" isEditing={isEditing}>
-                    {isEditing ? (
-                      <Select name="parkingType" value={formData.parkingType} onChange={handleInputChange}>
-                        {PARKING_TYPE_OPTIONS.map(o => <option key={o} value={o}>{o}</option>)}
-                      </Select>
-                    ) : formData.parkingType}
-                  </Field>
-                  <Field label="상세 주소" isEditing={isEditing}>
-                     {isEditing ? (<Input name="fullAddress" value={formData.fullAddress} onChange={handleInputChange} />) : formData.fullAddress}
-                  </Field>
+                  <Field label="운영시간">{formData.operationTime}</Field>
+                  <Field label="주차유형">{formData.parkingType}</Field>
+                  <Field label="상세 주소">{formData.fullAddress}</Field>
               </CardContent>
             </Card>
 
