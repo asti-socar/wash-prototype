@@ -35,7 +35,7 @@
 | 파트너 구분 | Input (읽기 전용) | 고정값: "세차 파트너" |
 | 파트너 하위 구분 | Select | 입고 세차장 / 현장 세차장 |
 | 파트너 이름 | Input | |
-| 주소 | Input + 우편번호 검색 | 우편번호 검색 또는 직접 입력 모드 선택 |
+| 주소 | Input(readOnly) + 우편번호/지도 검색 | 우편번호 검색 또는 지도 검색 모드 선택. 주소 Input은 항상 readOnly (API 응답값만 입력) |
 | 상세 주소 | Input | |
 
 ##### 카드 2: 주 연락처
@@ -52,10 +52,12 @@
 | 대표자 | Input | |
 | 업태 | Input | |
 | 업종 | Input | |
-| 주소 | Input + 우편번호 검색 | 기본 정보 주소와 별도. 우편번호 검색 또는 직접 입력 |
+| 주소 | Input(readOnly) + 우편번호/지도 검색 | 기본 정보 주소와 별도. 우편번호 검색 또는 지도 검색 |
 | 상세 주소 | Input | |
 
-- 주소 필드: 라디오 버튼으로 "우편번호 검색" / "직접 입력" 모드 전환. 우편번호 검색 모드에서는 Daum Postcode API 연동, 주소 Input은 읽기 전용.
+- 주소 필드: 라디오 버튼으로 "우편번호 검색" / "지도 검색" 모드 전환. 두 모드 모두 주소 Input은 항상 readOnly (API 응답값만 입력).
+  - 우편번호 검색: Daum Postcode API 연동
+  - 지도 검색: Naver Maps JavaScript API v3 (submodules=geocoder). 검색바로 Geocoding(주소→좌표), 지도 클릭으로 Reverse Geocoding(좌표→주소, ROAD_ADDR 우선). API 로드 실패 시 amber 경고 카드 표시.
 - Footer: 좌측 [삭제] (수정 모드만) + 우측 [닫기] + [수정하기]/[등록하기]
 - 삭제: confirm 후 soft delete 처리
 

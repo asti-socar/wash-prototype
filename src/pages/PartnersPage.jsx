@@ -1,6 +1,6 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import {
-  Plus, X, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, ArrowUpDown, Trash2, MapPin
+  Plus, X, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, ArrowUpDown, Trash2, MapPin, Search, AlertTriangle
 } from 'lucide-react';
 
 /**
@@ -213,6 +213,120 @@ const loadDaumPostcode = () => new Promise((resolve, reject) => {
   s.onerror = () => reject(new Error('Daum Postcode API 로드 실패'));
   document.head.appendChild(s);
 });
+
+// Naver Maps JavaScript API v3 lazy loader
+const loadNaverMaps = () => new Promise((resolve, reject) => {
+  if (window.naver?.maps) return resolve();
+  const s = document.createElement('script');
+  s.src = 'https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=NAVER_CLIENT_ID&submodules=geocoder';
+  s.onload = () => {
+    if (window.naver?.maps) resolve();
+    else reject(new Error('Naver Maps API 로드 실패'));
+  };
+  s.onerror = () => reject(new Error('Naver Maps API 로드 실패'));
+  document.head.appendChild(s);
+});
+
+function NaverMapSearch({ onSelect }) {
+  const mapRef = useRef(null);
+  const mapInstance = useRef(null);
+  const markerRef = useRef(null);
+  const [query, setQuery] = useState('');
+  const [selectedAddress, setSelectedAddress] = useState('');
+  const [apiLoaded, setApiLoaded] = useState(false);
+  const [apiError, setApiError] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    loadNaverMaps()
+      .then(() => { if (!cancelled) setApiLoaded(true); })
+      .catch(() => { if (!cancelled) setApiError(true); });
+    return () => { cancelled = true; };
+  }, []);
+
+  useEffect(() => {
+    if (!apiLoaded || !mapRef.current || mapInstance.current) return;
+    const map = new window.naver.maps.Map(mapRef.current, {
+      center: new window.naver.maps.LatLng(37.5665, 126.978),
+      zoom: 15,
+    });
+    mapInstance.current = map;
+
+    window.naver.maps.Event.addListener(map, 'click', (e) => {
+      const latlng = e.coord;
+      placeMarker(latlng);
+      reverseGeocode(latlng);
+    });
+  }, [apiLoaded]);
+
+  const placeMarker = (latlng) => {
+    if (markerRef.current) markerRef.current.setPosition(latlng);
+    else markerRef.current = new window.naver.maps.Marker({ position: latlng, map: mapInstance.current });
+  };
+
+  const reverseGeocode = (latlng) => {
+    window.naver.maps.Service.reverseGeocode(
+      { coords: latlng, orders: [window.naver.maps.Service.OrderType.ROAD_ADDR, window.naver.maps.Service.OrderType.ADDR].join(',') },
+      (status, response) => {
+        if (status !== window.naver.maps.Service.Status.OK) return;
+        const items = response.v2?.results || [];
+        const road = items.find(i => i.name === 'roadaddr');
+        const addr = items.find(i => i.name === 'addr');
+        const pick = road || addr;
+        if (pick) {
+          const full = [pick.region?.area1?.name, pick.region?.area2?.name, pick.region?.area3?.name, pick.land?.name, pick.land?.number1, pick.land?.number2 ? '-' + pick.land?.number2 : ''].filter(Boolean).join(' ');
+          setSelectedAddress(full);
+          onSelect(full);
+        }
+      }
+    );
+  };
+
+  const handleSearch = () => {
+    if (!query.trim() || !apiLoaded) return;
+    window.naver.maps.Service.geocode({ query: query.trim() }, (status, response) => {
+      if (status !== window.naver.maps.Service.Status.OK) return;
+      const item = response.v2?.addresses?.[0];
+      if (!item) return;
+      const latlng = new window.naver.maps.LatLng(parseFloat(item.y), parseFloat(item.x));
+      mapInstance.current.setCenter(latlng);
+      placeMarker(latlng);
+      const addr = item.roadAddress || item.jibunAddress || query.trim();
+      setSelectedAddress(addr);
+      onSelect(addr);
+    });
+  };
+
+  if (apiError) {
+    return (
+      <div className="flex items-center gap-2 rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-amber-800">
+        <AlertTriangle className="h-4 w-4 shrink-0" />
+        Naver Maps API를 불러올 수 없습니다. Client ID를 확인해주세요.
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-2">
+      <div className="flex items-center gap-2">
+        <Input
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+          placeholder="주소를 검색하세요"
+          className="flex-1"
+        />
+        <Button variant="secondary" onClick={handleSearch} className="shrink-0">
+          <Search className="mr-1 h-4 w-4" /> 검색
+        </Button>
+      </div>
+      <div ref={mapRef} className="h-64 w-full rounded-lg border border-[#E2E8F0] bg-[#F4F5F7]" />
+      {selectedAddress && (
+        <div className="text-xs text-[#6B778C]">선택된 주소: <span className="font-medium text-[#172B4D]">{selectedAddress}</span></div>
+      )}
+    </div>
+  );
+}
 
 const MOCK_PARTNERS_V2 = [
   {
@@ -431,25 +545,26 @@ function AddressField({ label, address, addressDetail, addressKey, addressDetail
               우편번호 검색
             </label>
             <label className="flex items-center gap-1 text-sm cursor-pointer">
-              <input type="radio" name={`addrMode-${addressKey}`} value="manual" checked={mode === 'manual'} onChange={() => setMode('manual')} />
-              직접 입력
+              <input type="radio" name={`addrMode-${addressKey}`} value="map" checked={mode === 'map'} onChange={() => setMode('map')} />
+              지도 검색
             </label>
           </div>
-          <div className="flex items-center gap-2">
-            <div className="flex-1">
-              <Input
-                value={address || ''}
-                onChange={(e) => onFieldChange(addressKey, e.target.value)}
-                placeholder="주소를 입력하세요"
-                readOnly={mode === 'postcode'}
-              />
-            </div>
-            {mode === 'postcode' && (
+          {mode === 'postcode' && (
+            <div className="flex items-center gap-2">
+              <div className="flex-1">
+                <Input value={address || ''} readOnly placeholder="주소 검색 결과가 표시됩니다" />
+              </div>
               <Button variant="secondary" onClick={handleSearchAddress} className="shrink-0">
                 <MapPin className="mr-1 h-4 w-4" /> 주소 검색
               </Button>
-            )}
-          </div>
+            </div>
+          )}
+          {mode === 'map' && (
+            <>
+              <NaverMapSearch onSelect={(addr) => onFieldChange(addressKey, addr)} />
+              <Input value={address || ''} readOnly placeholder="지도에서 주소를 선택하세요" />
+            </>
+          )}
         </div>
       </Field>
       <Field label={required ? <>상세 주소<span className="text-rose-500 ml-1">*</span></> : "상세 주소"}>
@@ -466,6 +581,13 @@ function AddressField({ label, address, addressDetail, addressKey, addressDetail
 function PartnerDetailDrawer({ partner, onClose, onSave, onDelete }) {
   const [activeTab, setActiveTab] = useState("info");
   const [formData, setFormData] = useState({ ...partner });
+  const isExisting = !!partner?.partnerId && !!partner.partnerName;
+  const [isEditMode, setIsEditMode] = useState(!isExisting);
+
+  useEffect(() => {
+    setFormData({ ...partner });
+    setIsEditMode(!partner?.partnerId || !partner?.partnerName);
+  }, [partner]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -476,26 +598,59 @@ function PartnerDetailDrawer({ partner, onClose, onSave, onDelete }) {
     setFormData(prev => ({ ...prev, [key]: value }));
   };
 
-  const isEditing = !!partner?.partnerId && !!partner.partnerName;
+  const handleCancel = () => {
+    setFormData({ ...partner });
+    setIsEditMode(false);
+  };
+
+  const handleSave = () => {
+    onSave(formData);
+    setIsEditMode(false);
+  };
+
+  const footer = (() => {
+    if (activeTab === 'prices') {
+      return (
+        <div className="flex w-full flex-col-reverse sm:flex-row sm:justify-between">
+          <div>{isExisting && <Button variant="danger" onClick={() => onDelete(partner.partnerId)}>삭제</Button>}</div>
+          <Button variant="secondary" onClick={onClose}>닫기</Button>
+        </div>
+      );
+    }
+    if (!isExisting) {
+      return (
+        <div className="flex w-full flex-col-reverse sm:flex-row sm:justify-between">
+          <div />
+          <div className="flex gap-2">
+            <Button variant="secondary" onClick={onClose}>닫기</Button>
+            <Button onClick={handleSave}>등록하기</Button>
+          </div>
+        </div>
+      );
+    }
+    return (
+      <div className="flex w-full flex-col-reverse sm:flex-row sm:justify-between">
+        <div>{isEditMode && <Button variant="danger" onClick={() => onDelete(partner.partnerId)}>삭제</Button>}</div>
+        <div className="flex gap-2">
+          {isEditMode ? (
+            <>
+              <Button variant="secondary" onClick={handleCancel}>취소</Button>
+              <Button onClick={handleSave}>저장하기</Button>
+            </>
+          ) : (
+            <>
+              <Button variant="secondary" onClick={onClose}>닫기</Button>
+              <Button onClick={() => setIsEditMode(true)}>수정하기</Button>
+            </>
+          )}
+        </div>
+      </div>
+    );
+  })();
 
   return (
     <Drawer open={!!partner} title={partner.partnerName ? `파트너 상세 - ${partner.partnerName}` : "신규 파트너 등록"} onClose={onClose}
-      footer={
-        activeTab === 'prices' ? (
-          <div className="flex w-full flex-col-reverse sm:flex-row sm:justify-between">
-            <div>{isEditing && <Button variant="danger" onClick={() => onDelete(partner.partnerId)}>삭제</Button>}</div>
-            <Button variant="secondary" onClick={onClose}>닫기</Button>
-          </div>
-        ) : (
-          <div className="flex w-full flex-col-reverse sm:flex-row sm:justify-between">
-            <div>{isEditing && <Button variant="danger" onClick={() => onDelete(partner.partnerId)}>삭제</Button>}</div>
-            <div className="flex gap-2">
-              <Button variant="secondary" onClick={onClose}>닫기</Button>
-              <Button onClick={() => onSave(formData)}>{isEditing ? '수정하기' : '등록하기'}</Button>
-            </div>
-          </div>
-        )
-      }
+      footer={footer}
     >
       <Tabs value={activeTab}>
         <TabsList>
@@ -510,27 +665,38 @@ function PartnerDetailDrawer({ partner, onClose, onSave, onDelete }) {
               <CardHeader><CardTitle>기본 정보</CardTitle></CardHeader>
               <CardContent>
                 <div className="space-y-2">
-                  <Field label={<>파트너 구분<span className="text-rose-500 ml-1">*</span></>}>
-                    <Input value="세차 파트너" readOnly className="bg-[#F4F5F7]" />
+                  <Field label="파트너 구분">
+                    <div className="text-sm pt-2.5">세차 파트너</div>
                   </Field>
-                  <Field label={<>파트너 하위 구분<span className="text-rose-500 ml-1">*</span></>}>
-                    <Select name="partnerSubCategory" value={formData.partnerSubCategory || '현장 세차장'} onChange={handleInputChange}>
-                      <option value="입고 세차장">입고 세차장</option>
-                      <option value="현장 세차장">현장 세차장</option>
-                    </Select>
+                  <Field label={isEditMode ? <>파트너 하위 구분<span className="text-rose-500 ml-1">*</span></> : "파트너 하위 구분"}>
+                    {isEditMode ? (
+                      <Select name="partnerSubCategory" value={formData.partnerSubCategory || '현장 세차장'} onChange={handleInputChange}>
+                        <option value="입고 세차장">입고 세차장</option>
+                        <option value="현장 세차장">현장 세차장</option>
+                      </Select>
+                    ) : <div className="text-sm pt-2.5">{formData.partnerSubCategory || '-'}</div>}
                   </Field>
-                  <Field label={<>파트너 이름<span className="text-rose-500 ml-1">*</span></>}>
-                    <Input name="partnerName" value={formData.partnerName || ''} onChange={handleInputChange} placeholder="파트너 이름 입력" />
+                  <Field label={isEditMode ? <>파트너 이름<span className="text-rose-500 ml-1">*</span></> : "파트너 이름"}>
+                    {isEditMode ? (
+                      <Input name="partnerName" value={formData.partnerName || ''} onChange={handleInputChange} placeholder="파트너 이름 입력" />
+                    ) : <div className="text-sm pt-2.5">{formData.partnerName || '-'}</div>}
                   </Field>
-                  <AddressField
-                    label="주소"
-                    address={formData.address}
-                    addressDetail={formData.addressDetail}
-                    addressKey="address"
-                    addressDetailKey="addressDetail"
-                    onFieldChange={handleFieldChange}
-                    required
-                  />
+                  {isEditMode ? (
+                    <AddressField
+                      label="주소"
+                      address={formData.address}
+                      addressDetail={formData.addressDetail}
+                      addressKey="address"
+                      addressDetailKey="addressDetail"
+                      onFieldChange={handleFieldChange}
+                      required
+                    />
+                  ) : (
+                    <>
+                      <Field label="주소"><div className="text-sm pt-2.5">{formData.address || '-'}</div></Field>
+                      <Field label="상세 주소"><div className="text-sm pt-2.5">{formData.addressDetail || '-'}</div></Field>
+                    </>
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -540,11 +706,15 @@ function PartnerDetailDrawer({ partner, onClose, onSave, onDelete }) {
               <CardHeader><CardTitle>주 연락처</CardTitle></CardHeader>
               <CardContent>
                 <div className="space-y-2">
-                  <Field label={<>이름<span className="text-rose-500 ml-1">*</span></>}>
-                    <Input name="contactName" value={formData.contactName || ''} onChange={handleInputChange} placeholder="담당자 이름 입력" />
+                  <Field label={isEditMode ? <>이름<span className="text-rose-500 ml-1">*</span></> : "이름"}>
+                    {isEditMode ? (
+                      <Input name="contactName" value={formData.contactName || ''} onChange={handleInputChange} placeholder="담당자 이름 입력" />
+                    ) : <div className="text-sm pt-2.5">{formData.contactName || '-'}</div>}
                   </Field>
-                  <Field label={<>전화번호<span className="text-rose-500 ml-1">*</span></>}>
-                    <Input name="contactPhone" value={formData.contactPhone || ''} onChange={handleInputChange} placeholder="전화번호 입력" />
+                  <Field label={isEditMode ? <>전화번호<span className="text-rose-500 ml-1">*</span></> : "전화번호"}>
+                    {isEditMode ? (
+                      <Input name="contactPhone" value={formData.contactPhone || ''} onChange={handleInputChange} placeholder="전화번호 입력" />
+                    ) : <div className="text-sm pt-2.5">{formData.contactPhone || '-'}</div>}
                   </Field>
                 </div>
               </CardContent>
@@ -555,30 +725,47 @@ function PartnerDetailDrawer({ partner, onClose, onSave, onDelete }) {
               <CardHeader><CardTitle>사업자 정보</CardTitle></CardHeader>
               <CardContent>
                 <div className="space-y-2">
-                  <Field label={<>사업자등록번호<span className="text-rose-500 ml-1">*</span></>}>
-                    <Input name="businessNumber" value={formData.businessNumber || ''} onChange={handleInputChange} placeholder="사업자등록번호 입력" />
+                  <Field label={isEditMode ? <>사업자등록번호<span className="text-rose-500 ml-1">*</span></> : "사업자등록번호"}>
+                    {isEditMode ? (
+                      <Input name="businessNumber" value={formData.businessNumber || ''} onChange={handleInputChange} placeholder="사업자등록번호 입력" />
+                    ) : <div className="text-sm pt-2.5">{formData.businessNumber || '-'}</div>}
                   </Field>
-                  <Field label={<>법인명<span className="text-rose-500 ml-1">*</span></>}>
-                    <Input name="corpName" value={formData.corpName || ''} onChange={handleInputChange} placeholder="법인명 입력" />
+                  <Field label={isEditMode ? <>법인명<span className="text-rose-500 ml-1">*</span></> : "법인명"}>
+                    {isEditMode ? (
+                      <Input name="corpName" value={formData.corpName || ''} onChange={handleInputChange} placeholder="법인명 입력" />
+                    ) : <div className="text-sm pt-2.5">{formData.corpName || '-'}</div>}
                   </Field>
-                  <Field label={<>대표자<span className="text-rose-500 ml-1">*</span></>}>
-                    <Input name="ceoName" value={formData.ceoName || ''} onChange={handleInputChange} placeholder="대표자 이름 입력" />
+                  <Field label={isEditMode ? <>대표자<span className="text-rose-500 ml-1">*</span></> : "대표자"}>
+                    {isEditMode ? (
+                      <Input name="ceoName" value={formData.ceoName || ''} onChange={handleInputChange} placeholder="대표자 이름 입력" />
+                    ) : <div className="text-sm pt-2.5">{formData.ceoName || '-'}</div>}
                   </Field>
-                  <Field label={<>업태<span className="text-rose-500 ml-1">*</span></>}>
-                    <Input name="bizType" value={formData.bizType || ''} onChange={handleInputChange} placeholder="업태 입력" />
+                  <Field label={isEditMode ? <>업태<span className="text-rose-500 ml-1">*</span></> : "업태"}>
+                    {isEditMode ? (
+                      <Input name="bizType" value={formData.bizType || ''} onChange={handleInputChange} placeholder="업태 입력" />
+                    ) : <div className="text-sm pt-2.5">{formData.bizType || '-'}</div>}
                   </Field>
-                  <Field label={<>업종<span className="text-rose-500 ml-1">*</span></>}>
-                    <Input name="bizItem" value={formData.bizItem || ''} onChange={handleInputChange} placeholder="업종 입력" />
+                  <Field label={isEditMode ? <>업종<span className="text-rose-500 ml-1">*</span></> : "업종"}>
+                    {isEditMode ? (
+                      <Input name="bizItem" value={formData.bizItem || ''} onChange={handleInputChange} placeholder="업종 입력" />
+                    ) : <div className="text-sm pt-2.5">{formData.bizItem || '-'}</div>}
                   </Field>
-                  <AddressField
-                    label="주소"
-                    address={formData.bizAddress}
-                    addressDetail={formData.bizAddressDetail}
-                    addressKey="bizAddress"
-                    addressDetailKey="bizAddressDetail"
-                    onFieldChange={handleFieldChange}
-                    required
-                  />
+                  {isEditMode ? (
+                    <AddressField
+                      label="주소"
+                      address={formData.bizAddress}
+                      addressDetail={formData.bizAddressDetail}
+                      addressKey="bizAddress"
+                      addressDetailKey="bizAddressDetail"
+                      onFieldChange={handleFieldChange}
+                      required
+                    />
+                  ) : (
+                    <>
+                      <Field label="주소"><div className="text-sm pt-2.5">{formData.bizAddress || '-'}</div></Field>
+                      <Field label="상세 주소"><div className="text-sm pt-2.5">{formData.bizAddressDetail || '-'}</div></Field>
+                    </>
+                  )}
                 </div>
               </CardContent>
             </Card>
