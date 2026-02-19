@@ -2583,7 +2583,6 @@ const DetailDrawer = ({ policy, onClose, onSave, policies, mode }) => {
 
 
 
-    if (formData.description?.length > 100) newErrors.description = "설명은 100자를 초과할 수 없습니다.";
     if (formData.memo?.length > 200) newErrors.memo = "메모는 200자를 초과할 수 없습니다.";
 
 
@@ -4400,7 +4399,6 @@ const DetailDrawer = ({ policy, onClose, onSave, policies, mode }) => {
 
 
 
-                <Field label="설명" error={errors.description} fullWidth>
 
 
 
@@ -4416,7 +4414,6 @@ const DetailDrawer = ({ policy, onClose, onSave, policies, mode }) => {
 
 
 
-                    {isEditing ? <textarea rows="3" className="w-full rounded-lg border border-[#E2E8F0] bg-white px-3 py-2 text-sm" value={formData.description || ''} onChange={e => handleFormDataChange('description', e.target.value)} /> : <div className="text-sm text-slate-700 py-2 px-3 bg-slate-50 rounded-lg min-h-[80px]">{formData.description || '-'}</div>}
 
 
 
@@ -4427,12 +4424,6 @@ const DetailDrawer = ({ policy, onClose, onSave, policies, mode }) => {
 
 
 
-
-
-
-
-
-                </Field>
 
                 <Field label="메모" error={errors.memo} fullWidth>
                     {isEditing ? <textarea rows="3" className="w-full rounded-lg border border-[#E2E8F0] bg-white px-3 py-2 text-sm" value={formData.memo || ''} onChange={e => handleFormDataChange('memo', e.target.value)} /> : <div className="text-sm text-slate-700 py-2 px-3 bg-slate-50 rounded-lg min-h-[80px]">{formData.memo || '-'}</div>}
