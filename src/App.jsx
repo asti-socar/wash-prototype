@@ -43,29 +43,30 @@ import {
   PanelLeft,
 } from "lucide-react";
 
-import Dashboard from "./pages/Dashboard";
-import OrdersPage from "./pages/OrdersPage";
-import MissionsPage from "./pages/MissionsPage";
-import CarsPage from "./pages/CarsPage";
-import PartnersPage from './pages/PartnersPage';
-import PartnerManagersPage from './pages/PartnerManagersPage';
-import WorkersPage from './pages/WorkersPage';
-import BillingPage from './pages/BillingPage';
-import SettlementPage from './pages/SettlementPage';
-import LostItemsPage from './pages/LostItemsPage';
-import UpdateHistoryPage from './pages/UpdateHistoryPage';
-import AIPolicyPage from './pages/AIPolicyPage';
-import ZonePolicyPage from './pages/ZonePolicyPage';
-import RegionPolicyPage from './pages/RegionPolicyPage';
-import OrderTypePolicyPage from './pages/OrderTypePolicyPage';
-import ChecklistPage from './pages/ChecklistPage';
-import ZoneAssignmentPage from './pages/ZoneAssignmentPage';
+import Dashboard from "./pages/internal/Dashboard";
+import OrdersPage from "./pages/internal/OrdersPage";
+import MissionsPage from "./pages/internal/MissionsPage";
+import CarsPage from "./pages/internal/CarsPage";
+import PartnersPage from './pages/internal/PartnersPage';
+import PartnerManagersPage from './pages/internal/PartnerManagersPage';
+import WorkersPage from './pages/internal/WorkersPage';
+import BillingPage from './pages/internal/BillingPage';
+import SettlementPage from './pages/internal/SettlementPage';
+import LostItemsPage from './pages/internal/LostItemsPage';
+import UpdateHistoryPage from './pages/internal/UpdateHistoryPage';
+import AIPolicyPage from './pages/internal/AIPolicyPage';
+import ZonePolicyPage from './pages/internal/ZonePolicyPage';
+import RegionPolicyPage from './pages/internal/RegionPolicyPage';
+import OrderTypePolicyPage from './pages/internal/OrderTypePolicyPage';
+import ChecklistPage from './pages/internal/ChecklistPage';
+import ZoneAssignmentPage from './pages/internal/ZoneAssignmentPage';
 
 import missionPoliciesData from "./mocks/missionPolicies.json";
 import policyVehiclesData from "./mocks/policyVehicles.json";
 import ordersData from "./mocks/orders.json";
 
 import FeedbackLayer from './FeedbackLayer';
+import PartnerApp from './PartnerApp';
 
 import {
   cn,
@@ -187,18 +188,78 @@ const PAGE_TITLES = {
 };
 
 /**
- * App
+ * App — 어드민 유형 선택 (인터널 / 파트너)
  */
 export default function App() {
-  const pageKeyFromUrl = useMemo(() => {
+  const [adminType, setAdminType] = useState(() => {
     const params = new URLSearchParams(window.location.search);
-    return params.get("page");
-  }, []);
-  
-  return <AdminApp />;
+    const admin = params.get("admin");
+    if (admin === "partner") return "partner";
+    if (admin === "internal") return "internal";
+    return null;
+  });
+
+  const handleSelectAdmin = (type) => {
+    setAdminType(type);
+    const url = new URL(window.location);
+    url.searchParams.set("admin", type);
+    if (type === "internal") {
+      url.searchParams.set("page", "update-history");
+    } else {
+      url.searchParams.set("page", "partner-dashboard");
+    }
+    window.history.pushState({}, "", url.toString());
+  };
+
+  const handleSwitchAdmin = () => {
+    setAdminType(null);
+    const url = new URL(window.location);
+    url.searchParams.delete("admin");
+    url.searchParams.delete("page");
+    window.history.pushState({}, "", url.toString());
+  };
+
+  if (!adminType) return <AdminSelector onSelect={handleSelectAdmin} />;
+  if (adminType === "partner") return <PartnerApp onSwitchAdmin={handleSwitchAdmin} />;
+  return <InternalApp onSwitchAdmin={handleSwitchAdmin} />;
 }
 
-function AdminApp() {
+function AdminSelector({ onSelect }) {
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-[#F8FAFC]">
+      <div className="w-full max-w-2xl px-6">
+        <div className="mb-10 text-center">
+          <h1 className="text-2xl font-bold text-[#172B4D]">세차 어드민 프로토타입</h1>
+          <p className="mt-2 text-sm text-[#6B778C]">어드민 유형을 선택해주세요</p>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <button
+            onClick={() => onSelect("internal")}
+            className="rounded-xl border-2 border-[#E2E8F0] bg-white p-8 text-left hover:border-[#0052CC] hover:shadow-lg transition-all group"
+          >
+            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-[#0052CC]/10 mb-4">
+              <Settings className="h-6 w-6 text-[#0052CC]" />
+            </div>
+            <div className="text-lg font-bold text-[#172B4D]">인터널 어드민</div>
+            <div className="mt-2 text-sm text-[#6B778C]">쏘카 내부 운영 관리자용 콘솔</div>
+          </button>
+          <button
+            onClick={() => onSelect("partner")}
+            className="rounded-xl border-2 border-[#E2E8F0] bg-white p-8 text-left hover:border-[#10B981] hover:shadow-lg transition-all group"
+          >
+            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-[#10B981]/10 mb-4">
+              <Building2 className="h-6 w-6 text-[#10B981]" />
+            </div>
+            <div className="text-lg font-bold text-[#172B4D]">파트너 어드민</div>
+            <div className="mt-2 text-sm text-[#6B778C]">세차 파트너 업무 관리용 콘솔</div>
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function InternalApp({ onSwitchAdmin }) {
   const [activeKey, setActiveKey] = useState(() => {
     const params = new URLSearchParams(window.location.search);
     const page = params.get("page");
@@ -316,8 +377,9 @@ function AdminApp() {
   // URL 쿼리 스트링과 activeKey 상태 양방향 동기화
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    if (params.get('page') !== activeKey) {
+    if (params.get('page') !== activeKey || params.get('admin') !== 'internal') {
       const newUrl = new URL(window.location);
+      newUrl.searchParams.set('admin', 'internal');
       newUrl.searchParams.set('page', activeKey);
       window.history.pushState({ path: newUrl.toString() }, '', newUrl.toString());
     }
@@ -420,11 +482,11 @@ function AdminApp() {
           className={cn("fixed inset-y-0 left-0 z-50 flex h-full w-64 flex-col bg-[#0F172A] text-white shadow-xl transition-transform duration-300 ease-in-out",
             isMobileMenuOpen ? "translate-x-0" : "-translate-x-full")} // z-index 50
         >
-          <SidebarContent activeKey={activeKey} onSelect={(key) => { onNavSelect(key); setIsMobileMenuOpen(false); }} openAccordion={openAccordion} setOpenAccordion={setOpenAccordion} />
+          <SidebarContent activeKey={activeKey} onSelect={(key) => { onNavSelect(key); setIsMobileMenuOpen(false); }} openAccordion={openAccordion} setOpenAccordion={setOpenAccordion} onSwitchAdmin={onSwitchAdmin} />
         </div>
       )}
       <div className="flex">
-        <Sidebar activeKey={activeKey} onSelect={onNavSelect} openAccordion={openAccordion} setOpenAccordion={setOpenAccordion} collapsed={isSidebarCollapsed} onToggle={() => setIsSidebarCollapsed(c => !c)} />
+        <Sidebar activeKey={activeKey} onSelect={onNavSelect} openAccordion={openAccordion} setOpenAccordion={setOpenAccordion} collapsed={isSidebarCollapsed} onToggle={() => setIsSidebarCollapsed(c => !c)} onSwitchAdmin={onSwitchAdmin} />
 
         <div className="flex min-w-0 flex-1 flex-col">
           <Header title={pageTitle} activeKey={activeKey} onMenuClick={() => setIsMobileMenuOpen(true)} />
@@ -492,15 +554,15 @@ function AdminApp() {
 /**
  * Layout components
  */
-function Sidebar({ activeKey, onSelect, openAccordion, setOpenAccordion, collapsed, onToggle }) {
+function Sidebar({ activeKey, onSelect, openAccordion, setOpenAccordion, collapsed, onToggle, onSwitchAdmin }) {
   return (
     <aside className={cn("sticky top-0 hidden h-screen shrink-0 flex-col bg-[#0F172A] text-white md:flex transition-[width] duration-300 ease-in-out", collapsed ? "w-16" : "w-64")}>
-      <SidebarContent activeKey={activeKey} onSelect={onSelect} openAccordion={openAccordion} setOpenAccordion={setOpenAccordion} collapsed={collapsed} onToggle={onToggle} />
+      <SidebarContent activeKey={activeKey} onSelect={onSelect} openAccordion={openAccordion} setOpenAccordion={setOpenAccordion} collapsed={collapsed} onToggle={onToggle} onSwitchAdmin={onSwitchAdmin} />
     </aside>
   );
 }
 
-function SidebarContent({ activeKey, onSelect, openAccordion, setOpenAccordion, collapsed, onToggle }) {
+function SidebarContent({ activeKey, onSelect, openAccordion, setOpenAccordion, collapsed, onToggle, onSwitchAdmin }) {
   return (
     <>
       <div className={cn("flex h-16 shrink-0 items-center gap-3", collapsed ? "justify-center px-2" : "px-6")}>
@@ -574,6 +636,22 @@ function SidebarContent({ activeKey, onSelect, openAccordion, setOpenAccordion, 
             </div>
           )
         ))}
+
+        {onSwitchAdmin && (
+          <div className={cn("mt-4 border-t border-slate-700 pt-4", collapsed ? "px-1" : "px-2")}>
+            <button
+              onClick={onSwitchAdmin}
+              title={collapsed ? "어드민 전환" : undefined}
+              className={cn(
+                "group flex w-full items-center rounded-lg text-sm font-medium text-[#B3BAC5] hover:bg-slate-700/50 hover:text-white transition-all",
+                collapsed ? "justify-center px-0 py-2.5" : "gap-3 px-4 py-2.5"
+              )}
+            >
+              <ArrowRight className="h-4 w-4 shrink-0 text-[#8993A4] group-hover:text-white" />
+              {!collapsed && <span className="truncate">어드민 전환</span>}
+            </button>
+          </div>
+        )}
       </nav>
     </>
   );
@@ -729,7 +807,7 @@ function PageHeaderWithSpec({ title, pageKey }) {
     if (isOpen && pageKey) {
       try {
         // Eager loading for better reliability in Vercel/Local
-        const modules = import.meta.glob("./docs/specs/*.md", { query: "?raw", import: "default", eager: true });
+        const modules = import.meta.glob("./docs/specs/internal/*.md", { query: "?raw", import: "default", eager: true });
         
         // Robust matching logic
         const foundKey = Object.keys(modules).find((key) => 
@@ -741,7 +819,7 @@ function PageHeaderWithSpec({ title, pageKey }) {
         } else {
           console.warn(`[PageHeaderWithSpec] Spec matching failed for key: "${pageKey}"`);
           console.log("Available modules:", Object.keys(modules));
-          setMarkdown(`# ${title}\n\n기능 명세 파일이 없습니다.\n\n\`src/docs/specs/${pageKey}.md\` 파일을 생성해주세요.`);
+          setMarkdown(`# ${title}\n\n기능 명세 파일이 없습니다.\n\n\`src/docs/specs/internal/${pageKey}.md\` 파일을 생성해주세요.`);
         }
       } catch (error) {
         console.error("Error loading spec:", error);

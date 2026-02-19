@@ -3,8 +3,8 @@ import {
   FileSpreadsheet, X, ArrowUpDown, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight,
   ExternalLink
 } from 'lucide-react';
-import { FilterPanel, Chip } from '../components/ui';
-import billingData from '../mocks/billing.json';
+import { FilterPanel, Chip } from '../../components/ui';
+import billingData from '../../mocks/billing.json';
 
 /**
  * Utility & UI Components

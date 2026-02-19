@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { Camera, ChevronLeft, ChevronRight, CheckCircle, ArrowLeft, Car, Droplet, Sparkles, ClipboardList, Send } from 'lucide-react';
-import { getPreWashPhotos, getPostWashPhotos, getChecklistItems, mockOrderTypes } from '../lib/checklistData.js';
+import { getPreWashPhotos, getPostWashPhotos, getChecklistItems, mockOrderTypes } from '../../lib/checklistData.js';
 
 // --- UI Components (Inspired by project's existing style) ---
 

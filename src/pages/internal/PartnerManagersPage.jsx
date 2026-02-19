@@ -4,7 +4,7 @@ import {
   Card, CardHeader, CardTitle, CardContent,
   Button, Input, Select, Drawer, DataTable,
   FilterPanel, Chip, usePagination,
-} from '../components/ui';
+} from '../../components/ui';
 
 // 리스트 마스킹 함수
 function maskName(name) {

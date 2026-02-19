@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect, useRef } from 'react';
 import {
   Plus, X, ArrowUpDown, FileDown, HelpCircle
 } from 'lucide-react';
-import MOCK_DATA from '../mocks/order-type-policy.json';
+import MOCK_DATA from '../../mocks/order-type-policy.json';
 
 // ============== Constants ==============
 

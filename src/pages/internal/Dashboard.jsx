@@ -15,8 +15,8 @@ import {
   Legend,
 } from "recharts";
 import { RefreshCw } from "lucide-react";
-import dashboardData from "../mocks/dashboard.json";
-import ordersData from "../mocks/orders.json";
+import dashboardData from "../../mocks/dashboard.json";
+import ordersData from "../../mocks/orders.json";
 
 function cn(...classes) {
   return classes.filter(Boolean).join(" ");

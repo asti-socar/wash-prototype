@@ -4,8 +4,8 @@ import {
   toYmd, Card, CardHeader, CardTitle, CardContent,
   Button, Input, Select, Badge, Chip, FilterPanel,
   Drawer, Field, DataTable, usePagination,
-} from '../components/ui';
-import initialMockLostItems from '../mocks/lostItems.json';
+} from '../../components/ui';
+import initialMockLostItems from '../../mocks/lostItems.json';
 
 // --- CONSTANTS ---
 const STATUS_BY_CATEGORY = {

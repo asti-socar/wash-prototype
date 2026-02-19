@@ -27,7 +27,7 @@ import {
   Drawer,
   usePagination,
   DataTable,
-} from "../components/ui";
+} from "../../components/ui";
 
 
 const MissionsPage = ({ missionPolicies, setMissionPolicies, policyVehicles, setPolicyVehicles, orders }) => {

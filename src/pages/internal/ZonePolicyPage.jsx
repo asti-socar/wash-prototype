@@ -3,7 +3,7 @@ import { Search, Edit, X } from 'lucide-react';
 import {
   cn, Card, CardHeader, CardTitle, CardContent, Button, Input, Select,
   usePagination, Pagination, DataTable, FilterPanel, Chip,
-} from '../components/ui';
+} from '../../components/ui';
 
 // ============== LOCAL UI COMPONENTS (not in shared ui.jsx) ==============
 function Textarea({ className, ...props }) {
