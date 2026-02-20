@@ -150,6 +150,7 @@ export default function ZonePolicyPage() {
   const [searchField, setSearchField] = useState('zoneId');
   const [zoneTypeFilter, setZoneTypeFilter] = useState('');
   const [fWashManaged, setFWashManaged] = useState('');
+  const [fLightWash, setFLightWash] = useState('');
   const [fRegion1, setFRegion1] = useState("");
   const [fRegion2, setFRegion2] = useState("");
 
@@ -166,9 +167,10 @@ export default function ZonePolicyPage() {
       const matchRegion2 = !fRegion2 || p.region2 === fRegion2;
       const matchZoneType = !zoneTypeFilter || p.zoneType === zoneTypeFilter;
       const matchWashManaged = !fWashManaged || (fWashManaged === 'Y' ? p.isWashManaged : !p.isWashManaged);
-      return matchQ && matchRegion1 && matchRegion2 && matchZoneType && matchWashManaged;
+      const matchLightWash = !fLightWash || (fLightWash === 'Y' ? p.isLightWash.value : !p.isLightWash.value);
+      return matchQ && matchRegion1 && matchRegion2 && matchZoneType && matchWashManaged && matchLightWash;
     });
-  }, [policies, q, searchField, fRegion1, fRegion2, zoneTypeFilter, fWashManaged]);
+  }, [policies, q, searchField, fRegion1, fRegion2, zoneTypeFilter, fWashManaged, fLightWash]);
 
   const sortedData = useMemo(() => {
     if (!sortConfig.key) return filteredData;
@@ -204,6 +206,7 @@ export default function ZonePolicyPage() {
     setSearchField('zoneId');
     setZoneTypeFilter('');
     setFWashManaged('');
+    setFLightWash('');
   };
   
   const handleSave = (policyToSave) => {
@@ -266,6 +269,7 @@ export default function ZonePolicyPage() {
           {q ? <Chip onRemove={() => setQ("")}>검색: {q}</Chip> : null}
           {zoneTypeFilter ? <Chip onRemove={() => setZoneTypeFilter("")}>존 유형: {zoneTypeFilter}</Chip> : null}
           {fWashManaged ? <Chip onRemove={() => setFWashManaged("")}>세차관리: {fWashManaged}</Chip> : null}
+          {fLightWash ? <Chip onRemove={() => setFLightWash("")}>라이트세차: {fLightWash}</Chip> : null}
           {fRegion1 ? <Chip onRemove={() => { setFRegion1(""); setFRegion2(""); }}>지역1: {fRegion1}</Chip> : null}
           {fRegion2 ? <Chip onRemove={() => setFRegion2("")}>지역2: {fRegion2}</Chip> : null}
         </>}
@@ -295,6 +299,14 @@ export default function ZonePolicyPage() {
         <div className="md:col-span-2">
           <label className="block text-xs font-semibold text-[#6B778C] mb-1.5">세차관리</label>
           <Select value={fWashManaged} onChange={e => setFWashManaged(e.target.value)}>
+            <option value="">전체</option>
+            <option value="Y">Y</option>
+            <option value="N">N</option>
+          </Select>
+        </div>
+        <div className="md:col-span-2">
+          <label className="block text-xs font-semibold text-[#6B778C] mb-1.5">라이트세차</label>
+          <Select value={fLightWash} onChange={e => setFLightWash(e.target.value)}>
             <option value="">전체</option>
             <option value="Y">Y</option>
             <option value="N">N</option>
