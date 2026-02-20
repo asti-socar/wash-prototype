@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import {
-  Search, MapPin,
+  Search, MapPin, Pencil, Trash2,
   Upload, Download, AlertCircle, CheckCircle2, FileSpreadsheet
 } from 'lucide-react';
 import { cn, Card, CardHeader, CardTitle, CardContent, Button, Input, Select, Badge, Chip, FilterPanel, Drawer, Field, usePagination, Pagination, DataTable } from '../../components/ui';
@@ -30,10 +30,65 @@ const MOCK_WORKERS = [
   { id: 'W-010', name: '윤수행', partnerId: 'P-002', penalty: 2, zoneIds: ['Z-1029', 'Z-1042'] },
 ];
 
+function ZASaveConfirmModal({ open, onClose, onConfirm, title, changes }) {
+  if (!open || !changes) return null;
+  const entries = Object.entries(changes);
+  return (
+    <div className="fixed inset-0 z-[1100] flex items-center justify-center">
+      <div className="absolute inset-0 bg-black/30" onClick={onClose} />
+      <Card className="relative z-[1101] w-full max-w-sm">
+        <CardHeader><CardTitle>수정 내용 확인</CardTitle>
+          {title && <p className="text-sm text-[#6B778C] mt-1">{title}</p>}
+        </CardHeader>
+        <CardContent className="space-y-2">
+          {entries.map(([field, { from, to }]) => (
+            <div key={field} className="rounded-lg bg-slate-50 p-3">
+              <div className="text-xs font-semibold text-[#6B778C] mb-1">{field}</div>
+              <div className="flex items-center gap-2 text-sm">
+                <span className="text-red-600 line-through">{from || '없음'}</span>
+                <span className="text-[#6B778C]">→</span>
+                <span className="text-blue-700 font-semibold">{to || '없음'}</span>
+              </div>
+            </div>
+          ))}
+        </CardContent>
+        <div className="flex items-center justify-end gap-2 border-t border-[#DFE1E6] px-5 py-4 bg-[#F4F5F7] rounded-b-xl">
+          <Button variant="secondary" onClick={onClose}>취소</Button>
+          <Button onClick={onConfirm}>확인</Button>
+        </div>
+      </Card>
+    </div>
+  );
+}
+
+function ZADeleteConfirmModal({ open, onClose, onConfirm, zone }) {
+  if (!open || !zone) return null;
+  return (
+    <div className="fixed inset-0 z-[1100] flex items-center justify-center">
+      <div className="absolute inset-0 bg-black/30" onClick={onClose} />
+      <Card className="relative z-[1101] w-full max-w-sm">
+        <CardHeader><CardTitle>배정 해제 확인</CardTitle></CardHeader>
+        <CardContent>
+          <p className="text-sm text-[#172B4D]">
+            <b>{zone.zoneName}</b>({zone.zoneId})의 파트너 배정을 해제하시겠습니까?
+          </p>
+          <p className="text-xs text-[#6B778C] mt-2">해제 후 해당 존은 미배정 상태가 됩니다.</p>
+        </CardContent>
+        <div className="flex items-center justify-end gap-2 border-t border-[#DFE1E6] px-5 py-4 bg-[#F4F5F7] rounded-b-xl">
+          <Button variant="secondary" onClick={onClose}>취소</Button>
+          <Button className="bg-rose-600 hover:bg-rose-700" onClick={onConfirm}>해제</Button>
+        </div>
+      </Card>
+    </div>
+  );
+}
+
 // ============== MAIN PAGE COMPONENT ==============
 export default function ZoneAssignmentPage() {
   const [zones, setZones] = useState(zoneAssignmentsData);
   const [selectedZone, setSelectedZone] = useState(null);
+  const [drawerMode, setDrawerMode] = useState('view');
+  const [deleteTarget, setDeleteTarget] = useState(null);
   const [bulkAssignmentOpen, setBulkAssignmentOpen] = useState(false);
 
   // Filters
@@ -124,7 +179,13 @@ export default function ZoneAssignmentPage() {
   const handlePartnerChange = (zoneId, partnerId) => {
     const newPartnerId = partnerId || null;
     setZones(prev => prev.map(z => z.zoneId === zoneId ? { ...z, assignedPartnerId: newPartnerId } : z));
-    setSelectedZone(prev => prev && prev.zoneId === zoneId ? { ...prev, assignedPartnerId: newPartnerId } : prev);
+    setSelectedZone(null);
+  };
+
+  const handleDeleteAssignment = () => {
+    if (!deleteTarget) return;
+    setZones(prev => prev.map(z => z.zoneId === deleteTarget.zoneId ? { ...z, assignedPartnerId: null } : z));
+    setDeleteTarget(null);
   };
 
   const handleBulkAssignment = (assignments) => {
@@ -160,6 +221,12 @@ export default function ZoneAssignmentPage() {
         ? <span className="text-[#172B4D]">{partnerMap.get(r.assignedPartnerId)}</span>
         : <Badge tone="warn">미배정</Badge>
     },
+    { key: '_actions', header: '', width: 80, render: r => (
+      <div className="flex items-center gap-1">
+        <button onClick={(e) => { e.stopPropagation(); setSelectedZone(r); setDrawerMode('edit'); }} className="p-1 rounded hover:bg-slate-100" title="수정"><Pencil className="h-4 w-4 text-[#6B778C]" /></button>
+        <button onClick={(e) => { e.stopPropagation(); setDeleteTarget(r); }} className="p-1 rounded hover:bg-red-50" title="배정 해제"><Trash2 className="h-4 w-4 text-[#6B778C]" /></button>
+      </div>
+    )},
   ];
 
   return (
@@ -243,7 +310,7 @@ export default function ZoneAssignmentPage() {
         columns={columns}
         rows={currentData}
         rowKey={(r) => r.zoneId}
-        onRowClick={setSelectedZone}
+        onRowClick={(r) => { setSelectedZone(r); setDrawerMode('view'); }}
         sortConfig={sortConfig}
         onSort={handleSort}
       />
@@ -266,8 +333,16 @@ export default function ZoneAssignmentPage() {
           zone={selectedZone}
           onClose={() => setSelectedZone(null)}
           onPartnerChange={handlePartnerChange}
+          onDelete={(z) => { setSelectedZone(null); setDeleteTarget(z); }}
+          mode={drawerMode}
         />
       )}
+      <ZADeleteConfirmModal
+        open={!!deleteTarget}
+        onClose={() => setDeleteTarget(null)}
+        onConfirm={handleDeleteAssignment}
+        zone={deleteTarget}
+      />
 
       {/* Bulk Assignment Drawer */}
       {bulkAssignmentOpen && (
@@ -281,125 +356,158 @@ export default function ZoneAssignmentPage() {
   );
 }
 
-function ZoneDetailDrawer({ zone, onClose, onPartnerChange }) {
+function ZoneDetailDrawer({ zone, onClose, onPartnerChange, onDelete, mode }) {
+  const [isEditing, setIsEditing] = useState(mode === 'edit');
+  const [editPartnerId, setEditPartnerId] = useState(zone.assignedPartnerId || '');
+  const [saveConfirm, setSaveConfirm] = useState(null);
+
+  useEffect(() => {
+    setIsEditing(mode === 'edit');
+    setEditPartnerId(zone.assignedPartnerId || '');
+    setSaveConfirm(null);
+  }, [zone, mode]);
+
   const zoneWorkers = useMemo(() => {
     if (!zone.assignedPartnerId) return [];
     return MOCK_WORKERS.filter(w => w.partnerId === zone.assignedPartnerId && w.zoneIds.includes(zone.zoneId));
   }, [zone.assignedPartnerId, zone.zoneId]);
 
-  const handlePartnerSelect = (e) => {
-    const newPartnerId = e.target.value || null;
+  const handleSave = () => {
+    const newPartnerId = editPartnerId || null;
     const currentPartnerId = zone.assignedPartnerId || null;
-    if (newPartnerId === currentPartnerId) return;
-    const newPartnerName = newPartnerId ? partnerMap.get(newPartnerId) : '미배정';
-    const hasWorkers = zoneWorkers.length > 0;
-    const message = hasWorkers
-      ? `배정 파트너를 '${newPartnerName}'(으)로 변경하시겠습니까?\n\n배정된 수행원 정보가 초기화됩니다.`
-      : `배정 파트너를 '${newPartnerName}'(으)로 변경하시겠습니까?`;
-    if (window.confirm(message)) {
-      onPartnerChange(zone.zoneId, newPartnerId);
+    if (newPartnerId === currentPartnerId) {
+      setIsEditing(false);
+      return;
     }
+    const fromName = currentPartnerId ? partnerMap.get(currentPartnerId) : '미배정';
+    const toName = newPartnerId ? partnerMap.get(newPartnerId) : '미배정';
+    const changes = { '배정 파트너': { from: fromName, to: toName } };
+    setSaveConfirm({ changes, partnerId: newPartnerId });
+  };
+
+  const confirmSave = () => {
+    if (!saveConfirm) return;
+    onPartnerChange(zone.zoneId, saveConfirm.partnerId);
+    setSaveConfirm(null);
+  };
+
+  const handleCancel = () => {
+    setEditPartnerId(zone.assignedPartnerId || '');
+    setIsEditing(false);
   };
 
   return (
-    <Drawer
-      open={!!zone}
-      title={`존 배정 상세 - ${zone.zoneId}`}
-      onClose={onClose}
-      footer={<Button variant="secondary" onClick={onClose}>닫기</Button>}
-    >
-      <div className="space-y-4">
-        {/* Zone Info Section */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <MapPin className="h-4 w-4" />
-              존 정보
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-1">
-            <Field label="존 ID" value={zone.zoneId} />
-            <Field label="존 이름" value={zone.zoneName} />
-            <Field label="지역" value={`${zone.region1} / ${zone.region2}`} />
-            <Field label="전체 주소" value={zone.fullAddress} />
-            <Field label="존 유형" value={zone.zoneType} />
-          </CardContent>
-        </Card>
+    <>
+      <Drawer
+        open={!!zone}
+        title={`존 배정 ${isEditing ? '수정' : '상세'} - ${zone.zoneId}`}
+        onClose={onClose}
+        footer={
+          isEditing ? (
+            <>
+              <Button variant="secondary" onClick={handleCancel}>취소</Button>
+              <Button onClick={handleSave}>저장</Button>
+            </>
+          ) : (
+            <>
+              <Button variant="secondary" onClick={onClose}>닫기</Button>
+              <div className="flex-1" />
+              <Button onClick={() => setIsEditing(true)}>수정</Button>
+              <Button className="bg-rose-600 hover:bg-rose-700" onClick={() => onDelete(zone)}>삭제</Button>
+            </>
+          )
+        }
+      >
+        <div className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <MapPin className="h-4 w-4" />
+                존 정보
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-1">
+              <Field label="존 ID" value={zone.zoneId} />
+              <Field label="존 이름" value={zone.zoneName} />
+              <Field label="지역" value={`${zone.region1} / ${zone.region2}`} />
+              <Field label="전체 주소" value={zone.fullAddress} />
+              <Field label="존 유형" value={zone.zoneType} />
+            </CardContent>
+          </Card>
 
-        {/* Vehicle Info Section */}
-        <Card>
-          <CardHeader>
-            <CardTitle>차량 정보</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Field label="차량 대수" value={`${zone.vehicleCount}대`} />
-          </CardContent>
-        </Card>
+          <Card>
+            <CardHeader><CardTitle>차량 정보</CardTitle></CardHeader>
+            <CardContent>
+              <Field label="차량 대수" value={`${zone.vehicleCount}대`} />
+            </CardContent>
+          </Card>
 
-        {/* Partner Assignment Section */}
-        <Card>
-          <CardHeader>
-            <CardTitle>파트너 배정</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-start justify-between gap-3">
-              <div className="w-28 shrink-0 text-xs font-semibold text-[#6B778C] pt-2">배정 파트너</div>
-              <div className="min-w-0 flex-1">
-                <Select
-                  value={zone.assignedPartnerId || ""}
-                  onChange={handlePartnerSelect}
-                >
-                  <option value="">미배정</option>
-                  {MOCK_PARTNERS.map(p => (
-                    <option key={p.partnerId} value={p.partnerId}>{p.partnerName}</option>
-                  ))}
-                </Select>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Workers Section */}
-        <Card>
-          <CardHeader>
-            <CardTitle>배정된 수행원 정보</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {!zone.assignedPartnerId ? (
-              <div className="text-sm text-[#94A3B8] py-2">파트너가 배정되지 않은 존입니다.</div>
-            ) : zoneWorkers.length === 0 ? (
-              <div className="text-sm text-[#94A3B8] py-2">배정된 수행원이 없습니다.</div>
-            ) : (
-              <div className="overflow-x-auto rounded-lg border border-[#E2E8F0]">
-                <table className="min-w-full text-sm">
-                  <thead className="bg-[#F8FAFC] border-b border-[#E2E8F0]">
-                    <tr>
-                      <th className="px-4 py-2.5 text-left text-xs font-semibold text-[#475569]">수행원 ID</th>
-                      <th className="px-4 py-2.5 text-left text-xs font-semibold text-[#475569]">이름</th>
-                      <th className="px-4 py-2.5 text-left text-xs font-semibold text-[#475569]">벌점</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-[#E2E8F0]">
-                    {zoneWorkers.map(w => (
-                      <tr key={w.id} className="hover:bg-[#F8FAFC]">
-                        <td className="px-4 py-2.5 text-[#172B4D]">{w.id}</td>
-                        <td className="px-4 py-2.5 text-[#172B4D]">{w.name}</td>
-                        <td className="px-4 py-2.5">
-                          {w.penalty === 0
-                            ? <span className="text-[#94A3B8]">0</span>
-                            : <Badge tone="danger">{w.penalty}</Badge>
-                          }
-                        </td>
-                      </tr>
+          <Card>
+            <CardHeader><CardTitle>파트너 배정</CardTitle></CardHeader>
+            <CardContent>
+              <Field label="배정 파트너" isEditing={isEditing}>
+                {isEditing ? (
+                  <Select value={editPartnerId} onChange={(e) => setEditPartnerId(e.target.value)}>
+                    <option value="">미배정</option>
+                    {MOCK_PARTNERS.map(p => (
+                      <option key={p.partnerId} value={p.partnerId}>{p.partnerName}</option>
                     ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      </div>
-    </Drawer>
+                  </Select>
+                ) : (
+                  zone.assignedPartnerId
+                    ? <span className="text-[#172B4D]">{partnerMap.get(zone.assignedPartnerId)}</span>
+                    : <Badge tone="warn">미배정</Badge>
+                )}
+              </Field>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader><CardTitle>배정된 수행원 정보</CardTitle></CardHeader>
+            <CardContent>
+              {!zone.assignedPartnerId ? (
+                <div className="text-sm text-[#94A3B8] py-2">파트너가 배정되지 않은 존입니다.</div>
+              ) : zoneWorkers.length === 0 ? (
+                <div className="text-sm text-[#94A3B8] py-2">배정된 수행원이 없습니다.</div>
+              ) : (
+                <div className="overflow-x-auto rounded-lg border border-[#E2E8F0]">
+                  <table className="min-w-full text-sm">
+                    <thead className="bg-[#F8FAFC] border-b border-[#E2E8F0]">
+                      <tr>
+                        <th className="px-4 py-2.5 text-left text-xs font-semibold text-[#475569]">수행원 ID</th>
+                        <th className="px-4 py-2.5 text-left text-xs font-semibold text-[#475569]">이름</th>
+                        <th className="px-4 py-2.5 text-left text-xs font-semibold text-[#475569]">벌점</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-[#E2E8F0]">
+                      {zoneWorkers.map(w => (
+                        <tr key={w.id} className="hover:bg-[#F8FAFC]">
+                          <td className="px-4 py-2.5 text-[#172B4D]">{w.id}</td>
+                          <td className="px-4 py-2.5 text-[#172B4D]">{w.name}</td>
+                          <td className="px-4 py-2.5">
+                            {w.penalty === 0
+                              ? <span className="text-[#94A3B8]">0</span>
+                              : <Badge tone="danger">{w.penalty}</Badge>
+                            }
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+      </Drawer>
+      <ZASaveConfirmModal
+        open={!!saveConfirm}
+        onClose={() => setSaveConfirm(null)}
+        onConfirm={confirmSave}
+        title={`${zone.zoneId} - ${zone.zoneName}`}
+        changes={saveConfirm?.changes}
+      />
+    </>
   );
 }
 
