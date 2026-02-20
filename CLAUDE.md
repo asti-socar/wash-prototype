@@ -83,7 +83,7 @@ const [rows, setRows] = useState(() => data.map(d => ({ ...d })));
 - `src/constants/updateHistory.js`
 - 탭: ASTI_HISTORY (아스티), BROWN_HISTORY (브라운)
 - 해당 배열 맨 앞에 새 항목 추가
-- id는 각 배열 내 직전 최대값 + 1 (현재 Asti: 4, Brown: 106)
+- id는 각 배열 내 직전 최대값 + 1 (현재 Asti: 6, Brown: 106)
 - date는 현재 KST 시각 (`YYYY-MM-DD HH:mm`)
 - 등록 후 `npm run update` 실행 → `public/version.json` 재생성
 
