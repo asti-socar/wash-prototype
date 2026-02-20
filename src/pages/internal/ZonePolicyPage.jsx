@@ -88,17 +88,17 @@ const REGION2_POLICIES = {
 };
 
 const RAW_ZONES = [
-    { zoneId: 'Z-1001', zoneName: '강남역 1번존', zoneType: '현장세차존', region1: '서울', region2: '강남구', operationTime: '24시간', parkingType: '건물안', fullAddress: '서울특별시 강남구 강남대로 396', zoneNotes: '지하 3층 B구역 주차장 이용', vehicleCount: 18, policy: { cycleWashDays: 7 } },
-    { zoneId: 'Z-1002', zoneName: '역삼역 2번존', zoneType: '현장세차존', region1: '서울', region2: '강남구', operationTime: '09:00~22:00', parkingType: '기계식', fullAddress: '서울특별시 강남구 테헤란로 152', zoneNotes: '기계식 주차장. SUV 입차 불가.', vehicleCount: 8, policy: { isLightWash: false } },
-    { zoneId: 'Z-1003', zoneName: '판교역 3번존', zoneType: '주기세차존', region1: '경기', region2: '성남시', operationTime: '24시간', parkingType: '건물안', fullAddress: '경기도 성남시 분당구 판교역로 166', zoneNotes: '', vehicleCount: 15, policy: {} },
-    { zoneId: 'Z-1004', zoneName: '해운대 1번존', zoneType: '현장세차존', region1: '부산', region2: '해운대구', operationTime: '10:00~20:00', parkingType: '노상', fullAddress: '부산광역시 해운대구 해운대해변로 266', zoneNotes: '해변가 공영주차장, 주말 혼잡', vehicleCount: 12, policy: { cycleWashDays: 5 } },
-    { zoneId: 'Z-1005', zoneName: '수원시청역', zoneType: '현장세차 불가존', region1: '경기', region2: '수원시', operationTime: '24시간', parkingType: '건물외', fullAddress: '경기도 수원시 팔달구 효원로 241', zoneNotes: '주차장 협소, 세차 불가', vehicleCount: 5, policy: { cycleWashDays: 999 } },
-    { zoneId: 'Z-1006', zoneName: '광화문 D타워', zoneType: '주기세차존', region1: '서울', region2: '종로구', operationTime: '08:00~23:00', parkingType: '건물안', fullAddress: '서울특별시 종로구 종로3길 17', zoneNotes: '방문객 주차 할인권 필요', vehicleCount: 11, policy: {} },
-    { zoneId: 'Z-1007', zoneName: '대전 시청', zoneType: '현장세차존', region1: '대전', region2: '서구', operationTime: '24시간', parkingType: '건물외', fullAddress: '대전광역시 서구 둔산로 100', zoneNotes: '', vehicleCount: 9, policy: {} },
-    { zoneId: 'Z-1008', zoneName: '동성로', zoneType: '현장세차 불가존', region1: '대구', region2: '중구', operationTime: '24시간', parkingType: '노상', fullAddress: '대구광역시 중구 동성로2길 81', zoneNotes: '유동인구 많아 세차 불가', vehicleCount: 3, policy: { cycleWashDays: 999 } },
-    { zoneId: 'Z-1009', zoneName: '상무지구', zoneType: '현장세차존', region1: '광주', region2: '서구', operationTime: '24시간', parkingType: '건물안', fullAddress: '광주광역시 서구 상무중앙로 7', zoneNotes: '', vehicleCount: 7, policy: { cycleWashDays: 8, isLightWash: false } },
-    { zoneId: 'Z-1010', zoneName: '인천공항 T1', zoneType: '주기세차존', region1: '인천', region2: '중구', operationTime: '24시간', parkingType: '건물안', fullAddress: '인천광역시 중구 공항로 272', zoneNotes: '장기주차장 P1 구역에서만 서비스 가능', vehicleCount: 22, policy: {} },
-    { zoneId: 'Z-1011', zoneName: '서울역', zoneType: '현장세차존', region1: '서울', region2: '용산구', operationTime: '06:00~24:00', parkingType: '건물안', fullAddress: '서울특별시 용산구 한강대로 405', zoneNotes: '롯데마트 주차장 이용, 주말 혼잡도 높음', vehicleCount: 20, policy: {} },
+    { zoneId: 'Z-1001', zoneName: '강남역 1번존', zoneType: '현장세차존', region1: '서울', region2: '강남구', operationTime: '24시간', parkingType: '건물안', fullAddress: '서울특별시 강남구 강남대로 396', zoneNotes: '지하 3층 B구역 주차장 이용', vehicleCount: 18, isWashManaged: true, policy: { cycleWashDays: 7 } },
+    { zoneId: 'Z-1002', zoneName: '역삼역 2번존', zoneType: '현장세차존', region1: '서울', region2: '강남구', operationTime: '09:00~22:00', parkingType: '기계식', fullAddress: '서울특별시 강남구 테헤란로 152', zoneNotes: '기계식 주차장. SUV 입차 불가.', vehicleCount: 8, isWashManaged: true, policy: { isLightWash: false } },
+    { zoneId: 'Z-1003', zoneName: '판교역 3번존', zoneType: '주기세차존', region1: '경기', region2: '성남시', operationTime: '24시간', parkingType: '건물안', fullAddress: '경기도 성남시 분당구 판교역로 166', zoneNotes: '', vehicleCount: 15, isWashManaged: true, policy: {} },
+    { zoneId: 'Z-1004', zoneName: '해운대 1번존', zoneType: '현장세차존', region1: '부산', region2: '해운대구', operationTime: '10:00~20:00', parkingType: '노상', fullAddress: '부산광역시 해운대구 해운대해변로 266', zoneNotes: '해변가 공영주차장, 주말 혼잡', vehicleCount: 12, isWashManaged: true, policy: { cycleWashDays: 5 } },
+    { zoneId: 'Z-1005', zoneName: '수원시청역', zoneType: '현장세차 불가존', region1: '경기', region2: '수원시', operationTime: '24시간', parkingType: '건물외', fullAddress: '경기도 수원시 팔달구 효원로 241', zoneNotes: '주차장 협소, 세차 불가', vehicleCount: 5, isWashManaged: false, policy: { cycleWashDays: 999 } },
+    { zoneId: 'Z-1006', zoneName: '광화문 D타워', zoneType: '주기세차존', region1: '서울', region2: '종로구', operationTime: '08:00~23:00', parkingType: '건물안', fullAddress: '서울특별시 종로구 종로3길 17', zoneNotes: '방문객 주차 할인권 필요', vehicleCount: 11, isWashManaged: true, policy: {} },
+    { zoneId: 'Z-1007', zoneName: '대전 시청', zoneType: '현장세차존', region1: '대전', region2: '서구', operationTime: '24시간', parkingType: '건물외', fullAddress: '대전광역시 서구 둔산로 100', zoneNotes: '', vehicleCount: 9, isWashManaged: true, policy: {} },
+    { zoneId: 'Z-1008', zoneName: '동성로', zoneType: '현장세차 불가존', region1: '대구', region2: '중구', operationTime: '24시간', parkingType: '노상', fullAddress: '대구광역시 중구 동성로2길 81', zoneNotes: '유동인구 많아 세차 불가', vehicleCount: 3, isWashManaged: false, policy: { cycleWashDays: 999 } },
+    { zoneId: 'Z-1009', zoneName: '상무지구', zoneType: '현장세차존', region1: '광주', region2: '서구', operationTime: '24시간', parkingType: '건물안', fullAddress: '광주광역시 서구 상무중앙로 7', zoneNotes: '', vehicleCount: 7, isWashManaged: true, policy: { cycleWashDays: 8, isLightWash: false } },
+    { zoneId: 'Z-1010', zoneName: '인천공항 T1', zoneType: '주기세차존', region1: '인천', region2: '중구', operationTime: '24시간', parkingType: '건물안', fullAddress: '인천광역시 중구 공항로 272', zoneNotes: '장기주차장 P1 구역에서만 서비스 가능', vehicleCount: 22, isWashManaged: true, policy: {} },
+    { zoneId: 'Z-1011', zoneName: '서울역', zoneType: '현장세차존', region1: '서울', region2: '용산구', operationTime: '06:00~24:00', parkingType: '건물안', fullAddress: '서울특별시 용산구 한강대로 405', zoneNotes: '롯데마트 주차장 이용, 주말 혼잡도 높음', vehicleCount: 20, isWashManaged: true, policy: {} },
 ];
 
 function generateMockData() {
@@ -149,6 +149,7 @@ export default function ZonePolicyPage() {
   const [q, setQ] = useState("");
   const [searchField, setSearchField] = useState('zoneId');
   const [zoneTypeFilter, setZoneTypeFilter] = useState('');
+  const [fWashManaged, setFWashManaged] = useState('');
   const [fRegion1, setFRegion1] = useState("");
   const [fRegion2, setFRegion2] = useState("");
 
@@ -164,9 +165,10 @@ export default function ZonePolicyPage() {
       const matchRegion1 = !fRegion1 || p.region1 === fRegion1;
       const matchRegion2 = !fRegion2 || p.region2 === fRegion2;
       const matchZoneType = !zoneTypeFilter || p.zoneType === zoneTypeFilter;
-      return matchQ && matchRegion1 && matchRegion2 && matchZoneType;
+      const matchWashManaged = !fWashManaged || (fWashManaged === 'Y' ? p.isWashManaged : !p.isWashManaged);
+      return matchQ && matchRegion1 && matchRegion2 && matchZoneType && matchWashManaged;
     });
-  }, [policies, q, searchField, fRegion1, fRegion2, zoneTypeFilter]);
+  }, [policies, q, searchField, fRegion1, fRegion2, zoneTypeFilter, fWashManaged]);
 
   const sortedData = useMemo(() => {
     if (!sortConfig.key) return filteredData;
@@ -201,6 +203,7 @@ export default function ZonePolicyPage() {
     setFRegion2("");
     setSearchField('zoneId');
     setZoneTypeFilter('');
+    setFWashManaged('');
   };
   
   const handleSave = (policyToSave) => {
@@ -224,7 +227,10 @@ export default function ZonePolicyPage() {
         if (bulkData.isLightWash !== null) {
             updatedPolicy.isLightWash = { value: bulkData.isLightWash, source: '존정책' };
         }
-        
+        if (bulkData.isWashManaged !== null) {
+            updatedPolicy.isWashManaged = bulkData.isWashManaged;
+        }
+
         return updatedPolicy;
     }));
 
@@ -235,6 +241,7 @@ export default function ZonePolicyPage() {
     { key: 'zoneId', header: '존 ID' },
     { key: 'zoneName', header: '존 이름' },
     { key: 'zoneType', header: '존 유형' },
+    { key: 'isWashManaged', header: '세차관리', render: r => r.isWashManaged ? 'Y' : 'N' },
     { key: 'vehicleCount', header: '차량 대수', align: 'center', sortable: true, render: r => `${r.vehicleCount}대` },
     { key: 'cycleWashDays', header: '주기세차(일)', sortable: true, render: r => <span className="inline-flex items-center gap-1.5">{r.cycleWashDays.value}<Badge tone={r.cycleWashDays.source.toLowerCase()}>{r.cycleWashDays.source}</Badge></span> },
     { key: 'isLightWash', header: '라이트세차', render: r => <span className="inline-flex items-center gap-1.5">{r.isLightWash.value ? 'Y' : 'N'}<Badge tone={r.isLightWash.source.toLowerCase()}>{r.isLightWash.source}</Badge></span> },
@@ -258,6 +265,7 @@ export default function ZonePolicyPage() {
         chips={<>
           {q ? <Chip onRemove={() => setQ("")}>검색: {q}</Chip> : null}
           {zoneTypeFilter ? <Chip onRemove={() => setZoneTypeFilter("")}>존 유형: {zoneTypeFilter}</Chip> : null}
+          {fWashManaged ? <Chip onRemove={() => setFWashManaged("")}>세차관리: {fWashManaged}</Chip> : null}
           {fRegion1 ? <Chip onRemove={() => { setFRegion1(""); setFRegion2(""); }}>지역1: {fRegion1}</Chip> : null}
           {fRegion2 ? <Chip onRemove={() => setFRegion2("")}>지역2: {fRegion2}</Chip> : null}
         </>}
@@ -282,6 +290,14 @@ export default function ZonePolicyPage() {
           <Select value={zoneTypeFilter} onChange={e => setZoneTypeFilter(e.target.value)}>
             <option value="">전체</option>
             {ZONE_TYPE_OPTIONS.map(o => <option key={o} value={o}>{o}</option>)}
+          </Select>
+        </div>
+        <div className="md:col-span-2">
+          <label className="block text-xs font-semibold text-[#6B778C] mb-1.5">세차관리</label>
+          <Select value={fWashManaged} onChange={e => setFWashManaged(e.target.value)}>
+            <option value="">전체</option>
+            <option value="Y">Y</option>
+            <option value="N">N</option>
           </Select>
         </div>
         <div className="md:col-span-2">
@@ -379,6 +395,8 @@ function ZonePolicyDrawer({ policy, onClose, onSave }) {
             ...prev,
             [name]: { ...prev[name], value: processedValue, source: '존정책' }
           }));
+        } else if (name === 'isWashManaged') {
+           setFormData(prev => ({ ...prev, [name]: value === 'true' }));
         } else {
            setFormData(prev => ({ ...prev, [name]: value }));
         }
@@ -438,6 +456,14 @@ function ZonePolicyDrawer({ policy, onClose, onSave }) {
                       </Select>
                   ) : formData.zoneType}
                 </Field>
+                <Field label="세차관리" isEditing={isEditing}>
+                  {isEditing ? (
+                      <Select name="isWashManaged" value={String(formData.isWashManaged)} onChange={handleInputChange}>
+                          <option value="true">Y</option>
+                          <option value="false">N</option>
+                      </Select>
+                  ) : (formData.isWashManaged ? 'Y' : 'N')}
+                </Field>
                 <Field label="차량 대수">{formData.vehicleCount}대</Field>
               </CardContent>
             </Card>
@@ -491,11 +517,13 @@ function ZonePolicyDrawer({ policy, onClose, onSave }) {
 function BulkEditModal({ open, onClose, onSave, filteredCount }) {
   const [cycleWashDays, setCycleWashDays] = useState("");
   const [isLightWash, setIsLightWash] = useState("");
+  const [isWashManaged, setIsWashManaged] = useState("");
 
   useEffect(() => {
     if (open) {
       setCycleWashDays("");
       setIsLightWash("");
+      setIsWashManaged("");
     }
   }, [open]);
 
@@ -505,6 +533,7 @@ function BulkEditModal({ open, onClose, onSave, filteredCount }) {
     onSave({
         cycleWashDays: cycleWashDays === '' ? null : Number(cycleWashDays),
         isLightWash: isLightWash === '' ? null : isLightWash === 'true',
+        isWashManaged: isWashManaged === '' ? null : isWashManaged === 'true',
     });
   };
 
@@ -535,6 +564,13 @@ function BulkEditModal({ open, onClose, onSave, filteredCount }) {
                     <option value="">선택 안함</option>
                     <option value="true">Y (발행)</option>
                     <option value="false">N (미발행)</option>
+                </Select>
+            </Field>
+            <Field label="세차관리">
+                <Select value={isWashManaged} onChange={e => setIsWashManaged(e.target.value)}>
+                    <option value="">선택 안함</option>
+                    <option value="true">Y</option>
+                    <option value="false">N</option>
                 </Select>
             </Field>
         </CardContent>
