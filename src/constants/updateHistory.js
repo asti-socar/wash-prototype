@@ -108,8 +108,8 @@ export const PARTNER_HISTORY = [
 ];
 
 export const ASTI_HISTORY = [
-  { id: 6, date: "2026-02-20 15:00", content: "존정책 관리: 라이트세차 Y/N 필터 추가", isPolicyChange: false, links: [{ label: "존정책 관리", page: "zone-policy" }] },
-  { id: 5, date: "2026-02-20 14:30", content: "존정책 관리: '세차관리' Y/N 필드 추가 (존 단위 속성, 필터/상세/일괄수정 지원)", isPolicyChange: true, links: [{ label: "존정책 관리", page: "zone-policy" }] },
+  { id: 6, date: "2026-02-20 11:23", content: "존정책 관리: 라이트세차 Y/N 필터 추가", isPolicyChange: false, links: [{ label: "존정책 관리", page: "zone-policy" }] },
+  { id: 5, date: "2026-02-20 11:15", content: "존정책 관리: '세차관리' Y/N 필드 추가 (존 단위 속성, 필터/상세/일괄수정 지원)", isPolicyChange: true, links: [{ label: "존정책 관리", page: "zone-policy" }] },
   { id: 4, date: "2026-02-19 18:09", content: "존정책 관리: 상세 화면 라이트세차 표기 Y/N으로 통일 (기존 true/false)", isPolicyChange: false, links: [{ label: "존정책 관리", page: "zone-policy" }] },
   { id: 3, date: "2026-02-19 18:09", content: "존정책 관리: 라이트세차/주기세차 '상위 정책 따름' 옵션 추가 (존정책 미설정 시 지역2→지역1 순 fallback)", isPolicyChange: true, links: [{ label: "존정책 관리", page: "zone-policy" }] },
   { id: 2, date: "2026-02-19 18:09", content: "존정책 관리: 상세 Drawer 저장 후 닫힘 방지, 저장 완료 alert 제거", isPolicyChange: false, links: [{ label: "존정책 관리", page: "zone-policy" }] },
