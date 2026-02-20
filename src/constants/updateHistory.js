@@ -108,6 +108,9 @@ export const PARTNER_HISTORY = [
 ];
 
 export const ASTI_HISTORY = [
+  { id: 9, date: "2026-02-20 14:30", content: "지역정책관리: 수정, 삭제 UX 변경", isPolicyChange: false, links: [{ label: "지역 정책 관리", page: "regionpolicy" }] },
+  { id: 8, date: "2026-02-20 12:10", content: "발행유형정책: 기능명세 현행화 (존유형 점수, 탭순서, Drawer 구조, 부가 정책 필드, 설명/메모, 컬럼 테이블, 유효성 검사, Drawer 제목/Footer)", isPolicyChange: false, links: [{ label: "발행 유형 정책", page: "order-type-policy" }] },
+  { id: 7, date: "2026-02-20 12:10", content: "발행유형정책: O/X 값 Y/N으로 통일", isPolicyChange: true, links: [{ label: "발행 유형 정책", page: "order-type-policy" }] },
   { id: 6, date: "2026-02-20 11:23", content: "존정책 관리: 라이트세차 Y/N 필터 추가", isPolicyChange: false, links: [{ label: "존정책 관리", page: "zone-policy" }] },
   { id: 5, date: "2026-02-20 11:15", content: "존정책 관리: '세차관리' Y/N 필드 추가 (존 단위 속성, 필터/상세/일괄수정 지원)", isPolicyChange: true, links: [{ label: "존정책 관리", page: "zone-policy" }] },
   { id: 4, date: "2026-02-19 18:09", content: "존정책 관리: 상세 화면 라이트세차 표기 Y/N으로 통일 (기존 true/false)", isPolicyChange: false, links: [{ label: "존정책 관리", page: "zone-policy" }] },
