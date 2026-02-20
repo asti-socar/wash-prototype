@@ -18,9 +18,7 @@ const PARTNER_TYPES = ["현장", "입고"];
 
 const BLOCK_TYPES = ["세차블락", "장애블락"];
 
-const OX_OPTIONS = ["O", "X"];
-
-
+const YN_OPTIONS = ["Y", "N"];
 
 const WASH_TYPE_SCORES = { "협의": 8, "특수": 7, "내외부": 5, "내부": 4, "외부": 3, "물세차": 2, "라이트": 1 };
 
@@ -939,11 +937,11 @@ const getIssuanceTone = (issuance) => {
 
 
 
-    if (issuance === 'O') return 'ok';
+    if (issuance === 'Y') return 'ok';
 
 
 
-    if (issuance === 'X') return 'danger';
+    if (issuance === 'N') return 'danger';
 
 
 
@@ -3772,7 +3770,7 @@ const DetailDrawer = ({ policy, onClose, onSave, policies, mode }) => {
 
 
 
-                        <Field label="오더발행 여부">{isEditing ? <Select value={formData.order_issuance} onChange={e => handleFormDataChange('order_issuance', e.target.value)}>{OX_OPTIONS.map(o => <option key={o} value={o}>{o}</option>)}</Select> : <ReadOnlyValue>{formData.order_issuance}</ReadOnlyValue>}</Field>
+                        <Field label="오더발행 여부">{isEditing ? <Select value={formData.order_issuance} onChange={e => handleFormDataChange('order_issuance', e.target.value)}>{YN_OPTIONS.map(o => <option key={o} value={o}>{o}</option>)}</Select> : <ReadOnlyValue>{formData.order_issuance}</ReadOnlyValue>}</Field>
 
 
 
@@ -4299,19 +4297,19 @@ const DetailDrawer = ({ policy, onClose, onSave, policies, mode }) => {
 
 
 
-                        <Field label="미션등록 여부">{isEditing ? <Select value={formData.mission_registration} onChange={e => handleFormDataChange('mission_registration', e.target.value)}>{OX_OPTIONS.map(o => <option key={o} value={o}>{o}</option>)}</Select> : <ReadOnlyValue>{formData.mission_registration}</ReadOnlyValue>}</Field>
+                        <Field label="미션등록 여부">{isEditing ? <Select value={formData.mission_registration} onChange={e => handleFormDataChange('mission_registration', e.target.value)}>{YN_OPTIONS.map(o => <option key={o} value={o}>{o}</option>)}</Select> : <ReadOnlyValue>{formData.mission_registration}</ReadOnlyValue>}</Field>
                         <div />
-                        <Field label="유예 면제 여부" tooltip={HELP_TEXTS.wait_time_exempt}>{isEditing ? <Select value={formData.wait_time_exempt} onChange={e => handleFormDataChange('wait_time_exempt', e.target.value)}>{OX_OPTIONS.map(o => <option key={o} value={o}>{o}</option>)}</Select> : <ReadOnlyValue>{formData.wait_time_exempt}</ReadOnlyValue>}</Field>
+                        <Field label="유예 면제 여부" tooltip={HELP_TEXTS.wait_time_exempt}>{isEditing ? <Select value={formData.wait_time_exempt} onChange={e => handleFormDataChange('wait_time_exempt', e.target.value)}>{YN_OPTIONS.map(o => <option key={o} value={o}>{o}</option>)}</Select> : <ReadOnlyValue>{formData.wait_time_exempt}</ReadOnlyValue>}</Field>
                         <Field label="오더 발행 유예 시간" error={errors.wait_time} tooltip={HELP_TEXTS.wait_time}>{isEditing ? <Input type="number" value={formData.wait_time || ''} onChange={e => handleFormDataChange('wait_time', Number(e.target.value))} /> : <ReadOnlyValue>{formData.wait_time}</ReadOnlyValue>}</Field>
-                        <Field label="자동 배정" tooltip={HELP_TEXTS.auto_assign}>{isEditing ? <Select value={formData.auto_assign} onChange={e => handleFormDataChange('auto_assign', e.target.value)}>{OX_OPTIONS.map(o => <option key={o} value={o}>{o}</option>)}</Select> : <ReadOnlyValue>{formData.auto_assign}</ReadOnlyValue>}</Field>
-                        <Field label="반복 주기" tooltip={HELP_TEXTS.repeat_cycle}>{isEditing && formData.auto_assign === 'O' ? <Select value={formData.repeat_cycle} onChange={e => handleFormDataChange('repeat_cycle', Number(e.target.value))}>{Array.from({ length: 16 }, (_, i) => i + 1).map(w => <option key={w} value={w}>{w === 1 ? '1주 (반복 없음)' : `${w}주`}</option>)}</Select> : <ReadOnlyValue className={formData.auto_assign !== 'O' ? 'opacity-40' : ''}>{formData.repeat_cycle === 1 ? '1주 (반복 없음)' : `${formData.repeat_cycle}주`}</ReadOnlyValue>}</Field>
-                        <Field label="수행 시간">{isEditing && formData.auto_assign === 'O' ? <Input type="time" value={formData.execution_time || ''} onChange={e => handleFormDataChange('execution_time', e.target.value)} /> : <ReadOnlyValue className={formData.auto_assign !== 'O' ? 'opacity-40' : ''}>{formData.execution_time || '-'}</ReadOnlyValue>}</Field>
-                        <Field label="수행 요일">{isEditing && formData.auto_assign === 'O' ? (
+                        <Field label="자동 배정" tooltip={HELP_TEXTS.auto_assign}>{isEditing ? <Select value={formData.auto_assign} onChange={e => handleFormDataChange('auto_assign', e.target.value)}>{YN_OPTIONS.map(o => <option key={o} value={o}>{o}</option>)}</Select> : <ReadOnlyValue>{formData.auto_assign}</ReadOnlyValue>}</Field>
+                        <Field label="반복 주기" tooltip={HELP_TEXTS.repeat_cycle}>{isEditing && formData.auto_assign === 'Y' ? <Select value={formData.repeat_cycle} onChange={e => handleFormDataChange('repeat_cycle', Number(e.target.value))}>{Array.from({ length: 16 }, (_, i) => i + 1).map(w => <option key={w} value={w}>{w === 1 ? '1주 (반복 없음)' : `${w}주`}</option>)}</Select> : <ReadOnlyValue className={formData.auto_assign !== 'Y' ? 'opacity-40' : ''}>{formData.repeat_cycle === 1 ? '1주 (반복 없음)' : `${formData.repeat_cycle}주`}</ReadOnlyValue>}</Field>
+                        <Field label="수행 시간">{isEditing && formData.auto_assign === 'Y' ? <Input type="time" value={formData.execution_time || ''} onChange={e => handleFormDataChange('execution_time', e.target.value)} /> : <ReadOnlyValue className={formData.auto_assign !== 'Y' ? 'opacity-40' : ''}>{formData.execution_time || '-'}</ReadOnlyValue>}</Field>
+                        <Field label="수행 요일">{isEditing && formData.auto_assign === 'Y' ? (
                           <div className="flex gap-1.5">{['월','화','수','목','금','토','일'].map(day => {
                             const selected = (formData.execution_days || []).includes(day);
                             return <button key={day} type="button" className={cn("h-8 w-8 rounded-md border text-xs font-medium transition", selected ? "bg-[#0052CC] text-white border-[#0052CC]" : "bg-white text-slate-600 border-[#E2E8F0] hover:border-[#0052CC]")} onClick={() => { const days = formData.execution_days || []; handleFormDataChange('execution_days', selected ? days.filter(d => d !== day) : [...days, day]); }}>{day}</button>;
                           })}</div>
-                        ) : <ReadOnlyValue className={formData.auto_assign !== 'O' ? 'opacity-40' : ''}>{(formData.execution_days || []).length === 7 ? '매일' : (formData.execution_days || []).join(', ') || '-'}</ReadOnlyValue>}</Field>
+                        ) : <ReadOnlyValue className={formData.auto_assign !== 'Y' ? 'opacity-40' : ''}>{(formData.execution_days || []).length === 7 ? '매일' : (formData.execution_days || []).join(', ') || '-'}</ReadOnlyValue>}</Field>
 
 
 
@@ -5063,7 +5061,7 @@ export default function OrderTypePolicyPage() {
 
     zone_type: "일반존", 
 
-    order_issuance: "O",
+    order_issuance: "Y",
 
     order_type_score: 5, 
 
@@ -5073,13 +5071,13 @@ export default function OrderTypePolicyPage() {
 
     block_type: "", 
 
-    mission_registration: "X",
+    mission_registration: "N",
 
-    wait_time: 0, 
+    wait_time: 0,
 
-    wait_time_exempt: "X",
+    wait_time_exempt: "N",
 
-    auto_assign: "X",
+    auto_assign: "N",
     repeat_cycle: 1,
     execution_days: [],
     execution_time: "",
