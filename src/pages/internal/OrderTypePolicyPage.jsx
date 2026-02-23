@@ -399,10 +399,25 @@ const DetailDrawer = ({ policy, onClose, onSave, onDelete, policies, mode }) => 
         onClose();
         return;
     }
-    const changes = Object.keys(finalData).reduce((acc, key) => {
-        if (JSON.stringify(finalData[key]) !== JSON.stringify(policy[key])) acc[`${key}`] = { from: policy[key], to: finalData[key] };
-        return acc;
-    }, {});
+    const fieldLabels = {
+      sharing_type: '셰어링 유형', order_division: '오더 구분', wash_type: '세차 유형',
+      zone_type: '존유형', order_issuance: '오더발행 여부', order_type_score: '발행 유형 점수',
+      bonus_points: '가산점', block_type: '블락 유형', cushion_before: '쿠션(전)',
+      handler_dispatch: '핸들러(배차)', wash_time: '세차수행시간', cushion_after: '쿠션(후)',
+      handler_return: '핸들러(반차)', mission_registration: '미션등록 여부',
+      wait_time_exempt: '유예 면제 여부', wait_time: '오더 발행 유예 시간',
+      auto_assign: '자동 배정', repeat_cycle: '반복 주기', execution_time: '수행 시간',
+      execution_days: '수행 요일', memo: '메모',
+    };
+    const changes = {};
+    for (const [key, label] of Object.entries(fieldLabels)) {
+      const oldVal = policy[key];
+      const newVal = finalData[key];
+      if (JSON.stringify(oldVal) !== JSON.stringify(newVal)) {
+        const fmt = (v) => v === null || v === undefined || v === '' ? '없음' : Array.isArray(v) ? v.join(', ') || '없음' : String(v);
+        changes[label] = { from: fmt(oldVal), to: fmt(newVal) };
+      }
+    }
     if (Object.keys(changes).length === 0) {
       setIsEditing(false);
       return;

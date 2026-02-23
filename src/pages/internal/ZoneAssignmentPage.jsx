@@ -45,9 +45,9 @@ function ZASaveConfirmModal({ open, onClose, onConfirm, title, changes }) {
             <div key={field} className="rounded-lg bg-slate-50 p-3">
               <div className="text-xs font-semibold text-[#6B778C] mb-1">{field}</div>
               <div className="flex items-center gap-2 text-sm">
-                <span className="text-red-600 line-through">{from || '없음'}</span>
+                <span className="text-[#6B778C]">{from || '없음'}</span>
                 <span className="text-[#6B778C]">→</span>
-                <span className="text-blue-700 font-semibold">{to || '없음'}</span>
+                <span className="font-semibold text-[#0052CC]">{to || '없음'}</span>
               </div>
             </div>
           ))}
