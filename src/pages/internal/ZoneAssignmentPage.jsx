@@ -7,26 +7,31 @@ import { cn, Card, CardHeader, CardTitle, CardContent, Button, Input, Select, Ba
 import zoneAssignmentsData from '../../mocks/zoneAssignments.json';
 
 // ============== MOCK PARTNERS ==============
-const MOCK_PARTNERS = [
+const ONSITE_PARTNERS = [
   { partnerId: 'P-001', partnerName: 'A파트너' },
   { partnerId: 'P-002', partnerName: 'B파트너' },
-  { partnerId: 'P-003', partnerName: 'C파트너' },
-  { partnerId: 'P-004', partnerName: 'D파트너' },
 ];
 
-const partnerMap = new Map(MOCK_PARTNERS.map(p => [p.partnerId, p.partnerName]));
+const INSHOP_PARTNERS = [
+  { partnerId: 'P-003', partnerName: 'C파트너' },
+];
+
+const ALL_PARTNERS = [...ONSITE_PARTNERS, ...INSHOP_PARTNERS];
+const partnerMap = new Map(ALL_PARTNERS.map(p => [p.partnerId, p.partnerName]));
+const onsitePartnerIdSet = new Set(ONSITE_PARTNERS.map(p => p.partnerId));
+const inshopPartnerIdSet = new Set(INSHOP_PARTNERS.map(p => p.partnerId));
 
 // ============== MOCK WORKERS (수행원 조회 참고) ==============
 const MOCK_WORKERS = [
   { id: 'W-001', name: '최수행', partnerId: 'P-001', penalty: 0, zoneIds: ['Z-1001', 'Z-1003', 'Z-1048'] },
   { id: 'W-002', name: '강수행', partnerId: 'P-002', penalty: 2, zoneIds: ['Z-1006', 'Z-1007', 'Z-1050'] },
   { id: 'W-003', name: '한수행', partnerId: 'P-003', penalty: 0, zoneIds: ['Z-1008', 'Z-1032', 'Z-1044'] },
-  { id: 'W-004', name: '오수행', partnerId: 'P-004', penalty: 1, zoneIds: ['Z-1035', 'Z-1037', 'Z-1046'] },
+  { id: 'W-004', name: '오수행', partnerId: 'P-002', penalty: 1, zoneIds: ['Z-1035', 'Z-1037', 'Z-1046'] },
   { id: 'W-005', name: '박수행', partnerId: 'P-001', penalty: 0, zoneIds: ['Z-1012', 'Z-1040'] },
   { id: 'W-006', name: '이수행', partnerId: 'P-002', penalty: 3, zoneIds: ['Z-1014', 'Z-1042', 'Z-1050'] },
   { id: 'W-007', name: '김수행', partnerId: 'P-003', penalty: 0, zoneIds: ['Z-1010', 'Z-1034', 'Z-1044'] },
   { id: 'W-008', name: '정수행', partnerId: 'P-001', penalty: 1, zoneIds: ['Z-1019', 'Z-1048'] },
-  { id: 'W-009', name: '조수행', partnerId: 'P-004', penalty: 0, zoneIds: ['Z-1021', 'Z-1035', 'Z-1046'] },
+  { id: 'W-009', name: '조수행', partnerId: 'P-002', penalty: 0, zoneIds: ['Z-1021', 'Z-1035', 'Z-1046'] },
   { id: 'W-010', name: '윤수행', partnerId: 'P-002', penalty: 2, zoneIds: ['Z-1029', 'Z-1042'] },
 ];
 
@@ -62,21 +67,51 @@ function ZASaveConfirmModal({ open, onClose, onConfirm, title, changes }) {
 }
 
 function ZADeleteConfirmModal({ open, onClose, onConfirm, zone }) {
+  const [deleteType, setDeleteType] = useState('all');
   if (!open || !zone) return null;
+
+  const hasOnsite = !!zone.assignedOnsitePartnerId;
+  const hasInshop = !!zone.assignedInshopPartnerId;
+  const hasBoth = hasOnsite && hasInshop;
+
   return (
     <div className="fixed inset-0 z-[1100] flex items-center justify-center">
       <div className="absolute inset-0 bg-black/30" onClick={onClose} />
       <Card className="relative z-[1101] w-full max-w-sm">
         <CardHeader><CardTitle>배정 해제 확인</CardTitle></CardHeader>
-        <CardContent>
+        <CardContent className="space-y-3">
           <p className="text-sm text-[#172B4D]">
             <b>{zone.zoneName}</b>({zone.zoneId})의 파트너 배정을 해제하시겠습니까?
           </p>
-          <p className="text-xs text-[#6B778C] mt-2">해제 후 해당 존은 미배정 상태가 됩니다.</p>
+          {hasBoth && (
+            <div className="space-y-2">
+              <label className="block text-xs font-semibold text-[#6B778C]">해제 범위</label>
+              <div className="space-y-1.5">
+                {[
+                  { value: 'all', label: '전체 해제', desc: '현장세차 + 입고세차 파트너 모두 해제' },
+                  { value: 'onsite', label: '현장세차 파트너만 해제', desc: partnerMap.get(zone.assignedOnsitePartnerId) },
+                  { value: 'inshop', label: '입고세차 파트너만 해제', desc: partnerMap.get(zone.assignedInshopPartnerId) },
+                ].map(opt => (
+                  <label key={opt.value} className={cn("flex items-start gap-2 rounded-lg border p-2.5 cursor-pointer transition-colors", deleteType === opt.value ? "border-[#0052CC] bg-blue-50" : "border-[#E2E8F0] hover:bg-slate-50")}>
+                    <input type="radio" name="deleteType" value={opt.value} checked={deleteType === opt.value} onChange={() => setDeleteType(opt.value)} className="mt-0.5 accent-blue-600" />
+                    <div>
+                      <div className="text-sm font-medium text-[#172B4D]">{opt.label}</div>
+                      <div className="text-xs text-[#6B778C]">{opt.desc}</div>
+                    </div>
+                  </label>
+                ))}
+              </div>
+            </div>
+          )}
+          {!hasBoth && (
+            <p className="text-xs text-[#6B778C]">
+              {hasOnsite ? `현장세차 파트너 (${partnerMap.get(zone.assignedOnsitePartnerId)})` : `입고세차 파트너 (${partnerMap.get(zone.assignedInshopPartnerId)})`} 배정이 해제됩니다.
+            </p>
+          )}
         </CardContent>
         <div className="flex items-center justify-end gap-2 border-t border-[#DFE1E6] px-5 py-4 bg-[#F4F5F7] rounded-b-xl">
           <Button variant="secondary" onClick={onClose}>취소</Button>
-          <Button className="bg-rose-600 hover:bg-rose-700" onClick={onConfirm}>해제</Button>
+          <Button className="bg-rose-600 hover:bg-rose-700" onClick={() => onConfirm(hasBoth ? deleteType : (hasOnsite ? 'onsite' : 'inshop'))}>해제</Button>
         </div>
       </Card>
     </div>
@@ -96,7 +131,8 @@ export default function ZoneAssignmentPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [region1Filter, setRegion1Filter] = useState("");
   const [region2Filter, setRegion2Filter] = useState("");
-  const [fPartner, setFPartner] = useState("");
+  const [fOnsitePartner, setFOnsitePartner] = useState("");
+  const [fInshopPartner, setFInshopPartner] = useState("");
 
   const [sortConfig, setSortConfig] = useState({ key: 'zoneId', direction: 'desc' });
 
@@ -113,12 +149,6 @@ export default function ZoneAssignmentPage() {
     return unique.sort();
   }, [zones, region1Filter]);
 
-  // Get unique assigned partner names for filter
-  const partnerOptions = useMemo(() => {
-    const names = [...new Set(zones.filter(z => z.assignedPartnerId).map(z => partnerMap.get(z.assignedPartnerId)).filter(Boolean))];
-    return names.sort();
-  }, [zones]);
-
   // Reset region2 when region1 changes
   useEffect(() => {
     setRegion2Filter("");
@@ -126,25 +156,28 @@ export default function ZoneAssignmentPage() {
 
   const filteredData = useMemo(() => {
     return zones.filter(z => {
-      // Search filter
       if (searchQuery) {
         const q = searchQuery.toLowerCase();
         const targetVal = String(z[searchField] || "").toLowerCase();
         if (!targetVal.includes(q)) return false;
       }
-      // Region1 filter
       if (region1Filter && z.region1 !== region1Filter) return false;
-      // Region2 filter
       if (region2Filter && z.region2 !== region2Filter) return false;
-      // Partner filter
-      if (fPartner === "미배정" && z.assignedPartnerId) return false;
-      if (fPartner && fPartner !== "미배정") {
-        const assignedName = z.assignedPartnerId ? partnerMap.get(z.assignedPartnerId) : null;
-        if (assignedName !== fPartner) return false;
+      // 현장세차 파트너 필터
+      if (fOnsitePartner === "미배정" && z.assignedOnsitePartnerId) return false;
+      if (fOnsitePartner && fOnsitePartner !== "미배정") {
+        const name = z.assignedOnsitePartnerId ? partnerMap.get(z.assignedOnsitePartnerId) : null;
+        if (name !== fOnsitePartner) return false;
+      }
+      // 입고세차 파트너 필터
+      if (fInshopPartner === "미배정" && z.assignedInshopPartnerId) return false;
+      if (fInshopPartner && fInshopPartner !== "미배정") {
+        const name = z.assignedInshopPartnerId ? partnerMap.get(z.assignedInshopPartnerId) : null;
+        if (name !== fInshopPartner) return false;
       }
       return true;
     });
-  }, [zones, searchField, searchQuery, region1Filter, region2Filter, fPartner]);
+  }, [zones, searchField, searchQuery, region1Filter, region2Filter, fOnsitePartner, fInshopPartner]);
 
   const sortedData = useMemo(() => {
     if (!sortConfig.key) return filteredData;
@@ -152,9 +185,8 @@ export default function ZoneAssignmentPage() {
       let aVal = a[sortConfig.key];
       let bVal = b[sortConfig.key];
 
-      // Handle partner name sorting
-      if (sortConfig.key === 'assignedPartnerId') {
-        aVal = aVal ? partnerMap.get(aVal) || '' : 'zzz'; // Put unassigned at end
+      if (sortConfig.key === 'assignedOnsitePartnerId' || sortConfig.key === 'assignedInshopPartnerId') {
+        aVal = aVal ? partnerMap.get(aVal) || '' : 'zzz';
         bVal = bVal ? partnerMap.get(bVal) || '' : 'zzz';
       }
 
@@ -176,25 +208,34 @@ export default function ZoneAssignmentPage() {
     }));
   };
 
-  const handlePartnerChange = (zoneId, partnerId) => {
-    const newPartnerId = partnerId || null;
-    setZones(prev => prev.map(z => z.zoneId === zoneId ? { ...z, assignedPartnerId: newPartnerId } : z));
+  const handlePartnerChange = (zoneId, { onsitePartnerId, inshopPartnerId }) => {
+    setZones(prev => prev.map(z => z.zoneId === zoneId ? { ...z, assignedOnsitePartnerId: onsitePartnerId, assignedInshopPartnerId: inshopPartnerId } : z));
     setSelectedZone(null);
   };
 
-  const handleDeleteAssignment = () => {
+  const handleDeleteAssignment = (type) => {
     if (!deleteTarget) return;
-    setZones(prev => prev.map(z => z.zoneId === deleteTarget.zoneId ? { ...z, assignedPartnerId: null } : z));
+    setZones(prev => prev.map(z => {
+      if (z.zoneId !== deleteTarget.zoneId) return z;
+      if (type === 'all') return { ...z, assignedOnsitePartnerId: null, assignedInshopPartnerId: null };
+      if (type === 'onsite') return { ...z, assignedOnsitePartnerId: null };
+      if (type === 'inshop') return { ...z, assignedInshopPartnerId: null };
+      return z;
+    }));
     setDeleteTarget(null);
   };
 
   const handleBulkAssignment = (assignments) => {
     setZones(prev => {
       const updated = [...prev];
-      assignments.forEach(({ zoneId, partnerId }) => {
+      assignments.forEach(({ zoneId, onsitePartnerId, inshopPartnerId }) => {
         const idx = updated.findIndex(z => z.zoneId === zoneId);
         if (idx !== -1) {
-          updated[idx] = { ...updated[idx], assignedPartnerId: partnerId || null };
+          updated[idx] = {
+            ...updated[idx],
+            assignedOnsitePartnerId: onsitePartnerId !== undefined ? (onsitePartnerId || null) : updated[idx].assignedOnsitePartnerId,
+            assignedInshopPartnerId: inshopPartnerId !== undefined ? (inshopPartnerId || null) : updated[idx].assignedInshopPartnerId,
+          };
         }
       });
       return updated;
@@ -204,9 +245,9 @@ export default function ZoneAssignmentPage() {
   // Stats
   const stats = useMemo(() => {
     const total = zones.length;
-    const assigned = zones.filter(z => z.assignedPartnerId).length;
-    const unassigned = total - assigned;
-    return { total, assigned, unassigned };
+    const onsiteAssigned = zones.filter(z => z.assignedOnsitePartnerId).length;
+    const inshopAssigned = zones.filter(z => z.assignedInshopPartnerId).length;
+    return { total, onsiteAssigned, inshopAssigned };
   }, [zones]);
 
   const columns = [
@@ -216,9 +257,14 @@ export default function ZoneAssignmentPage() {
     { key: 'zoneName', header: '존 이름' },
     { key: 'zoneType', header: '존 유형' },
     { key: 'vehicleCount', header: '차량 대수', align: 'center', sortable: true, render: r => `${r.vehicleCount}대` },
-    { key: 'assignedPartnerId', header: '배정 파트너', render: r =>
-      r.assignedPartnerId
-        ? <span className="text-[#172B4D]">{partnerMap.get(r.assignedPartnerId)}</span>
+    { key: 'assignedOnsitePartnerId', header: '현장세차 파트너', render: r =>
+      r.assignedOnsitePartnerId
+        ? <span className="text-[#172B4D]">{partnerMap.get(r.assignedOnsitePartnerId)}</span>
+        : <Badge tone="warn">미배정</Badge>
+    },
+    { key: 'assignedInshopPartnerId', header: '입고세차 파트너', render: r =>
+      r.assignedInshopPartnerId
+        ? <span className="text-[#172B4D]">{partnerMap.get(r.assignedInshopPartnerId)}</span>
         : <Badge tone="warn">미배정</Badge>
     },
     { key: '_actions', header: '', width: 80, render: r => (
@@ -228,6 +274,15 @@ export default function ZoneAssignmentPage() {
       </div>
     )},
   ];
+
+  const resetFilters = () => {
+    setSearchField("zoneId");
+    setSearchQuery("");
+    setRegion1Filter("");
+    setRegion2Filter("");
+    setFOnsitePartner("");
+    setFInshopPartner("");
+  };
 
   return (
     <div className="space-y-4">
@@ -243,12 +298,12 @@ export default function ZoneAssignmentPage() {
               <span className="font-semibold text-[#172B4D]">{stats.total}개</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-[#6B778C]">배정</span>
-              <span className="font-semibold text-emerald-600">{stats.assigned}개</span>
+              <span className="text-[#6B778C]">현장 배정</span>
+              <span className="font-semibold text-emerald-600">{stats.onsiteAssigned}개</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-[#6B778C]">미배정</span>
-              <span className="font-semibold text-amber-600">{stats.unassigned}개</span>
+              <span className="text-[#6B778C]">입고 배정</span>
+              <span className="font-semibold text-emerald-600">{stats.inshopAssigned}개</span>
             </div>
           </div>
           <Button onClick={() => setBulkAssignmentOpen(true)}>
@@ -264,9 +319,10 @@ export default function ZoneAssignmentPage() {
           {searchQuery ? <Chip onRemove={() => setSearchQuery("")}>{searchField === "zoneId" ? "존 ID" : "존 이름"}: {searchQuery}</Chip> : null}
           {region1Filter ? <Chip onRemove={() => { setRegion1Filter(""); setRegion2Filter(""); }}>지역1: {region1Filter}</Chip> : null}
           {region2Filter ? <Chip onRemove={() => setRegion2Filter("")}>지역2: {region2Filter}</Chip> : null}
-          {fPartner ? <Chip onRemove={() => setFPartner("")}>배정 파트너: {fPartner}</Chip> : null}
+          {fOnsitePartner ? <Chip onRemove={() => setFOnsitePartner("")}>현장세차 파트너: {fOnsitePartner}</Chip> : null}
+          {fInshopPartner ? <Chip onRemove={() => setFInshopPartner("")}>입고세차 파트너: {fInshopPartner}</Chip> : null}
         </>}
-        onReset={() => { setSearchField("zoneId"); setSearchQuery(""); setRegion1Filter(""); setRegion2Filter(""); setFPartner(""); }}
+        onReset={resetFilters}
       >
         <div className="md:col-span-2">
           <label htmlFor="searchField" className="block text-xs font-semibold text-[#6B778C] mb-1.5">검색항목</label>
@@ -275,7 +331,7 @@ export default function ZoneAssignmentPage() {
             <option value="zoneName">존 이름</option>
           </Select>
         </div>
-        <div className="md:col-span-4">
+        <div className="md:col-span-3">
           <label htmlFor="searchQuery" className="block text-xs font-semibold text-[#6B778C] mb-1.5">검색어</label>
           <div className="relative">
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#6B778C]" />
@@ -297,11 +353,19 @@ export default function ZoneAssignmentPage() {
           </Select>
         </div>
         <div className="md:col-span-2">
-          <label htmlFor="fPartner" className="block text-xs font-semibold text-[#6B778C] mb-1.5">배정 파트너</label>
-          <Select id="fPartner" value={fPartner} onChange={(e) => setFPartner(e.target.value)}>
+          <label htmlFor="fOnsitePartner" className="block text-xs font-semibold text-[#6B778C] mb-1.5">현장세차 파트너</label>
+          <Select id="fOnsitePartner" value={fOnsitePartner} onChange={(e) => setFOnsitePartner(e.target.value)}>
             <option value="">전체</option>
             <option value="미배정">미배정</option>
-            {partnerOptions.map(p => <option key={p} value={p}>{p}</option>)}
+            {ONSITE_PARTNERS.map(p => <option key={p.partnerId} value={p.partnerName}>{p.partnerName}</option>)}
+          </Select>
+        </div>
+        <div className="md:col-span-2">
+          <label htmlFor="fInshopPartner" className="block text-xs font-semibold text-[#6B778C] mb-1.5">입고세차 파트너</label>
+          <Select id="fInshopPartner" value={fInshopPartner} onChange={(e) => setFInshopPartner(e.target.value)}>
+            <option value="">전체</option>
+            <option value="미배정">미배정</option>
+            {INSHOP_PARTNERS.map(p => <option key={p.partnerId} value={p.partnerName}>{p.partnerName}</option>)}
           </Select>
         </div>
       </FilterPanel>
@@ -358,42 +422,96 @@ export default function ZoneAssignmentPage() {
 
 function ZoneDetailDrawer({ zone, onClose, onPartnerChange, onDelete, mode }) {
   const [isEditing, setIsEditing] = useState(mode === 'edit');
-  const [editPartnerId, setEditPartnerId] = useState(zone.assignedPartnerId || '');
+  const [editOnsitePartnerId, setEditOnsitePartnerId] = useState(zone.assignedOnsitePartnerId || '');
+  const [editInshopPartnerId, setEditInshopPartnerId] = useState(zone.assignedInshopPartnerId || '');
   const [saveConfirm, setSaveConfirm] = useState(null);
 
   useEffect(() => {
     setIsEditing(mode === 'edit');
-    setEditPartnerId(zone.assignedPartnerId || '');
+    setEditOnsitePartnerId(zone.assignedOnsitePartnerId || '');
+    setEditInshopPartnerId(zone.assignedInshopPartnerId || '');
     setSaveConfirm(null);
   }, [zone, mode]);
 
-  const zoneWorkers = useMemo(() => {
-    if (!zone.assignedPartnerId) return [];
-    return MOCK_WORKERS.filter(w => w.partnerId === zone.assignedPartnerId && w.zoneIds.includes(zone.zoneId));
-  }, [zone.assignedPartnerId, zone.zoneId]);
+  const onsiteWorkers = useMemo(() => {
+    if (!zone.assignedOnsitePartnerId) return [];
+    return MOCK_WORKERS.filter(w => w.partnerId === zone.assignedOnsitePartnerId && w.zoneIds.includes(zone.zoneId));
+  }, [zone.assignedOnsitePartnerId, zone.zoneId]);
+
+  const inshopWorkers = useMemo(() => {
+    if (!zone.assignedInshopPartnerId) return [];
+    return MOCK_WORKERS.filter(w => w.partnerId === zone.assignedInshopPartnerId && w.zoneIds.includes(zone.zoneId));
+  }, [zone.assignedInshopPartnerId, zone.zoneId]);
 
   const handleSave = () => {
-    const newPartnerId = editPartnerId || null;
-    const currentPartnerId = zone.assignedPartnerId || null;
-    if (newPartnerId === currentPartnerId) {
+    const newOnsite = editOnsitePartnerId || null;
+    const newInshop = editInshopPartnerId || null;
+    const curOnsite = zone.assignedOnsitePartnerId || null;
+    const curInshop = zone.assignedInshopPartnerId || null;
+
+    if (newOnsite === curOnsite && newInshop === curInshop) {
       setIsEditing(false);
       return;
     }
-    const fromName = currentPartnerId ? partnerMap.get(currentPartnerId) : '미배정';
-    const toName = newPartnerId ? partnerMap.get(newPartnerId) : '미배정';
-    const changes = { '배정 파트너': { from: fromName, to: toName } };
-    setSaveConfirm({ changes, partnerId: newPartnerId });
+
+    const changes = {};
+    if (newOnsite !== curOnsite) {
+      changes['현장세차 파트너'] = {
+        from: curOnsite ? partnerMap.get(curOnsite) : '미배정',
+        to: newOnsite ? partnerMap.get(newOnsite) : '미배정',
+      };
+    }
+    if (newInshop !== curInshop) {
+      changes['입고세차 파트너'] = {
+        from: curInshop ? partnerMap.get(curInshop) : '미배정',
+        to: newInshop ? partnerMap.get(newInshop) : '미배정',
+      };
+    }
+
+    setSaveConfirm({ changes, onsitePartnerId: newOnsite, inshopPartnerId: newInshop });
   };
 
   const confirmSave = () => {
     if (!saveConfirm) return;
-    onPartnerChange(zone.zoneId, saveConfirm.partnerId);
+    onPartnerChange(zone.zoneId, { onsitePartnerId: saveConfirm.onsitePartnerId, inshopPartnerId: saveConfirm.inshopPartnerId });
     setSaveConfirm(null);
   };
 
   const handleCancel = () => {
-    setEditPartnerId(zone.assignedPartnerId || '');
+    setEditOnsitePartnerId(zone.assignedOnsitePartnerId || '');
+    setEditInshopPartnerId(zone.assignedInshopPartnerId || '');
     setIsEditing(false);
+  };
+
+  const WorkerTable = ({ workers, emptyMessage }) => {
+    if (workers.length === 0) return <div className="text-sm text-[#94A3B8] py-2">{emptyMessage}</div>;
+    return (
+      <div className="overflow-x-auto rounded-lg border border-[#E2E8F0]">
+        <table className="min-w-full text-sm">
+          <thead className="bg-[#F8FAFC] border-b border-[#E2E8F0]">
+            <tr>
+              <th className="px-4 py-2.5 text-left text-xs font-semibold text-[#475569]">수행원 ID</th>
+              <th className="px-4 py-2.5 text-left text-xs font-semibold text-[#475569]">이름</th>
+              <th className="px-4 py-2.5 text-left text-xs font-semibold text-[#475569]">벌점</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-[#E2E8F0]">
+            {workers.map(w => (
+              <tr key={w.id} className="hover:bg-[#F8FAFC]">
+                <td className="px-4 py-2.5 text-[#172B4D]">{w.id}</td>
+                <td className="px-4 py-2.5 text-[#172B4D]">{w.name}</td>
+                <td className="px-4 py-2.5">
+                  {w.penalty === 0
+                    ? <span className="text-[#94A3B8]">0</span>
+                    : <Badge tone="danger">{w.penalty}</Badge>
+                  }
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    );
   };
 
   return (
@@ -444,18 +562,32 @@ function ZoneDetailDrawer({ zone, onClose, onPartnerChange, onDelete, mode }) {
 
           <Card>
             <CardHeader><CardTitle>파트너 배정</CardTitle></CardHeader>
-            <CardContent>
-              <Field label="배정 파트너" isEditing={isEditing}>
+            <CardContent className="space-y-3">
+              <Field label="현장세차 파트너" isEditing={isEditing}>
                 {isEditing ? (
-                  <Select value={editPartnerId} onChange={(e) => setEditPartnerId(e.target.value)}>
+                  <Select value={editOnsitePartnerId} onChange={(e) => setEditOnsitePartnerId(e.target.value)}>
                     <option value="">미배정</option>
-                    {MOCK_PARTNERS.map(p => (
+                    {ONSITE_PARTNERS.map(p => (
                       <option key={p.partnerId} value={p.partnerId}>{p.partnerName}</option>
                     ))}
                   </Select>
                 ) : (
-                  zone.assignedPartnerId
-                    ? <span className="text-[#172B4D]">{partnerMap.get(zone.assignedPartnerId)}</span>
+                  zone.assignedOnsitePartnerId
+                    ? <span className="text-[#172B4D]">{partnerMap.get(zone.assignedOnsitePartnerId)}</span>
+                    : <Badge tone="warn">미배정</Badge>
+                )}
+              </Field>
+              <Field label="입고세차 파트너" isEditing={isEditing}>
+                {isEditing ? (
+                  <Select value={editInshopPartnerId} onChange={(e) => setEditInshopPartnerId(e.target.value)}>
+                    <option value="">미배정</option>
+                    {INSHOP_PARTNERS.map(p => (
+                      <option key={p.partnerId} value={p.partnerId}>{p.partnerName}</option>
+                    ))}
+                  </Select>
+                ) : (
+                  zone.assignedInshopPartnerId
+                    ? <span className="text-[#172B4D]">{partnerMap.get(zone.assignedInshopPartnerId)}</span>
                     : <Badge tone="warn">미배정</Badge>
                 )}
               </Field>
@@ -463,38 +595,23 @@ function ZoneDetailDrawer({ zone, onClose, onPartnerChange, onDelete, mode }) {
           </Card>
 
           <Card>
-            <CardHeader><CardTitle>배정된 수행원 정보</CardTitle></CardHeader>
+            <CardHeader><CardTitle>현장세차 수행원</CardTitle></CardHeader>
             <CardContent>
-              {!zone.assignedPartnerId ? (
-                <div className="text-sm text-[#94A3B8] py-2">파트너가 배정되지 않은 존입니다.</div>
-              ) : zoneWorkers.length === 0 ? (
-                <div className="text-sm text-[#94A3B8] py-2">배정된 수행원이 없습니다.</div>
+              {!zone.assignedOnsitePartnerId ? (
+                <div className="text-sm text-[#94A3B8] py-2">현장세차 파트너가 배정되지 않은 존입니다.</div>
               ) : (
-                <div className="overflow-x-auto rounded-lg border border-[#E2E8F0]">
-                  <table className="min-w-full text-sm">
-                    <thead className="bg-[#F8FAFC] border-b border-[#E2E8F0]">
-                      <tr>
-                        <th className="px-4 py-2.5 text-left text-xs font-semibold text-[#475569]">수행원 ID</th>
-                        <th className="px-4 py-2.5 text-left text-xs font-semibold text-[#475569]">이름</th>
-                        <th className="px-4 py-2.5 text-left text-xs font-semibold text-[#475569]">벌점</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-[#E2E8F0]">
-                      {zoneWorkers.map(w => (
-                        <tr key={w.id} className="hover:bg-[#F8FAFC]">
-                          <td className="px-4 py-2.5 text-[#172B4D]">{w.id}</td>
-                          <td className="px-4 py-2.5 text-[#172B4D]">{w.name}</td>
-                          <td className="px-4 py-2.5">
-                            {w.penalty === 0
-                              ? <span className="text-[#94A3B8]">0</span>
-                              : <Badge tone="danger">{w.penalty}</Badge>
-                            }
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                <WorkerTable workers={onsiteWorkers} emptyMessage="배정된 수행원이 없습니다." />
+              )}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader><CardTitle>입고세차 수행원</CardTitle></CardHeader>
+            <CardContent>
+              {!zone.assignedInshopPartnerId ? (
+                <div className="text-sm text-[#94A3B8] py-2">입고세차 파트너가 배정되지 않은 존입니다.</div>
+              ) : (
+                <WorkerTable workers={inshopWorkers} emptyMessage="배정된 수행원이 없습니다." />
               )}
             </CardContent>
           </Card>
@@ -516,20 +633,19 @@ function BulkAssignmentDrawer({ zones, onClose, onApply }) {
   const fileInputRef = useRef(null);
   const [isDragging, setIsDragging] = useState(false);
   const [uploadedFile, setUploadedFile] = useState(null);
-  const [parseResult, setParseResult] = useState(null); // { success: [], errors: [] }
+  const [parseResult, setParseResult] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isApplied, setIsApplied] = useState(false);
 
   const zoneIdSet = useMemo(() => new Set(zones.map(z => z.zoneId)), [zones]);
-  const partnerIdSet = useMemo(() => new Set(MOCK_PARTNERS.map(p => p.partnerId)), []);
 
   // CSV 양식 다운로드
   const handleDownloadTemplate = () => {
-    const headers = "zoneId,partnerId";
+    const headers = "zoneId,onsitePartnerId,inshopPartnerId";
     const sampleRows = [
-      "Z-1001,P-001",
-      "Z-1002,P-002",
-      "Z-1003,",
+      "Z-1001,P-001,P-003",
+      "Z-1002,P-002,P-003",
+      "Z-1003,,P-003",
     ];
     const csvContent = [headers, ...sampleRows].join("\n");
     const blob = new Blob(["\uFEFF" + csvContent], { type: "text/csv;charset=utf-8;" });
@@ -548,10 +664,14 @@ function BulkAssignmentDrawer({ zones, onClose, onApply }) {
 
     const headers = lines[0].split(",").map(h => h.trim().toLowerCase());
     const zoneIdIdx = headers.indexOf("zoneid");
-    const partnerIdIdx = headers.indexOf("partnerid");
+    const onsiteIdx = headers.indexOf("onsitepartnerid");
+    const inshopIdx = headers.indexOf("inshoppartnerid");
 
-    if (zoneIdIdx === -1 || partnerIdIdx === -1) {
-      return { success: [], errors: [{ row: 1, message: "필수 컬럼(zoneId, partnerId)이 없습니다." }] };
+    if (zoneIdIdx === -1) {
+      return { success: [], errors: [{ row: 1, message: "필수 컬럼(zoneId)이 없습니다." }] };
+    }
+    if (onsiteIdx === -1 && inshopIdx === -1) {
+      return { success: [], errors: [{ row: 1, message: "파트너 컬럼(onsitePartnerId, inshopPartnerId) 중 하나 이상이 필요합니다." }] };
     }
 
     const success = [];
@@ -560,30 +680,33 @@ function BulkAssignmentDrawer({ zones, onClose, onApply }) {
     for (let i = 1; i < lines.length; i++) {
       const cols = lines[i].split(",").map(c => c.trim());
       const zoneId = cols[zoneIdIdx];
-      const partnerId = cols[partnerIdIdx] || null;
+      const onsitePartnerId = onsiteIdx !== -1 ? (cols[onsiteIdx] || null) : undefined;
+      const inshopPartnerId = inshopIdx !== -1 ? (cols[inshopIdx] || null) : undefined;
       const rowNum = i + 1;
 
-      // 빈 행 스킵
-      if (!zoneId && !partnerId) continue;
+      if (!zoneId && !onsitePartnerId && !inshopPartnerId) continue;
 
-      // 존 ID 검증
       if (!zoneId) {
         errors.push({ row: rowNum, zoneId: "(없음)", message: "존 ID가 비어있습니다." });
         continue;
       }
 
       if (!zoneIdSet.has(zoneId)) {
-        errors.push({ row: rowNum, zoneId, message: `존재하지 않는 존 ID입니다.` });
+        errors.push({ row: rowNum, zoneId, message: "존재하지 않는 존 ID입니다." });
         continue;
       }
 
-      // 파트너 ID 검증 (빈 값은 미배정으로 허용)
-      if (partnerId && !partnerIdSet.has(partnerId)) {
-        errors.push({ row: rowNum, zoneId, partnerId, message: `존재하지 않는 파트너 ID입니다.` });
+      if (onsitePartnerId && !onsitePartnerIdSet.has(onsitePartnerId)) {
+        errors.push({ row: rowNum, zoneId, message: `현장세차 파트너 ID(${onsitePartnerId})가 유효하지 않습니다.` });
         continue;
       }
 
-      success.push({ zoneId, partnerId });
+      if (inshopPartnerId && !inshopPartnerIdSet.has(inshopPartnerId)) {
+        errors.push({ row: rowNum, zoneId, message: `입고세차 파트너 ID(${inshopPartnerId})가 유효하지 않습니다.` });
+        continue;
+      }
+
+      success.push({ zoneId, onsitePartnerId, inshopPartnerId });
     }
 
     return { success, errors };
@@ -620,39 +743,18 @@ function BulkAssignmentDrawer({ zones, onClose, onApply }) {
     reader.readAsText(file);
   };
 
-  // 드래그 앤 드롭 핸들러
-  const handleDragOver = (e) => {
-    e.preventDefault();
-    setIsDragging(true);
-  };
+  const handleDragOver = (e) => { e.preventDefault(); setIsDragging(true); };
+  const handleDragLeave = (e) => { e.preventDefault(); setIsDragging(false); };
+  const handleDrop = (e) => { e.preventDefault(); setIsDragging(false); handleFile(e.dataTransfer.files[0]); };
+  const handleFileInput = (e) => handleFile(e.target.files[0]);
 
-  const handleDragLeave = (e) => {
-    e.preventDefault();
-    setIsDragging(false);
-  };
-
-  const handleDrop = (e) => {
-    e.preventDefault();
-    setIsDragging(false);
-    const file = e.dataTransfer.files[0];
-    handleFile(file);
-  };
-
-  const handleFileInput = (e) => {
-    const file = e.target.files[0];
-    handleFile(file);
-  };
-
-  // 배정 적용
   const handleApply = () => {
     if (!parseResult || parseResult.success.length === 0) return;
     if (!window.confirm(`${parseResult.success.length}건의 배정을 적용하시겠습니까?`)) return;
-
     onApply(parseResult.success);
     setIsApplied(true);
   };
 
-  // 초기화
   const handleReset = () => {
     setUploadedFile(null);
     setParseResult(null);
@@ -690,7 +792,9 @@ function BulkAssignmentDrawer({ zones, onClose, onApply }) {
             <p>CSV 또는 엑셀 파일을 업로드하여 다수의 존에 파트너를 일괄 배정할 수 있습니다.</p>
             <ul className="list-disc list-inside space-y-1">
               <li>파일 형식: CSV (쉼표 구분) 또는 Excel (.xlsx)</li>
-              <li>필수 컬럼: zoneId, partnerId</li>
+              <li>필수 컬럼: zoneId, onsitePartnerId, inshopPartnerId</li>
+              <li>현장세차 파트너: {ONSITE_PARTNERS.map(p => `${p.partnerId}(${p.partnerName})`).join(', ')}</li>
+              <li>입고세차 파트너: {INSHOP_PARTNERS.map(p => `${p.partnerId}(${p.partnerName})`).join(', ')}</li>
               <li>파트너 ID를 비워두면 미배정 처리됩니다.</li>
             </ul>
             <Button variant="secondary" size="sm" onClick={handleDownloadTemplate}>
@@ -702,9 +806,7 @@ function BulkAssignmentDrawer({ zones, onClose, onApply }) {
 
         {/* 파일 업로드 영역 */}
         <Card>
-          <CardHeader>
-            <CardTitle>파일 업로드</CardTitle>
-          </CardHeader>
+          <CardHeader><CardTitle>파일 업로드</CardTitle></CardHeader>
           <CardContent>
             <div
               className={cn(
@@ -717,23 +819,12 @@ function BulkAssignmentDrawer({ zones, onClose, onApply }) {
               onDrop={handleDrop}
               onClick={() => fileInputRef.current?.click()}
             >
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept=".csv,.xlsx,.xls"
-                className="hidden"
-                onChange={handleFileInput}
-              />
+              <input ref={fileInputRef} type="file" accept=".csv,.xlsx,.xls" className="hidden" onChange={handleFileInput} />
               {uploadedFile ? (
                 <div className="space-y-2">
                   <CheckCircle2 className="h-10 w-10 mx-auto text-emerald-500" />
                   <p className="font-medium text-[#172B4D]">{uploadedFile.name}</p>
-                  <button
-                    onClick={(e) => { e.stopPropagation(); handleReset(); }}
-                    className="text-sm text-[#0052CC] hover:underline"
-                  >
-                    다른 파일 선택
-                  </button>
+                  <button onClick={(e) => { e.stopPropagation(); handleReset(); }} className="text-sm text-[#0052CC] hover:underline">다른 파일 선택</button>
                 </div>
               ) : (
                 <div className="space-y-2">
@@ -746,16 +837,10 @@ function BulkAssignmentDrawer({ zones, onClose, onApply }) {
           </CardContent>
         </Card>
 
-        {/* 처리 중 */}
         {isProcessing && (
-          <Card>
-            <CardContent className="py-8 text-center text-[#6B778C]">
-              파일을 분석 중입니다...
-            </CardContent>
-          </Card>
+          <Card><CardContent className="py-8 text-center text-[#6B778C]">파일을 분석 중입니다...</CardContent></Card>
         )}
 
-        {/* 적용 완료 */}
         {isApplied && (
           <Card>
             <CardContent className="py-6">
@@ -785,18 +870,20 @@ function BulkAssignmentDrawer({ zones, onClose, onApply }) {
                   <thead className="bg-[#F8FAFC] sticky top-0">
                     <tr>
                       <th className="px-3 py-2 text-left font-semibold text-[#475569]">존 ID</th>
-                      <th className="px-3 py-2 text-left font-semibold text-[#475569]">파트너 ID</th>
+                      <th className="px-3 py-2 text-left font-semibold text-[#475569]">현장세차 파트너</th>
+                      <th className="px-3 py-2 text-left font-semibold text-[#475569]">입고세차 파트너</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-[#E2E8F0]">
                     {parseResult.success.slice(0, 50).map((item, idx) => (
                       <tr key={idx}>
                         <td className="px-3 py-2">{item.zoneId}</td>
-                        <td className="px-3 py-2">{item.partnerId || <span className="text-[#94A3B8]">미배정</span>}</td>
+                        <td className="px-3 py-2">{item.onsitePartnerId ? partnerMap.get(item.onsitePartnerId) || item.onsitePartnerId : <span className="text-[#94A3B8]">미배정</span>}</td>
+                        <td className="px-3 py-2">{item.inshopPartnerId ? partnerMap.get(item.inshopPartnerId) || item.inshopPartnerId : <span className="text-[#94A3B8]">미배정</span>}</td>
                       </tr>
                     ))}
                     {parseResult.success.length > 50 && (
-                      <tr><td colSpan={2} className="px-3 py-2 text-center text-[#6B778C]">외 {parseResult.success.length - 50}건...</td></tr>
+                      <tr><td colSpan={3} className="px-3 py-2 text-center text-[#6B778C]">외 {parseResult.success.length - 50}건...</td></tr>
                     )}
                   </tbody>
                 </table>
@@ -839,13 +926,8 @@ function BulkAssignmentDrawer({ zones, onClose, onApply }) {
           </Card>
         )}
 
-        {/* 성공 0건일 때 */}
         {parseResult && parseResult.success.length === 0 && parseResult.errors.length === 0 && (
-          <Card>
-            <CardContent className="py-6 text-center text-[#6B778C]">
-              처리할 데이터가 없습니다.
-            </CardContent>
-          </Card>
+          <Card><CardContent className="py-6 text-center text-[#6B778C]">처리할 데이터가 없습니다.</CardContent></Card>
         )}
       </div>
     </Drawer>
