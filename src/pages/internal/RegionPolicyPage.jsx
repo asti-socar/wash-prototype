@@ -208,6 +208,70 @@ function BatchEditModal({ open, onClose, onApply, filteredCount }) {
   );
 }
 
+// ============== BatchConfirmModal ==============
+
+function BatchConfirmModal({ open, onClose, onConfirm, changedRows, bulkData }) {
+  if (!open || !changedRows) return null;
+
+  const displayRows = changedRows.slice(0, 5);
+  const remaining = changedRows.length - displayRows.length;
+
+  const changeItems = [];
+  if (bulkData["주기세차(일)"] !== null) {
+    const v = bulkData["주기세차(일)"] === 0 ? "상위 정책 따름" : `${bulkData["주기세차(일)"]}일`;
+    changeItems.push({ field: "주기세차(일)", value: v });
+  }
+  if (bulkData["라이트세차"] !== null) {
+    const v = bulkData["라이트세차"] === "inherit" ? "상위 정책 따름" : bulkData["라이트세차"];
+    changeItems.push({ field: "라이트세차", value: v });
+  }
+
+  return (
+    <div className="fixed inset-0 z-[60] flex items-center justify-center">
+      <div className="absolute inset-0 bg-black/30" onClick={onClose} />
+      <Card className="relative z-10 w-full max-w-md shadow-2xl">
+        <CardHeader>
+          <CardTitle>일괄 수정 확인</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <p className="text-sm text-[#172B4D]">
+            <b className="text-[#0052CC]">{changedRows.length}건</b>의 지역2 정책이 변경됩니다.
+          </p>
+
+          <div>
+            <div className="text-xs font-semibold text-[#6B778C] mb-1.5">변경 대상</div>
+            <div className="rounded-lg bg-slate-50 p-3 space-y-1">
+              {displayRows.map((r, i) => (
+                <div key={i} className="text-sm text-[#172B4D]">{r.name}</div>
+              ))}
+              {remaining > 0 && (
+                <div className="text-sm text-[#6B778C]">외 {remaining}건</div>
+              )}
+            </div>
+          </div>
+
+          <div>
+            <div className="text-xs font-semibold text-[#6B778C] mb-1.5">변경 내용</div>
+            <div className="rounded-lg bg-slate-50 p-3 space-y-2">
+              {changeItems.map(({ field, value }) => (
+                <div key={field} className="flex items-center gap-2 text-sm">
+                  <span className="font-medium text-[#172B4D] min-w-[80px]">{field}</span>
+                  <span className="text-[#6B778C]">→</span>
+                  <span className="font-semibold text-[#0052CC]">{value}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </CardContent>
+        <div className="flex h-[72px] items-center justify-end gap-2 border-t border-[#DFE1E6] px-5 bg-[#F4F5F7] rounded-b-xl">
+          <Button variant="secondary" onClick={onClose}>취소</Button>
+          <Button onClick={onConfirm}>{changedRows.length}건 적용</Button>
+        </div>
+      </Card>
+    </div>
+  );
+}
+
 // ============== Region1 Detail/Edit Drawer ==============
 
 function Region1DetailDrawer({ open, onClose, row, editing, onEditStart, onSave, historyEntries }) {
@@ -593,6 +657,7 @@ function Region2Tab({ onSwitchTab }) {
   const [batchEditOpen, setBatchEditOpen] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [saveConfirm, setSaveConfirm] = useState(null);
+  const [batchConfirm, setBatchConfirm] = useState(null);
 
   const sidoOptions = useMemo(() => [...new Set(initialRegion2Data.map(d => d.시도))].sort(), []);
   const region1Map = useMemo(() => {
@@ -769,6 +834,36 @@ function Region2Tab({ onSwitchTab }) {
     setBatchEditOpen(false);
   };
 
+  const handleBulkPreview = (bulkData) => {
+    const changedRows = [];
+    data.forEach(r => {
+      if (!selectedIds.has(r.Region2ID)) return;
+      const changes = {};
+      if (bulkData["주기세차(일)"] !== null) {
+        const newCycle = bulkData["주기세차(일)"] === 0 ? null : bulkData["주기세차(일)"];
+        if (r["주기세차(일)"] !== newCycle) changes["주기세차(일)"] = { from: r["주기세차(일)"], to: newCycle };
+      }
+      if (bulkData["라이트세차"] !== null) {
+        const newLight = bulkData["라이트세차"] === "inherit" ? null : bulkData["라이트세차"];
+        if (r["라이트세차"] !== newLight) changes["라이트세차"] = { from: r["라이트세차"], to: newLight };
+      }
+      if (Object.keys(changes).length > 0) {
+        changedRows.push({ name: `${r.시도} ${r.시군구}`, changes });
+      }
+    });
+    if (changedRows.length === 0) {
+      setBatchEditOpen(false);
+      return;
+    }
+    setBatchConfirm({ bulkData, changedRows });
+  };
+
+  const handleBulkConfirm = () => {
+    if (!batchConfirm) return;
+    handleBulkApply(batchConfirm.bulkData);
+    setBatchConfirm(null);
+  };
+
   const pageAllSelected = pageData.length > 0 && pageData.every(r => selectedIds.has(r.Region2ID));
   const pageSomeSelected = pageData.some(r => selectedIds.has(r.Region2ID));
 
@@ -789,7 +884,8 @@ function Region2Tab({ onSwitchTab }) {
         <input
           type="checkbox"
           checked={selectedIds.has(row.Region2ID)}
-          onChange={(e) => { e.stopPropagation(); handleToggleSelect(row.Region2ID); }}
+          onClick={(e) => e.stopPropagation()}
+          onChange={() => handleToggleSelect(row.Region2ID)}
           className="h-4 w-4 rounded border-gray-300 cursor-pointer accent-blue-600"
         />
       ),
@@ -957,8 +1053,15 @@ function Region2Tab({ onSwitchTab }) {
       <BatchEditModal
         open={batchEditOpen}
         onClose={() => setBatchEditOpen(false)}
-        onApply={handleBulkApply}
+        onApply={handleBulkPreview}
         filteredCount={selectedIds.size}
+      />
+      <BatchConfirmModal
+        open={!!batchConfirm}
+        onClose={() => setBatchConfirm(null)}
+        onConfirm={handleBulkConfirm}
+        changedRows={batchConfirm?.changedRows}
+        bulkData={batchConfirm?.bulkData}
       />
 
       <Region2DetailDrawer
