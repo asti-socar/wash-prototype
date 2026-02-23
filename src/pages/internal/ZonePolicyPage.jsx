@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { Search, Edit, X } from 'lucide-react';
+import { Search, Edit, X, Pencil, Trash2 } from 'lucide-react';
 import {
   cn, Card, CardHeader, CardTitle, CardContent, Button, Input, Select,
   usePagination, Pagination, DataTable, FilterPanel, Chip,
@@ -73,6 +73,125 @@ function Field({ label, children, isEditing }) {
 }
 
 
+function ZPSaveConfirmModal({ open, onClose, onConfirm, title, changes }) {
+  if (!open || !changes) return null;
+  const entries = Object.entries(changes);
+  return (
+    <div className="fixed inset-0 z-[1100] flex items-center justify-center">
+      <div className="absolute inset-0 bg-black/30" onClick={onClose} />
+      <Card className="relative z-[1101] w-full max-w-sm">
+        <CardHeader>
+          <CardTitle>수정 내용 확인</CardTitle>
+          {title && <p className="text-sm text-[#6B778C] mt-1">{title}</p>}
+        </CardHeader>
+        <CardContent className="space-y-2">
+          {entries.map(([field, { from, to }]) => (
+            <div key={field} className="rounded-lg bg-slate-50 p-3">
+              <div className="text-xs font-semibold text-[#6B778C] mb-1">{field}</div>
+              <div className="flex items-center gap-2 text-sm">
+                <span className="text-[#6B778C]">{from || '없음'}</span>
+                <span className="text-[#6B778C]">→</span>
+                <span className="font-semibold text-[#0052CC]">{to || '없음'}</span>
+              </div>
+            </div>
+          ))}
+        </CardContent>
+        <div className="flex items-center justify-end gap-2 border-t border-[#DFE1E6] px-5 py-4 bg-[#F4F5F7] rounded-b-xl">
+          <Button variant="secondary" onClick={onClose}>취소</Button>
+          <Button onClick={onConfirm}>확인</Button>
+        </div>
+      </Card>
+    </div>
+  );
+}
+
+function ZPDeleteConfirmModal({ open, onClose, onConfirm, policy }) {
+  if (!open || !policy) return null;
+  return (
+    <div className="fixed inset-0 z-[1100] flex items-center justify-center">
+      <div className="absolute inset-0 bg-black/30" onClick={onClose} />
+      <Card className="relative z-[1101] w-full max-w-sm">
+        <CardHeader>
+          <CardTitle>정책 초기화 확인</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-sm text-[#172B4D]">
+            <b>{policy.zoneName}</b>의 존 수준 정책(주기세차, 라이트세차)을 초기화하시겠습니까?
+          </p>
+          <p className="text-xs text-[#6B778C] mt-2">초기화 후 상위 정책(지역2/지역1)을 따르게 됩니다.</p>
+        </CardContent>
+        <div className="flex items-center justify-end gap-2 border-t border-[#DFE1E6] px-5 py-4 bg-[#F4F5F7] rounded-b-xl">
+          <Button variant="secondary" onClick={onClose}>취소</Button>
+          <Button className="bg-rose-600 hover:bg-rose-700" onClick={onConfirm}>초기화</Button>
+        </div>
+      </Card>
+    </div>
+  );
+}
+
+function ZPBulkConfirmModal({ open, onClose, onConfirm, changedRows, bulkData }) {
+  if (!open || !changedRows) return null;
+
+  const displayRows = changedRows.slice(0, 5);
+  const remaining = changedRows.length - displayRows.length;
+
+  const changeItems = [];
+  if (bulkData.cycleWashDays !== null) {
+    changeItems.push({ field: '주기세차(일)', value: `${bulkData.cycleWashDays}일` });
+  }
+  if (bulkData.isLightWash !== null) {
+    changeItems.push({ field: '라이트세차', value: bulkData.isLightWash ? 'Y' : 'N' });
+  }
+  if (bulkData.isWashManaged !== null) {
+    changeItems.push({ field: '세차관리', value: bulkData.isWashManaged ? 'Y' : 'N' });
+  }
+
+  return (
+    <div className="fixed inset-0 z-[60] flex items-center justify-center">
+      <div className="absolute inset-0 bg-black/30" onClick={onClose} />
+      <Card className="relative z-10 w-full max-w-md shadow-2xl">
+        <CardHeader>
+          <CardTitle>일괄 수정 확인</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <p className="text-sm text-[#172B4D]">
+            <b className="text-[#0052CC]">{changedRows.length}건</b>의 존 정책이 변경됩니다.
+          </p>
+
+          <div>
+            <div className="text-xs font-semibold text-[#6B778C] mb-1.5">변경 대상</div>
+            <div className="rounded-lg bg-slate-50 p-3 space-y-1">
+              {displayRows.map((r, i) => (
+                <div key={i} className="text-sm text-[#172B4D]">{r.name}</div>
+              ))}
+              {remaining > 0 && (
+                <div className="text-sm text-[#6B778C]">외 {remaining}건</div>
+              )}
+            </div>
+          </div>
+
+          <div>
+            <div className="text-xs font-semibold text-[#6B778C] mb-1.5">변경 내용</div>
+            <div className="rounded-lg bg-slate-50 p-3 space-y-2">
+              {changeItems.map(({ field, value }) => (
+                <div key={field} className="flex items-center gap-2 text-sm">
+                  <span className="font-medium text-[#172B4D] min-w-[80px]">{field}</span>
+                  <span className="text-[#6B778C]">→</span>
+                  <span className="font-semibold text-[#0052CC]">{value}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </CardContent>
+        <div className="flex h-[72px] items-center justify-end gap-2 border-t border-[#DFE1E6] px-5 bg-[#F4F5F7] rounded-b-xl">
+          <Button variant="secondary" onClick={onClose}>취소</Button>
+          <Button onClick={onConfirm}>{changedRows.length}건 적용</Button>
+        </div>
+      </Card>
+    </div>
+  );
+}
+
 // ============== MOCK DATA ==============
 const REGION1_POLICIES = {
   '서울': { cycleWashDays: 14, isLightWash: true },
@@ -144,7 +263,9 @@ const ZONE_TYPE_OPTIONS = ['현장세차존', '주기세차존', '현장세차 �
 export default function ZonePolicyPage() {
   const [policies, setPolicies] = useState(MOCK_ZONE_POLICIES);
   const [selectedPolicy, setSelectedPolicy] = useState(null);
-  
+  const [drawerMode, setDrawerMode] = useState('view');
+  const [deleteTarget, setDeleteTarget] = useState(null);
+
   // Filters
   const [q, setQ] = useState("");
   const [searchField, setSearchField] = useState('zoneId');
@@ -154,7 +275,9 @@ export default function ZonePolicyPage() {
   const [fRegion1, setFRegion1] = useState("");
   const [fRegion2, setFRegion2] = useState("");
 
+  const [selectedIds, setSelectedIds] = useState(new Set());
   const [isBulkEditModalOpen, setIsBulkEditModalOpen] = useState(false);
+  const [bulkConfirm, setBulkConfirm] = useState(null);
   const [sortConfig, setSortConfig] = useState({ key: 'zoneId', direction: 'asc' });
 
   const filteredData = useMemo(() => {
@@ -211,19 +334,53 @@ export default function ZonePolicyPage() {
   
   const handleSave = (policyToSave) => {
     setPolicies(prev => prev.map(p => p.zoneId === policyToSave.zoneId ? policyToSave : p));
-    setSelectedPolicy(policyToSave);
+    setSelectedPolicy(null);
+  };
+
+  const handleDelete = () => {
+    if (!deleteTarget) return;
+    const zone = deleteTarget;
+    const r1Policy = REGION1_POLICIES[zone.region1] || REGION1_POLICIES['기타'];
+    const r2Policy = REGION2_POLICIES[zone.region2] || {};
+    setPolicies(prev => prev.map(p => {
+      if (p.zoneId !== zone.zoneId) return p;
+      return {
+        ...p,
+        cycleWashDays: r2Policy.cycleWashDays !== undefined
+          ? { value: r2Policy.cycleWashDays, source: '지역2정책' }
+          : { value: r1Policy.cycleWashDays, source: '지역1정책' },
+        isLightWash: r2Policy.isLightWash !== undefined
+          ? { value: r2Policy.isLightWash, source: '지역2정책' }
+          : { value: r1Policy.isLightWash, source: '지역1정책' },
+      };
+    }));
+    setDeleteTarget(null);
   };
   
+  const handleToggleSelect = (id) => {
+    setSelectedIds(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  };
+
+  const handleTogglePageAll = () => {
+    const pageIds = currentData.map(r => r.zoneId);
+    const allSelected = pageIds.every(id => selectedIds.has(id));
+    setSelectedIds(prev => {
+      const next = new Set(prev);
+      pageIds.forEach(id => allSelected ? next.delete(id) : next.add(id));
+      return next;
+    });
+  };
+
   const handleBulkSave = (bulkData) => {
-    const filteredIds = new Set(filteredData.map(p => p.zoneId));
-    
     setPolicies(currentPolicies => currentPolicies.map(p => {
-        if (!filteredIds.has(p.zoneId)) {
-            return p;
-        }
+        if (!selectedIds.has(p.zoneId)) return p;
 
         const updatedPolicy = { ...p };
-        
+
         if (bulkData.cycleWashDays !== null) {
             updatedPolicy.cycleWashDays = { value: bulkData.cycleWashDays, source: '존정책' };
         }
@@ -237,10 +394,67 @@ export default function ZonePolicyPage() {
         return updatedPolicy;
     }));
 
+    setSelectedIds(new Set());
     setIsBulkEditModalOpen(false);
   };
 
+  const handleBulkPreview = (bulkData) => {
+    const changedRows = [];
+    policies.forEach(p => {
+      if (!selectedIds.has(p.zoneId)) return;
+      const changes = {};
+      if (bulkData.cycleWashDays !== null && p.cycleWashDays.value !== bulkData.cycleWashDays) {
+        changes['주기세차(일)'] = { from: p.cycleWashDays.value, to: bulkData.cycleWashDays };
+      }
+      if (bulkData.isLightWash !== null && p.isLightWash.value !== bulkData.isLightWash) {
+        changes['라이트세차'] = { from: p.isLightWash.value ? 'Y' : 'N', to: bulkData.isLightWash ? 'Y' : 'N' };
+      }
+      if (bulkData.isWashManaged !== null && p.isWashManaged !== bulkData.isWashManaged) {
+        changes['세차관리'] = { from: p.isWashManaged ? 'Y' : 'N', to: bulkData.isWashManaged ? 'Y' : 'N' };
+      }
+      if (Object.keys(changes).length > 0) {
+        changedRows.push({ name: p.zoneName, changes });
+      }
+    });
+    if (changedRows.length === 0) {
+      setIsBulkEditModalOpen(false);
+      return;
+    }
+    setBulkConfirm({ bulkData, changedRows });
+  };
+
+  const handleBulkConfirm = () => {
+    if (!bulkConfirm) return;
+    handleBulkSave(bulkConfirm.bulkData);
+    setBulkConfirm(null);
+  };
+
+  const pageAllSelected = currentData.length > 0 && currentData.every(r => selectedIds.has(r.zoneId));
+  const pageSomeSelected = currentData.some(r => selectedIds.has(r.zoneId));
+
   const columns = [
+    {
+      key: '_select',
+      header: (
+        <input
+          type="checkbox"
+          checked={pageAllSelected}
+          ref={el => { if (el) el.indeterminate = pageSomeSelected && !pageAllSelected; }}
+          onChange={handleTogglePageAll}
+          className="h-4 w-4 rounded border-gray-300 cursor-pointer accent-blue-600"
+        />
+      ),
+      align: 'center',
+      render: r => (
+        <input
+          type="checkbox"
+          checked={selectedIds.has(r.zoneId)}
+          onClick={(e) => e.stopPropagation()}
+          onChange={() => handleToggleSelect(r.zoneId)}
+          className="h-4 w-4 rounded border-gray-300 cursor-pointer accent-blue-600"
+        />
+      ),
+    },
     { key: 'zoneId', header: '존 ID' },
     { key: 'zoneName', header: '존 이름' },
     { key: 'zoneType', header: '존 유형' },
@@ -248,6 +462,12 @@ export default function ZonePolicyPage() {
     { key: 'vehicleCount', header: '차량 대수', align: 'center', sortable: true, render: r => `${r.vehicleCount}대` },
     { key: 'cycleWashDays', header: '주기세차(일)', sortable: true, render: r => <span className="inline-flex items-center gap-1.5">{r.cycleWashDays.value}<Badge tone={r.cycleWashDays.source.toLowerCase()}>{r.cycleWashDays.source}</Badge></span> },
     { key: 'isLightWash', header: '라이트세차', render: r => <span className="inline-flex items-center gap-1.5">{r.isLightWash.value ? 'Y' : 'N'}<Badge tone={r.isLightWash.source.toLowerCase()}>{r.isLightWash.source}</Badge></span> },
+    { key: '_actions', header: '', width: 80, render: r => (
+      <div className="flex items-center gap-1">
+        <button onClick={(e) => { e.stopPropagation(); setSelectedPolicy(r); setDrawerMode('edit'); }} className="p-1 rounded hover:bg-slate-100" title="수정"><Pencil className="h-4 w-4 text-[#6B778C]" /></button>
+        <button onClick={(e) => { e.stopPropagation(); setDeleteTarget(r); }} className="p-1 rounded hover:bg-red-50" title="초기화"><Trash2 className="h-4 w-4 text-[#6B778C]" /></button>
+      </div>
+    )},
   ];
 
   const isFiltered = filteredData.length > 0 && policies.length > filteredData.length;
@@ -259,9 +479,6 @@ export default function ZonePolicyPage() {
           <div className="text-base font-bold text-[#172B4D]">존 정책 관리</div>
           <div className="mt-1 text-sm text-[#6B778C]">존별 세차 정책(주기/라이트) 및 운영 유형을 관리합니다.</div>
         </div>
-        <Button onClick={() => setIsBulkEditModalOpen(true)} disabled={!isFiltered}>
-            <Edit className="mr-2 h-4 w-4" /> 필터된 데이터 일괄 수정
-        </Button>
       </div>
 
       <FilterPanel
@@ -333,12 +550,25 @@ export default function ZonePolicyPage() {
           {isFiltered ? `필터된 결과 ${filteredData.length.toLocaleString()}건 / ` : ''}
           전체 <b className="text-[#172B4D]">{policies.length.toLocaleString()}</b>건
         </div>
+        <div className="flex items-center gap-2">
+          {selectedIds.size > 0 && (
+            <span className="text-xs text-blue-600 font-semibold">{selectedIds.size}건 선택</span>
+          )}
+          <Button
+            variant="secondary" size="sm"
+            disabled={selectedIds.size === 0}
+            onClick={() => setIsBulkEditModalOpen(true)}
+          >
+            <Edit className="mr-1.5 h-3.5 w-3.5" />
+            일괄 수정{selectedIds.size > 0 ? ` (${selectedIds.size}건)` : ""}
+          </Button>
+        </div>
       </div>
       <DataTable 
         columns={columns} 
         rows={currentData} 
         rowKey={r => r.zoneId} 
-        onRowClick={setSelectedPolicy} 
+        onRowClick={(r) => { setSelectedPolicy(r); setDrawerMode('view'); }}
         sortConfig={sortConfig} 
         onSort={handleSort} 
       />
@@ -349,26 +579,43 @@ export default function ZonePolicyPage() {
           policy={selectedPolicy}
           onClose={() => setSelectedPolicy(null)}
           onSave={handleSave}
+          onDelete={(p) => { setSelectedPolicy(null); setDeleteTarget(p); }}
+          mode={drawerMode}
         />
       )}
-      <BulkEditModal 
+      <ZPDeleteConfirmModal
+        open={!!deleteTarget}
+        onClose={() => setDeleteTarget(null)}
+        onConfirm={handleDelete}
+        policy={deleteTarget}
+      />
+      <BulkEditModal
         open={isBulkEditModalOpen}
         onClose={() => setIsBulkEditModalOpen(false)}
-        onSave={handleBulkSave}
-        filteredCount={filteredData.length}
+        onSave={handleBulkPreview}
+        filteredCount={selectedIds.size}
+      />
+      <ZPBulkConfirmModal
+        open={!!bulkConfirm}
+        onClose={() => setBulkConfirm(null)}
+        onConfirm={handleBulkConfirm}
+        changedRows={bulkConfirm?.changedRows}
+        bulkData={bulkConfirm?.bulkData}
       />
     </div>
   );
 }
 
-function ZonePolicyDrawer({ policy, onClose, onSave }) {
-    const [isEditing, setIsEditing] = useState(false);
+function ZonePolicyDrawer({ policy, onClose, onSave, onDelete, mode }) {
+    const [isEditing, setIsEditing] = useState(mode === 'edit');
     const [formData, setFormData] = useState(JSON.parse(JSON.stringify(policy)));
+    const [saveConfirm, setSaveConfirm] = useState(null);
 
     useEffect(() => {
         setFormData(JSON.parse(JSON.stringify(policy)));
-        setIsEditing(false);
-    }, [policy]);
+        setIsEditing(mode === 'edit');
+        setSaveConfirm(null);
+    }, [policy, mode]);
 
     const handleInputChange = (e) => {
         const { name, value, type } = e.target;
@@ -415,14 +662,39 @@ function ZonePolicyDrawer({ policy, onClose, onSave }) {
     };
 
     const handleSave = () => {
-        onSave({ ...formData });
-        setIsEditing(false);
-    }
-    
+        const changes = {};
+        if (formData.zoneType !== policy.zoneType) {
+            changes['존 유형'] = { from: policy.zoneType, to: formData.zoneType };
+        }
+        if (formData.isWashManaged !== policy.isWashManaged) {
+            changes['세차관리'] = { from: policy.isWashManaged ? 'Y' : 'N', to: formData.isWashManaged ? 'Y' : 'N' };
+        }
+        if (formData.cycleWashDays.value !== policy.cycleWashDays.value || formData.cycleWashDays.source !== policy.cycleWashDays.source) {
+            changes['주기세차 경과일'] = { from: `${policy.cycleWashDays.value}일 (${policy.cycleWashDays.source})`, to: `${formData.cycleWashDays.value}일 (${formData.cycleWashDays.source})` };
+        }
+        if (formData.isLightWash.value !== policy.isLightWash.value || formData.isLightWash.source !== policy.isLightWash.source) {
+            changes['라이트세차'] = { from: `${policy.isLightWash.value ? 'Y' : 'N'} (${policy.isLightWash.source})`, to: `${formData.isLightWash.value ? 'Y' : 'N'} (${formData.isLightWash.source})` };
+        }
+        if (formData.zoneNotes !== policy.zoneNotes) {
+            changes['존 특이사항'] = { from: policy.zoneNotes || '없음', to: formData.zoneNotes || '없음' };
+        }
+        if (Object.keys(changes).length === 0) {
+            setIsEditing(false);
+            return;
+        }
+        setSaveConfirm({ changes, finalData: { ...formData } });
+    };
+
+    const confirmSave = () => {
+        if (!saveConfirm) return;
+        onSave(saveConfirm.finalData);
+        setSaveConfirm(null);
+    };
+
     const handleCancel = () => {
         setFormData(JSON.parse(JSON.stringify(policy)));
         setIsEditing(false);
-    }
+    };
     
     const renderPolicyField = (field, unit = '') => {
       const raw = formData[field].value;
@@ -436,9 +708,10 @@ function ZonePolicyDrawer({ policy, onClose, onSave }) {
     };
 
     return (
-        <Drawer 
-            open={!!policy} 
-            title={`정책 상세: ${policy.zoneName}`} 
+      <>
+        <Drawer
+            open={!!policy}
+            title={`정책 ${isEditing ? '수정' : '상세'}: ${policy.zoneName}`}
             onClose={onClose}
             footer={
                 isEditing ? (
@@ -449,7 +722,9 @@ function ZonePolicyDrawer({ policy, onClose, onSave }) {
                 ) : (
                     <>
                         <Button variant="secondary" onClick={onClose}>닫기</Button>
+                        <div className="flex-1" />
                         <Button onClick={() => setIsEditing(true)}>수정</Button>
+                        <Button className="bg-rose-600 hover:bg-rose-700" onClick={() => onDelete(policy)}>삭제</Button>
                     </>
                 )
             }
@@ -523,6 +798,14 @@ function ZonePolicyDrawer({ policy, onClose, onSave }) {
             </Card>
           </div>
         </Drawer>
+        <ZPSaveConfirmModal
+          open={!!saveConfirm}
+          onClose={() => setSaveConfirm(null)}
+          onConfirm={confirmSave}
+          title={policy.zoneName}
+          changes={saveConfirm?.changes}
+        />
+      </>
     );
 }
 

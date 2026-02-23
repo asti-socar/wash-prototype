@@ -108,6 +108,11 @@ export const PARTNER_HISTORY = [
 ];
 
 export const ASTI_HISTORY = [
+  { id: 14, date: "2026-02-23 12:13", content: "존정책관리: 일괄 수정 UX 변경 (필터 기반→체크박스 선택 기반, 버튼 위치/스타일 변경, 적용 전 확인 모달 추가)", isPolicyChange: false, links: [{ label: "존 정책 관리", page: "zone-policy" }] },
+  { id: 13, date: "2026-02-23 11:43", content: "지역정책관리: 지역2정책 체크박스 클릭 시 Drawer 열림 방지, 일괄 수정 시 변경 확인 모달 추가", isPolicyChange: false, links: [{ label: "지역 정책 관리", page: "regionpolicy" }] },
+  { id: 12, date: "2026-02-20 18:14", content: "발행유형정책, 존정책관리, 존배정관리: 수정/삭제 UX 변경 (인라인 아이콘, Drawer 상세↔수정, SaveConfirmModal, DeleteConfirmModal)", isPolicyChange: false, links: [{ label: "발행 유형 정책", page: "order-type-policy" }, { label: "존 정책 관리", page: "zone-policy" }, { label: "존 배정 관리", page: "zone-assignment" }] },
+  { id: 11, date: "2026-02-20 17:42", content: "지역정책관리: 지역1/지역2 정책 수정 시 변경 내용 확인 팝업(SaveConfirmModal) 추가", isPolicyChange: false, links: [{ label: "지역 정책 관리", page: "regionpolicy" }] },
+  { id: 10, date: "2026-02-20 17:21", content: "지역정책관리: 지역1 정책탭 수정UX 변경 (인라인→Drawer 기반 상세/수정)", isPolicyChange: false, links: [{ label: "지역 정책 관리", page: "regionpolicy" }] },
   { id: 9, date: "2026-02-20 14:30", content: "지역정책관리: 수정, 삭제 UX 변경", isPolicyChange: false, links: [{ label: "지역 정책 관리", page: "regionpolicy" }] },
   { id: 8, date: "2026-02-20 12:10", content: "발행유형정책: 기능명세 현행화 (존유형 점수, 탭순서, Drawer 구조, 부가 정책 필드, 설명/메모, 컬럼 테이블, 유효성 검사, Drawer 제목/Footer)", isPolicyChange: false, links: [{ label: "발행 유형 정책", page: "order-type-policy" }] },
   { id: 7, date: "2026-02-20 12:10", content: "발행유형정책: O/X 값 Y/N으로 통일", isPolicyChange: true, links: [{ label: "발행 유형 정책", page: "order-type-policy" }] },
