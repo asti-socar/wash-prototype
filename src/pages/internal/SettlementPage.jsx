@@ -142,7 +142,7 @@ export default function SettlementPage() {
         chips={<>
           {fPartner !== "전체" && <Chip onRemove={() => setFPartner("전체")}>파트너: {fPartner}</Chip>}
           {fRequestType !== "전체" && <Chip onRemove={() => setFRequestType("전체")}>요청 유형: {fRequestType}</Chip>}
-          {(periodFrom || periodTo) && <Chip onRemove={() => { setPeriodFrom(defaultFrom); setPeriodTo(defaultTo); }}>요청 일: {periodFrom || "-"} ~ {periodTo || "-"}</Chip>}
+          {(periodFrom || periodTo) && <Chip onRemove={() => { setPeriodFrom(defaultFrom); setPeriodTo(defaultTo); }}>요청 일시: {periodFrom || "-"} ~ {periodTo || "-"}</Chip>}
           {approvalTypeFilter !== "전체" && <Chip onRemove={() => setApprovalTypeFilter("전체")}>합의 유형: {approvalTypeFilter}</Chip>}
           {statusFilter !== "전체" && <Chip onRemove={() => setStatusFilter("전체")}>상태: {statusFilter}</Chip>}
         </>}
@@ -162,13 +162,13 @@ export default function SettlementPage() {
             {[...new Set(items.map(i => i.requestType))].sort().map(t => <option key={t} value={t}>{t}</option>)}
           </Select>
         </div>
-        <div className="md:col-span-2">
-          <label htmlFor="periodFrom" className="block text-xs font-semibold text-[#6B778C] mb-1.5">요청 일 시작</label>
-          <Input id="periodFrom" type="date" value={periodFrom} onChange={e => setPeriodFrom(e.target.value)} />
-        </div>
-        <div className="md:col-span-2">
-          <label htmlFor="periodTo" className="block text-xs font-semibold text-[#6B778C] mb-1.5">요청 일 종료</label>
-          <Input id="periodTo" type="date" value={periodTo} onChange={e => setPeriodTo(e.target.value)} />
+        <div className="md:col-span-5">
+          <label className="block text-xs font-semibold text-[#6B778C] mb-1.5">요청 일시</label>
+          <div className="flex items-center gap-2">
+            <Input id="periodFrom" type="date" value={periodFrom} onChange={e => setPeriodFrom(e.target.value)} />
+            <span className="text-sm text-[#6B778C] shrink-0">~</span>
+            <Input id="periodTo" type="date" value={periodTo} onChange={e => setPeriodTo(e.target.value)} />
+          </div>
         </div>
         <div className="md:col-span-2">
           <label htmlFor="approvalTypeFilter" className="block text-xs font-semibold text-[#6B778C] mb-1.5">합의 유형</label>

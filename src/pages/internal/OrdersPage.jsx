@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from "react";
+import React, { useMemo, useState, useEffect, useRef } from "react";
 import {
   Search,
   X,
@@ -17,6 +17,8 @@ import {
   ChevronRight,
   ChevronsLeft,
   ChevronsRight,
+  ChevronDown,
+  RotateCcw,
 } from "lucide-react";
 import {
   cn,
@@ -32,7 +34,6 @@ import {
   Select,
   Badge,
   Chip,
-  FilterPanel,
   Drawer,
   usePagination,
   Pagination,
@@ -95,11 +96,95 @@ const formatLeadTimeHours = (h) => {
 
 const CANCEL_TYPES = ["시스템(변경 취소)", "시스템(미예약 취소)", "시스템(노쇼 취소)", "시스템(예약 불가)", "시스템(우천 취소)", "수행원(차량 없음)", "수행원(주차장 문제)", "수행원(기타)", "수행원(개인 사유)"];
 
+const SECONDARY_FILTER_DEFS = [
+  { key: 'model', label: '차종' },
+  { key: 'zone', label: '존 이름' },
+  { key: 'partner', label: '파트너 이름' },
+  { key: 'orderGroup', label: '오더 구분' },
+  { key: 'orderType', label: '발행 유형' },
+  { key: 'region1', label: '지역1' },
+  { key: 'region2', label: '지역2' },
+  { key: 'partnerType', label: '파트너 유형' },
+  { key: 'cancelType', label: '취소 유형' },
+  { key: 'delayed', label: '지연 여부' },
+];
+
+/** 검색 가능한 셀렉트 (차종, 존 이름 등 옵션이 많은 필터용) */
+function SearchableSelect({ value, onChange, options, placeholder = "검색" }) {
+  const [open, setOpen] = useState(false);
+  const [search, setSearch] = useState("");
+  const ref = useRef(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const handler = (e) => {
+      if (!ref.current?.contains(e.target)) setOpen(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [open]);
+
+  const filtered = options.filter((o) =>
+    o.toLowerCase().includes(search.toLowerCase())
+  );
+
+  return (
+    <div ref={ref} className="relative">
+      <div className="relative">
+        <Search className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[#6B778C]" />
+        <input
+          className="h-10 w-full rounded-lg border border-[#E2E8F0] bg-white pl-8 pr-8 text-sm text-[#172B4D] outline-none transition focus:border-[#0052CC] focus:ring-1 focus:ring-[#0052CC]"
+          value={value || search}
+          onChange={(e) => {
+            if (value) { onChange(""); setSearch(e.target.value); }
+            else { setSearch(e.target.value); }
+            setOpen(true);
+          }}
+          onFocus={() => setOpen(true)}
+          placeholder={value ? value : placeholder}
+        />
+        {value && (
+          <button
+            className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full p-0.5 hover:bg-[#DFE1E6]"
+            onClick={() => { onChange(""); setSearch(""); }}
+          >
+            <X className="h-3.5 w-3.5 text-[#6B778C]" />
+          </button>
+        )}
+      </div>
+      {open && (
+        <div className="absolute left-0 top-full z-20 mt-1 w-full max-h-48 overflow-auto rounded-lg border border-[#DFE1E6] bg-white shadow-lg py-1">
+          <button
+            className="w-full text-left px-3 py-1.5 text-sm text-[#6B778C] hover:bg-[#F4F5F7]"
+            onClick={() => { onChange(""); setSearch(""); setOpen(false); }}
+          >
+            전체
+          </button>
+          {filtered.map((opt) => (
+            <button
+              key={opt}
+              className={cn(
+                "w-full text-left px-3 py-1.5 text-sm hover:bg-[#F4F5F7]",
+                opt === value ? "bg-[#E9F2FF] text-[#0052CC] font-medium" : "text-[#172B4D]"
+              )}
+              onClick={() => { onChange(opt); setSearch(""); setOpen(false); }}
+            >
+              {opt}
+            </button>
+          ))}
+          {filtered.length === 0 && (
+            <div className="px-3 py-2 text-sm text-[#6B778C]">결과 없음</div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function OrdersPage({ quickFilter, onClearQuickFilter, initialOrderId, orders, setOrders, missions, setMissions }) {
   const today = new Date();
 
   const [q, setQ] = useState("");
-  const [searchField, setSearchField] = useState("plate");
   const [sortConfig, setSortConfig] = useState({ key: 'createdAt', direction: 'desc' });
   const [periodFrom, setPeriodFrom] = useState(() => {
     const d = new Date();
@@ -107,24 +192,48 @@ function OrdersPage({ quickFilter, onClearQuickFilter, initialOrderId, orders, s
     return toYmd(d);
   });
   const [periodTo, setPeriodTo] = useState(toYmd(today));
-  const [fRegion1, setFRegion1] = useState("");
-  const [fRegion2, setFRegion2] = useState("");
+  const [fWashType, setFWashType] = useState("");
+  const [fStatus, setFStatus] = useState("");
+  // Secondary filter values
+  const [fModel, setFModel] = useState("");
+  const [fZone, setFZone] = useState("");
+  const [fPartner, setFPartner] = useState("");
   const [fOrderGroup, setFOrderGroup] = useState("");
   const [fOrderType, setFOrderType] = useState("");
-  const [fWashType, setFWashType] = useState("");
-  const [fPartner, setFPartner] = useState("");
+  const [fRegion1, setFRegion1] = useState("");
+  const [fRegion2, setFRegion2] = useState("");
   const [fPartnerType, setFPartnerType] = useState("");
-  const [fStatus, setFStatus] = useState("");
   const [fCancelType, setFCancelType] = useState("");
   const [fDelayed, setFDelayed] = useState("");
+  // Secondary filter UI state
+  const [activeSecondaryFilters, setActiveSecondaryFilters] = useState(new Set());
+  const [showSecondaryFilters, setShowSecondaryFilters] = useState(true);
+  const [filterDropdownOpen, setFilterDropdownOpen] = useState(false);
 
   // quickFilter로부터 초기값 설정
   useEffect(() => {
     if (quickFilter) {
-      if (quickFilter.status) setFStatus(quickFilter.status);
-      if (quickFilter.orderType) setFOrderType(quickFilter.orderType);
-      if (quickFilter.cancelType) setFCancelType(quickFilter.cancelType);
-      if (quickFilter.delayed) setFDelayed(quickFilter.delayed);
+      if (quickFilter.status) {
+        setFStatus(quickFilter.status);
+        if (quickFilter.status === "취소") {
+          setActiveSecondaryFilters(prev => new Set([...prev, 'cancelType']));
+        }
+        if (quickFilter.status === "완료") {
+          setActiveSecondaryFilters(prev => new Set([...prev, 'delayed']));
+        }
+      }
+      if (quickFilter.orderType) {
+        setFOrderType(quickFilter.orderType);
+        setActiveSecondaryFilters(prev => new Set([...prev, 'orderType']));
+      }
+      if (quickFilter.cancelType) {
+        setFCancelType(quickFilter.cancelType);
+        setActiveSecondaryFilters(prev => new Set([...prev, 'cancelType']));
+      }
+      if (quickFilter.delayed) {
+        setFDelayed(quickFilter.delayed);
+        setActiveSecondaryFilters(prev => new Set([...prev, 'delayed']));
+      }
     }
   }, [quickFilter]);
 
@@ -303,6 +412,20 @@ function OrdersPage({ quickFilter, onClearQuickFilter, initialOrderId, orders, s
     [orders, fRegion1]
   );
   const partners = useMemo(() => Array.from(new Set(orders.map((d) => d.partner))), [orders]);
+  const models = useMemo(() => Array.from(new Set(orders.map((d) => d.model))).sort(), [orders]);
+  const zones = useMemo(() => Array.from(new Set(orders.map((d) => d.zone))).sort(), [orders]);
+
+  // 필터 추가 드롭다운 외부 클릭 닫기
+  useEffect(() => {
+    if (!filterDropdownOpen) return;
+    const handleClick = (e) => {
+      if (!e.target.closest('[data-filter-dropdown]')) {
+        setFilterDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, [filterDropdownOpen]);
 
   const MOCK_DELIVERY_INFO = MOCK_DELIVERY_INFO_DATA;
   const MOCK_HANDLER_INFO = MOCK_HANDLER_INFO_DATA;
@@ -311,6 +434,97 @@ function OrdersPage({ quickFilter, onClearQuickFilter, initialOrderId, orders, s
   const orderGroups = ORDER_GROUPS;
   const orderTypes = ORDER_TYPES;
   const washTypes = WASH_TYPES;
+
+  // 상세 필터 값 초기화 헬퍼
+  const clearSecondaryFilterValue = (key) => {
+    switch (key) {
+      case 'model': setFModel(""); break;
+      case 'zone': setFZone(""); break;
+      case 'partner': setFPartner(""); break;
+      case 'orderGroup': setFOrderGroup(""); break;
+      case 'orderType': setFOrderType(""); break;
+      case 'region1': setFRegion1(""); setFRegion2(""); break;
+      case 'region2': setFRegion2(""); break;
+      case 'partnerType': setFPartnerType(""); break;
+      case 'cancelType': setFCancelType(""); break;
+      case 'delayed': setFDelayed(""); break;
+    }
+  };
+
+  // 상세 필터 렌더링
+  const renderSecondaryFilter = (filterKey) => {
+    switch (filterKey) {
+      case 'model':
+        return (
+          <SearchableSelect value={fModel} onChange={setFModel} options={models} placeholder="차종 검색" />
+        );
+      case 'zone':
+        return (
+          <SearchableSelect value={fZone} onChange={setFZone} options={zones} placeholder="존 이름 검색" />
+        );
+      case 'partner':
+        return (
+          <Select value={fPartner} onChange={e => setFPartner(e.target.value)}>
+            <option value="">전체</option>
+            {partners.map(v => <option key={v} value={v}>{v}</option>)}
+          </Select>
+        );
+      case 'orderGroup':
+        return (
+          <Select value={fOrderGroup} onChange={e => setFOrderGroup(e.target.value)}>
+            <option value="">전체</option>
+            {orderGroups.map(v => <option key={v} value={v}>{v}</option>)}
+          </Select>
+        );
+      case 'orderType':
+        return (
+          <Select value={fOrderType} onChange={e => setFOrderType(e.target.value)}>
+            <option value="">전체</option>
+            {orderTypes.map(v => <option key={v} value={v}>{v}</option>)}
+          </Select>
+        );
+      case 'region1':
+        return (
+          <Select value={fRegion1} onChange={e => { setFRegion1(e.target.value); setFRegion2(""); }}>
+            <option value="">전체</option>
+            {regions1.map(v => <option key={v} value={v}>{v}</option>)}
+          </Select>
+        );
+      case 'region2':
+        return (
+          <Select value={fRegion2} onChange={e => setFRegion2(e.target.value)} disabled={!fRegion1} className={!fRegion1 ? "bg-[#F4F5F7]! text-[#C1C7CD] cursor-not-allowed" : ""}>
+            <option value="">전체</option>
+            {regions2.map(v => <option key={v} value={v}>{v}</option>)}
+          </Select>
+        );
+      case 'partnerType':
+        return (
+          <Select value={fPartnerType} onChange={e => setFPartnerType(e.target.value)}>
+            <option value="">전체</option>
+            <option value="현장">현장</option>
+            <option value="입고">입고</option>
+            <option value="핸들러">핸들러</option>
+          </Select>
+        );
+      case 'cancelType':
+        return (
+          <Select value={fCancelType} onChange={e => { setFCancelType(e.target.value); onClearQuickFilter?.(); }} disabled={fStatus !== "취소"} className={fStatus !== "취소" ? "bg-[#F4F5F7]! text-[#C1C7CD] cursor-not-allowed" : ""}>
+            <option value="">전체</option>
+            {CANCEL_TYPES.map(v => <option key={v} value={v}>{v}</option>)}
+          </Select>
+        );
+      case 'delayed':
+        return (
+          <Select value={fDelayed} onChange={e => setFDelayed(e.target.value)} disabled={fStatus !== "완료"} className={fStatus !== "완료" ? "bg-[#F4F5F7]! text-[#C1C7CD] cursor-not-allowed" : ""}>
+            <option value="">전체</option>
+            <option value="지연">지연</option>
+            <option value="정상">정상</option>
+          </Select>
+        );
+      default:
+        return null;
+    }
+  };
 
   // 오더 발행 핸들러
   const handleCreateOrder = () => {
@@ -360,24 +574,24 @@ function OrdersPage({ quickFilter, onClearQuickFilter, initialOrderId, orders, s
   const filtered = useMemo(() => {
     const qq = q.trim().toLowerCase();
     return orders.filter((d) => {
-      const targetVal = String(d[searchField] || "").toLowerCase();
-      const hitQ = !qq || targetVal.includes(qq);
-
+      const hitQ = !qq || String(d.plate || "").toLowerCase().includes(qq);
       const hitPeriod = (!periodFrom || d.createdAt >= periodFrom) && (!periodTo || d.createdAt <= periodTo);
+      const hitWT = !fWashType || d.washType === fWashType;
+      const hitS = !fStatus || d.status === fStatus;
+      const hitModel = !fModel || d.model === fModel;
+      const hitZone = !fZone || d.zone === fZone;
       const hitR1 = !fRegion1 || d.region1 === fRegion1;
       const hitR2 = !fRegion2 || d.region2 === fRegion2;
       const hitOG = !fOrderGroup || d.orderGroup === fOrderGroup;
       const hitOT = !fOrderType || d.orderType === fOrderType;
-      const hitWT = !fWashType || d.washType === fWashType;
       const hitP = !fPartner || d.partner === fPartner;
       const hitPT = !fPartnerType || d.partnerType === fPartnerType;
-      const hitS = !fStatus || d.status === fStatus;
       const hitCT = !fCancelType || d.cancelType === fCancelType;
       const hitDelay = !fDelayed || (fDelayed === "지연" ? MOCK_LEAD_TIME_DATA[d.orderId]?.isDelayed === true : MOCK_LEAD_TIME_DATA[d.orderId]?.isDelayed === false);
 
-      return hitQ && hitPeriod && hitR1 && hitR2 && hitOG && hitOT && hitWT && hitP && hitPT && hitS && hitCT && hitDelay;
+      return hitQ && hitPeriod && hitWT && hitS && hitModel && hitZone && hitR1 && hitR2 && hitOG && hitOT && hitP && hitPT && hitCT && hitDelay;
     });
-  }, [orders, q, searchField, periodFrom, periodTo, fRegion1, fRegion2, fOrderGroup, fOrderType, fWashType, fPartner, fPartnerType, fStatus, fCancelType, fDelayed]);
+  }, [orders, q, periodFrom, periodTo, fWashType, fStatus, fModel, fZone, fRegion1, fRegion2, fOrderGroup, fOrderType, fPartner, fPartnerType, fCancelType, fDelayed]);
 
   const sortedData = useMemo(() => {
     if (!sortConfig.key) return filtered;
@@ -464,27 +678,54 @@ function OrdersPage({ quickFilter, onClearQuickFilter, initialOrderId, orders, s
     },
   ];
 
-  const chips = (
-    <div className="flex flex-wrap gap-2">
-      {quickFilter ? (
-        <Chip variant="info" onRemove={() => { onClearQuickFilter?.(); setFStatus(""); setFOrderType(""); setFCancelType(""); setFDelayed(""); }}>
-          Quick Filter: {quickFilter.status ? `상태=${quickFilter.status}` : ""}{quickFilter.orderType ? ` 유형=${quickFilter.orderType}` : ""}{quickFilter.cancelType ? ` 취소=${quickFilter.cancelType}` : ""}{quickFilter.delayed ? ` 지연=${quickFilter.delayed}` : ""}
-        </Chip>
-      ) : null}
-      {q ? <Chip onRemove={() => setQ("")}>검색: {q}</Chip> : null}
-      {periodFrom || periodTo ? <Chip onRemove={() => { setPeriodFrom(""); setPeriodTo(""); }}>기간: {periodFrom || "-"} ~ {periodTo || "-"}</Chip> : null}
-      {fRegion1 ? <Chip onRemove={() => { setFRegion1(""); setFRegion2(""); }}>지역1: {fRegion1}</Chip> : null}
-      {fRegion2 ? <Chip onRemove={() => setFRegion2("")}>지역2: {fRegion2}</Chip> : null}
-      {fOrderGroup ? <Chip onRemove={() => setFOrderGroup("")}>오더 구분: {fOrderGroup}</Chip> : null}
-      {fOrderType && !quickFilter?.orderType ? <Chip onRemove={() => setFOrderType("")}>발행 유형: {fOrderType}</Chip> : null}
-      {fWashType ? <Chip onRemove={() => setFWashType("")}>세차 유형: {fWashType}</Chip> : null}
-      {fPartner ? <Chip onRemove={() => setFPartner("")}>파트너 이름: {fPartner}</Chip> : null}
-      {fPartnerType ? <Chip onRemove={() => setFPartnerType("")}>파트너 유형: {fPartnerType}</Chip> : null}
-      {fStatus && !quickFilter?.status ? <Chip onRemove={() => { setFStatus(""); setFCancelType(""); }}>상태: {fStatus}</Chip> : null}
-      {fCancelType && !quickFilter?.cancelType ? <Chip onRemove={() => setFCancelType("")}>취소 유형: {fCancelType}</Chip> : null}
-      {fDelayed && !quickFilter?.delayed ? <Chip onRemove={() => setFDelayed("")}>지연 여부: {fDelayed}</Chip> : null}
-    </div>
-  );
+  // 적용 필터 칩 목록
+  const appliedChips = (() => {
+    const chips = [];
+    if (quickFilter) {
+      chips.push({ key: 'quickFilter', label: 'Quick Filter', value: [quickFilter.status ? `상태=${quickFilter.status}` : '', quickFilter.orderType ? `유형=${quickFilter.orderType}` : '', quickFilter.cancelType ? `취소=${quickFilter.cancelType}` : '', quickFilter.delayed ? `지연=${quickFilter.delayed}` : ''].filter(Boolean).join(' '), onRemove: () => { onClearQuickFilter?.(); setFStatus(""); setFOrderType(""); setFCancelType(""); setFDelayed(""); setActiveSecondaryFilters(prev => { const next = new Set(prev); next.delete('orderType'); next.delete('cancelType'); next.delete('delayed'); return next; }); } });
+    }
+    if (q) chips.push({ key: 'q', label: '차량 번호', value: q, onRemove: () => setQ("") });
+    if (fWashType) chips.push({ key: 'washType', label: '세차 유형', value: fWashType, onRemove: () => setFWashType("") });
+    if (fStatus && !quickFilter?.status) chips.push({ key: 'status', label: '진행 상태', value: fStatus, onRemove: () => { setFStatus(""); setFCancelType(""); setFDelayed(""); setActiveSecondaryFilters(prev => { const next = new Set(prev); next.delete('cancelType'); next.delete('delayed'); return next; }); } });
+    if (periodFrom || periodTo) chips.push({ key: 'period', label: '발행 일시', value: `${periodFrom || "-"} ~ ${periodTo || "-"}`, onRemove: () => { setPeriodFrom(""); setPeriodTo(""); } });
+    if (fModel) chips.push({ key: 'model', label: '차종', value: fModel, onRemove: () => setFModel("") });
+    if (fZone) chips.push({ key: 'zone', label: '존 이름', value: fZone, onRemove: () => setFZone("") });
+    if (fPartner) chips.push({ key: 'partner', label: '파트너 이름', value: fPartner, onRemove: () => setFPartner("") });
+    if (fOrderGroup) chips.push({ key: 'orderGroup', label: '오더 구분', value: fOrderGroup, onRemove: () => setFOrderGroup("") });
+    if (fOrderType && !quickFilter?.orderType) chips.push({ key: 'orderType', label: '발행 유형', value: fOrderType, onRemove: () => setFOrderType("") });
+    if (fRegion1) chips.push({ key: 'region1', label: '지역1', value: fRegion1, onRemove: () => { setFRegion1(""); setFRegion2(""); } });
+    if (fRegion2) chips.push({ key: 'region2', label: '지역2', value: fRegion2, onRemove: () => setFRegion2("") });
+    if (fPartnerType) chips.push({ key: 'partnerType', label: '파트너 유형', value: fPartnerType, onRemove: () => setFPartnerType("") });
+    if (fCancelType && !quickFilter?.cancelType) chips.push({ key: 'cancelType', label: '취소 유형', value: fCancelType, onRemove: () => setFCancelType("") });
+    if (fDelayed && !quickFilter?.delayed) chips.push({ key: 'delayed', label: '지연 여부', value: fDelayed, onRemove: () => setFDelayed("") });
+    return chips;
+  })();
+
+  const handleResetAll = () => {
+    setQ("");
+    setPeriodFrom(() => { const d = new Date(); d.setMonth(d.getMonth() - 1); return toYmd(d); });
+    setPeriodTo(toYmd(today));
+    setFWashType(""); setFStatus("");
+    setFModel(""); setFZone("");
+    setFRegion1(""); setFRegion2("");
+    setFOrderGroup(""); setFOrderType("");
+    setFPartner(""); setFPartnerType("");
+    setFCancelType(""); setFDelayed("");
+    setActiveSecondaryFilters(new Set());
+    setShowSecondaryFilters(true);
+    onClearQuickFilter?.();
+  };
+
+  const handleClearAllChips = () => {
+    setQ("");
+    setFWashType(""); setFStatus("");
+    setFModel(""); setFZone("");
+    setFRegion1(""); setFRegion2("");
+    setFOrderGroup(""); setFOrderType("");
+    setFPartner(""); setFPartnerType("");
+    setFCancelType(""); setFDelayed("");
+    onClearQuickFilter?.();
+  };
 
   return (
     <div className="space-y-4">
@@ -504,117 +745,149 @@ function OrdersPage({ quickFilter, onClearQuickFilter, initialOrderId, orders, s
         </div>
       </div>
 
-      <FilterPanel
-        chips={chips}
-        onReset={() => {
-          setQ("");
-          setPeriodFrom(() => { const d = new Date(); d.setMonth(d.getMonth() - 1); return toYmd(d); });
-          setPeriodTo(toYmd(today));
-          setFRegion1(""); setFRegion2("");
-          setFOrderGroup(""); setFOrderType(""); setFWashType("");
-          setFPartner(""); setFPartnerType("");
-          setFStatus(""); setFCancelType(""); setFDelayed("");
-          onClearQuickFilter?.();
-        }}
-      >
-        <div className="md:col-span-2">
-          <label htmlFor="searchField" className="block text-xs font-semibold text-[#6B778C] mb-1.5">검색항목</label>
-          <Select id="searchField" value={searchField} onChange={e => setSearchField(e.target.value)}>
-            <option value="plate">차량 번호</option>
-            <option value="carId">차량 ID</option>
-            <option value="orderId">오더 ID</option>
-            <option value="zone">존 이름</option>
-          </Select>
-        </div>
-        <div className="md:col-span-2">
-          <label htmlFor="searchQuery" className="block text-xs font-semibold text-[#6B778C] mb-1.5">검색어</label>
-          <div className="relative">
-            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#6B778C]" />
-            <Input id="searchQuery" value={q} onChange={(e) => setQ(e.target.value)} placeholder={`${searchField === 'plate' ? '차량 번호' : searchField === 'carId' ? '차량 ID' : searchField === 'orderId' ? '오더 ID' : '존 이름'} 검색`} className="pl-9" />
+      {/* 필터 영역 */}
+      <Card>
+        <CardHeader>
+          <CardTitle>조회 조건 설정</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {/* 기본 필터 (1줄) */}
+          <div className="flex flex-wrap items-end gap-3">
+            <div className="min-w-[180px] flex-1 max-w-[220px]">
+              <label className="block text-xs font-semibold text-[#6B778C] mb-1.5">차량 번호</label>
+              <div className="relative">
+                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#6B778C]" />
+                <Input value={q} onChange={e => setQ(e.target.value)} placeholder="차량 번호 검색" className="pl-9" />
+              </div>
+            </div>
+            <div className="w-[140px]">
+              <label className="block text-xs font-semibold text-[#6B778C] mb-1.5">세차 유형</label>
+              <Select value={fWashType} onChange={e => setFWashType(e.target.value)}>
+                <option value="">전체</option>
+                {washTypes.map(v => <option key={v} value={v}>{v}</option>)}
+              </Select>
+            </div>
+            <div className="w-[140px]">
+              <label className="block text-xs font-semibold text-[#6B778C] mb-1.5">진행 상태</label>
+              <Select value={fStatus} onChange={e => {
+                const val = e.target.value;
+                setFStatus(val);
+                if (val === "취소") {
+                  setActiveSecondaryFilters(prev => { const next = new Set(prev); next.add('cancelType'); return next; });
+                  setShowSecondaryFilters(true);
+                } else {
+                  setFCancelType("");
+                  setActiveSecondaryFilters(prev => { const next = new Set(prev); next.delete('cancelType'); return next; });
+                }
+                if (val === "완료") {
+                  setActiveSecondaryFilters(prev => { const next = new Set(prev); next.add('delayed'); return next; });
+                  setShowSecondaryFilters(true);
+                } else {
+                  setFDelayed("");
+                  setActiveSecondaryFilters(prev => { const next = new Set(prev); next.delete('delayed'); return next; });
+                }
+                onClearQuickFilter?.();
+              }}>
+                <option value="">전체</option>
+                {statuses.map(v => <option key={v} value={v}>{v}</option>)}
+              </Select>
+            </div>
+            <div className="flex items-end gap-2">
+              <div className="w-[140px]">
+                <label className="block text-xs font-semibold text-[#6B778C] mb-1.5">발행 일시</label>
+                <Input type="date" value={periodFrom} onChange={e => setPeriodFrom(e.target.value)} />
+              </div>
+              <span className="pb-2 text-sm text-[#6B778C]">~</span>
+              <div className="w-[140px]">
+                <Input type="date" value={periodTo} onChange={e => setPeriodTo(e.target.value)} />
+              </div>
+            </div>
+            <div className="relative" data-filter-dropdown>
+              <Button variant="secondary" onClick={() => setFilterDropdownOpen(!filterDropdownOpen)}>
+                <Plus className="mr-1 h-4 w-4" /> 필터 추가
+              </Button>
+              {filterDropdownOpen && (
+                <div className="absolute left-0 top-full mt-1 z-10 w-48 rounded-lg border border-[#DFE1E6] bg-white shadow-lg py-1">
+                  {SECONDARY_FILTER_DEFS
+                    .filter(f => !activeSecondaryFilters.has(f.key))
+                    .map(f => (
+                      <button
+                        key={f.key}
+                        className="w-full text-left px-4 py-2 text-sm text-[#172B4D] hover:bg-[#F4F5F7]"
+                        onClick={() => {
+                          setActiveSecondaryFilters(prev => new Set([...prev, f.key]));
+                          setShowSecondaryFilters(true);
+                          setFilterDropdownOpen(false);
+                        }}
+                      >
+                        {f.label}
+                      </button>
+                    ))}
+                  {SECONDARY_FILTER_DEFS.filter(f => !activeSecondaryFilters.has(f.key)).length === 0 && (
+                    <div className="px-4 py-2 text-sm text-[#6B778C]">추가 가능한 필터 없음</div>
+                  )}
+                </div>
+              )}
+            </div>
+            <Button variant="secondary" onClick={handleResetAll} title="설정 초기화">
+              <RotateCcw className="h-4 w-4" />
+            </Button>
           </div>
-        </div>
-        <div className="md:col-span-2">
-          <label htmlFor="periodFrom" className="block text-xs font-semibold text-[#6B778C] mb-1.5">발행일 시작</label>
-          <Input id="periodFrom" type="date" value={periodFrom} onChange={(e) => setPeriodFrom(e.target.value)} />
-        </div>
-        <div className="md:col-span-2">
-          <label htmlFor="periodTo" className="block text-xs font-semibold text-[#6B778C] mb-1.5">발행일 종료</label>
-          <Input id="periodTo" type="date" value={periodTo} onChange={(e) => setPeriodTo(e.target.value)} />
-        </div>
-        <div className="md:col-span-2">
-          <label htmlFor="fRegion1" className="block text-xs font-semibold text-[#6B778C] mb-1.5">지역1</label>
-          <Select id="fRegion1" value={fRegion1} onChange={(e) => { setFRegion1(e.target.value); setFRegion2(""); }}>
-            <option value="">전체</option>
-            {regions1.map((v) => <option key={v} value={v}>{v}</option>)}
-          </Select>
-        </div>
-        <div className="md:col-span-2">
-          <label htmlFor="fRegion2" className={cn("block text-xs font-semibold mb-1.5", fRegion1 ? "text-[#6B778C]" : "text-[#C1C7CD]")}>지역2</label>
-          <Select id="fRegion2" value={fRegion2} onChange={(e) => setFRegion2(e.target.value)} disabled={!fRegion1} className={!fRegion1 ? "bg-[#F4F5F7]! text-[#C1C7CD] cursor-not-allowed" : ""}>
-            <option value="">전체</option>
-            {regions2.map((v) => <option key={v} value={v}>{v}</option>)}
-          </Select>
-        </div>
-        <div className="md:col-span-2">
-          <label htmlFor="fOrderGroup" className="block text-xs font-semibold text-[#6B778C] mb-1.5">오더 구분</label>
-          <Select id="fOrderGroup" value={fOrderGroup} onChange={(e) => setFOrderGroup(e.target.value)}>
-            <option value="">전체</option>
-            {orderGroups.map((v) => <option key={v} value={v}>{v}</option>)}
-          </Select>
-        </div>
-        <div className="md:col-span-2">
-          <label htmlFor="fOrderType" className="block text-xs font-semibold text-[#6B778C] mb-1.5">발행 유형</label>
-          <Select id="fOrderType" value={fOrderType} onChange={(e) => setFOrderType(e.target.value)}>
-            <option value="">전체</option>
-            {orderTypes.map((v) => <option key={v} value={v}>{v}</option>)}
-          </Select>
-        </div>
-        <div className="md:col-span-2">
-          <label htmlFor="fWashType" className="block text-xs font-semibold text-[#6B778C] mb-1.5">세차 유형</label>
-          <Select id="fWashType" value={fWashType} onChange={(e) => setFWashType(e.target.value)}>
-            <option value="">전체</option>
-            {washTypes.map((v) => <option key={v} value={v}>{v}</option>)}
-          </Select>
-        </div>
-        <div className="md:col-span-2">
-          <label htmlFor="fPartner" className="block text-xs font-semibold text-[#6B778C] mb-1.5">파트너 이름</label>
-          <Select id="fPartner" value={fPartner} onChange={(e) => setFPartner(e.target.value)}>
-            <option value="">전체</option>
-            {partners.map((v) => <option key={v} value={v}>{v}</option>)}
-          </Select>
-        </div>
-        <div className="md:col-span-2">
-          <label htmlFor="fPartnerType" className="block text-xs font-semibold text-[#6B778C] mb-1.5">파트너 유형</label>
-          <Select id="fPartnerType" value={fPartnerType} onChange={(e) => setFPartnerType(e.target.value)}>
-            <option value="">전체</option>
-            <option value="현장">현장</option>
-            <option value="입고">입고</option>
-            <option value="핸들러">핸들러</option>
-          </Select>
-        </div>
-        <div className="md:col-span-2">
-          <label htmlFor="fStatus" className="block text-xs font-semibold text-[#6B778C] mb-1.5">진행 상태</label>
-          <Select id="fStatus" value={fStatus} onChange={(e) => { setFStatus(e.target.value); if (e.target.value !== "취소") setFCancelType(""); if (e.target.value !== "완료") setFDelayed(""); onClearQuickFilter?.(); }}>
-            <option value="">전체</option>
-            {statuses.map((v) => <option key={v} value={v}>{v}</option>)}
-          </Select>
-        </div>
-        <div className="md:col-span-2">
-          <label htmlFor="fCancelType" className={cn("block text-xs font-semibold mb-1.5", fStatus === "취소" ? "text-[#6B778C]" : "text-[#C1C7CD]")}>취소 유형</label>
-          <Select id="fCancelType" value={fCancelType} onChange={(e) => { setFCancelType(e.target.value); onClearQuickFilter?.(); }} disabled={fStatus !== "취소"} className={fStatus !== "취소" ? "bg-[#F4F5F7]! text-[#C1C7CD] cursor-not-allowed" : ""}>
-            <option value="">전체</option>
-            {CANCEL_TYPES.map((v) => <option key={v} value={v}>{v}</option>)}
-          </Select>
-        </div>
-        <div className="md:col-span-2">
-          <label htmlFor="fDelayed" className={cn("block text-xs font-semibold mb-1.5", fStatus === "완료" ? "text-[#6B778C]" : "text-[#C1C7CD]")}>지연 여부</label>
-          <Select id="fDelayed" value={fDelayed} onChange={(e) => setFDelayed(e.target.value)} disabled={fStatus !== "완료"} className={fStatus !== "완료" ? "bg-[#F4F5F7]! text-[#C1C7CD] cursor-not-allowed" : ""}>
-            <option value="">전체</option>
-            <option value="지연">지연</option>
-            <option value="정상">정상</option>
-          </Select>
-        </div>
-      </FilterPanel>
+
+          {/* 상세 필터 영역 */}
+          {activeSecondaryFilters.size > 0 && (
+            <div className="space-y-3">
+              <button
+                className="flex items-center gap-1 text-sm font-medium text-[#6B778C] hover:text-[#172B4D] transition-colors"
+                onClick={() => setShowSecondaryFilters(!showSecondaryFilters)}
+              >
+                <ChevronDown className={cn("h-4 w-4 transition-transform", !showSecondaryFilters && "-rotate-90")} />
+                상세 필터 ({activeSecondaryFilters.size})
+              </button>
+              {showSecondaryFilters && (
+                <div className="grid grid-cols-1 gap-x-4 gap-y-3 md:grid-cols-12">
+                  {[...activeSecondaryFilters].map(filterKey => {
+                    const def = SECONDARY_FILTER_DEFS.find(f => f.key === filterKey);
+                    if (!def) return null;
+                    return (
+                      <div key={filterKey} className="md:col-span-2 relative group">
+                        <div className="flex items-center justify-between mb-1.5">
+                          <label className="text-xs font-semibold text-[#6B778C]">{def.label}</label>
+                          <button
+                            className="opacity-0 group-hover:opacity-100 p-0.5 rounded hover:bg-[#DFE1E6] transition-opacity"
+                            onClick={() => {
+                              setActiveSecondaryFilters(prev => { const next = new Set(prev); next.delete(filterKey); return next; });
+                              clearSecondaryFilterValue(filterKey);
+                            }}
+                            title="필터 제거"
+                          >
+                            <X className="h-3 w-3 text-[#6B778C]" />
+                          </button>
+                        </div>
+                        {renderSecondaryFilter(filterKey)}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* 적용 필터 칩 */}
+          {appliedChips.length > 0 && (
+            <div className="flex flex-wrap items-center gap-2 border-t border-[#DFE1E6] pt-3">
+              {appliedChips.map(chip => (
+                <Chip key={chip.key} onRemove={chip.onRemove}>{chip.label}: {chip.value}</Chip>
+              ))}
+              {appliedChips.length >= 2 && (
+                <button className="text-xs text-[#6B778C] hover:text-[#172B4D] underline ml-1" onClick={handleClearAllChips}>
+                  전체 해제
+                </button>
+              )}
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
       <div className="flex items-center mb-2">
         <div className="text-sm text-[#6B778C]">
