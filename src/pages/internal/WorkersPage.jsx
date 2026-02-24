@@ -19,18 +19,22 @@ import {
 export default function WorkersPage() {
   const [workers] = useState([
     {
-      id: 'W-001', name: '최수행', partner: 'A파트너', penalty: 0,
-      penaltyHistory: [],
+      id: 'W-001', name: '최수행', partner: 'A파트너', penalty: 1,
+      penaltyHistory: [
+        { orderId: 'O-90028', reason: '미예약', date: '2026-01-28' },
+      ],
       zones: [
         { zoneName: '강남역 1번존', zoneId: 'Z-1001', region1: '서울', region2: '강남' },
         { zoneName: '역삼역 1번존', zoneId: 'Z-1003', region1: '서울', region2: '강남' },
       ],
     },
     {
-      id: 'W-002', name: '강수행', partner: 'B파트너', penalty: 2,
+      id: 'W-002', name: '강수행', partner: 'B파트너', penalty: 4,
       penaltyHistory: [
-        { orderId: 'O-90015', reason: '지연', date: '2026-01-15' },
+        { orderId: 'O-90015', reason: '미예약', date: '2026-01-15' },
+        { orderId: 'O-90019', reason: '미예약', date: '2026-01-19' },
         { orderId: 'O-90022', reason: '노쇼', date: '2026-01-22' },
+        { orderId: 'O-90042', reason: '미예약', date: '2026-02-05' },
       ],
       zones: [
         { zoneName: '잠실역 2번존', zoneId: 'Z-1002', region1: '서울', region2: '송파' },
@@ -48,7 +52,7 @@ export default function WorkersPage() {
     {
       id: 'W-004', name: '오수행', partner: 'D파트너', penalty: 1,
       penaltyHistory: [
-        { orderId: 'O-90038', reason: '지연', date: '2026-02-03' },
+        { orderId: 'O-90038', reason: '미예약', date: '2026-02-03' },
       ],
       zones: [
         { zoneName: '해운대 2번존', zoneId: 'Z-3002', region1: '부산', region2: '해운대' },
@@ -58,16 +62,20 @@ export default function WorkersPage() {
       ],
     },
     {
-      id: 'W-005', name: '박수행', partner: 'A파트너', penalty: 0,
-      penaltyHistory: [],
+      id: 'W-005', name: '박수행', partner: 'A파트너', penalty: 1,
+      penaltyHistory: [
+        { orderId: 'O-90028', reason: '미예약', date: '2026-01-28' },
+      ],
       zones: [],
     },
     {
-      id: 'W-006', name: '이수행', partner: 'B파트너', penalty: 3,
+      id: 'W-006', name: '이수행', partner: 'B파트너', penalty: 5,
       penaltyHistory: [
         { orderId: 'O-90008', reason: '노쇼', date: '2026-01-08' },
-        { orderId: 'O-90019', reason: '지연', date: '2026-01-19' },
+        { orderId: 'O-90015', reason: '미예약', date: '2026-01-15' },
+        { orderId: 'O-90019', reason: '미예약', date: '2026-01-19' },
         { orderId: 'O-90033', reason: '노쇼', date: '2026-02-01' },
+        { orderId: 'O-90042', reason: '미예약', date: '2026-02-05' },
       ],
       zones: [
         { zoneName: '건대입구 1번존', zoneId: 'Z-1004', region1: '서울', region2: '광진' },
@@ -89,25 +97,29 @@ export default function WorkersPage() {
     {
       id: 'W-008', name: '정수행', partner: 'A파트너', penalty: 1,
       penaltyHistory: [
-        { orderId: 'O-90028', reason: '지연', date: '2026-01-28' },
+        { orderId: 'O-90028', reason: '미예약', date: '2026-01-28' },
       ],
       zones: [
         { zoneName: '서면역 1번존', zoneId: 'Z-3001', region1: '부산', region2: '부산진' },
       ],
     },
     {
-      id: 'W-009', name: '조수행', partner: 'D파트너', penalty: 0,
-      penaltyHistory: [],
+      id: 'W-009', name: '조수행', partner: 'D파트너', penalty: 1,
+      penaltyHistory: [
+        { orderId: 'O-90038', reason: '미예약', date: '2026-02-03' },
+      ],
       zones: [
         { zoneName: '분당 1번존', zoneId: 'Z-2003', region1: '경기', region2: '성남' },
         { zoneName: '정자역 1번존', zoneId: 'Z-2006', region1: '경기', region2: '성남' },
       ],
     },
     {
-      id: 'W-010', name: '윤수행', partner: 'B파트너', penalty: 2,
+      id: 'W-010', name: '윤수행', partner: 'B파트너', penalty: 5,
       penaltyHistory: [
         { orderId: 'O-90012', reason: '노쇼', date: '2026-01-12' },
-        { orderId: 'O-90042', reason: '지연', date: '2026-02-05' },
+        { orderId: 'O-90015', reason: '미예약', date: '2026-01-15' },
+        { orderId: 'O-90019', reason: '미예약', date: '2026-01-19' },
+        { orderId: 'O-90042', reason: '미예약', date: '2026-02-05' },
       ],
       zones: [
         { zoneName: '홍대입구 1번존', zoneId: 'Z-1005', region1: '서울', region2: '마포' },

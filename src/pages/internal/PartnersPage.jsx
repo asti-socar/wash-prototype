@@ -347,6 +347,7 @@ const MOCK_PARTNERS_V2 = [
     bizAddressDetail: '강남빌딩 5층',
     isActive: true,
     createdAt: '2025-01-01',
+    delayCount: 19,
     assignedZoneIds: MOCK_ALL_ZONES.slice(0, 60).map(z => z.zoneId),
     unitPrices: [
       { id: 1, orderGroup: '정규', washType: '내외부', price: 15000, effectiveDate: '2025-01-01' },
@@ -378,6 +379,7 @@ const MOCK_PARTNERS_V2 = [
     bizAddressDetail: '',
     isActive: true,
     createdAt: '2024-06-01',
+    delayCount: 19,
     assignedZoneIds: MOCK_ALL_ZONES.slice(60, 120).map(z => z.zoneId),
     unitPrices: [
       { id: 1, orderGroup: '정규', washType: '내외부', price: 16000, effectiveDate: '2024-06-01' },
@@ -385,6 +387,31 @@ const MOCK_PARTNERS_V2 = [
       { id: 3, orderGroup: '수시', washType: '내부', price: 11000, effectiveDate: '2025-08-15' },
       { id: 4, orderGroup: '정규', washType: '내외부', price: 18000, effectiveDate: '2026-06-15' },
       { id: 5, orderGroup: '긴급', washType: '내외부', price: 25000, effectiveDate: '2026-08-01' },
+    ],
+  },
+  {
+    partnerId: 'P-003',
+    partnerName: '미션핸들코리아',
+    partnerCategory: '세차 파트너',
+    partnerSubCategory: '현장 세차장',
+    address: '서울시 성동구 성수이로 77',
+    addressDetail: '3층',
+    contactName: '정운영',
+    contactPhone: '02-555-7890',
+    businessNumber: '555-77-89012',
+    corpName: '(주)미션핸들코리아',
+    ceoName: '정대표',
+    bizType: '서비스업',
+    bizItem: '핸들러 세차 서비스',
+    bizAddress: '서울시 성동구 성수동 77-1',
+    bizAddressDetail: '성수빌딩 3층',
+    isActive: true,
+    createdAt: '2025-06-01',
+    delayCount: 3,
+    assignedZoneIds: MOCK_ALL_ZONES.slice(120, 140).map(z => z.zoneId),
+    unitPrices: [
+      { id: 1, orderGroup: '정규', washType: '기계세차', price: 8000, effectiveDate: '2025-06-01' },
+      { id: 2, orderGroup: '긴급', washType: '기계세차', price: 12000, effectiveDate: '2025-06-01' },
     ],
   },
 ];
@@ -424,6 +451,11 @@ export default function PartnersPage() {
     { key: 'partnerName', header: '파트너 이름' },
     { key: 'address', header: '주소', render: r => [r.address, r.addressDetail].filter(Boolean).join(' ') },
     { key: 'corpName', header: '법인명' },
+    { key: 'delayCount', header: '지연처리', render: r => {
+      const count = r.delayCount || 0;
+      if (count === 0) return <span className="text-[#94A3B8]">0</span>;
+      return <Badge tone="danger">{count}</Badge>;
+    }},
   ];
 
   const handleSave = (partnerToSave) => {
@@ -455,6 +487,7 @@ export default function PartnersPage() {
       bizAddress: '',
       bizAddressDetail: '',
       isActive: true,
+      delayCount: 0,
       assignedZoneIds: [],
       createdAt: new Date().toISOString().split('T')[0],
       unitPrices: [],

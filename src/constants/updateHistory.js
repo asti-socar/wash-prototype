@@ -108,6 +108,9 @@ export const PARTNER_HISTORY = [
 ];
 
 export const ASTI_HISTORY = [
+  { id: 23, date: "2026-02-24 16:58", content: "대시보드: 데이터 소스 전환 (dashboard.json 삭제 → orders.json + orders-leadTime.json 기반 실시간 산출), 취소 카드 동적 유형 표시, 지연 판정 leadTime 기반으로 변경", isPolicyChange: false, links: [{ label: "대시보드", page: "dashboard" }] },
+  { id: 22, date: "2026-02-24 16:33", content: "벌점 정책 변경: 지연→미예약으로 변경 (24시간 미예약 시 담당 존 파트너 전체 수행원에게 벌점 부과)", isPolicyChange: true, links: [{ label: "수행원 조회", page: "workers" }, { label: "오더 관리", page: "orders" }] },
+  { id: 21, date: "2026-02-24 16:11", content: "오더 관리: 오더 체인 타임라인 UI 구현 (취소→재발행 플로우 시각화, 참조 오더별 발행·취소 시각/귀책·면책 표시, 산출 요약 박스)", isPolicyChange: false, links: [{ label: "오더 관리", page: "orders" }] },
   { id: 20, date: "2026-02-24 15:56", content: "오더 정책: 리드타임·귀책 소요시간·면책 시간·지연 처리 정책 정의 (귀책 소요시간 > 72h 지연 판정, 벌점 연동)", isPolicyChange: true, links: [{ label: "오더 관리", page: "orders" }] },
   { id: 19, date: "2026-02-24 15:56", content: "오더 정책: 취소 유형 재정의 (5→9개 유형, 귀책/면책 구분 추가, 취소 주체·대상 명시, 유형별 정책 상세 기술)", isPolicyChange: true, links: [{ label: "오더 관리", page: "orders" }] },
   { id: 18, date: "2026-02-24 15:50", content: "오더 관리: 리스트에 지연 여부 컬럼 추가 (완료 오더만 지연/정상 배지 표시)", isPolicyChange: false, links: [{ label: "오더 관리", page: "orders" }] },

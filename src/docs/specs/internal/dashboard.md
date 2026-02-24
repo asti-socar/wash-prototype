@@ -3,6 +3,7 @@
 ## 1. 개요
 - **화면명**: 세차 운영 대시보드
 - **목적**: 전체 세차 오더 현황 실시간 모니터링, 리스크 오더 사전 감지/개입, 파트너 성과 추적
+- **데이터 소스**: `orders.json` + `orders-leadTime.json` (useMemo 실시간 산출)
 - **데이터 갱신**: 수동 (새로고침 버튼), 조회 기준일 오늘 고정
 
 ## 2. 화면 구성 및 기능
@@ -29,9 +30,11 @@
 | :--- | :--- | :--- | :--- |
 | 수행 대기 | 발행 + 예약 합계 | 발행: N건, 예약: N건 | #7BA3C9 |
 | 수행 중 | 수행 중 건수 | - | #E8C47C |
-| 완료 | 완료 건수 | 적시수행: N건, 지연수행: N건 | #7BC9A8 |
-| 취소 | 취소 건수 | 변경, 미예약, 노쇼, 수행원, 우천 (유형별 건수) | #D98E8E |
+| 완료 | 완료 건수 | 적시수행: N건 (`!isDelayed`), 지연수행: N건 (`isDelayed`) | #7BC9A8 |
+| 취소 | 취소 건수 | 취소 유형별 건수 (동적 생성, 건수 내림차순 정렬) | #D98E8E |
 
+- 완료 적시/지연: `orders-leadTime.json`의 `isDelayed` 기준 판정
+- 취소 유형: `orders.json`의 `cancelType`에서 동적 집계 (0건 유형 미표시)
 - 각 카드/하위 항목 클릭 시 해당 필터로 오더 관리 페이지 이동
 
 ### 2.3 [영역 2] 리스크 관리
@@ -69,7 +72,7 @@
 | 대기 | 발행+예약 오더 수 | `{ partner, status: "발행" }` |
 | 수행중 | 수행 중 오더 수 | `{ partner, status: "수행 중" }` |
 | 리스크 | 리스크 오더 수 (위생장애+ML긴급+초장기미세차) | `{ partner, orderType: "위생장애" }` |
-| 지연 | 수행 중 + elapsedDays > 7 | `{ partner, status: "수행 중" }` |
+| 지연 | 완료 오더 중 `leadTimeData[orderId].isDelayed === true` 건수 | `{ partner, status: "수행 중" }` |
 
 - **기본 정렬**: 담당 오더 수 내림차순
 
@@ -116,7 +119,35 @@
 - 범례: 차트 상단 우측, 원형 아이콘
 - 호버 시 툴팁: 날짜, 유형별 건수
 
-## 3. 색상 팔레트
+## 3. 데이터 산출 로직
+
+모든 통계는 `orders.json` + `orders-leadTime.json`에서 `useMemo`로 실시간 산출합니다. (`dashboard.json` 사용하지 않음)
+
+### 3.1 `aggregateStatus(orders)` — 공통 집계 함수
+| 필드 | 산출 | 비고 |
+| :--- | :--- | :--- |
+| total | `orders.length` | |
+| issued | `status === '발행'` 건수 | |
+| reserved | `status === '예약'` 건수 | |
+| in_progress | `status === '수행 중'` 건수 | |
+| completed.total | `status === '완료'` 건수 | |
+| completed.on_time | 완료 중 `!leadTimeData[orderId].isDelayed` | |
+| completed.delayed | 완료 중 `leadTimeData[orderId].isDelayed` | |
+| cancelled.total | `status === '취소'` 건수 | |
+| cancelled.byType | `cancelType`별 건수 맵 | 동적 키 |
+
+- **오더 현황**: `aggregateStatus(ordersData)` (전체)
+- **리스크 관리**: `aggregateStatus(ordersData.filter(o => o.orderType === 유형))` (유형별 3종)
+
+### 3.2 일자별 차트 데이터
+- **정규 오더 생성량**: `createdAt.slice(0,10)` 기준 최근 7일 일자별 count
+- **리스크 추이**: 리스크 3종(`위생장애`, `고객 피드백(ML)_긴급`, `초장기 미세차`)의 `createdAt` 기준 최근 7일 일자별 count
+
+### 3.3 파트너 테이블
+- `orders.json`에서 `partner`별 그룹화
+- 지연 판정: `orders-leadTime.json`의 `isDelayed` 기준 (기존 `elapsedDays > 7` 폐기)
+
+## 4. 색상 팔레트
 
 차트 색상은 80% 투명도 적용, 카드 숫자 및 범례는 100% 색상 유지.
 
