@@ -42,6 +42,11 @@ import {
   TabsTrigger,
   TabsContent,
 } from "../../components/ui";
+import MOCK_VEHICLES from "../../mocks/orders-vehicles.json";
+import MOCK_LOST_ITEMS from "../../mocks/orders-lostItems.json";
+import MOCK_LEAD_TIME_DATA from "../../mocks/orders-leadTime.json";
+import MOCK_DELIVERY_INFO_DATA from "../../mocks/orders-deliveryInfo.json";
+import MOCK_HANDLER_INFO_DATA from "../../mocks/orders-handlerInfo.json";
 
 const ORDER_GROUPS = ["긴급", "정규", "변경", "수시", "특별"];
 const ORDER_TYPES = [
@@ -63,62 +68,6 @@ const ORDER_TYPES = [
 ];
 const WASH_TYPES = ["내외부", "내부", "외부", "특수", "협의", "라이트", "기계세차"];
 
-const MOCK_VEHICLES = [
-  { plate: "12가3456", zoneName: "강남역 1번존", zoneId: "Z-1001", region1: "서울", region2: "강남", partner: "A파트너", activeOrderId: "O-90001", activeOrderStatus: "예약", lastWash: "2026-01-10", model: "아반떼 AD", isRechargeGuaranteed: false },
-  { plate: "34나7890", zoneName: "잠실역 2번존", zoneId: "Z-1002", region1: "서울", region2: "송파", partner: "B파트너", activeOrderId: null, activeOrderStatus: null, lastWash: "2026-01-08", model: "K5", isRechargeGuaranteed: false },
-  { plate: "56다1122", zoneName: "홍대입구 3번존", zoneId: "Z-1003", region1: "서울", region2: "마포", partner: "A파트너", activeOrderId: "O-90003", activeOrderStatus: "발행", lastWash: "2026-01-05", model: "쏘나타", isRechargeGuaranteed: false },
-  { plate: "78라3344", zoneName: "판교 1번존", zoneId: "Z-2001", region1: "경기", region2: "성남", partner: "C파트너", activeOrderId: "O-90004", activeOrderStatus: "수행 중", lastWash: "2026-01-09", model: "아이오닉5", isRechargeGuaranteed: true },
-  { plate: "90마5566", zoneName: "수원역 2번존", zoneId: "Z-2002", region1: "경기", region2: "수원", partner: "B파트너", activeOrderId: null, activeOrderStatus: null, lastWash: "2026-01-07", model: "스포티지", isRechargeGuaranteed: false },
-  { plate: "11바7788", zoneName: "부산역 1번존", zoneId: "Z-3001", region1: "부산", region2: "동구", partner: "D파트너", activeOrderId: "O-90006", activeOrderStatus: "발행", lastWash: "2026-01-03", model: "그랜저", isRechargeGuaranteed: false },
-  { plate: "22사9900", zoneName: "해운대 2번존", zoneId: "Z-3002", region1: "부산", region2: "해운대", partner: "D파트너", activeOrderId: "O-90007", activeOrderStatus: "예약", lastWash: "2026-01-11", model: "레이", isRechargeGuaranteed: false },
-  { plate: "33아1212", zoneName: "대전역 1번존", zoneId: "Z-4001", region1: "대전", region2: "동구", partner: "C파트너", activeOrderId: null, activeOrderStatus: null, lastWash: "2026-01-06", model: "카니발", isRechargeGuaranteed: false },
-  { plate: "44자3434", zoneName: "청주 2번존", zoneId: "Z-5002", region1: "충북", region2: "청주", partner: "B파트너", activeOrderId: "O-90009", activeOrderStatus: "발행", lastWash: "2026-01-02", model: "모닝", isRechargeGuaranteed: false },
-  { plate: "55차5656", zoneName: "광주 1번존", zoneId: "Z-6001", region1: "광주", region2: "서구", partner: "A파트너", activeOrderId: "O-90010", activeOrderStatus: "예약", lastWash: "2026-01-09", model: "EV6", isRechargeGuaranteed: false },
-  { plate: "66카7878", zoneName: "인천공항 1번존", zoneId: "Z-7001", region1: "인천", region2: "중구", partner: "C파트너", activeOrderId: null, activeOrderStatus: null, lastWash: "2026-01-08", model: "티볼리", isRechargeGuaranteed: false },
-  { plate: "77타9090", zoneName: "제주공항 1번존", zoneId: "Z-8001", region1: "제주", region2: "제주시", partner: "D파트너", activeOrderId: "O-90012", activeOrderStatus: "발행", lastWash: "2026-01-01", model: "셀토스", isRechargeGuaranteed: false },
-];
-
-// 분실물 Mock 데이터 (오더 ID별) - 전체 오더의 50%에 분실물 할당
-const generateMockLostItems = () => {
-  const items = {};
-  const categories = ["일반", "귀중품"];
-  const statusesByCategory = {
-    "일반": ["배송지 미입력", "발송 대기", "발송 완료"],
-    "귀중품": ["배송지 미입력", "경찰서 인계"],
-  };
-  const details = [
-    "검은색 스마트폰", "갈색 가죽 지갑", "회색 후드티", "검정 선글라스", "에어팟",
-    "블루투스 이어폰", "손목시계", "우산", "노트북", "충전기"
-  ];
-
-  // 짝수 번호 오더에 분실물 할당 (전체의 50%)
-  for (let i = 2; i <= 100; i += 2) {
-    const orderId = `O-900${String(i).padStart(2, '0')}`;
-    const itemCount = Math.random() > 0.7 ? 2 : 1; // 30% 확률로 2개, 70% 확률로 1개
-    items[orderId] = [];
-
-    for (let j = 0; j < itemCount; j++) {
-      const category = categories[Math.floor(Math.random() * categories.length)];
-      const validStatuses = statusesByCategory[category];
-      const status = validStatuses[Math.floor(Math.random() * validStatuses.length)];
-      const detail = details[Math.floor(Math.random() * details.length)];
-      const date = new Date(2026, 0, Math.floor(Math.random() * 28) + 1);
-
-      items[orderId].push({
-        id: `LI${String(i * 10 + j).padStart(4, '0')}`,
-        createdAt: `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')} ${String(Math.floor(Math.random() * 24)).padStart(2, '0')}:${String(Math.floor(Math.random() * 60)).padStart(2, '0')}`,
-        itemCategory: category,
-        status: status,
-        itemDetails: detail
-      });
-    }
-  }
-
-  return items;
-};
-
-const MOCK_LOST_ITEMS = generateMockLostItems();
-
 // 탁송 상태 매핑
 const DELIVERY_STATUS_MAP = {
   WAITING: "매칭 전",
@@ -137,88 +86,11 @@ const HANDLER_STATUS_MAP = {
   COMPLETED: "완료"
 };
 
-// 핸들러 파트너 예약 Mock 데이터 생성 함수
-const generateMockHandlerInfo = (orders) => {
-  const handlerInfo = {};
-
-  // 핸들러 파트너 오더만 필터링
-  const handlerOrders = orders.filter(order => order.partnerType === '핸들러');
-
-  handlerOrders.forEach((order, index) => {
-    const reservationIdNum = 1001 + index;
-
-    // 오더 상태에 따른 핸들러 예약 상태 매핑
-    let handlerStatus;
-    switch(order.status) {
-      case '예약':
-        handlerStatus = 'CONFIRMED';
-        break;
-      case '수행 중':
-        handlerStatus = 'IN_PROGRESS';
-        break;
-      case '완료':
-        handlerStatus = 'COMPLETED';
-        break;
-      default:
-        handlerStatus = 'CONFIRMED';
-    }
-
-    handlerInfo[order.orderId] = {
-      reservationId: `MH-${reservationIdNum}`,
-      status: handlerStatus
-    };
-  });
-
-  return handlerInfo;
-};
-
-// 입고 파트너 탁송 Mock 데이터 생성 함수
-const generateMockDeliveryInfo = (orders) => {
-  const deliveryInfo = {};
-
-  // 입고 파트너 오더만 필터링
-  const pickupOrders = orders.filter(order => order.partnerType === '입고');
-
-  pickupOrders.forEach((order, index) => {
-    const reservationIdNum = 2001 + index;
-
-    // 상태에 따른 입고 탁송 상태 매핑
-    let pickupStatus;
-    switch(order.status) {
-      case '발행':
-        pickupStatus = 'WAITING';
-        break;
-      case '예약':
-        // 예약: ASSIGN 또는 RUN (50:50 분배)
-        pickupStatus = Math.random() > 0.5 ? 'ASSIGN' : 'RUN';
-        break;
-      case '수행 중':
-        pickupStatus = 'END';
-        break;
-      case '완료':
-        pickupStatus = 'END';
-        break;
-      case '취소':
-        // 취소: CANCEL 또는 END (50:50 분배)
-        pickupStatus = Math.random() > 0.5 ? 'CANCEL' : 'END';
-        break;
-      default:
-        pickupStatus = 'ETC';
-    }
-
-    deliveryInfo[order.orderId] = {
-      pickupReservationId: `DR-${reservationIdNum}`,
-      pickupStatus: pickupStatus
-    };
-
-    // 완료 상태인 경우에만 출고 정보 추가
-    if (order.status === '완료') {
-      deliveryInfo[order.orderId].deliveryReservationId = `DR-${reservationIdNum + 50}`;
-      deliveryInfo[order.orderId].deliveryStatus = 'END';
-    }
-  });
-
-  return deliveryInfo;
+const formatLeadTimeHours = (h) => {
+  if (h < 24) return `${h}h`;
+  const days = Math.floor(h / 24);
+  const rem = h % 24;
+  return `${h}h (${days}일 ${rem}시간)`;
 };
 
 const CANCEL_TYPES = ["시스템(변경 취소)", "시스템(미예약 취소)", "시스템(노쇼 취소)", "시스템(예약 불가)", "시스템(우천 취소)", "수행원(차량 없음)", "수행원(주차장 문제)", "수행원(기타)", "수행원(개인 사유)"];
@@ -228,7 +100,7 @@ function OrdersPage({ quickFilter, onClearQuickFilter, initialOrderId, orders, s
 
   const [q, setQ] = useState("");
   const [searchField, setSearchField] = useState("plate");
-  const [sortConfig, setSortConfig] = useState({ key: 'orderId', direction: 'desc' });
+  const [sortConfig, setSortConfig] = useState({ key: 'createdAt', direction: 'desc' });
   const [periodFrom, setPeriodFrom] = useState(() => {
     const d = new Date();
     d.setMonth(d.getMonth() - 1);
@@ -244,6 +116,7 @@ function OrdersPage({ quickFilter, onClearQuickFilter, initialOrderId, orders, s
   const [fPartnerType, setFPartnerType] = useState("");
   const [fStatus, setFStatus] = useState("");
   const [fCancelType, setFCancelType] = useState("");
+  const [fDelayed, setFDelayed] = useState("");
 
   // quickFilter로부터 초기값 설정
   useEffect(() => {
@@ -430,11 +303,8 @@ function OrdersPage({ quickFilter, onClearQuickFilter, initialOrderId, orders, s
   );
   const partners = useMemo(() => Array.from(new Set(orders.map((d) => d.partner))), [orders]);
 
-  // 입고 파트너 탁송 정보 동적 생성
-  const MOCK_DELIVERY_INFO = useMemo(() => generateMockDeliveryInfo(orders), [orders]);
-
-  // 핸들러 파트너 예약 정보 동적 생성
-  const MOCK_HANDLER_INFO = useMemo(() => generateMockHandlerInfo(orders), [orders]);
+  const MOCK_DELIVERY_INFO = MOCK_DELIVERY_INFO_DATA;
+  const MOCK_HANDLER_INFO = MOCK_HANDLER_INFO_DATA;
 
   const statuses = ["발행", "예약", "수행 중", "완료", "취소"];
   const orderGroups = ORDER_GROUPS;
@@ -502,10 +372,11 @@ function OrdersPage({ quickFilter, onClearQuickFilter, initialOrderId, orders, s
       const hitPT = !fPartnerType || d.partnerType === fPartnerType;
       const hitS = !fStatus || d.status === fStatus;
       const hitCT = !fCancelType || d.cancelType === fCancelType;
+      const hitDelay = !fDelayed || (fDelayed === "지연" ? MOCK_LEAD_TIME_DATA[d.orderId]?.isDelayed === true : MOCK_LEAD_TIME_DATA[d.orderId]?.isDelayed === false);
 
-      return hitQ && hitPeriod && hitR1 && hitR2 && hitOG && hitOT && hitWT && hitP && hitPT && hitS && hitCT;
+      return hitQ && hitPeriod && hitR1 && hitR2 && hitOG && hitOT && hitWT && hitP && hitPT && hitS && hitCT && hitDelay;
     });
-  }, [orders, q, searchField, periodFrom, periodTo, fRegion1, fRegion2, fOrderGroup, fOrderType, fWashType, fPartner, fPartnerType, fStatus, fCancelType]);
+  }, [orders, q, searchField, periodFrom, periodTo, fRegion1, fRegion2, fOrderGroup, fOrderType, fWashType, fPartner, fPartnerType, fStatus, fCancelType, fDelayed]);
 
   const sortedData = useMemo(() => {
     if (!sortConfig.key) return filtered;
@@ -567,6 +438,18 @@ function OrdersPage({ quickFilter, onClearQuickFilter, initialOrderId, orders, s
       },
     },
     {
+      key: "isDelayed",
+      header: "지연 여부",
+      render: (r) => {
+        if (r.status !== "완료") return "-";
+        const info = MOCK_LEAD_TIME_DATA[r.orderId];
+        if (!info) return "-";
+        return info.isDelayed
+          ? <Badge tone="danger">지연</Badge>
+          : <Badge tone="ok">정상</Badge>;
+      },
+    },
+    {
       key: "createdAt",
       header: "발행 일시",
       render: (r) => {
@@ -598,6 +481,7 @@ function OrdersPage({ quickFilter, onClearQuickFilter, initialOrderId, orders, s
       {fPartnerType ? <Chip onRemove={() => setFPartnerType("")}>파트너 유형: {fPartnerType}</Chip> : null}
       {fStatus && !quickFilter?.status ? <Chip onRemove={() => { setFStatus(""); setFCancelType(""); }}>상태: {fStatus}</Chip> : null}
       {fCancelType && !quickFilter?.cancelType ? <Chip onRemove={() => setFCancelType("")}>취소 유형: {fCancelType}</Chip> : null}
+      {fDelayed ? <Chip onRemove={() => setFDelayed("")}>지연 여부: {fDelayed}</Chip> : null}
     </div>
   );
 
@@ -628,7 +512,7 @@ function OrdersPage({ quickFilter, onClearQuickFilter, initialOrderId, orders, s
           setFRegion1(""); setFRegion2("");
           setFOrderGroup(""); setFOrderType(""); setFWashType("");
           setFPartner(""); setFPartnerType("");
-          setFStatus(""); setFCancelType("");
+          setFStatus(""); setFCancelType(""); setFDelayed("");
           onClearQuickFilter?.();
         }}
       >
@@ -709,7 +593,7 @@ function OrdersPage({ quickFilter, onClearQuickFilter, initialOrderId, orders, s
         </div>
         <div className="md:col-span-2">
           <label htmlFor="fStatus" className="block text-xs font-semibold text-[#6B778C] mb-1.5">진행 상태</label>
-          <Select id="fStatus" value={fStatus} onChange={(e) => { setFStatus(e.target.value); if (e.target.value !== "취소") setFCancelType(""); onClearQuickFilter?.(); }}>
+          <Select id="fStatus" value={fStatus} onChange={(e) => { setFStatus(e.target.value); if (e.target.value !== "취소") setFCancelType(""); if (e.target.value !== "완료") setFDelayed(""); onClearQuickFilter?.(); }}>
             <option value="">전체</option>
             {statuses.map((v) => <option key={v} value={v}>{v}</option>)}
           </Select>
@@ -721,7 +605,22 @@ function OrdersPage({ quickFilter, onClearQuickFilter, initialOrderId, orders, s
             {CANCEL_TYPES.map((v) => <option key={v} value={v}>{v}</option>)}
           </Select>
         </div>
+        <div className="md:col-span-2">
+          <label htmlFor="fDelayed" className={cn("block text-xs font-semibold mb-1.5", fStatus === "완료" ? "text-[#6B778C]" : "text-[#C1C7CD]")}>지연 여부</label>
+          <Select id="fDelayed" value={fDelayed} onChange={(e) => setFDelayed(e.target.value)} disabled={fStatus !== "완료"} className={fStatus !== "완료" ? "bg-[#F4F5F7]! text-[#C1C7CD] cursor-not-allowed" : ""}>
+            <option value="">전체</option>
+            <option value="지연">지연</option>
+            <option value="정상">정상</option>
+          </Select>
+        </div>
       </FilterPanel>
+
+      <div className="flex items-center mb-2">
+        <div className="text-sm text-[#6B778C]">
+          {filtered.length !== orders.length ? `필터된 결과 ${filtered.length.toLocaleString()}건 / ` : ''}
+          전체 <b className="text-[#172B4D]">{orders.length.toLocaleString()}</b>건
+        </div>
+      </div>
 
       <DataTable
         columns={columns}
@@ -887,6 +786,61 @@ function OrdersPage({ quickFilter, onClearQuickFilter, initialOrderId, orders, s
                   </div>
                 </CardContent>
               </Card>
+
+              {/* 1-2. 리드타임 정보 (완료 오더만) */}
+              {selected.status === '완료' && (() => {
+                const lt = MOCK_LEAD_TIME_DATA[selected.orderId];
+                if (!lt) return null;
+                return (
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>리드타임 정보</CardTitle>
+                      <CardDescription>최초 발행 ~ 세차 완료 소요시간 분석</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="grid grid-cols-2 gap-x-4 gap-y-3 text-xs">
+                        <div className="space-y-1">
+                          <div className="text-[#6B778C]">리드타임</div>
+                          <div className="font-semibold text-[#172B4D]">{formatLeadTimeHours(lt.leadTimeHours)}</div>
+                        </div>
+                        <div className="space-y-1">
+                          <div className="text-[#6B778C]">면책 시간</div>
+                          <div className="font-semibold text-blue-600">{lt.exemptionHours > 0 ? `${lt.exemptionHours}h` : '-'}</div>
+                        </div>
+                        <div className="space-y-1">
+                          <div className="text-[#6B778C]">귀책 소요시간</div>
+                          <div className="font-semibold text-[#172B4D]">{formatLeadTimeHours(lt.accountabilityHours)}</div>
+                        </div>
+                        <div className="space-y-1">
+                          <div className="text-[#6B778C]">지연 여부</div>
+                          <Badge tone={lt.isDelayed ? "danger" : "ok"}>{lt.isDelayed ? "지연" : "정상"}</Badge>
+                        </div>
+                      </div>
+                      {lt.referenceChain.length > 0 && (
+                        <div className="mt-3 pt-3 border-t border-[#DFE1E6]">
+                          <div className="text-xs font-semibold text-[#6B778C] mb-2">참조 오더 이력</div>
+                          <div className="space-y-1.5">
+                            {lt.referenceChain.map((ref, idx) => (
+                              <div key={idx} className="flex items-center gap-2 text-xs">
+                                <span className="font-mono text-[#172B4D]">{ref.orderId}</span>
+                                <span className="text-[#6B778C]">{ref.cancelType}</span>
+                                <span className={cn("font-semibold", ref.responsibility === "면책" ? "text-blue-600" : "text-rose-600")}>
+                                  ({ref.responsibility})
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      {lt.referenceChain.length === 0 && (
+                        <div className="mt-3 pt-3 border-t border-[#DFE1E6]">
+                          <div className="text-xs text-[#94A3B8]">직접 완료 (참조 오더 없음)</div>
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                );
+              })()}
 
               {/* 2. 탁송 정보 (입고 파트너 전용) */}
               {selected.partnerType === '입고' && MOCK_DELIVERY_INFO[selected.orderId] && (

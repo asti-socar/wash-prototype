@@ -1,0 +1,1022 @@
+{
+  "O-90001": {
+    "leadTimeHours": 77,
+    "exemptionHours": 11,
+    "accountabilityHours": 66,
+    "isDelayed": false,
+    "referenceChain": []
+  },
+  "O-90002": {
+    "leadTimeHours": 63,
+    "exemptionHours": 8,
+    "accountabilityHours": 55,
+    "isDelayed": false,
+    "referenceChain": []
+  },
+  "O-90003": {
+    "leadTimeHours": 92,
+    "exemptionHours": 15,
+    "accountabilityHours": 77,
+    "isDelayed": true,
+    "referenceChain": [
+      {
+        "orderId": "O-89860",
+        "cancelType": "예약 불가",
+        "responsibility": "귀책"
+      },
+      {
+        "orderId": "O-89811",
+        "cancelType": "노쇼",
+        "responsibility": "귀책"
+      }
+    ]
+  },
+  "O-90004": {
+    "leadTimeHours": 63,
+    "exemptionHours": 7,
+    "accountabilityHours": 56,
+    "isDelayed": false,
+    "referenceChain": []
+  },
+  "O-90005": {
+    "leadTimeHours": 95,
+    "exemptionHours": 3,
+    "accountabilityHours": 92,
+    "isDelayed": true,
+    "referenceChain": []
+  },
+  "O-90006": {
+    "leadTimeHours": 119,
+    "exemptionHours": 5,
+    "accountabilityHours": 114,
+    "isDelayed": true,
+    "referenceChain": []
+  },
+  "O-90007": {
+    "leadTimeHours": 110,
+    "exemptionHours": 0,
+    "accountabilityHours": 110,
+    "isDelayed": true,
+    "referenceChain": []
+  },
+  "O-90008": {
+    "leadTimeHours": 36,
+    "exemptionHours": 0,
+    "accountabilityHours": 36,
+    "isDelayed": false,
+    "referenceChain": []
+  },
+  "O-90009": {
+    "leadTimeHours": 89,
+    "exemptionHours": 18,
+    "accountabilityHours": 71,
+    "isDelayed": false,
+    "referenceChain": []
+  },
+  "O-90010": {
+    "leadTimeHours": 52,
+    "exemptionHours": 0,
+    "accountabilityHours": 52,
+    "isDelayed": false,
+    "referenceChain": []
+  },
+  "O-90011": {
+    "leadTimeHours": 32,
+    "exemptionHours": 0,
+    "accountabilityHours": 32,
+    "isDelayed": false,
+    "referenceChain": []
+  },
+  "O-90012": {
+    "leadTimeHours": 97,
+    "exemptionHours": 0,
+    "accountabilityHours": 97,
+    "isDelayed": true,
+    "referenceChain": [
+      {
+        "orderId": "O-89895",
+        "cancelType": "주차장 문제",
+        "responsibility": "면책"
+      },
+      {
+        "orderId": "O-89865",
+        "cancelType": "예약 불가",
+        "responsibility": "면책"
+      }
+    ]
+  },
+  "O-90013": {
+    "leadTimeHours": 106,
+    "exemptionHours": 7,
+    "accountabilityHours": 99,
+    "isDelayed": true,
+    "referenceChain": []
+  },
+  "O-90014": {
+    "leadTimeHours": 107,
+    "exemptionHours": 24,
+    "accountabilityHours": 83,
+    "isDelayed": true,
+    "referenceChain": []
+  },
+  "O-90015": {
+    "leadTimeHours": 81,
+    "exemptionHours": 0,
+    "accountabilityHours": 81,
+    "isDelayed": true,
+    "referenceChain": [
+      {
+        "orderId": "O-89799",
+        "cancelType": "우천",
+        "responsibility": "면책"
+      },
+      {
+        "orderId": "O-89834",
+        "cancelType": "예약 불가",
+        "responsibility": "귀책"
+      }
+    ]
+  },
+  "O-90016": {
+    "leadTimeHours": 46,
+    "exemptionHours": 0,
+    "accountabilityHours": 46,
+    "isDelayed": false,
+    "referenceChain": []
+  },
+  "O-90017": {
+    "leadTimeHours": 48,
+    "exemptionHours": 0,
+    "accountabilityHours": 48,
+    "isDelayed": false,
+    "referenceChain": [
+      {
+        "orderId": "O-89863",
+        "cancelType": "미예약",
+        "responsibility": "귀책"
+      },
+      {
+        "orderId": "O-89753",
+        "cancelType": "미예약",
+        "responsibility": "귀책"
+      }
+    ]
+  },
+  "O-90018": {
+    "leadTimeHours": 38,
+    "exemptionHours": 0,
+    "accountabilityHours": 38,
+    "isDelayed": false,
+    "referenceChain": []
+  },
+  "O-90019": {
+    "leadTimeHours": 40,
+    "exemptionHours": 7,
+    "accountabilityHours": 33,
+    "isDelayed": false,
+    "referenceChain": [
+      {
+        "orderId": "O-89749",
+        "cancelType": "노쇼",
+        "responsibility": "귀책"
+      }
+    ]
+  },
+  "O-90020": {
+    "leadTimeHours": 25,
+    "exemptionHours": 0,
+    "accountabilityHours": 25,
+    "isDelayed": false,
+    "referenceChain": [
+      {
+        "orderId": "O-89752",
+        "cancelType": "미예약",
+        "responsibility": "면책"
+      },
+      {
+        "orderId": "O-89885",
+        "cancelType": "주차장 문제",
+        "responsibility": "귀책"
+      }
+    ]
+  },
+  "O-90021": {
+    "leadTimeHours": 43,
+    "exemptionHours": 0,
+    "accountabilityHours": 43,
+    "isDelayed": false,
+    "referenceChain": [
+      {
+        "orderId": "O-89845",
+        "cancelType": "차량 없음",
+        "responsibility": "귀책"
+      },
+      {
+        "orderId": "O-89778",
+        "cancelType": "주차장 문제",
+        "responsibility": "귀책"
+      }
+    ]
+  },
+  "O-90022": {
+    "leadTimeHours": 63,
+    "exemptionHours": 8,
+    "accountabilityHours": 55,
+    "isDelayed": false,
+    "referenceChain": []
+  },
+  "O-90023": {
+    "leadTimeHours": 87,
+    "exemptionHours": 0,
+    "accountabilityHours": 87,
+    "isDelayed": true,
+    "referenceChain": [
+      {
+        "orderId": "O-89889",
+        "cancelType": "차량 없음",
+        "responsibility": "귀책"
+      }
+    ]
+  },
+  "O-90024": {
+    "leadTimeHours": 111,
+    "exemptionHours": 0,
+    "accountabilityHours": 111,
+    "isDelayed": true,
+    "referenceChain": []
+  },
+  "O-90025": {
+    "leadTimeHours": 119,
+    "exemptionHours": 10,
+    "accountabilityHours": 109,
+    "isDelayed": true,
+    "referenceChain": []
+  },
+  "O-90026": {
+    "leadTimeHours": 89,
+    "exemptionHours": 24,
+    "accountabilityHours": 65,
+    "isDelayed": false,
+    "referenceChain": []
+  },
+  "O-90027": {
+    "leadTimeHours": 39,
+    "exemptionHours": 0,
+    "accountabilityHours": 39,
+    "isDelayed": false,
+    "referenceChain": [
+      {
+        "orderId": "O-89791",
+        "cancelType": "주차장 문제",
+        "responsibility": "면책"
+      },
+      {
+        "orderId": "O-89741",
+        "cancelType": "예약 불가",
+        "responsibility": "면책"
+      },
+      {
+        "orderId": "O-89738",
+        "cancelType": "주차장 문제",
+        "responsibility": "귀책"
+      }
+    ]
+  },
+  "O-90028": {
+    "leadTimeHours": 83,
+    "exemptionHours": 0,
+    "accountabilityHours": 83,
+    "isDelayed": true,
+    "referenceChain": []
+  },
+  "O-90029": {
+    "leadTimeHours": 89,
+    "exemptionHours": 0,
+    "accountabilityHours": 89,
+    "isDelayed": true,
+    "referenceChain": []
+  },
+  "O-90030": {
+    "leadTimeHours": 119,
+    "exemptionHours": 0,
+    "accountabilityHours": 119,
+    "isDelayed": true,
+    "referenceChain": []
+  },
+  "O-90031": {
+    "leadTimeHours": 116,
+    "exemptionHours": 0,
+    "accountabilityHours": 116,
+    "isDelayed": true,
+    "referenceChain": []
+  },
+  "O-90032": {
+    "leadTimeHours": 82,
+    "exemptionHours": 17,
+    "accountabilityHours": 65,
+    "isDelayed": false,
+    "referenceChain": [
+      {
+        "orderId": "O-89839",
+        "cancelType": "예약 불가",
+        "responsibility": "귀책"
+      }
+    ]
+  },
+  "O-90033": {
+    "leadTimeHours": 44,
+    "exemptionHours": 22,
+    "accountabilityHours": 22,
+    "isDelayed": false,
+    "referenceChain": []
+  },
+  "O-90034": {
+    "leadTimeHours": 37,
+    "exemptionHours": 0,
+    "accountabilityHours": 37,
+    "isDelayed": false,
+    "referenceChain": []
+  },
+  "O-90035": {
+    "leadTimeHours": 96,
+    "exemptionHours": 0,
+    "accountabilityHours": 96,
+    "isDelayed": true,
+    "referenceChain": [
+      {
+        "orderId": "O-89894",
+        "cancelType": "주차장 문제",
+        "responsibility": "면책"
+      }
+    ]
+  },
+  "O-90036": {
+    "leadTimeHours": 104,
+    "exemptionHours": 0,
+    "accountabilityHours": 104,
+    "isDelayed": true,
+    "referenceChain": [
+      {
+        "orderId": "O-89802",
+        "cancelType": "우천",
+        "responsibility": "귀책"
+      }
+    ]
+  },
+  "O-90037": {
+    "leadTimeHours": 24,
+    "exemptionHours": 0,
+    "accountabilityHours": 24,
+    "isDelayed": false,
+    "referenceChain": [
+      {
+        "orderId": "O-89899",
+        "cancelType": "미예약",
+        "responsibility": "귀책"
+      },
+      {
+        "orderId": "O-89873",
+        "cancelType": "차량 없음",
+        "responsibility": "면책"
+      },
+      {
+        "orderId": "O-89815",
+        "cancelType": "차량 없음",
+        "responsibility": "면책"
+      }
+    ]
+  },
+  "O-90038": {
+    "leadTimeHours": 90,
+    "exemptionHours": 24,
+    "accountabilityHours": 66,
+    "isDelayed": false,
+    "referenceChain": []
+  },
+  "O-90039": {
+    "leadTimeHours": 66,
+    "exemptionHours": 11,
+    "accountabilityHours": 55,
+    "isDelayed": false,
+    "referenceChain": []
+  },
+  "O-90040": {
+    "leadTimeHours": 25,
+    "exemptionHours": 0,
+    "accountabilityHours": 25,
+    "isDelayed": false,
+    "referenceChain": []
+  },
+  "O-90041": {
+    "leadTimeHours": 84,
+    "exemptionHours": 6,
+    "accountabilityHours": 78,
+    "isDelayed": true,
+    "referenceChain": []
+  },
+  "O-90042": {
+    "leadTimeHours": 38,
+    "exemptionHours": 13,
+    "accountabilityHours": 25,
+    "isDelayed": false,
+    "referenceChain": []
+  },
+  "O-90043": {
+    "leadTimeHours": 37,
+    "exemptionHours": 0,
+    "accountabilityHours": 37,
+    "isDelayed": false,
+    "referenceChain": []
+  },
+  "O-90044": {
+    "leadTimeHours": 38,
+    "exemptionHours": 22,
+    "accountabilityHours": 16,
+    "isDelayed": false,
+    "referenceChain": []
+  },
+  "O-90045": {
+    "leadTimeHours": 43,
+    "exemptionHours": 0,
+    "accountabilityHours": 43,
+    "isDelayed": false,
+    "referenceChain": []
+  },
+  "O-90046": {
+    "leadTimeHours": 44,
+    "exemptionHours": 0,
+    "accountabilityHours": 44,
+    "isDelayed": false,
+    "referenceChain": [
+      {
+        "orderId": "O-89801",
+        "cancelType": "차량 없음",
+        "responsibility": "면책"
+      },
+      {
+        "orderId": "O-89798",
+        "cancelType": "우천",
+        "responsibility": "면책"
+      },
+      {
+        "orderId": "O-89834",
+        "cancelType": "노쇼",
+        "responsibility": "귀책"
+      }
+    ]
+  },
+  "O-90047": {
+    "leadTimeHours": 24,
+    "exemptionHours": 0,
+    "accountabilityHours": 24,
+    "isDelayed": false,
+    "referenceChain": []
+  },
+  "O-90048": {
+    "leadTimeHours": 83,
+    "exemptionHours": 0,
+    "accountabilityHours": 83,
+    "isDelayed": true,
+    "referenceChain": []
+  },
+  "O-90049": {
+    "leadTimeHours": 76,
+    "exemptionHours": 0,
+    "accountabilityHours": 76,
+    "isDelayed": true,
+    "referenceChain": []
+  },
+  "O-90050": {
+    "leadTimeHours": 31,
+    "exemptionHours": 2,
+    "accountabilityHours": 29,
+    "isDelayed": false,
+    "referenceChain": [
+      {
+        "orderId": "O-89809",
+        "cancelType": "미예약",
+        "responsibility": "면책"
+      },
+      {
+        "orderId": "O-89751",
+        "cancelType": "노쇼",
+        "responsibility": "귀책"
+      },
+      {
+        "orderId": "O-89845",
+        "cancelType": "예약 불가",
+        "responsibility": "귀책"
+      }
+    ]
+  },
+  "O-90051": {
+    "leadTimeHours": 51,
+    "exemptionHours": 6,
+    "accountabilityHours": 45,
+    "isDelayed": false,
+    "referenceChain": []
+  },
+  "O-90052": {
+    "leadTimeHours": 89,
+    "exemptionHours": 23,
+    "accountabilityHours": 66,
+    "isDelayed": false,
+    "referenceChain": []
+  },
+  "O-90053": {
+    "leadTimeHours": 73,
+    "exemptionHours": 7,
+    "accountabilityHours": 66,
+    "isDelayed": false,
+    "referenceChain": [
+      {
+        "orderId": "O-89789",
+        "cancelType": "주차장 문제",
+        "responsibility": "면책"
+      },
+      {
+        "orderId": "O-89780",
+        "cancelType": "미예약",
+        "responsibility": "면책"
+      }
+    ]
+  },
+  "O-90054": {
+    "leadTimeHours": 32,
+    "exemptionHours": 0,
+    "accountabilityHours": 32,
+    "isDelayed": false,
+    "referenceChain": []
+  },
+  "O-90055": {
+    "leadTimeHours": 93,
+    "exemptionHours": 13,
+    "accountabilityHours": 80,
+    "isDelayed": true,
+    "referenceChain": []
+  },
+  "O-90056": {
+    "leadTimeHours": 74,
+    "exemptionHours": 0,
+    "accountabilityHours": 74,
+    "isDelayed": true,
+    "referenceChain": []
+  },
+  "O-90057": {
+    "leadTimeHours": 99,
+    "exemptionHours": 0,
+    "accountabilityHours": 99,
+    "isDelayed": true,
+    "referenceChain": []
+  },
+  "O-90058": {
+    "leadTimeHours": 109,
+    "exemptionHours": 4,
+    "accountabilityHours": 105,
+    "isDelayed": true,
+    "referenceChain": [
+      {
+        "orderId": "O-89834",
+        "cancelType": "미예약",
+        "responsibility": "귀책"
+      },
+      {
+        "orderId": "O-89814",
+        "cancelType": "주차장 문제",
+        "responsibility": "귀책"
+      },
+      {
+        "orderId": "O-89840",
+        "cancelType": "예약 불가",
+        "responsibility": "면책"
+      }
+    ]
+  },
+  "O-90059": {
+    "leadTimeHours": 61,
+    "exemptionHours": 7,
+    "accountabilityHours": 54,
+    "isDelayed": false,
+    "referenceChain": []
+  },
+  "O-90060": {
+    "leadTimeHours": 82,
+    "exemptionHours": 22,
+    "accountabilityHours": 60,
+    "isDelayed": false,
+    "referenceChain": [
+      {
+        "orderId": "O-89754",
+        "cancelType": "우천",
+        "responsibility": "면책"
+      }
+    ]
+  },
+  "O-90061": {
+    "leadTimeHours": 78,
+    "exemptionHours": 0,
+    "accountabilityHours": 78,
+    "isDelayed": true,
+    "referenceChain": []
+  },
+  "O-90062": {
+    "leadTimeHours": 84,
+    "exemptionHours": 19,
+    "accountabilityHours": 65,
+    "isDelayed": false,
+    "referenceChain": [
+      {
+        "orderId": "O-89759",
+        "cancelType": "주차장 문제",
+        "responsibility": "귀책"
+      },
+      {
+        "orderId": "O-89837",
+        "cancelType": "주차장 문제",
+        "responsibility": "귀책"
+      }
+    ]
+  },
+  "O-90063": {
+    "leadTimeHours": 117,
+    "exemptionHours": 11,
+    "accountabilityHours": 106,
+    "isDelayed": true,
+    "referenceChain": []
+  },
+  "O-90064": {
+    "leadTimeHours": 102,
+    "exemptionHours": 21,
+    "accountabilityHours": 81,
+    "isDelayed": true,
+    "referenceChain": []
+  },
+  "O-90065": {
+    "leadTimeHours": 42,
+    "exemptionHours": 0,
+    "accountabilityHours": 42,
+    "isDelayed": false,
+    "referenceChain": [
+      {
+        "orderId": "O-89704",
+        "cancelType": "노쇼",
+        "responsibility": "면책"
+      }
+    ]
+  },
+  "O-90066": {
+    "leadTimeHours": 65,
+    "exemptionHours": 0,
+    "accountabilityHours": 65,
+    "isDelayed": false,
+    "referenceChain": [
+      {
+        "orderId": "O-89709",
+        "cancelType": "예약 불가",
+        "responsibility": "귀책"
+      },
+      {
+        "orderId": "O-89735",
+        "cancelType": "우천",
+        "responsibility": "귀책"
+      },
+      {
+        "orderId": "O-89888",
+        "cancelType": "주차장 문제",
+        "responsibility": "귀책"
+      }
+    ]
+  },
+  "O-90067": {
+    "leadTimeHours": 104,
+    "exemptionHours": 0,
+    "accountabilityHours": 104,
+    "isDelayed": true,
+    "referenceChain": []
+  },
+  "O-90068": {
+    "leadTimeHours": 54,
+    "exemptionHours": 23,
+    "accountabilityHours": 31,
+    "isDelayed": false,
+    "referenceChain": []
+  },
+  "O-90069": {
+    "leadTimeHours": 114,
+    "exemptionHours": 0,
+    "accountabilityHours": 114,
+    "isDelayed": true,
+    "referenceChain": []
+  },
+  "O-90070": {
+    "leadTimeHours": 88,
+    "exemptionHours": 0,
+    "accountabilityHours": 88,
+    "isDelayed": true,
+    "referenceChain": []
+  },
+  "O-90071": {
+    "leadTimeHours": 78,
+    "exemptionHours": 17,
+    "accountabilityHours": 61,
+    "isDelayed": false,
+    "referenceChain": []
+  },
+  "O-90072": {
+    "leadTimeHours": 108,
+    "exemptionHours": 7,
+    "accountabilityHours": 101,
+    "isDelayed": true,
+    "referenceChain": []
+  },
+  "O-90073": {
+    "leadTimeHours": 64,
+    "exemptionHours": 7,
+    "accountabilityHours": 57,
+    "isDelayed": false,
+    "referenceChain": []
+  },
+  "O-90074": {
+    "leadTimeHours": 41,
+    "exemptionHours": 4,
+    "accountabilityHours": 37,
+    "isDelayed": false,
+    "referenceChain": [
+      {
+        "orderId": "O-89886",
+        "cancelType": "차량 없음",
+        "responsibility": "면책"
+      },
+      {
+        "orderId": "O-89749",
+        "cancelType": "미예약",
+        "responsibility": "면책"
+      }
+    ]
+  },
+  "O-90075": {
+    "leadTimeHours": 58,
+    "exemptionHours": 0,
+    "accountabilityHours": 58,
+    "isDelayed": false,
+    "referenceChain": []
+  },
+  "O-90076": {
+    "leadTimeHours": 54,
+    "exemptionHours": 9,
+    "accountabilityHours": 45,
+    "isDelayed": false,
+    "referenceChain": []
+  },
+  "O-90077": {
+    "leadTimeHours": 104,
+    "exemptionHours": 17,
+    "accountabilityHours": 87,
+    "isDelayed": true,
+    "referenceChain": []
+  },
+  "O-90078": {
+    "leadTimeHours": 80,
+    "exemptionHours": 0,
+    "accountabilityHours": 80,
+    "isDelayed": true,
+    "referenceChain": []
+  },
+  "O-90079": {
+    "leadTimeHours": 117,
+    "exemptionHours": 3,
+    "accountabilityHours": 114,
+    "isDelayed": true,
+    "referenceChain": []
+  },
+  "O-90080": {
+    "leadTimeHours": 91,
+    "exemptionHours": 0,
+    "accountabilityHours": 91,
+    "isDelayed": true,
+    "referenceChain": []
+  },
+  "O-90081": {
+    "leadTimeHours": 47,
+    "exemptionHours": 0,
+    "accountabilityHours": 47,
+    "isDelayed": false,
+    "referenceChain": []
+  },
+  "O-90082": {
+    "leadTimeHours": 41,
+    "exemptionHours": 14,
+    "accountabilityHours": 27,
+    "isDelayed": false,
+    "referenceChain": [
+      {
+        "orderId": "O-89828",
+        "cancelType": "예약 불가",
+        "responsibility": "귀책"
+      },
+      {
+        "orderId": "O-89815",
+        "cancelType": "우천",
+        "responsibility": "귀책"
+      },
+      {
+        "orderId": "O-89733",
+        "cancelType": "주차장 문제",
+        "responsibility": "면책"
+      }
+    ]
+  },
+  "O-90083": {
+    "leadTimeHours": 28,
+    "exemptionHours": 0,
+    "accountabilityHours": 28,
+    "isDelayed": false,
+    "referenceChain": []
+  },
+  "O-90084": {
+    "leadTimeHours": 62,
+    "exemptionHours": 0,
+    "accountabilityHours": 62,
+    "isDelayed": false,
+    "referenceChain": []
+  },
+  "O-90085": {
+    "leadTimeHours": 59,
+    "exemptionHours": 0,
+    "accountabilityHours": 59,
+    "isDelayed": false,
+    "referenceChain": []
+  },
+  "O-90086": {
+    "leadTimeHours": 120,
+    "exemptionHours": 0,
+    "accountabilityHours": 120,
+    "isDelayed": true,
+    "referenceChain": [
+      {
+        "orderId": "O-89818",
+        "cancelType": "예약 불가",
+        "responsibility": "귀책"
+      },
+      {
+        "orderId": "O-89878",
+        "cancelType": "미예약",
+        "responsibility": "면책"
+      }
+    ]
+  },
+  "O-90087": {
+    "leadTimeHours": 96,
+    "exemptionHours": 0,
+    "accountabilityHours": 96,
+    "isDelayed": true,
+    "referenceChain": []
+  },
+  "O-90088": {
+    "leadTimeHours": 37,
+    "exemptionHours": 0,
+    "accountabilityHours": 37,
+    "isDelayed": false,
+    "referenceChain": []
+  },
+  "O-90089": {
+    "leadTimeHours": 66,
+    "exemptionHours": 0,
+    "accountabilityHours": 66,
+    "isDelayed": false,
+    "referenceChain": []
+  },
+  "O-90090": {
+    "leadTimeHours": 74,
+    "exemptionHours": 0,
+    "accountabilityHours": 74,
+    "isDelayed": true,
+    "referenceChain": []
+  },
+  "O-90091": {
+    "leadTimeHours": 49,
+    "exemptionHours": 18,
+    "accountabilityHours": 31,
+    "isDelayed": false,
+    "referenceChain": [
+      {
+        "orderId": "O-89807",
+        "cancelType": "예약 불가",
+        "responsibility": "면책"
+      }
+    ]
+  },
+  "O-90092": {
+    "leadTimeHours": 43,
+    "exemptionHours": 0,
+    "accountabilityHours": 43,
+    "isDelayed": false,
+    "referenceChain": []
+  },
+  "O-90093": {
+    "leadTimeHours": 30,
+    "exemptionHours": 0,
+    "accountabilityHours": 30,
+    "isDelayed": false,
+    "referenceChain": [
+      {
+        "orderId": "O-89766",
+        "cancelType": "예약 불가",
+        "responsibility": "귀책"
+      },
+      {
+        "orderId": "O-89821",
+        "cancelType": "우천",
+        "responsibility": "면책"
+      }
+    ]
+  },
+  "O-90094": {
+    "leadTimeHours": 36,
+    "exemptionHours": 7,
+    "accountabilityHours": 29,
+    "isDelayed": false,
+    "referenceChain": [
+      {
+        "orderId": "O-89893",
+        "cancelType": "우천",
+        "responsibility": "면책"
+      }
+    ]
+  },
+  "O-90095": {
+    "leadTimeHours": 40,
+    "exemptionHours": 0,
+    "accountabilityHours": 40,
+    "isDelayed": false,
+    "referenceChain": []
+  },
+  "O-90096": {
+    "leadTimeHours": 89,
+    "exemptionHours": 10,
+    "accountabilityHours": 79,
+    "isDelayed": true,
+    "referenceChain": []
+  },
+  "O-90097": {
+    "leadTimeHours": 32,
+    "exemptionHours": 12,
+    "accountabilityHours": 20,
+    "isDelayed": false,
+    "referenceChain": [
+      {
+        "orderId": "O-89822",
+        "cancelType": "주차장 문제",
+        "responsibility": "귀책"
+      },
+      {
+        "orderId": "O-89834",
+        "cancelType": "차량 없음",
+        "responsibility": "귀책"
+      }
+    ]
+  },
+  "O-90098": {
+    "leadTimeHours": 116,
+    "exemptionHours": 16,
+    "accountabilityHours": 100,
+    "isDelayed": true,
+    "referenceChain": []
+  },
+  "O-90099": {
+    "leadTimeHours": 82,
+    "exemptionHours": 0,
+    "accountabilityHours": 82,
+    "isDelayed": true,
+    "referenceChain": [
+      {
+        "orderId": "O-89754",
+        "cancelType": "주차장 문제",
+        "responsibility": "귀책"
+      }
+    ]
+  },
+  "O-90100": {
+    "leadTimeHours": 72,
+    "exemptionHours": 0,
+    "accountabilityHours": 72,
+    "isDelayed": false,
+    "referenceChain": [
+      {
+        "orderId": "O-89868",
+        "cancelType": "노쇼",
+        "responsibility": "면책"
+      },
+      {
+        "orderId": "O-89740",
+        "cancelType": "주차장 문제",
+        "responsibility": "면책"
+      },
+      {
+        "orderId": "O-89736",
+        "cancelType": "미예약",
+        "responsibility": "면책"
+      }
+    ]
+  }
+}

@@ -1,0 +1,1154 @@
+{
+  "O-90001": [
+    {
+      "id": "LI0010",
+      "createdAt": "2026-02-25 17:46",
+      "itemCategory": "일반",
+      "status": "발송 대기",
+      "itemDetails": "손목시계"
+    },
+    {
+      "id": "LI0011",
+      "createdAt": "2026-02-28 18:04",
+      "itemCategory": "귀중품",
+      "status": "경찰서 인계",
+      "itemDetails": "검은색 스마트폰"
+    }
+  ],
+  "O-90003": [
+    {
+      "id": "LI0030",
+      "createdAt": "2026-01-28 17:20",
+      "itemCategory": "일반",
+      "status": "배송지 미입력",
+      "itemDetails": "우산"
+    }
+  ],
+  "O-90005": [
+    {
+      "id": "LI0050",
+      "createdAt": "2026-02-25 19:48",
+      "itemCategory": "일반",
+      "status": "발송 대기",
+      "itemDetails": "노트북"
+    }
+  ],
+  "O-90007": [
+    {
+      "id": "LI0070",
+      "createdAt": "2026-02-23 19:36",
+      "itemCategory": "일반",
+      "status": "배송지 미입력",
+      "itemDetails": "블루투스 이어폰"
+    }
+  ],
+  "O-90009": [
+    {
+      "id": "LI0090",
+      "createdAt": "2026-02-18 09:55",
+      "itemCategory": "귀중품",
+      "status": "경찰서 인계",
+      "itemDetails": "노트북"
+    },
+    {
+      "id": "LI0091",
+      "createdAt": "2026-01-26 15:54",
+      "itemCategory": "귀중품",
+      "status": "경찰서 인계",
+      "itemDetails": "회색 후드티"
+    }
+  ],
+  "O-90011": [
+    {
+      "id": "LI0110",
+      "createdAt": "2026-01-01 15:30",
+      "itemCategory": "일반",
+      "status": "발송 완료",
+      "itemDetails": "우산"
+    }
+  ],
+  "O-90013": [
+    {
+      "id": "LI0130",
+      "createdAt": "2026-01-08 18:10",
+      "itemCategory": "귀중품",
+      "status": "배송지 미입력",
+      "itemDetails": "검정 선글라스"
+    }
+  ],
+  "O-90015": [
+    {
+      "id": "LI0150",
+      "createdAt": "2026-01-13 08:33",
+      "itemCategory": "일반",
+      "status": "발송 대기",
+      "itemDetails": "회색 후드티"
+    }
+  ],
+  "O-90017": [
+    {
+      "id": "LI0170",
+      "createdAt": "2026-02-14 17:19",
+      "itemCategory": "귀중품",
+      "status": "배송지 미입력",
+      "itemDetails": "에어팟"
+    }
+  ],
+  "O-90019": [
+    {
+      "id": "LI0190",
+      "createdAt": "2026-02-10 16:16",
+      "itemCategory": "일반",
+      "status": "발송 대기",
+      "itemDetails": "노트북"
+    }
+  ],
+  "O-90021": [
+    {
+      "id": "LI0210",
+      "createdAt": "2026-02-17 16:25",
+      "itemCategory": "일반",
+      "status": "발송 완료",
+      "itemDetails": "회색 후드티"
+    },
+    {
+      "id": "LI0211",
+      "createdAt": "2026-02-18 14:10",
+      "itemCategory": "일반",
+      "status": "배송지 미입력",
+      "itemDetails": "갈색 가죽 지갑"
+    }
+  ],
+  "O-90023": [
+    {
+      "id": "LI0230",
+      "createdAt": "2026-01-24 17:19",
+      "itemCategory": "귀중품",
+      "status": "경찰서 인계",
+      "itemDetails": "검정 선글라스"
+    }
+  ],
+  "O-90025": [
+    {
+      "id": "LI0250",
+      "createdAt": "2026-01-25 14:19",
+      "itemCategory": "일반",
+      "status": "배송지 미입력",
+      "itemDetails": "우산"
+    }
+  ],
+  "O-90027": [
+    {
+      "id": "LI0270",
+      "createdAt": "2026-01-22 19:17",
+      "itemCategory": "일반",
+      "status": "배송지 미입력",
+      "itemDetails": "회색 후드티"
+    }
+  ],
+  "O-90029": [
+    {
+      "id": "LI0290",
+      "createdAt": "2026-01-01 21:38",
+      "itemCategory": "귀중품",
+      "status": "경찰서 인계",
+      "itemDetails": "검정 선글라스"
+    }
+  ],
+  "O-90031": [
+    {
+      "id": "LI0310",
+      "createdAt": "2026-02-24 17:02",
+      "itemCategory": "일반",
+      "status": "배송지 미입력",
+      "itemDetails": "검은색 스마트폰"
+    }
+  ],
+  "O-90033": [
+    {
+      "id": "LI0330",
+      "createdAt": "2026-02-20 16:49",
+      "itemCategory": "일반",
+      "status": "발송 완료",
+      "itemDetails": "손목시계"
+    }
+  ],
+  "O-90035": [
+    {
+      "id": "LI0350",
+      "createdAt": "2026-02-04 09:35",
+      "itemCategory": "일반",
+      "status": "발송 완료",
+      "itemDetails": "손목시계"
+    }
+  ],
+  "O-90037": [
+    {
+      "id": "LI0370",
+      "createdAt": "2026-01-01 14:49",
+      "itemCategory": "일반",
+      "status": "발송 완료",
+      "itemDetails": "손목시계"
+    },
+    {
+      "id": "LI0371",
+      "createdAt": "2026-02-05 10:27",
+      "itemCategory": "일반",
+      "status": "배송지 미입력",
+      "itemDetails": "회색 후드티"
+    }
+  ],
+  "O-90039": [
+    {
+      "id": "LI0390",
+      "createdAt": "2026-02-02 17:30",
+      "itemCategory": "귀중품",
+      "status": "경찰서 인계",
+      "itemDetails": "우산"
+    },
+    {
+      "id": "LI0391",
+      "createdAt": "2026-01-07 20:49",
+      "itemCategory": "일반",
+      "status": "배송지 미입력",
+      "itemDetails": "충전기"
+    }
+  ],
+  "O-90041": [
+    {
+      "id": "LI0410",
+      "createdAt": "2026-01-23 13:58",
+      "itemCategory": "귀중품",
+      "status": "경찰서 인계",
+      "itemDetails": "노트북"
+    }
+  ],
+  "O-90043": [
+    {
+      "id": "LI0430",
+      "createdAt": "2026-02-10 21:00",
+      "itemCategory": "귀중품",
+      "status": "배송지 미입력",
+      "itemDetails": "노트북"
+    }
+  ],
+  "O-90045": [
+    {
+      "id": "LI0450",
+      "createdAt": "2026-01-18 09:44",
+      "itemCategory": "귀중품",
+      "status": "경찰서 인계",
+      "itemDetails": "충전기"
+    }
+  ],
+  "O-90047": [
+    {
+      "id": "LI0470",
+      "createdAt": "2026-01-24 19:15",
+      "itemCategory": "일반",
+      "status": "배송지 미입력",
+      "itemDetails": "손목시계"
+    }
+  ],
+  "O-90049": [
+    {
+      "id": "LI0490",
+      "createdAt": "2026-02-24 20:56",
+      "itemCategory": "귀중품",
+      "status": "배송지 미입력",
+      "itemDetails": "충전기"
+    }
+  ],
+  "O-90051": [
+    {
+      "id": "LI0510",
+      "createdAt": "2026-02-05 16:20",
+      "itemCategory": "귀중품",
+      "status": "경찰서 인계",
+      "itemDetails": "검은색 스마트폰"
+    }
+  ],
+  "O-90053": [
+    {
+      "id": "LI0530",
+      "createdAt": "2026-02-01 13:17",
+      "itemCategory": "귀중품",
+      "status": "배송지 미입력",
+      "itemDetails": "노트북"
+    },
+    {
+      "id": "LI0531",
+      "createdAt": "2026-01-20 19:59",
+      "itemCategory": "귀중품",
+      "status": "배송지 미입력",
+      "itemDetails": "손목시계"
+    }
+  ],
+  "O-90055": [
+    {
+      "id": "LI0550",
+      "createdAt": "2026-01-04 08:02",
+      "itemCategory": "귀중품",
+      "status": "배송지 미입력",
+      "itemDetails": "회색 후드티"
+    },
+    {
+      "id": "LI0551",
+      "createdAt": "2026-02-16 22:35",
+      "itemCategory": "귀중품",
+      "status": "배송지 미입력",
+      "itemDetails": "검정 선글라스"
+    }
+  ],
+  "O-90057": [
+    {
+      "id": "LI0570",
+      "createdAt": "2026-02-02 08:40",
+      "itemCategory": "일반",
+      "status": "발송 대기",
+      "itemDetails": "회색 후드티"
+    },
+    {
+      "id": "LI0571",
+      "createdAt": "2026-01-19 16:15",
+      "itemCategory": "일반",
+      "status": "발송 완료",
+      "itemDetails": "회색 후드티"
+    }
+  ],
+  "O-90059": [
+    {
+      "id": "LI0590",
+      "createdAt": "2026-01-14 17:58",
+      "itemCategory": "일반",
+      "status": "배송지 미입력",
+      "itemDetails": "에어팟"
+    }
+  ],
+  "O-90061": [
+    {
+      "id": "LI0610",
+      "createdAt": "2026-01-16 10:32",
+      "itemCategory": "일반",
+      "status": "발송 완료",
+      "itemDetails": "검정 선글라스"
+    },
+    {
+      "id": "LI0611",
+      "createdAt": "2026-02-03 09:34",
+      "itemCategory": "귀중품",
+      "status": "경찰서 인계",
+      "itemDetails": "우산"
+    }
+  ],
+  "O-90063": [
+    {
+      "id": "LI0630",
+      "createdAt": "2026-02-09 16:17",
+      "itemCategory": "일반",
+      "status": "배송지 미입력",
+      "itemDetails": "손목시계"
+    }
+  ],
+  "O-90065": [
+    {
+      "id": "LI0650",
+      "createdAt": "2026-02-25 10:00",
+      "itemCategory": "일반",
+      "status": "배송지 미입력",
+      "itemDetails": "검은색 스마트폰"
+    },
+    {
+      "id": "LI0651",
+      "createdAt": "2026-01-06 08:44",
+      "itemCategory": "귀중품",
+      "status": "배송지 미입력",
+      "itemDetails": "손목시계"
+    }
+  ],
+  "O-90067": [
+    {
+      "id": "LI0670",
+      "createdAt": "2026-02-12 12:16",
+      "itemCategory": "일반",
+      "status": "발송 대기",
+      "itemDetails": "회색 후드티"
+    },
+    {
+      "id": "LI0671",
+      "createdAt": "2026-02-18 13:39",
+      "itemCategory": "일반",
+      "status": "배송지 미입력",
+      "itemDetails": "블루투스 이어폰"
+    }
+  ],
+  "O-90069": [
+    {
+      "id": "LI0690",
+      "createdAt": "2026-01-09 12:15",
+      "itemCategory": "일반",
+      "status": "발송 완료",
+      "itemDetails": "검은색 스마트폰"
+    },
+    {
+      "id": "LI0691",
+      "createdAt": "2026-02-11 11:19",
+      "itemCategory": "일반",
+      "status": "배송지 미입력",
+      "itemDetails": "에어팟"
+    }
+  ],
+  "O-90071": [
+    {
+      "id": "LI0710",
+      "createdAt": "2026-02-08 10:52",
+      "itemCategory": "일반",
+      "status": "배송지 미입력",
+      "itemDetails": "검은색 스마트폰"
+    }
+  ],
+  "O-90073": [
+    {
+      "id": "LI0730",
+      "createdAt": "2026-01-26 10:17",
+      "itemCategory": "일반",
+      "status": "발송 완료",
+      "itemDetails": "갈색 가죽 지갑"
+    }
+  ],
+  "O-90075": [
+    {
+      "id": "LI0750",
+      "createdAt": "2026-02-07 09:11",
+      "itemCategory": "귀중품",
+      "status": "배송지 미입력",
+      "itemDetails": "갈색 가죽 지갑"
+    }
+  ],
+  "O-90077": [
+    {
+      "id": "LI0770",
+      "createdAt": "2026-01-28 22:23",
+      "itemCategory": "일반",
+      "status": "배송지 미입력",
+      "itemDetails": "에어팟"
+    }
+  ],
+  "O-90079": [
+    {
+      "id": "LI0790",
+      "createdAt": "2026-01-26 12:44",
+      "itemCategory": "귀중품",
+      "status": "경찰서 인계",
+      "itemDetails": "갈색 가죽 지갑"
+    },
+    {
+      "id": "LI0791",
+      "createdAt": "2026-02-04 09:51",
+      "itemCategory": "귀중품",
+      "status": "경찰서 인계",
+      "itemDetails": "회색 후드티"
+    }
+  ],
+  "O-90081": [
+    {
+      "id": "LI0810",
+      "createdAt": "2026-01-18 10:38",
+      "itemCategory": "일반",
+      "status": "발송 대기",
+      "itemDetails": "갈색 가죽 지갑"
+    }
+  ],
+  "O-90083": [
+    {
+      "id": "LI0830",
+      "createdAt": "2026-01-20 22:50",
+      "itemCategory": "일반",
+      "status": "발송 대기",
+      "itemDetails": "검은색 스마트폰"
+    }
+  ],
+  "O-90085": [
+    {
+      "id": "LI0850",
+      "createdAt": "2026-02-18 16:37",
+      "itemCategory": "귀중품",
+      "status": "경찰서 인계",
+      "itemDetails": "에어팟"
+    }
+  ],
+  "O-90087": [
+    {
+      "id": "LI0870",
+      "createdAt": "2026-01-15 15:21",
+      "itemCategory": "귀중품",
+      "status": "경찰서 인계",
+      "itemDetails": "블루투스 이어폰"
+    }
+  ],
+  "O-90089": [
+    {
+      "id": "LI0890",
+      "createdAt": "2026-02-22 16:51",
+      "itemCategory": "일반",
+      "status": "발송 완료",
+      "itemDetails": "검은색 스마트폰"
+    }
+  ],
+  "O-90091": [
+    {
+      "id": "LI0910",
+      "createdAt": "2026-01-27 20:09",
+      "itemCategory": "귀중품",
+      "status": "경찰서 인계",
+      "itemDetails": "갈색 가죽 지갑"
+    },
+    {
+      "id": "LI0911",
+      "createdAt": "2026-01-27 21:58",
+      "itemCategory": "일반",
+      "status": "발송 완료",
+      "itemDetails": "검정 선글라스"
+    }
+  ],
+  "O-90093": [
+    {
+      "id": "LI0930",
+      "createdAt": "2026-01-21 16:41",
+      "itemCategory": "귀중품",
+      "status": "배송지 미입력",
+      "itemDetails": "노트북"
+    }
+  ],
+  "O-90095": [
+    {
+      "id": "LI0950",
+      "createdAt": "2026-01-21 15:31",
+      "itemCategory": "귀중품",
+      "status": "경찰서 인계",
+      "itemDetails": "손목시계"
+    },
+    {
+      "id": "LI0951",
+      "createdAt": "2026-01-16 16:00",
+      "itemCategory": "귀중품",
+      "status": "배송지 미입력",
+      "itemDetails": "블루투스 이어폰"
+    }
+  ],
+  "O-90097": [
+    {
+      "id": "LI0970",
+      "createdAt": "2026-02-26 22:00",
+      "itemCategory": "귀중품",
+      "status": "배송지 미입력",
+      "itemDetails": "손목시계"
+    }
+  ],
+  "O-90099": [
+    {
+      "id": "LI0990",
+      "createdAt": "2026-02-20 14:24",
+      "itemCategory": "일반",
+      "status": "발송 완료",
+      "itemDetails": "노트북"
+    },
+    {
+      "id": "LI0991",
+      "createdAt": "2026-02-20 20:49",
+      "itemCategory": "일반",
+      "status": "발송 대기",
+      "itemDetails": "검정 선글라스"
+    }
+  ],
+  "O-90101": [
+    {
+      "id": "LI1010",
+      "createdAt": "2026-01-27 16:39",
+      "itemCategory": "일반",
+      "status": "발송 대기",
+      "itemDetails": "충전기"
+    }
+  ],
+  "O-90103": [
+    {
+      "id": "LI1030",
+      "createdAt": "2026-01-04 16:52",
+      "itemCategory": "귀중품",
+      "status": "경찰서 인계",
+      "itemDetails": "검은색 스마트폰"
+    }
+  ],
+  "O-90105": [
+    {
+      "id": "LI1050",
+      "createdAt": "2026-01-17 17:45",
+      "itemCategory": "일반",
+      "status": "발송 대기",
+      "itemDetails": "검정 선글라스"
+    }
+  ],
+  "O-90107": [
+    {
+      "id": "LI1070",
+      "createdAt": "2026-01-13 10:11",
+      "itemCategory": "귀중품",
+      "status": "배송지 미입력",
+      "itemDetails": "에어팟"
+    }
+  ],
+  "O-90109": [
+    {
+      "id": "LI1090",
+      "createdAt": "2026-02-13 08:44",
+      "itemCategory": "일반",
+      "status": "발송 완료",
+      "itemDetails": "블루투스 이어폰"
+    }
+  ],
+  "O-90111": [
+    {
+      "id": "LI1110",
+      "createdAt": "2026-02-21 15:04",
+      "itemCategory": "귀중품",
+      "status": "배송지 미입력",
+      "itemDetails": "검은색 스마트폰"
+    }
+  ],
+  "O-90113": [
+    {
+      "id": "LI1130",
+      "createdAt": "2026-02-03 10:38",
+      "itemCategory": "일반",
+      "status": "발송 대기",
+      "itemDetails": "충전기"
+    },
+    {
+      "id": "LI1131",
+      "createdAt": "2026-01-05 11:09",
+      "itemCategory": "귀중품",
+      "status": "배송지 미입력",
+      "itemDetails": "검은색 스마트폰"
+    }
+  ],
+  "O-90115": [
+    {
+      "id": "LI1150",
+      "createdAt": "2026-01-05 16:55",
+      "itemCategory": "귀중품",
+      "status": "배송지 미입력",
+      "itemDetails": "회색 후드티"
+    },
+    {
+      "id": "LI1151",
+      "createdAt": "2026-02-02 22:14",
+      "itemCategory": "일반",
+      "status": "발송 완료",
+      "itemDetails": "충전기"
+    }
+  ],
+  "O-90117": [
+    {
+      "id": "LI1170",
+      "createdAt": "2026-01-14 15:33",
+      "itemCategory": "귀중품",
+      "status": "배송지 미입력",
+      "itemDetails": "회색 후드티"
+    },
+    {
+      "id": "LI1171",
+      "createdAt": "2026-02-12 22:33",
+      "itemCategory": "일반",
+      "status": "발송 대기",
+      "itemDetails": "블루투스 이어폰"
+    }
+  ],
+  "O-90119": [
+    {
+      "id": "LI1190",
+      "createdAt": "2026-02-27 12:21",
+      "itemCategory": "귀중품",
+      "status": "경찰서 인계",
+      "itemDetails": "충전기"
+    }
+  ],
+  "O-90121": [
+    {
+      "id": "LI1210",
+      "createdAt": "2026-02-21 15:01",
+      "itemCategory": "일반",
+      "status": "배송지 미입력",
+      "itemDetails": "검은색 스마트폰"
+    },
+    {
+      "id": "LI1211",
+      "createdAt": "2026-01-14 20:17",
+      "itemCategory": "일반",
+      "status": "발송 대기",
+      "itemDetails": "손목시계"
+    }
+  ],
+  "O-90123": [
+    {
+      "id": "LI1230",
+      "createdAt": "2026-02-03 12:28",
+      "itemCategory": "귀중품",
+      "status": "경찰서 인계",
+      "itemDetails": "회색 후드티"
+    },
+    {
+      "id": "LI1231",
+      "createdAt": "2026-01-23 08:40",
+      "itemCategory": "귀중품",
+      "status": "배송지 미입력",
+      "itemDetails": "검은색 스마트폰"
+    }
+  ],
+  "O-90125": [
+    {
+      "id": "LI1250",
+      "createdAt": "2026-01-18 09:29",
+      "itemCategory": "귀중품",
+      "status": "배송지 미입력",
+      "itemDetails": "검정 선글라스"
+    }
+  ],
+  "O-90127": [
+    {
+      "id": "LI1270",
+      "createdAt": "2026-01-04 17:39",
+      "itemCategory": "귀중품",
+      "status": "경찰서 인계",
+      "itemDetails": "블루투스 이어폰"
+    }
+  ],
+  "O-90129": [
+    {
+      "id": "LI1290",
+      "createdAt": "2026-01-21 18:52",
+      "itemCategory": "일반",
+      "status": "발송 대기",
+      "itemDetails": "검은색 스마트폰"
+    }
+  ],
+  "O-90131": [
+    {
+      "id": "LI1310",
+      "createdAt": "2026-01-18 13:37",
+      "itemCategory": "귀중품",
+      "status": "경찰서 인계",
+      "itemDetails": "검은색 스마트폰"
+    },
+    {
+      "id": "LI1311",
+      "createdAt": "2026-01-25 09:01",
+      "itemCategory": "일반",
+      "status": "발송 완료",
+      "itemDetails": "우산"
+    }
+  ],
+  "O-90133": [
+    {
+      "id": "LI1330",
+      "createdAt": "2026-02-01 09:00",
+      "itemCategory": "귀중품",
+      "status": "경찰서 인계",
+      "itemDetails": "블루투스 이어폰"
+    }
+  ],
+  "O-90135": [
+    {
+      "id": "LI1350",
+      "createdAt": "2026-01-27 09:34",
+      "itemCategory": "일반",
+      "status": "발송 완료",
+      "itemDetails": "충전기"
+    },
+    {
+      "id": "LI1351",
+      "createdAt": "2026-01-07 16:25",
+      "itemCategory": "귀중품",
+      "status": "경찰서 인계",
+      "itemDetails": "블루투스 이어폰"
+    }
+  ],
+  "O-90137": [
+    {
+      "id": "LI1370",
+      "createdAt": "2026-02-19 11:19",
+      "itemCategory": "일반",
+      "status": "발송 완료",
+      "itemDetails": "충전기"
+    }
+  ],
+  "O-90139": [
+    {
+      "id": "LI1390",
+      "createdAt": "2026-02-01 11:03",
+      "itemCategory": "귀중품",
+      "status": "경찰서 인계",
+      "itemDetails": "검정 선글라스"
+    }
+  ],
+  "O-90141": [
+    {
+      "id": "LI1410",
+      "createdAt": "2026-01-18 20:28",
+      "itemCategory": "일반",
+      "status": "발송 완료",
+      "itemDetails": "갈색 가죽 지갑"
+    },
+    {
+      "id": "LI1411",
+      "createdAt": "2026-01-04 15:41",
+      "itemCategory": "귀중품",
+      "status": "경찰서 인계",
+      "itemDetails": "갈색 가죽 지갑"
+    }
+  ],
+  "O-90143": [
+    {
+      "id": "LI1430",
+      "createdAt": "2026-02-25 21:51",
+      "itemCategory": "귀중품",
+      "status": "배송지 미입력",
+      "itemDetails": "손목시계"
+    }
+  ],
+  "O-90145": [
+    {
+      "id": "LI1450",
+      "createdAt": "2026-01-22 08:51",
+      "itemCategory": "일반",
+      "status": "발송 완료",
+      "itemDetails": "노트북"
+    },
+    {
+      "id": "LI1451",
+      "createdAt": "2026-01-15 22:07",
+      "itemCategory": "일반",
+      "status": "발송 대기",
+      "itemDetails": "검은색 스마트폰"
+    }
+  ],
+  "O-90147": [
+    {
+      "id": "LI1470",
+      "createdAt": "2026-01-19 13:37",
+      "itemCategory": "귀중품",
+      "status": "경찰서 인계",
+      "itemDetails": "검은색 스마트폰"
+    }
+  ],
+  "O-90149": [
+    {
+      "id": "LI1490",
+      "createdAt": "2026-02-03 22:30",
+      "itemCategory": "귀중품",
+      "status": "경찰서 인계",
+      "itemDetails": "우산"
+    }
+  ],
+  "O-90151": [
+    {
+      "id": "LI1510",
+      "createdAt": "2026-02-09 20:18",
+      "itemCategory": "귀중품",
+      "status": "경찰서 인계",
+      "itemDetails": "검은색 스마트폰"
+    }
+  ],
+  "O-90153": [
+    {
+      "id": "LI1530",
+      "createdAt": "2026-01-24 12:12",
+      "itemCategory": "귀중품",
+      "status": "경찰서 인계",
+      "itemDetails": "검은색 스마트폰"
+    },
+    {
+      "id": "LI1531",
+      "createdAt": "2026-01-03 11:25",
+      "itemCategory": "일반",
+      "status": "발송 대기",
+      "itemDetails": "블루투스 이어폰"
+    }
+  ],
+  "O-90155": [
+    {
+      "id": "LI1550",
+      "createdAt": "2026-01-24 21:12",
+      "itemCategory": "귀중품",
+      "status": "경찰서 인계",
+      "itemDetails": "갈색 가죽 지갑"
+    }
+  ],
+  "O-90157": [
+    {
+      "id": "LI1570",
+      "createdAt": "2026-01-03 11:51",
+      "itemCategory": "귀중품",
+      "status": "경찰서 인계",
+      "itemDetails": "블루투스 이어폰"
+    }
+  ],
+  "O-90159": [
+    {
+      "id": "LI1590",
+      "createdAt": "2026-01-19 10:41",
+      "itemCategory": "일반",
+      "status": "배송지 미입력",
+      "itemDetails": "갈색 가죽 지갑"
+    }
+  ],
+  "O-90161": [
+    {
+      "id": "LI1610",
+      "createdAt": "2026-01-19 20:10",
+      "itemCategory": "일반",
+      "status": "발송 완료",
+      "itemDetails": "우산"
+    },
+    {
+      "id": "LI1611",
+      "createdAt": "2026-01-26 20:33",
+      "itemCategory": "귀중품",
+      "status": "경찰서 인계",
+      "itemDetails": "우산"
+    }
+  ],
+  "O-90163": [
+    {
+      "id": "LI1630",
+      "createdAt": "2026-02-10 15:57",
+      "itemCategory": "일반",
+      "status": "발송 완료",
+      "itemDetails": "손목시계"
+    }
+  ],
+  "O-90165": [
+    {
+      "id": "LI1650",
+      "createdAt": "2026-01-02 10:59",
+      "itemCategory": "일반",
+      "status": "발송 대기",
+      "itemDetails": "손목시계"
+    },
+    {
+      "id": "LI1651",
+      "createdAt": "2026-02-13 19:05",
+      "itemCategory": "일반",
+      "status": "발송 대기",
+      "itemDetails": "노트북"
+    }
+  ],
+  "O-90167": [
+    {
+      "id": "LI1670",
+      "createdAt": "2026-02-02 16:06",
+      "itemCategory": "일반",
+      "status": "배송지 미입력",
+      "itemDetails": "충전기"
+    }
+  ],
+  "O-90169": [
+    {
+      "id": "LI1690",
+      "createdAt": "2026-02-06 09:43",
+      "itemCategory": "귀중품",
+      "status": "배송지 미입력",
+      "itemDetails": "갈색 가죽 지갑"
+    }
+  ],
+  "O-90171": [
+    {
+      "id": "LI1710",
+      "createdAt": "2026-01-08 15:28",
+      "itemCategory": "귀중품",
+      "status": "배송지 미입력",
+      "itemDetails": "손목시계"
+    },
+    {
+      "id": "LI1711",
+      "createdAt": "2026-01-15 16:42",
+      "itemCategory": "귀중품",
+      "status": "경찰서 인계",
+      "itemDetails": "블루투스 이어폰"
+    }
+  ],
+  "O-90173": [
+    {
+      "id": "LI1730",
+      "createdAt": "2026-01-25 13:28",
+      "itemCategory": "일반",
+      "status": "발송 완료",
+      "itemDetails": "블루투스 이어폰"
+    }
+  ],
+  "O-90175": [
+    {
+      "id": "LI1750",
+      "createdAt": "2026-02-07 17:30",
+      "itemCategory": "귀중품",
+      "status": "경찰서 인계",
+      "itemDetails": "검정 선글라스"
+    }
+  ],
+  "O-90177": [
+    {
+      "id": "LI1770",
+      "createdAt": "2026-01-17 19:24",
+      "itemCategory": "귀중품",
+      "status": "배송지 미입력",
+      "itemDetails": "노트북"
+    },
+    {
+      "id": "LI1771",
+      "createdAt": "2026-02-26 18:53",
+      "itemCategory": "귀중품",
+      "status": "경찰서 인계",
+      "itemDetails": "충전기"
+    }
+  ],
+  "O-90179": [
+    {
+      "id": "LI1790",
+      "createdAt": "2026-02-28 18:31",
+      "itemCategory": "귀중품",
+      "status": "배송지 미입력",
+      "itemDetails": "블루투스 이어폰"
+    },
+    {
+      "id": "LI1791",
+      "createdAt": "2026-02-06 10:00",
+      "itemCategory": "일반",
+      "status": "배송지 미입력",
+      "itemDetails": "갈색 가죽 지갑"
+    }
+  ],
+  "O-90181": [
+    {
+      "id": "LI1810",
+      "createdAt": "2026-02-19 13:17",
+      "itemCategory": "귀중품",
+      "status": "경찰서 인계",
+      "itemDetails": "블루투스 이어폰"
+    },
+    {
+      "id": "LI1811",
+      "createdAt": "2026-01-08 21:00",
+      "itemCategory": "귀중품",
+      "status": "경찰서 인계",
+      "itemDetails": "갈색 가죽 지갑"
+    }
+  ],
+  "O-90183": [
+    {
+      "id": "LI1830",
+      "createdAt": "2026-01-07 21:04",
+      "itemCategory": "귀중품",
+      "status": "배송지 미입력",
+      "itemDetails": "충전기"
+    },
+    {
+      "id": "LI1831",
+      "createdAt": "2026-02-09 09:28",
+      "itemCategory": "일반",
+      "status": "발송 완료",
+      "itemDetails": "우산"
+    }
+  ],
+  "O-90185": [
+    {
+      "id": "LI1850",
+      "createdAt": "2026-02-08 13:42",
+      "itemCategory": "일반",
+      "status": "발송 대기",
+      "itemDetails": "에어팟"
+    },
+    {
+      "id": "LI1851",
+      "createdAt": "2026-02-10 08:04",
+      "itemCategory": "귀중품",
+      "status": "배송지 미입력",
+      "itemDetails": "손목시계"
+    }
+  ],
+  "O-90187": [
+    {
+      "id": "LI1870",
+      "createdAt": "2026-02-22 16:52",
+      "itemCategory": "일반",
+      "status": "발송 완료",
+      "itemDetails": "우산"
+    }
+  ],
+  "O-90189": [
+    {
+      "id": "LI1890",
+      "createdAt": "2026-01-05 16:30",
+      "itemCategory": "귀중품",
+      "status": "배송지 미입력",
+      "itemDetails": "충전기"
+    }
+  ],
+  "O-90191": [
+    {
+      "id": "LI1910",
+      "createdAt": "2026-01-14 16:40",
+      "itemCategory": "일반",
+      "status": "발송 완료",
+      "itemDetails": "노트북"
+    },
+    {
+      "id": "LI1911",
+      "createdAt": "2026-01-07 11:00",
+      "itemCategory": "귀중품",
+      "status": "배송지 미입력",
+      "itemDetails": "검은색 스마트폰"
+    }
+  ],
+  "O-90193": [
+    {
+      "id": "LI1930",
+      "createdAt": "2026-01-25 15:53",
+      "itemCategory": "일반",
+      "status": "배송지 미입력",
+      "itemDetails": "노트북"
+    }
+  ],
+  "O-90195": [
+    {
+      "id": "LI1950",
+      "createdAt": "2026-02-28 17:34",
+      "itemCategory": "귀중품",
+      "status": "배송지 미입력",
+      "itemDetails": "노트북"
+    }
+  ],
+  "O-90197": [
+    {
+      "id": "LI1970",
+      "createdAt": "2026-02-25 18:58",
+      "itemCategory": "귀중품",
+      "status": "배송지 미입력",
+      "itemDetails": "검은색 스마트폰"
+    }
+  ],
+  "O-90199": [
+    {
+      "id": "LI1990",
+      "createdAt": "2026-02-07 14:11",
+      "itemCategory": "귀중품",
+      "status": "경찰서 인계",
+      "itemDetails": "충전기"
+    },
+    {
+      "id": "LI1991",
+      "createdAt": "2026-01-05 16:10",
+      "itemCategory": "일반",
+      "status": "발송 완료",
+      "itemDetails": "우산"
+    }
+  ]
+}
