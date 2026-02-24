@@ -1,0 +1,486 @@
+{
+  "O-90001": {
+    "pickupReservationId": "DR-2001",
+    "pickupStatus": "END",
+    "deliveryReservationId": "DR-2101",
+    "deliveryStatus": "END"
+  },
+  "O-90006": {
+    "pickupReservationId": "DR-2002",
+    "pickupStatus": "END",
+    "deliveryReservationId": "DR-2102",
+    "deliveryStatus": "END"
+  },
+  "O-90009": {
+    "pickupReservationId": "DR-2003",
+    "pickupStatus": "END",
+    "deliveryReservationId": "DR-2103",
+    "deliveryStatus": "END"
+  },
+  "O-90010": {
+    "pickupReservationId": "DR-2004",
+    "pickupStatus": "END",
+    "deliveryReservationId": "DR-2104",
+    "deliveryStatus": "END"
+  },
+  "O-90011": {
+    "pickupReservationId": "DR-2005",
+    "pickupStatus": "END",
+    "deliveryReservationId": "DR-2105",
+    "deliveryStatus": "END"
+  },
+  "O-90014": {
+    "pickupReservationId": "DR-2006",
+    "pickupStatus": "END",
+    "deliveryReservationId": "DR-2106",
+    "deliveryStatus": "END"
+  },
+  "O-90015": {
+    "pickupReservationId": "DR-2007",
+    "pickupStatus": "END",
+    "deliveryReservationId": "DR-2107",
+    "deliveryStatus": "END"
+  },
+  "O-90016": {
+    "pickupReservationId": "DR-2008",
+    "pickupStatus": "END",
+    "deliveryReservationId": "DR-2108",
+    "deliveryStatus": "END"
+  },
+  "O-90018": {
+    "pickupReservationId": "DR-2009",
+    "pickupStatus": "END",
+    "deliveryReservationId": "DR-2109",
+    "deliveryStatus": "END"
+  },
+  "O-90019": {
+    "pickupReservationId": "DR-2010",
+    "pickupStatus": "END",
+    "deliveryReservationId": "DR-2110",
+    "deliveryStatus": "END"
+  },
+  "O-90020": {
+    "pickupReservationId": "DR-2011",
+    "pickupStatus": "END",
+    "deliveryReservationId": "DR-2111",
+    "deliveryStatus": "END"
+  },
+  "O-90022": {
+    "pickupReservationId": "DR-2012",
+    "pickupStatus": "END",
+    "deliveryReservationId": "DR-2112",
+    "deliveryStatus": "END"
+  },
+  "O-90023": {
+    "pickupReservationId": "DR-2013",
+    "pickupStatus": "END",
+    "deliveryReservationId": "DR-2113",
+    "deliveryStatus": "END"
+  },
+  "O-90024": {
+    "pickupReservationId": "DR-2014",
+    "pickupStatus": "END",
+    "deliveryReservationId": "DR-2114",
+    "deliveryStatus": "END"
+  },
+  "O-90025": {
+    "pickupReservationId": "DR-2015",
+    "pickupStatus": "END",
+    "deliveryReservationId": "DR-2115",
+    "deliveryStatus": "END"
+  },
+  "O-90026": {
+    "pickupReservationId": "DR-2016",
+    "pickupStatus": "END",
+    "deliveryReservationId": "DR-2116",
+    "deliveryStatus": "END"
+  },
+  "O-90031": {
+    "pickupReservationId": "DR-2017",
+    "pickupStatus": "END",
+    "deliveryReservationId": "DR-2117",
+    "deliveryStatus": "END"
+  },
+  "O-90033": {
+    "pickupReservationId": "DR-2018",
+    "pickupStatus": "END",
+    "deliveryReservationId": "DR-2118",
+    "deliveryStatus": "END"
+  },
+  "O-90034": {
+    "pickupReservationId": "DR-2019",
+    "pickupStatus": "END",
+    "deliveryReservationId": "DR-2119",
+    "deliveryStatus": "END"
+  },
+  "O-90037": {
+    "pickupReservationId": "DR-2020",
+    "pickupStatus": "END",
+    "deliveryReservationId": "DR-2120",
+    "deliveryStatus": "END"
+  },
+  "O-90038": {
+    "pickupReservationId": "DR-2021",
+    "pickupStatus": "END",
+    "deliveryReservationId": "DR-2121",
+    "deliveryStatus": "END"
+  },
+  "O-90039": {
+    "pickupReservationId": "DR-2022",
+    "pickupStatus": "END",
+    "deliveryReservationId": "DR-2122",
+    "deliveryStatus": "END"
+  },
+  "O-90040": {
+    "pickupReservationId": "DR-2023",
+    "pickupStatus": "END",
+    "deliveryReservationId": "DR-2123",
+    "deliveryStatus": "END"
+  },
+  "O-90041": {
+    "pickupReservationId": "DR-2024",
+    "pickupStatus": "END",
+    "deliveryReservationId": "DR-2124",
+    "deliveryStatus": "END"
+  },
+  "O-90043": {
+    "pickupReservationId": "DR-2025",
+    "pickupStatus": "END",
+    "deliveryReservationId": "DR-2125",
+    "deliveryStatus": "END"
+  },
+  "O-90046": {
+    "pickupReservationId": "DR-2026",
+    "pickupStatus": "END",
+    "deliveryReservationId": "DR-2126",
+    "deliveryStatus": "END"
+  },
+  "O-90051": {
+    "pickupReservationId": "DR-2027",
+    "pickupStatus": "END",
+    "deliveryReservationId": "DR-2127",
+    "deliveryStatus": "END"
+  },
+  "O-90053": {
+    "pickupReservationId": "DR-2028",
+    "pickupStatus": "END",
+    "deliveryReservationId": "DR-2128",
+    "deliveryStatus": "END"
+  },
+  "O-90055": {
+    "pickupReservationId": "DR-2029",
+    "pickupStatus": "END",
+    "deliveryReservationId": "DR-2129",
+    "deliveryStatus": "END"
+  },
+  "O-90057": {
+    "pickupReservationId": "DR-2030",
+    "pickupStatus": "END",
+    "deliveryReservationId": "DR-2130",
+    "deliveryStatus": "END"
+  },
+  "O-90059": {
+    "pickupReservationId": "DR-2031",
+    "pickupStatus": "END",
+    "deliveryReservationId": "DR-2131",
+    "deliveryStatus": "END"
+  },
+  "O-90060": {
+    "pickupReservationId": "DR-2032",
+    "pickupStatus": "END",
+    "deliveryReservationId": "DR-2132",
+    "deliveryStatus": "END"
+  },
+  "O-90061": {
+    "pickupReservationId": "DR-2033",
+    "pickupStatus": "END",
+    "deliveryReservationId": "DR-2133",
+    "deliveryStatus": "END"
+  },
+  "O-90063": {
+    "pickupReservationId": "DR-2034",
+    "pickupStatus": "END",
+    "deliveryReservationId": "DR-2134",
+    "deliveryStatus": "END"
+  },
+  "O-90064": {
+    "pickupReservationId": "DR-2035",
+    "pickupStatus": "END",
+    "deliveryReservationId": "DR-2135",
+    "deliveryStatus": "END"
+  },
+  "O-90065": {
+    "pickupReservationId": "DR-2036",
+    "pickupStatus": "END",
+    "deliveryReservationId": "DR-2136",
+    "deliveryStatus": "END"
+  },
+  "O-90067": {
+    "pickupReservationId": "DR-2037",
+    "pickupStatus": "END",
+    "deliveryReservationId": "DR-2137",
+    "deliveryStatus": "END"
+  },
+  "O-90070": {
+    "pickupReservationId": "DR-2038",
+    "pickupStatus": "END",
+    "deliveryReservationId": "DR-2138",
+    "deliveryStatus": "END"
+  },
+  "O-90071": {
+    "pickupReservationId": "DR-2039",
+    "pickupStatus": "END",
+    "deliveryReservationId": "DR-2139",
+    "deliveryStatus": "END"
+  },
+  "O-90076": {
+    "pickupReservationId": "DR-2040",
+    "pickupStatus": "END",
+    "deliveryReservationId": "DR-2140",
+    "deliveryStatus": "END"
+  },
+  "O-90077": {
+    "pickupReservationId": "DR-2041",
+    "pickupStatus": "END",
+    "deliveryReservationId": "DR-2141",
+    "deliveryStatus": "END"
+  },
+  "O-90079": {
+    "pickupReservationId": "DR-2042",
+    "pickupStatus": "END",
+    "deliveryReservationId": "DR-2142",
+    "deliveryStatus": "END"
+  },
+  "O-90082": {
+    "pickupReservationId": "DR-2043",
+    "pickupStatus": "END",
+    "deliveryReservationId": "DR-2143",
+    "deliveryStatus": "END"
+  },
+  "O-90083": {
+    "pickupReservationId": "DR-2044",
+    "pickupStatus": "END",
+    "deliveryReservationId": "DR-2144",
+    "deliveryStatus": "END"
+  },
+  "O-90084": {
+    "pickupReservationId": "DR-2045",
+    "pickupStatus": "END",
+    "deliveryReservationId": "DR-2145",
+    "deliveryStatus": "END"
+  },
+  "O-90086": {
+    "pickupReservationId": "DR-2046",
+    "pickupStatus": "END",
+    "deliveryReservationId": "DR-2146",
+    "deliveryStatus": "END"
+  },
+  "O-90087": {
+    "pickupReservationId": "DR-2047",
+    "pickupStatus": "END",
+    "deliveryReservationId": "DR-2147",
+    "deliveryStatus": "END"
+  },
+  "O-90088": {
+    "pickupReservationId": "DR-2048",
+    "pickupStatus": "END",
+    "deliveryReservationId": "DR-2148",
+    "deliveryStatus": "END"
+  },
+  "O-90089": {
+    "pickupReservationId": "DR-2049",
+    "pickupStatus": "END",
+    "deliveryReservationId": "DR-2149",
+    "deliveryStatus": "END"
+  },
+  "O-90091": {
+    "pickupReservationId": "DR-2050",
+    "pickupStatus": "END",
+    "deliveryReservationId": "DR-2150",
+    "deliveryStatus": "END"
+  },
+  "O-90092": {
+    "pickupReservationId": "DR-2051",
+    "pickupStatus": "END",
+    "deliveryReservationId": "DR-2151",
+    "deliveryStatus": "END"
+  },
+  "O-90093": {
+    "pickupReservationId": "DR-2052",
+    "pickupStatus": "END",
+    "deliveryReservationId": "DR-2152",
+    "deliveryStatus": "END"
+  },
+  "O-90102": {
+    "pickupReservationId": "DR-2053",
+    "pickupStatus": "ASSIGN"
+  },
+  "O-90103": {
+    "pickupReservationId": "DR-2054",
+    "pickupStatus": "RUN"
+  },
+  "O-90107": {
+    "pickupReservationId": "DR-2055",
+    "pickupStatus": "ASSIGN"
+  },
+  "O-90108": {
+    "pickupReservationId": "DR-2056",
+    "pickupStatus": "RUN"
+  },
+  "O-90109": {
+    "pickupReservationId": "DR-2057",
+    "pickupStatus": "ASSIGN"
+  },
+  "O-90110": {
+    "pickupReservationId": "DR-2058",
+    "pickupStatus": "RUN"
+  },
+  "O-90111": {
+    "pickupReservationId": "DR-2059",
+    "pickupStatus": "ASSIGN"
+  },
+  "O-90117": {
+    "pickupReservationId": "DR-2060",
+    "pickupStatus": "RUN"
+  },
+  "O-90118": {
+    "pickupReservationId": "DR-2061",
+    "pickupStatus": "ASSIGN"
+  },
+  "O-90119": {
+    "pickupReservationId": "DR-2062",
+    "pickupStatus": "RUN"
+  },
+  "O-90120": {
+    "pickupReservationId": "DR-2063",
+    "pickupStatus": "ASSIGN"
+  },
+  "O-90122": {
+    "pickupReservationId": "DR-2064",
+    "pickupStatus": "RUN"
+  },
+  "O-90126": {
+    "pickupReservationId": "DR-2065",
+    "pickupStatus": "ASSIGN"
+  },
+  "O-90129": {
+    "pickupReservationId": "DR-2066",
+    "pickupStatus": "RUN"
+  },
+  "O-90132": {
+    "pickupReservationId": "DR-2067",
+    "pickupStatus": "ASSIGN"
+  },
+  "O-90140": {
+    "pickupReservationId": "DR-2068",
+    "pickupStatus": "RUN"
+  },
+  "O-90141": {
+    "pickupReservationId": "DR-2069",
+    "pickupStatus": "ASSIGN"
+  },
+  "O-90143": {
+    "pickupReservationId": "DR-2070",
+    "pickupStatus": "RUN"
+  },
+  "O-90144": {
+    "pickupReservationId": "DR-2071",
+    "pickupStatus": "ASSIGN"
+  },
+  "O-90147": {
+    "pickupReservationId": "DR-2072",
+    "pickupStatus": "RUN"
+  },
+  "O-90148": {
+    "pickupReservationId": "DR-2073",
+    "pickupStatus": "ASSIGN"
+  },
+  "O-90150": {
+    "pickupReservationId": "DR-2074",
+    "pickupStatus": "RUN"
+  },
+  "O-90152": {
+    "pickupReservationId": "DR-2075",
+    "pickupStatus": "END"
+  },
+  "O-90153": {
+    "pickupReservationId": "DR-2076",
+    "pickupStatus": "END"
+  },
+  "O-90156": {
+    "pickupReservationId": "DR-2077",
+    "pickupStatus": "END"
+  },
+  "O-90157": {
+    "pickupReservationId": "DR-2078",
+    "pickupStatus": "END"
+  },
+  "O-90159": {
+    "pickupReservationId": "DR-2079",
+    "pickupStatus": "END"
+  },
+  "O-90160": {
+    "pickupReservationId": "DR-2080",
+    "pickupStatus": "END"
+  },
+  "O-90163": {
+    "pickupReservationId": "DR-2081",
+    "pickupStatus": "END"
+  },
+  "O-90164": {
+    "pickupReservationId": "DR-2082",
+    "pickupStatus": "END"
+  },
+  "O-90166": {
+    "pickupReservationId": "DR-2083",
+    "pickupStatus": "END"
+  },
+  "O-90167": {
+    "pickupReservationId": "DR-2084",
+    "pickupStatus": "END"
+  },
+  "O-90170": {
+    "pickupReservationId": "DR-2085",
+    "pickupStatus": "END"
+  },
+  "O-90173": {
+    "pickupReservationId": "DR-2086",
+    "pickupStatus": "CANCEL"
+  },
+  "O-90176": {
+    "pickupReservationId": "DR-2087",
+    "pickupStatus": "END"
+  },
+  "O-90178": {
+    "pickupReservationId": "DR-2088",
+    "pickupStatus": "CANCEL"
+  },
+  "O-90180": {
+    "pickupReservationId": "DR-2089",
+    "pickupStatus": "END"
+  },
+  "O-90186": {
+    "pickupReservationId": "DR-2090",
+    "pickupStatus": "CANCEL"
+  },
+  "O-90191": {
+    "pickupReservationId": "DR-2091",
+    "pickupStatus": "END"
+  },
+  "O-90192": {
+    "pickupReservationId": "DR-2092",
+    "pickupStatus": "CANCEL"
+  },
+  "O-90193": {
+    "pickupReservationId": "DR-2093",
+    "pickupStatus": "END"
+  },
+  "O-90194": {
+    "pickupReservationId": "DR-2094",
+    "pickupStatus": "CANCEL"
+  },
+  "O-90199": {
+    "pickupReservationId": "DR-2095",
+    "pickupStatus": "END"
+  }
+}

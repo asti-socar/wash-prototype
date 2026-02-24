@@ -1,0 +1,62 @@
+{
+  "O-90032": {
+    "reservationId": "MH-1001",
+    "status": "COMPLETED"
+  },
+  "O-90058": {
+    "reservationId": "MH-1002",
+    "status": "COMPLETED"
+  },
+  "O-90062": {
+    "reservationId": "MH-1003",
+    "status": "COMPLETED"
+  },
+  "O-90078": {
+    "reservationId": "MH-1004",
+    "status": "COMPLETED"
+  },
+  "O-90085": {
+    "reservationId": "MH-1005",
+    "status": "COMPLETED"
+  },
+  "O-90095": {
+    "reservationId": "MH-1006",
+    "status": "COMPLETED"
+  },
+  "O-90098": {
+    "reservationId": "MH-1007",
+    "status": "COMPLETED"
+  },
+  "O-90127": {
+    "reservationId": "MH-1008",
+    "status": "CONFIRMED"
+  },
+  "O-90131": {
+    "reservationId": "MH-1009",
+    "status": "CONFIRMED"
+  },
+  "O-90135": {
+    "reservationId": "MH-1010",
+    "status": "CONFIRMED"
+  },
+  "O-90137": {
+    "reservationId": "MH-1011",
+    "status": "CONFIRMED"
+  },
+  "O-90168": {
+    "reservationId": "MH-1012",
+    "status": "IN_PROGRESS"
+  },
+  "O-90175": {
+    "reservationId": "MH-1013",
+    "status": "CONFIRMED"
+  },
+  "O-90187": {
+    "reservationId": "MH-1014",
+    "status": "CONFIRMED"
+  },
+  "O-90198": {
+    "reservationId": "MH-1015",
+    "status": "CONFIRMED"
+  }
+}

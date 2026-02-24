@@ -108,6 +108,11 @@ export const PARTNER_HISTORY = [
 ];
 
 export const ASTI_HISTORY = [
+  { id: 20, date: "2026-02-24 15:56", content: "오더 정책: 리드타임·귀책 소요시간·면책 시간·지연 처리 정책 정의 (귀책 소요시간 > 72h 지연 판정, 벌점 연동)", isPolicyChange: true, links: [{ label: "오더 관리", page: "orders" }] },
+  { id: 19, date: "2026-02-24 15:56", content: "오더 정책: 취소 유형 재정의 (5→9개 유형, 귀책/면책 구분 추가, 취소 주체·대상 명시, 유형별 정책 상세 기술)", isPolicyChange: true, links: [{ label: "오더 관리", page: "orders" }] },
+  { id: 18, date: "2026-02-24 15:50", content: "오더 관리: 리스트에 지연 여부 컬럼 추가 (완료 오더만 지연/정상 배지 표시)", isPolicyChange: false, links: [{ label: "오더 관리", page: "orders" }] },
+  { id: 17, date: "2026-02-24 15:45", content: "오더 관리: 데이터 건수 표시 추가 (필터된 결과 N건 / 전체 M건), 지연 완료 오더 필터 추가", isPolicyChange: false, links: [{ label: "오더 관리", page: "orders" }] },
+  { id: 16, date: "2026-02-24 15:30", content: "오더 관리: 목데이터 200건 확장 (완료 100/수행중 20/예약 50/취소 30), 기본 정렬 발행 일시 내림차순으로 변경, 목데이터 JSON 분리", isPolicyChange: false, links: [{ label: "오더 관리", page: "orders" }] },
   { id: 15, date: "2026-02-23 16:47", content: "존배정관리: 배정 구조 변경 (단일 파트너 → 현장세차/입고세차 듀얼 파트너 배정)", isPolicyChange: true, links: [{ label: "존 배정 관리", page: "zone-assignment" }] },
   { id: 14, date: "2026-02-23 12:13", content: "존정책관리: 일괄 수정 UX 변경 (필터 기반→체크박스 선택 기반, 버튼 위치/스타일 변경, 적용 전 확인 모달 추가)", isPolicyChange: false, links: [{ label: "존 정책 관리", page: "zone-policy" }] },
   { id: 13, date: "2026-02-23 11:43", content: "지역정책관리: 지역2정책 체크박스 클릭 시 Drawer 열림 방지, 일괄 수정 시 변경 확인 모달 추가", isPolicyChange: false, links: [{ label: "지역 정책 관리", page: "regionpolicy" }] },
