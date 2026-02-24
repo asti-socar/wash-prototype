@@ -34,6 +34,7 @@ const MissionsPage = ({ missionPolicies, setMissionPolicies, policyVehicles, set
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
   const [newPolicyForm, setNewPolicyForm] = useState({ title: "", content: "", amount: 0, requiresPhoto: true, status: "활성" });
   
+  const [qTitle, setQTitle] = useState("");
   const [periodFrom, setPeriodFrom] = useState("");
   const [periodTo, setPeriodTo] = useState("");
   const [fStatus, setFStatus] = useState("");
@@ -59,12 +60,14 @@ const MissionsPage = ({ missionPolicies, setMissionPolicies, policyVehicles, set
   }, [missionPolicies, policyVehicles]);
 
   const filteredPolicies = useMemo(() => {
+    const qq = qTitle.trim().toLowerCase();
     return enrichedPolicies.filter(p => {
+      const hitTitle = !qq || (p.title || "").toLowerCase().includes(qq);
       const hitPeriod = (!periodFrom || p.createdAt >= periodFrom) && (!periodTo || p.createdAt <= periodTo);
       const hitStatus = !fStatus || p.status === fStatus;
-      return hitPeriod && hitStatus;
+      return hitTitle && hitPeriod && hitStatus;
     });
-  }, [enrichedPolicies, periodFrom, periodTo, fStatus]);
+  }, [enrichedPolicies, qTitle, periodFrom, periodTo, fStatus]);
   
   const sortedData = useMemo(() => {
     if (!sortConfig.key) return filteredPolicies;
@@ -84,6 +87,7 @@ const MissionsPage = ({ missionPolicies, setMissionPolicies, policyVehicles, set
   const { currentData, currentPage, totalPages, setCurrentPage, totalItems } = usePagination(sortedData, 40);
 
   const handleResetFilters = () => {
+    setQTitle("");
     setPeriodFrom("");
     setPeriodTo("");
     setFStatus("");
@@ -239,19 +243,26 @@ const MissionsPage = ({ missionPolicies, setMissionPolicies, policyVehicles, set
 
       <FilterPanel
         chips={<>
-          {periodFrom ? <Chip onRemove={() => setPeriodFrom("")}>시작일: {periodFrom}</Chip> : null}
-          {periodTo ? <Chip onRemove={() => setPeriodTo("")}>종료일: {periodTo}</Chip> : null}
+          {qTitle ? <Chip onRemove={() => setQTitle("")}>미션 제목: {qTitle}</Chip> : null}
+          {periodFrom || periodTo ? <Chip onRemove={() => { setPeriodFrom(""); setPeriodTo(""); }}>등록 일시: {periodFrom || "-"} ~ {periodTo || "-"}</Chip> : null}
           {fStatus ? <Chip onRemove={() => setFStatus("")}>상태: {fStatus}</Chip> : null}
         </>}
         onReset={handleResetFilters}
       >
-        <div className="md:col-span-2">
-          <label htmlFor="periodFrom" className="block text-xs font-semibold text-[#6B778C] mb-1.5">등록일 시작</label>
-          <Input id="periodFrom" type="date" value={periodFrom} onChange={(e) => setPeriodFrom(e.target.value)} />
+        <div className="md:col-span-3">
+          <label htmlFor="qTitle" className="block text-xs font-semibold text-[#6B778C] mb-1.5">미션 제목</label>
+          <div className="relative">
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#6B778C]" />
+            <Input id="qTitle" value={qTitle} onChange={(e) => setQTitle(e.target.value)} placeholder="미션 제목 검색" className="pl-9" />
+          </div>
         </div>
-        <div className="md:col-span-2">
-          <label htmlFor="periodTo" className="block text-xs font-semibold text-[#6B778C] mb-1.5">등록일 종료</label>
-          <Input id="periodTo" type="date" value={periodTo} onChange={(e) => setPeriodTo(e.target.value)} />
+        <div className="md:col-span-5">
+          <label className="block text-xs font-semibold text-[#6B778C] mb-1.5">등록 일시</label>
+          <div className="flex items-center gap-2">
+            <Input id="periodFrom" type="date" value={periodFrom} onChange={(e) => setPeriodFrom(e.target.value)} />
+            <span className="text-sm text-[#6B778C] shrink-0">~</span>
+            <Input id="periodTo" type="date" value={periodTo} onChange={(e) => setPeriodTo(e.target.value)} />
+          </div>
         </div>
         <div className="md:col-span-2">
           <label htmlFor="fStatus" className="block text-xs font-semibold text-[#6B778C] mb-1.5">상태</label>
