@@ -108,6 +108,7 @@ export const PARTNER_HISTORY = [
 ];
 
 export const ASTI_HISTORY = [
+  { id: 24, date: "2026-02-24 18:00", content: "오더 관리: 필터 UI 개선 — 기본 필터 4개(차량번호/세차유형/진행상태/발행일시) 1줄 노출 + 상세 필터 10개 '필터 추가' 버튼으로 온디맨드 추가, 적용 필터 칩 표시, 진행상태 연동 자동 필터 추가(취소→취소유형, 완료→지연여부)", isPolicyChange: false, links: [{ label: "오더 관리", page: "orders" }] },
   { id: 23, date: "2026-02-24 16:58", content: "대시보드: 데이터 소스 전환 (dashboard.json 삭제 → orders.json + orders-leadTime.json 기반 실시간 산출), 취소 카드 동적 유형 표시, 지연 판정 leadTime 기반으로 변경", isPolicyChange: false, links: [{ label: "대시보드", page: "dashboard" }] },
   { id: 22, date: "2026-02-24 16:33", content: "벌점 정책 변경: 지연→미예약으로 변경 (24시간 미예약 시 담당 존 파트너 전체 수행원에게 벌점 부과)", isPolicyChange: true, links: [{ label: "수행원 조회", page: "workers" }, { label: "오더 관리", page: "orders" }] },
   { id: 21, date: "2026-02-24 16:11", content: "오더 관리: 오더 체인 타임라인 UI 구현 (취소→재발행 플로우 시각화, 참조 오더별 발행·취소 시각/귀책·면책 표시, 산출 요약 박스)", isPolicyChange: false, links: [{ label: "오더 관리", page: "orders" }] },
