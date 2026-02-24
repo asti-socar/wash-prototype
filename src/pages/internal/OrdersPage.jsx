@@ -124,6 +124,7 @@ function OrdersPage({ quickFilter, onClearQuickFilter, initialOrderId, orders, s
       if (quickFilter.status) setFStatus(quickFilter.status);
       if (quickFilter.orderType) setFOrderType(quickFilter.orderType);
       if (quickFilter.cancelType) setFCancelType(quickFilter.cancelType);
+      if (quickFilter.delayed) setFDelayed(quickFilter.delayed);
     }
   }, [quickFilter]);
 
@@ -466,8 +467,8 @@ function OrdersPage({ quickFilter, onClearQuickFilter, initialOrderId, orders, s
   const chips = (
     <div className="flex flex-wrap gap-2">
       {quickFilter ? (
-        <Chip variant="info" onRemove={() => { onClearQuickFilter?.(); setFStatus(""); setFOrderType(""); setFCancelType(""); }}>
-          Quick Filter: {quickFilter.status ? `상태=${quickFilter.status}` : ""}{quickFilter.orderType ? ` 유형=${quickFilter.orderType}` : ""}{quickFilter.cancelType ? ` 취소=${quickFilter.cancelType}` : ""}
+        <Chip variant="info" onRemove={() => { onClearQuickFilter?.(); setFStatus(""); setFOrderType(""); setFCancelType(""); setFDelayed(""); }}>
+          Quick Filter: {quickFilter.status ? `상태=${quickFilter.status}` : ""}{quickFilter.orderType ? ` 유형=${quickFilter.orderType}` : ""}{quickFilter.cancelType ? ` 취소=${quickFilter.cancelType}` : ""}{quickFilter.delayed ? ` 지연=${quickFilter.delayed}` : ""}
         </Chip>
       ) : null}
       {q ? <Chip onRemove={() => setQ("")}>검색: {q}</Chip> : null}
@@ -481,7 +482,7 @@ function OrdersPage({ quickFilter, onClearQuickFilter, initialOrderId, orders, s
       {fPartnerType ? <Chip onRemove={() => setFPartnerType("")}>파트너 유형: {fPartnerType}</Chip> : null}
       {fStatus && !quickFilter?.status ? <Chip onRemove={() => { setFStatus(""); setFCancelType(""); }}>상태: {fStatus}</Chip> : null}
       {fCancelType && !quickFilter?.cancelType ? <Chip onRemove={() => setFCancelType("")}>취소 유형: {fCancelType}</Chip> : null}
-      {fDelayed ? <Chip onRemove={() => setFDelayed("")}>지연 여부: {fDelayed}</Chip> : null}
+      {fDelayed && !quickFilter?.delayed ? <Chip onRemove={() => setFDelayed("")}>지연 여부: {fDelayed}</Chip> : null}
     </div>
   );
 
@@ -787,56 +788,106 @@ function OrdersPage({ quickFilter, onClearQuickFilter, initialOrderId, orders, s
                 </CardContent>
               </Card>
 
-              {/* 1-2. 리드타임 정보 (완료 오더만) */}
+              {/* 1-2. 오더 체인 & 리드타임 (완료 오더만) */}
               {selected.status === '완료' && (() => {
                 const lt = MOCK_LEAD_TIME_DATA[selected.orderId];
                 if (!lt) return null;
+                const hasChain = lt.referenceChain.length > 0;
                 return (
                   <Card>
                     <CardHeader>
-                      <CardTitle>리드타임 정보</CardTitle>
-                      <CardDescription>최초 발행 ~ 세차 완료 소요시간 분석</CardDescription>
+                      <CardTitle>오더 체인 & 리드타임</CardTitle>
+                      <CardDescription>
+                        {hasChain
+                          ? `${lt.referenceChain.length}회 취소 → 재발행 후 완료`
+                          : '최초 발행 → 직접 완료'}
+                      </CardDescription>
                     </CardHeader>
                     <CardContent>
-                      <div className="grid grid-cols-2 gap-x-4 gap-y-3 text-xs">
-                        <div className="space-y-1">
-                          <div className="text-[#6B778C]">리드타임</div>
-                          <div className="font-semibold text-[#172B4D]">{formatLeadTimeHours(lt.leadTimeHours)}</div>
-                        </div>
-                        <div className="space-y-1">
-                          <div className="text-[#6B778C]">면책 시간</div>
-                          <div className="font-semibold text-blue-600">{lt.exemptionHours > 0 ? `${lt.exemptionHours}h` : '-'}</div>
-                        </div>
-                        <div className="space-y-1">
-                          <div className="text-[#6B778C]">귀책 소요시간</div>
-                          <div className="font-semibold text-[#172B4D]">{formatLeadTimeHours(lt.accountabilityHours)}</div>
-                        </div>
-                        <div className="space-y-1">
-                          <div className="text-[#6B778C]">지연 여부</div>
-                          <Badge tone={lt.isDelayed ? "danger" : "ok"}>{lt.isDelayed ? "지연" : "정상"}</Badge>
-                        </div>
-                      </div>
-                      {lt.referenceChain.length > 0 && (
-                        <div className="mt-3 pt-3 border-t border-[#DFE1E6]">
-                          <div className="text-xs font-semibold text-[#6B778C] mb-2">참조 오더 이력</div>
-                          <div className="space-y-1.5">
-                            {lt.referenceChain.map((ref, idx) => (
-                              <div key={idx} className="flex items-center gap-2 text-xs">
-                                <span className="font-mono text-[#172B4D]">{ref.orderId}</span>
-                                <span className="text-[#6B778C]">{ref.cancelType}</span>
-                                <span className={cn("font-semibold", ref.responsibility === "면책" ? "text-blue-600" : "text-rose-600")}>
-                                  ({ref.responsibility})
-                                </span>
+                      {hasChain ? (
+                        <div className="relative space-y-0 pl-2 mb-4">
+                          {/* 세로 연결선 */}
+                          <div className="absolute left-[9px] top-2 bottom-2 w-0.5 bg-[#DFE1E6]" />
+                          {lt.referenceChain.map((ref, idx) => {
+                            const durH = ref.canceledAt && ref.issuedAt
+                              ? Math.round((new Date(ref.canceledAt.replace(' ', 'T') + ':00+09:00') - new Date(ref.issuedAt.replace(' ', 'T') + ':00+09:00')) / 3600000)
+                              : null;
+                            return (
+                              <div key={idx} className="relative pb-4">
+                                <div className="flex items-start gap-3">
+                                  <div className={cn("z-10 flex h-5 w-5 shrink-0 items-center justify-center rounded-full ring-4 ring-white", ref.responsibility === "면책" ? "bg-blue-400" : "bg-rose-400")}>
+                                    <span className="text-[8px] font-bold text-white">{idx + 1}</span>
+                                  </div>
+                                  <div className="flex-1 min-w-0">
+                                    <div className="flex items-center gap-2">
+                                      <span className="font-mono text-xs font-semibold text-[#172B4D]">{ref.orderId}</span>
+                                      <Badge tone={ref.responsibility === "면책" ? "info" : "danger"}>{ref.cancelType}</Badge>
+                                      <span className={cn("text-[10px] font-semibold", ref.responsibility === "면책" ? "text-blue-600" : "text-rose-600")}>{ref.responsibility}</span>
+                                    </div>
+                                    <div className="mt-1 text-[10px] text-[#6B778C] space-y-0.5">
+                                      <div>발행: {ref.issuedAt || '-'}</div>
+                                      <div>취소: {ref.canceledAt || '-'}{durH !== null ? ` (${durH}h)` : ''}</div>
+                                    </div>
+                                  </div>
+                                </div>
                               </div>
-                            ))}
+                            );
+                          })}
+                          {/* 현재 오더 (최종 완료) */}
+                          <div className="relative">
+                            <div className="flex items-start gap-3">
+                              <div className="z-10 flex h-5 w-5 shrink-0 items-center justify-center rounded-full ring-4 ring-white bg-[#36B37E]">
+                                <span className="text-[9px] font-bold text-white">✓</span>
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-2">
+                                  <span className="font-mono text-xs font-semibold text-[#172B4D]">{selected.orderId}</span>
+                                  <Badge tone="ok">완료</Badge>
+                                  <span className="text-[10px] text-[#6B778C]">현재 오더</span>
+                                </div>
+                                <div className="mt-1 text-[10px] text-[#6B778C] space-y-0.5">
+                                  <div>재발행: {lt.referenceChain[lt.referenceChain.length - 1]?.reissuedAt || selected.createdAt}</div>
+                                  <div>완료: {selected.completedAt || '-'}</div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-3 mb-4 pl-2">
+                          <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#36B37E]">
+                            <span className="text-[9px] font-bold text-white">✓</span>
+                          </div>
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <span className="font-mono text-xs font-semibold text-[#172B4D]">{selected.orderId}</span>
+                              <Badge tone="ok">완료</Badge>
+                            </div>
+                            <div className="mt-1 text-[10px] text-[#6B778C]">직접 완료 (참조 오더 없음)</div>
                           </div>
                         </div>
                       )}
-                      {lt.referenceChain.length === 0 && (
-                        <div className="mt-3 pt-3 border-t border-[#DFE1E6]">
-                          <div className="text-xs text-[#94A3B8]">직접 완료 (참조 오더 없음)</div>
+                      {/* 산출 요약 */}
+                      <div className={cn("rounded-lg p-3 text-xs", lt.isDelayed ? "bg-rose-50 border border-rose-200" : "bg-[#F4F5F7] border border-[#DFE1E6]")}>
+                        <div className="grid grid-cols-2 gap-x-4 gap-y-2">
+                          <div>
+                            <span className="text-[#6B778C]">리드타임</span>
+                            <div className="font-semibold text-[#172B4D]">{formatLeadTimeHours(lt.leadTimeHours)}</div>
+                          </div>
+                          <div>
+                            <span className="text-[#6B778C]">면책 시간</span>
+                            <div className="font-semibold text-blue-600">{lt.exemptionHours > 0 ? formatLeadTimeHours(lt.exemptionHours) : '-'}</div>
+                          </div>
+                          <div>
+                            <span className="text-[#6B778C]">귀책 소요시간</span>
+                            <div className="font-semibold text-[#172B4D]">{formatLeadTimeHours(lt.accountabilityHours)}</div>
+                          </div>
+                          <div>
+                            <span className="text-[#6B778C]">판정</span>
+                            <div><Badge tone={lt.isDelayed ? "danger" : "ok"}>{lt.isDelayed ? "지연 (72h 초과)" : "정상"}</Badge></div>
+                          </div>
                         </div>
-                      )}
+                      </div>
                     </CardContent>
                   </Card>
                 );

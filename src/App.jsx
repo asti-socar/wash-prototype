@@ -388,8 +388,8 @@ function InternalApp({ onSwitchAdmin }) {
   const pageTitle = PAGE_TITLES[activeKey] ?? "Admin";
 
   // 대시보드에서 오더관리로 이동하면서 필터 적용
-  const goOrdersWithFilter = ({ status, orderType, cancelType } = {}) => {
-    setOrderQuickFilter({ status, orderType, cancelType });
+  const goOrdersWithFilter = ({ status, orderType, cancelType, delayed } = {}) => {
+    setOrderQuickFilter({ status, orderType, cancelType, delayed });
     setActiveKey("orders");
   };
 

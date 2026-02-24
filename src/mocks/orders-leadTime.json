@@ -20,14 +20,20 @@
     "isDelayed": true,
     "referenceChain": [
       {
-        "orderId": "O-89860",
+        "orderId": "O-89500",
         "cancelType": "예약 불가",
-        "responsibility": "귀책"
+        "responsibility": "면책",
+        "issuedAt": "2026-01-29 03:36",
+        "canceledAt": "2026-01-30 03:36",
+        "reissuedAt": "2026-01-30 03:36"
       },
       {
-        "orderId": "O-89811",
+        "orderId": "O-89501",
         "cancelType": "노쇼",
-        "responsibility": "귀책"
+        "responsibility": "귀책",
+        "issuedAt": "2026-01-30 03:36",
+        "canceledAt": "2026-01-31 18:36",
+        "reissuedAt": "2026-01-31 20:36"
       }
     ]
   },
@@ -43,21 +49,104 @@
     "exemptionHours": 3,
     "accountabilityHours": 92,
     "isDelayed": true,
-    "referenceChain": []
+    "referenceChain": [
+      {
+        "orderId": "O-89502",
+        "cancelType": "개인 사유",
+        "responsibility": "귀책",
+        "issuedAt": "2026-02-11 01:16",
+        "canceledAt": "2026-02-11 13:16",
+        "reissuedAt": "2026-02-11 15:16"
+      },
+      {
+        "orderId": "O-89503",
+        "cancelType": "개인 사유",
+        "responsibility": "귀책",
+        "issuedAt": "2026-02-11 15:16",
+        "canceledAt": "2026-02-13 03:16",
+        "reissuedAt": "2026-02-13 04:16"
+      },
+      {
+        "orderId": "O-89504",
+        "cancelType": "노쇼",
+        "responsibility": "귀책",
+        "issuedAt": "2026-02-13 04:16",
+        "canceledAt": "2026-02-13 19:16",
+        "reissuedAt": "2026-02-13 19:16"
+      }
+    ]
   },
   "O-90006": {
     "leadTimeHours": 119,
     "exemptionHours": 5,
     "accountabilityHours": 114,
     "isDelayed": true,
-    "referenceChain": []
+    "referenceChain": [
+      {
+        "orderId": "O-89505",
+        "cancelType": "개인 사유",
+        "responsibility": "귀책",
+        "issuedAt": "2026-01-20 06:30",
+        "canceledAt": "2026-01-21 06:30",
+        "reissuedAt": "2026-01-21 07:30"
+      },
+      {
+        "orderId": "O-89506",
+        "cancelType": "미예약",
+        "responsibility": "귀책",
+        "issuedAt": "2026-01-21 07:30",
+        "canceledAt": "2026-01-22 07:30",
+        "reissuedAt": "2026-01-22 09:30"
+      },
+      {
+        "orderId": "O-89507",
+        "cancelType": "우천",
+        "responsibility": "면책",
+        "issuedAt": "2026-01-22 09:30",
+        "canceledAt": "2026-01-23 01:30",
+        "reissuedAt": "2026-01-23 03:30"
+      },
+      {
+        "orderId": "O-89508",
+        "cancelType": "개인 사유",
+        "responsibility": "귀책",
+        "issuedAt": "2026-01-23 03:30",
+        "canceledAt": "2026-01-23 15:30",
+        "reissuedAt": "2026-01-23 17:30"
+      }
+    ]
   },
   "O-90007": {
     "leadTimeHours": 110,
     "exemptionHours": 0,
     "accountabilityHours": 110,
     "isDelayed": true,
-    "referenceChain": []
+    "referenceChain": [
+      {
+        "orderId": "O-89509",
+        "cancelType": "미예약",
+        "responsibility": "귀책",
+        "issuedAt": "2026-01-23 12:18",
+        "canceledAt": "2026-01-24 12:18",
+        "reissuedAt": "2026-01-24 13:18"
+      },
+      {
+        "orderId": "O-89510",
+        "cancelType": "노쇼",
+        "responsibility": "귀책",
+        "issuedAt": "2026-01-24 13:18",
+        "canceledAt": "2026-01-25 07:18",
+        "reissuedAt": "2026-01-25 09:18"
+      },
+      {
+        "orderId": "O-89511",
+        "cancelType": "개인 사유",
+        "responsibility": "귀책",
+        "issuedAt": "2026-01-25 09:18",
+        "canceledAt": "2026-01-26 21:18",
+        "reissuedAt": "2026-01-26 22:18"
+      }
+    ]
   },
   "O-90008": {
     "leadTimeHours": 36,
@@ -94,14 +183,20 @@
     "isDelayed": true,
     "referenceChain": [
       {
-        "orderId": "O-89895",
-        "cancelType": "주차장 문제",
-        "responsibility": "면책"
+        "orderId": "O-89512",
+        "cancelType": "개인 사유",
+        "responsibility": "귀책",
+        "issuedAt": "2026-02-12 21:26",
+        "canceledAt": "2026-02-14 09:26",
+        "reissuedAt": "2026-02-14 10:26"
       },
       {
-        "orderId": "O-89865",
-        "cancelType": "예약 불가",
-        "responsibility": "면책"
+        "orderId": "O-89513",
+        "cancelType": "노쇼",
+        "responsibility": "귀책",
+        "issuedAt": "2026-02-14 10:26",
+        "canceledAt": "2026-02-15 17:26",
+        "reissuedAt": "2026-02-15 19:26"
       }
     ]
   },
@@ -110,14 +205,72 @@
     "exemptionHours": 7,
     "accountabilityHours": 99,
     "isDelayed": true,
-    "referenceChain": []
+    "referenceChain": [
+      {
+        "orderId": "O-89514",
+        "cancelType": "예약 불가",
+        "responsibility": "면책",
+        "issuedAt": "2026-02-05 01:34",
+        "canceledAt": "2026-02-06 01:34",
+        "reissuedAt": "2026-02-06 02:34"
+      },
+      {
+        "orderId": "O-89515",
+        "cancelType": "미예약",
+        "responsibility": "귀책",
+        "issuedAt": "2026-02-06 02:34",
+        "canceledAt": "2026-02-07 02:34",
+        "reissuedAt": "2026-02-07 02:34"
+      },
+      {
+        "orderId": "O-89516",
+        "cancelType": "미예약",
+        "responsibility": "귀책",
+        "issuedAt": "2026-02-07 02:34",
+        "canceledAt": "2026-02-08 02:34",
+        "reissuedAt": "2026-02-08 02:34"
+      }
+    ]
   },
   "O-90014": {
     "leadTimeHours": 107,
     "exemptionHours": 24,
     "accountabilityHours": 83,
     "isDelayed": true,
-    "referenceChain": []
+    "referenceChain": [
+      {
+        "orderId": "O-89517",
+        "cancelType": "우천",
+        "responsibility": "면책",
+        "issuedAt": "2026-02-07 04:55",
+        "canceledAt": "2026-02-07 16:55",
+        "reissuedAt": "2026-02-07 18:55"
+      },
+      {
+        "orderId": "O-89518",
+        "cancelType": "개인 사유",
+        "responsibility": "귀책",
+        "issuedAt": "2026-02-07 18:55",
+        "canceledAt": "2026-02-08 06:55",
+        "reissuedAt": "2026-02-08 08:55"
+      },
+      {
+        "orderId": "O-89519",
+        "cancelType": "예약 불가",
+        "responsibility": "면책",
+        "issuedAt": "2026-02-08 08:55",
+        "canceledAt": "2026-02-09 08:55",
+        "reissuedAt": "2026-02-09 09:55"
+      },
+      {
+        "orderId": "O-89520",
+        "cancelType": "개인 사유",
+        "responsibility": "귀책",
+        "issuedAt": "2026-02-09 09:55",
+        "canceledAt": "2026-02-10 10:55",
+        "reissuedAt": "2026-02-10 11:55"
+      }
+    ]
   },
   "O-90015": {
     "leadTimeHours": 81,
@@ -126,14 +279,20 @@
     "isDelayed": true,
     "referenceChain": [
       {
-        "orderId": "O-89799",
-        "cancelType": "우천",
-        "responsibility": "면책"
+        "orderId": "O-89521",
+        "cancelType": "개인 사유",
+        "responsibility": "귀책",
+        "issuedAt": "2026-01-24 01:12",
+        "canceledAt": "2026-01-25 13:12",
+        "reissuedAt": "2026-01-25 15:12"
       },
       {
-        "orderId": "O-89834",
-        "cancelType": "예약 불가",
-        "responsibility": "귀책"
+        "orderId": "O-89522",
+        "cancelType": "노쇼",
+        "responsibility": "귀책",
+        "issuedAt": "2026-01-25 15:12",
+        "canceledAt": "2026-01-26 05:12",
+        "reissuedAt": "2026-01-26 05:12"
       }
     ]
   },
@@ -149,18 +308,7 @@
     "exemptionHours": 0,
     "accountabilityHours": 48,
     "isDelayed": false,
-    "referenceChain": [
-      {
-        "orderId": "O-89863",
-        "cancelType": "미예약",
-        "responsibility": "귀책"
-      },
-      {
-        "orderId": "O-89753",
-        "cancelType": "미예약",
-        "responsibility": "귀책"
-      }
-    ]
+    "referenceChain": []
   },
   "O-90018": {
     "leadTimeHours": 38,
@@ -174,49 +322,21 @@
     "exemptionHours": 7,
     "accountabilityHours": 33,
     "isDelayed": false,
-    "referenceChain": [
-      {
-        "orderId": "O-89749",
-        "cancelType": "노쇼",
-        "responsibility": "귀책"
-      }
-    ]
+    "referenceChain": []
   },
   "O-90020": {
     "leadTimeHours": 25,
     "exemptionHours": 0,
     "accountabilityHours": 25,
     "isDelayed": false,
-    "referenceChain": [
-      {
-        "orderId": "O-89752",
-        "cancelType": "미예약",
-        "responsibility": "면책"
-      },
-      {
-        "orderId": "O-89885",
-        "cancelType": "주차장 문제",
-        "responsibility": "귀책"
-      }
-    ]
+    "referenceChain": []
   },
   "O-90021": {
     "leadTimeHours": 43,
     "exemptionHours": 0,
     "accountabilityHours": 43,
     "isDelayed": false,
-    "referenceChain": [
-      {
-        "orderId": "O-89845",
-        "cancelType": "차량 없음",
-        "responsibility": "귀책"
-      },
-      {
-        "orderId": "O-89778",
-        "cancelType": "주차장 문제",
-        "responsibility": "귀책"
-      }
-    ]
+    "referenceChain": []
   },
   "O-90022": {
     "leadTimeHours": 63,
@@ -232,9 +352,20 @@
     "isDelayed": true,
     "referenceChain": [
       {
-        "orderId": "O-89889",
-        "cancelType": "차량 없음",
-        "responsibility": "귀책"
+        "orderId": "O-89523",
+        "cancelType": "개인 사유",
+        "responsibility": "귀책",
+        "issuedAt": "2026-01-20 08:14",
+        "canceledAt": "2026-01-20 20:14",
+        "reissuedAt": "2026-01-20 22:14"
+      },
+      {
+        "orderId": "O-89524",
+        "cancelType": "개인 사유",
+        "responsibility": "귀책",
+        "issuedAt": "2026-01-20 22:14",
+        "canceledAt": "2026-01-22 10:14",
+        "reissuedAt": "2026-01-22 11:14"
       }
     ]
   },
@@ -243,14 +374,56 @@
     "exemptionHours": 0,
     "accountabilityHours": 111,
     "isDelayed": true,
-    "referenceChain": []
+    "referenceChain": [
+      {
+        "orderId": "O-89525",
+        "cancelType": "개인 사유",
+        "responsibility": "귀책",
+        "issuedAt": "2026-02-10 02:25",
+        "canceledAt": "2026-02-11 14:25",
+        "reissuedAt": "2026-02-11 14:25"
+      },
+      {
+        "orderId": "O-89526",
+        "cancelType": "노쇼",
+        "responsibility": "귀책",
+        "issuedAt": "2026-02-11 14:25",
+        "canceledAt": "2026-02-13 02:25",
+        "reissuedAt": "2026-02-13 02:25"
+      }
+    ]
   },
   "O-90025": {
     "leadTimeHours": 119,
     "exemptionHours": 10,
     "accountabilityHours": 109,
     "isDelayed": true,
-    "referenceChain": []
+    "referenceChain": [
+      {
+        "orderId": "O-89527",
+        "cancelType": "차량 없음",
+        "responsibility": "면책",
+        "issuedAt": "2026-01-29 10:06",
+        "canceledAt": "2026-01-29 16:06",
+        "reissuedAt": "2026-01-29 16:06"
+      },
+      {
+        "orderId": "O-89528",
+        "cancelType": "노쇼",
+        "responsibility": "귀책",
+        "issuedAt": "2026-01-29 16:06",
+        "canceledAt": "2026-01-30 22:06",
+        "reissuedAt": "2026-01-30 23:06"
+      },
+      {
+        "orderId": "O-89529",
+        "cancelType": "노쇼",
+        "responsibility": "귀책",
+        "issuedAt": "2026-01-30 23:06",
+        "canceledAt": "2026-02-01 17:06",
+        "reissuedAt": "2026-02-01 18:06"
+      }
+    ]
   },
   "O-90026": {
     "leadTimeHours": 89,
@@ -264,64 +437,142 @@
     "exemptionHours": 0,
     "accountabilityHours": 39,
     "isDelayed": false,
-    "referenceChain": [
-      {
-        "orderId": "O-89791",
-        "cancelType": "주차장 문제",
-        "responsibility": "면책"
-      },
-      {
-        "orderId": "O-89741",
-        "cancelType": "예약 불가",
-        "responsibility": "면책"
-      },
-      {
-        "orderId": "O-89738",
-        "cancelType": "주차장 문제",
-        "responsibility": "귀책"
-      }
-    ]
+    "referenceChain": []
   },
   "O-90028": {
     "leadTimeHours": 83,
     "exemptionHours": 0,
     "accountabilityHours": 83,
     "isDelayed": true,
-    "referenceChain": []
+    "referenceChain": [
+      {
+        "orderId": "O-89530",
+        "cancelType": "미예약",
+        "responsibility": "귀책",
+        "issuedAt": "2026-02-16 09:59",
+        "canceledAt": "2026-02-17 09:59",
+        "reissuedAt": "2026-02-17 11:59"
+      },
+      {
+        "orderId": "O-89531",
+        "cancelType": "미예약",
+        "responsibility": "귀책",
+        "issuedAt": "2026-02-17 11:59",
+        "canceledAt": "2026-02-18 11:59",
+        "reissuedAt": "2026-02-18 11:59"
+      }
+    ]
   },
   "O-90029": {
     "leadTimeHours": 89,
     "exemptionHours": 0,
     "accountabilityHours": 89,
     "isDelayed": true,
-    "referenceChain": []
+    "referenceChain": [
+      {
+        "orderId": "O-89532",
+        "cancelType": "미예약",
+        "responsibility": "귀책",
+        "issuedAt": "2026-02-14 18:14",
+        "canceledAt": "2026-02-15 18:14",
+        "reissuedAt": "2026-02-15 19:14"
+      },
+      {
+        "orderId": "O-89533",
+        "cancelType": "미예약",
+        "responsibility": "귀책",
+        "issuedAt": "2026-02-15 19:14",
+        "canceledAt": "2026-02-16 19:14",
+        "reissuedAt": "2026-02-16 21:14"
+      }
+    ]
   },
   "O-90030": {
     "leadTimeHours": 119,
     "exemptionHours": 0,
     "accountabilityHours": 119,
     "isDelayed": true,
-    "referenceChain": []
+    "referenceChain": [
+      {
+        "orderId": "O-89534",
+        "cancelType": "노쇼",
+        "responsibility": "귀책",
+        "issuedAt": "2026-02-03 17:49",
+        "canceledAt": "2026-02-04 11:49",
+        "reissuedAt": "2026-02-04 11:49"
+      },
+      {
+        "orderId": "O-89535",
+        "cancelType": "노쇼",
+        "responsibility": "귀책",
+        "issuedAt": "2026-02-04 11:49",
+        "canceledAt": "2026-02-05 05:49",
+        "reissuedAt": "2026-02-05 06:49"
+      },
+      {
+        "orderId": "O-89536",
+        "cancelType": "개인 사유",
+        "responsibility": "귀책",
+        "issuedAt": "2026-02-05 06:49",
+        "canceledAt": "2026-02-05 18:49",
+        "reissuedAt": "2026-02-05 20:49"
+      },
+      {
+        "orderId": "O-89537",
+        "cancelType": "개인 사유",
+        "responsibility": "귀책",
+        "issuedAt": "2026-02-05 20:49",
+        "canceledAt": "2026-02-06 20:49",
+        "reissuedAt": "2026-02-06 21:49"
+      },
+      {
+        "orderId": "O-89538",
+        "cancelType": "미예약",
+        "responsibility": "귀책",
+        "issuedAt": "2026-02-06 21:49",
+        "canceledAt": "2026-02-07 10:49",
+        "reissuedAt": "2026-02-07 10:49"
+      }
+    ]
   },
   "O-90031": {
     "leadTimeHours": 116,
     "exemptionHours": 0,
     "accountabilityHours": 116,
     "isDelayed": true,
-    "referenceChain": []
+    "referenceChain": [
+      {
+        "orderId": "O-89539",
+        "cancelType": "노쇼",
+        "responsibility": "귀책",
+        "issuedAt": "2026-01-23 05:36",
+        "canceledAt": "2026-01-24 23:36",
+        "reissuedAt": "2026-01-24 23:36"
+      },
+      {
+        "orderId": "O-89540",
+        "cancelType": "미예약",
+        "responsibility": "귀책",
+        "issuedAt": "2026-01-24 23:36",
+        "canceledAt": "2026-01-25 23:36",
+        "reissuedAt": "2026-01-26 01:36"
+      },
+      {
+        "orderId": "O-89541",
+        "cancelType": "미예약",
+        "responsibility": "귀책",
+        "issuedAt": "2026-01-26 01:36",
+        "canceledAt": "2026-01-26 19:36",
+        "reissuedAt": "2026-01-26 21:36"
+      }
+    ]
   },
   "O-90032": {
     "leadTimeHours": 82,
     "exemptionHours": 17,
     "accountabilityHours": 65,
     "isDelayed": false,
-    "referenceChain": [
-      {
-        "orderId": "O-89839",
-        "cancelType": "예약 불가",
-        "responsibility": "귀책"
-      }
-    ]
+    "referenceChain": []
   },
   "O-90033": {
     "leadTimeHours": 44,
@@ -344,9 +595,20 @@
     "isDelayed": true,
     "referenceChain": [
       {
-        "orderId": "O-89894",
-        "cancelType": "주차장 문제",
-        "responsibility": "면책"
+        "orderId": "O-89542",
+        "cancelType": "개인 사유",
+        "responsibility": "귀책",
+        "issuedAt": "2026-02-07 04:33",
+        "canceledAt": "2026-02-08 04:33",
+        "reissuedAt": "2026-02-08 05:33"
+      },
+      {
+        "orderId": "O-89543",
+        "cancelType": "개인 사유",
+        "responsibility": "귀책",
+        "issuedAt": "2026-02-08 05:33",
+        "canceledAt": "2026-02-09 17:33",
+        "reissuedAt": "2026-02-09 19:33"
       }
     ]
   },
@@ -357,9 +619,28 @@
     "isDelayed": true,
     "referenceChain": [
       {
-        "orderId": "O-89802",
-        "cancelType": "우천",
-        "responsibility": "귀책"
+        "orderId": "O-89544",
+        "cancelType": "개인 사유",
+        "responsibility": "귀책",
+        "issuedAt": "2026-01-19 18:47",
+        "canceledAt": "2026-01-20 06:47",
+        "reissuedAt": "2026-01-20 07:47"
+      },
+      {
+        "orderId": "O-89545",
+        "cancelType": "노쇼",
+        "responsibility": "귀책",
+        "issuedAt": "2026-01-20 07:47",
+        "canceledAt": "2026-01-21 19:47",
+        "reissuedAt": "2026-01-21 19:47"
+      },
+      {
+        "orderId": "O-89546",
+        "cancelType": "노쇼",
+        "responsibility": "귀책",
+        "issuedAt": "2026-01-21 19:47",
+        "canceledAt": "2026-01-22 13:47",
+        "reissuedAt": "2026-01-22 13:47"
       }
     ]
   },
@@ -368,23 +649,7 @@
     "exemptionHours": 0,
     "accountabilityHours": 24,
     "isDelayed": false,
-    "referenceChain": [
-      {
-        "orderId": "O-89899",
-        "cancelType": "미예약",
-        "responsibility": "귀책"
-      },
-      {
-        "orderId": "O-89873",
-        "cancelType": "차량 없음",
-        "responsibility": "면책"
-      },
-      {
-        "orderId": "O-89815",
-        "cancelType": "차량 없음",
-        "responsibility": "면책"
-      }
-    ]
+    "referenceChain": []
   },
   "O-90038": {
     "leadTimeHours": 90,
@@ -412,7 +677,24 @@
     "exemptionHours": 6,
     "accountabilityHours": 78,
     "isDelayed": true,
-    "referenceChain": []
+    "referenceChain": [
+      {
+        "orderId": "O-89547",
+        "cancelType": "노쇼",
+        "responsibility": "귀책",
+        "issuedAt": "2026-02-14 21:48",
+        "canceledAt": "2026-02-16 09:48",
+        "reissuedAt": "2026-02-16 11:48"
+      },
+      {
+        "orderId": "O-89548",
+        "cancelType": "노쇼",
+        "responsibility": "귀책",
+        "issuedAt": "2026-02-16 11:48",
+        "canceledAt": "2026-02-17 03:48",
+        "reissuedAt": "2026-02-17 05:48"
+      }
+    ]
   },
   "O-90042": {
     "leadTimeHours": 38,
@@ -447,23 +729,7 @@
     "exemptionHours": 0,
     "accountabilityHours": 44,
     "isDelayed": false,
-    "referenceChain": [
-      {
-        "orderId": "O-89801",
-        "cancelType": "차량 없음",
-        "responsibility": "면책"
-      },
-      {
-        "orderId": "O-89798",
-        "cancelType": "우천",
-        "responsibility": "면책"
-      },
-      {
-        "orderId": "O-89834",
-        "cancelType": "노쇼",
-        "responsibility": "귀책"
-      }
-    ]
+    "referenceChain": []
   },
   "O-90047": {
     "leadTimeHours": 24,
@@ -477,37 +743,55 @@
     "exemptionHours": 0,
     "accountabilityHours": 83,
     "isDelayed": true,
-    "referenceChain": []
+    "referenceChain": [
+      {
+        "orderId": "O-89549",
+        "cancelType": "개인 사유",
+        "responsibility": "귀책",
+        "issuedAt": "2026-02-13 14:17",
+        "canceledAt": "2026-02-14 14:17",
+        "reissuedAt": "2026-02-14 16:17"
+      },
+      {
+        "orderId": "O-89550",
+        "cancelType": "노쇼",
+        "responsibility": "귀책",
+        "issuedAt": "2026-02-14 16:17",
+        "canceledAt": "2026-02-15 19:17",
+        "reissuedAt": "2026-02-15 20:17"
+      }
+    ]
   },
   "O-90049": {
     "leadTimeHours": 76,
     "exemptionHours": 0,
     "accountabilityHours": 76,
     "isDelayed": true,
-    "referenceChain": []
+    "referenceChain": [
+      {
+        "orderId": "O-89551",
+        "cancelType": "미예약",
+        "responsibility": "귀책",
+        "issuedAt": "2026-01-19 17:33",
+        "canceledAt": "2026-01-20 17:33",
+        "reissuedAt": "2026-01-20 17:33"
+      },
+      {
+        "orderId": "O-89552",
+        "cancelType": "개인 사유",
+        "responsibility": "귀책",
+        "issuedAt": "2026-01-20 17:33",
+        "canceledAt": "2026-01-21 05:33",
+        "reissuedAt": "2026-01-21 05:33"
+      }
+    ]
   },
   "O-90050": {
     "leadTimeHours": 31,
     "exemptionHours": 2,
     "accountabilityHours": 29,
     "isDelayed": false,
-    "referenceChain": [
-      {
-        "orderId": "O-89809",
-        "cancelType": "미예약",
-        "responsibility": "면책"
-      },
-      {
-        "orderId": "O-89751",
-        "cancelType": "노쇼",
-        "responsibility": "귀책"
-      },
-      {
-        "orderId": "O-89845",
-        "cancelType": "예약 불가",
-        "responsibility": "귀책"
-      }
-    ]
+    "referenceChain": []
   },
   "O-90051": {
     "leadTimeHours": 51,
@@ -528,18 +812,7 @@
     "exemptionHours": 7,
     "accountabilityHours": 66,
     "isDelayed": false,
-    "referenceChain": [
-      {
-        "orderId": "O-89789",
-        "cancelType": "주차장 문제",
-        "responsibility": "면책"
-      },
-      {
-        "orderId": "O-89780",
-        "cancelType": "미예약",
-        "responsibility": "면책"
-      }
-    ]
+    "referenceChain": []
   },
   "O-90054": {
     "leadTimeHours": 32,
@@ -553,21 +826,88 @@
     "exemptionHours": 13,
     "accountabilityHours": 80,
     "isDelayed": true,
-    "referenceChain": []
+    "referenceChain": [
+      {
+        "orderId": "O-89553",
+        "cancelType": "우천",
+        "responsibility": "면책",
+        "issuedAt": "2026-01-27 13:48",
+        "canceledAt": "2026-01-27 17:48",
+        "reissuedAt": "2026-01-27 17:48"
+      },
+      {
+        "orderId": "O-89554",
+        "cancelType": "예약 불가",
+        "responsibility": "면책",
+        "issuedAt": "2026-01-27 17:48",
+        "canceledAt": "2026-01-28 17:48",
+        "reissuedAt": "2026-01-28 19:48"
+      },
+      {
+        "orderId": "O-89555",
+        "cancelType": "개인 사유",
+        "responsibility": "귀책",
+        "issuedAt": "2026-01-28 19:48",
+        "canceledAt": "2026-01-29 07:48",
+        "reissuedAt": "2026-01-29 07:48"
+      },
+      {
+        "orderId": "O-89556",
+        "cancelType": "노쇼",
+        "responsibility": "귀책",
+        "issuedAt": "2026-01-29 07:48",
+        "canceledAt": "2026-01-30 04:48",
+        "reissuedAt": "2026-01-30 06:48"
+      }
+    ]
   },
   "O-90056": {
     "leadTimeHours": 74,
     "exemptionHours": 0,
     "accountabilityHours": 74,
     "isDelayed": true,
-    "referenceChain": []
+    "referenceChain": [
+      {
+        "orderId": "O-89557",
+        "cancelType": "개인 사유",
+        "responsibility": "귀책",
+        "issuedAt": "2026-01-19 03:45",
+        "canceledAt": "2026-01-20 15:45",
+        "reissuedAt": "2026-01-20 15:45"
+      }
+    ]
   },
   "O-90057": {
     "leadTimeHours": 99,
     "exemptionHours": 0,
     "accountabilityHours": 99,
     "isDelayed": true,
-    "referenceChain": []
+    "referenceChain": [
+      {
+        "orderId": "O-89558",
+        "cancelType": "개인 사유",
+        "responsibility": "귀책",
+        "issuedAt": "2026-02-20 08:40",
+        "canceledAt": "2026-02-21 08:40",
+        "reissuedAt": "2026-02-21 08:40"
+      },
+      {
+        "orderId": "O-89559",
+        "cancelType": "노쇼",
+        "responsibility": "귀책",
+        "issuedAt": "2026-02-21 08:40",
+        "canceledAt": "2026-02-22 02:40",
+        "reissuedAt": "2026-02-22 02:40"
+      },
+      {
+        "orderId": "O-89560",
+        "cancelType": "노쇼",
+        "responsibility": "귀책",
+        "issuedAt": "2026-02-22 02:40",
+        "canceledAt": "2026-02-23 05:40",
+        "reissuedAt": "2026-02-23 05:40"
+      }
+    ]
   },
   "O-90058": {
     "leadTimeHours": 109,
@@ -576,19 +916,28 @@
     "isDelayed": true,
     "referenceChain": [
       {
-        "orderId": "O-89834",
-        "cancelType": "미예약",
-        "responsibility": "귀책"
+        "orderId": "O-89561",
+        "cancelType": "우천",
+        "responsibility": "면책",
+        "issuedAt": "2026-02-05 22:17",
+        "canceledAt": "2026-02-06 06:17",
+        "reissuedAt": "2026-02-06 06:17"
       },
       {
-        "orderId": "O-89814",
-        "cancelType": "주차장 문제",
-        "responsibility": "귀책"
+        "orderId": "O-89562",
+        "cancelType": "개인 사유",
+        "responsibility": "귀책",
+        "issuedAt": "2026-02-06 06:17",
+        "canceledAt": "2026-02-07 18:17",
+        "reissuedAt": "2026-02-07 19:17"
       },
       {
-        "orderId": "O-89840",
-        "cancelType": "예약 불가",
-        "responsibility": "면책"
+        "orderId": "O-89563",
+        "cancelType": "노쇼",
+        "responsibility": "귀책",
+        "issuedAt": "2026-02-07 19:17",
+        "canceledAt": "2026-02-09 01:17",
+        "reissuedAt": "2026-02-09 02:17"
       }
     ]
   },
@@ -604,95 +953,156 @@
     "exemptionHours": 22,
     "accountabilityHours": 60,
     "isDelayed": false,
-    "referenceChain": [
-      {
-        "orderId": "O-89754",
-        "cancelType": "우천",
-        "responsibility": "면책"
-      }
-    ]
+    "referenceChain": []
   },
   "O-90061": {
     "leadTimeHours": 78,
     "exemptionHours": 0,
     "accountabilityHours": 78,
     "isDelayed": true,
-    "referenceChain": []
+    "referenceChain": [
+      {
+        "orderId": "O-89564",
+        "cancelType": "미예약",
+        "responsibility": "귀책",
+        "issuedAt": "2026-02-12 00:53",
+        "canceledAt": "2026-02-13 00:53",
+        "reissuedAt": "2026-02-13 00:53"
+      },
+      {
+        "orderId": "O-89565",
+        "cancelType": "노쇼",
+        "responsibility": "귀책",
+        "issuedAt": "2026-02-13 00:53",
+        "canceledAt": "2026-02-13 18:53",
+        "reissuedAt": "2026-02-13 18:53"
+      }
+    ]
   },
   "O-90062": {
     "leadTimeHours": 84,
     "exemptionHours": 19,
     "accountabilityHours": 65,
     "isDelayed": false,
-    "referenceChain": [
-      {
-        "orderId": "O-89759",
-        "cancelType": "주차장 문제",
-        "responsibility": "귀책"
-      },
-      {
-        "orderId": "O-89837",
-        "cancelType": "주차장 문제",
-        "responsibility": "귀책"
-      }
-    ]
+    "referenceChain": []
   },
   "O-90063": {
     "leadTimeHours": 117,
     "exemptionHours": 11,
     "accountabilityHours": 106,
     "isDelayed": true,
-    "referenceChain": []
+    "referenceChain": [
+      {
+        "orderId": "O-89566",
+        "cancelType": "개인 사유",
+        "responsibility": "귀책",
+        "issuedAt": "2026-01-23 00:01",
+        "canceledAt": "2026-01-24 00:01",
+        "reissuedAt": "2026-01-24 01:01"
+      },
+      {
+        "orderId": "O-89567",
+        "cancelType": "차량 없음",
+        "responsibility": "면책",
+        "issuedAt": "2026-01-24 01:01",
+        "canceledAt": "2026-01-24 07:01",
+        "reissuedAt": "2026-01-24 09:01"
+      },
+      {
+        "orderId": "O-89568",
+        "cancelType": "차량 없음",
+        "responsibility": "면책",
+        "issuedAt": "2026-01-24 09:01",
+        "canceledAt": "2026-01-25 03:01",
+        "reissuedAt": "2026-01-25 05:01"
+      },
+      {
+        "orderId": "O-89569",
+        "cancelType": "노쇼",
+        "responsibility": "귀책",
+        "issuedAt": "2026-01-25 05:01",
+        "canceledAt": "2026-01-26 15:01",
+        "reissuedAt": "2026-01-26 16:01"
+      }
+    ]
   },
   "O-90064": {
     "leadTimeHours": 102,
     "exemptionHours": 21,
     "accountabilityHours": 81,
     "isDelayed": true,
-    "referenceChain": []
+    "referenceChain": [
+      {
+        "orderId": "O-89570",
+        "cancelType": "예약 불가",
+        "responsibility": "면책",
+        "issuedAt": "2026-02-15 11:21",
+        "canceledAt": "2026-02-16 11:21",
+        "reissuedAt": "2026-02-16 12:21"
+      },
+      {
+        "orderId": "O-89571",
+        "cancelType": "미예약",
+        "responsibility": "귀책",
+        "issuedAt": "2026-02-16 12:21",
+        "canceledAt": "2026-02-17 12:21",
+        "reissuedAt": "2026-02-17 13:21"
+      },
+      {
+        "orderId": "O-89572",
+        "cancelType": "미예약",
+        "responsibility": "귀책",
+        "issuedAt": "2026-02-17 13:21",
+        "canceledAt": "2026-02-18 11:21",
+        "reissuedAt": "2026-02-18 11:21"
+      }
+    ]
   },
   "O-90065": {
     "leadTimeHours": 42,
     "exemptionHours": 0,
     "accountabilityHours": 42,
     "isDelayed": false,
-    "referenceChain": [
-      {
-        "orderId": "O-89704",
-        "cancelType": "노쇼",
-        "responsibility": "면책"
-      }
-    ]
+    "referenceChain": []
   },
   "O-90066": {
     "leadTimeHours": 65,
     "exemptionHours": 0,
     "accountabilityHours": 65,
     "isDelayed": false,
-    "referenceChain": [
-      {
-        "orderId": "O-89709",
-        "cancelType": "예약 불가",
-        "responsibility": "귀책"
-      },
-      {
-        "orderId": "O-89735",
-        "cancelType": "우천",
-        "responsibility": "귀책"
-      },
-      {
-        "orderId": "O-89888",
-        "cancelType": "주차장 문제",
-        "responsibility": "귀책"
-      }
-    ]
+    "referenceChain": []
   },
   "O-90067": {
     "leadTimeHours": 104,
     "exemptionHours": 0,
     "accountabilityHours": 104,
     "isDelayed": true,
-    "referenceChain": []
+    "referenceChain": [
+      {
+        "orderId": "O-89573",
+        "cancelType": "개인 사유",
+        "responsibility": "귀책",
+        "issuedAt": "2026-01-24 13:42",
+        "canceledAt": "2026-01-25 13:42",
+        "reissuedAt": "2026-01-25 14:42"
+      },
+      {
+        "orderId": "O-89574",
+        "cancelType": "미예약",
+        "responsibility": "귀책",
+        "issuedAt": "2026-01-25 14:42",
+        "canceledAt": "2026-01-26 14:42",
+        "reissuedAt": "2026-01-26 16:42"
+      },
+      {
+        "orderId": "O-89575",
+        "cancelType": "노쇼",
+        "responsibility": "귀책",
+        "issuedAt": "2026-01-26 16:42",
+        "canceledAt": "2026-01-27 15:42",
+        "reissuedAt": "2026-01-27 17:42"
+      }
+    ]
   },
   "O-90068": {
     "leadTimeHours": 54,
@@ -706,14 +1116,56 @@
     "exemptionHours": 0,
     "accountabilityHours": 114,
     "isDelayed": true,
-    "referenceChain": []
+    "referenceChain": [
+      {
+        "orderId": "O-89576",
+        "cancelType": "개인 사유",
+        "responsibility": "귀책",
+        "issuedAt": "2026-02-12 20:37",
+        "canceledAt": "2026-02-14 08:37",
+        "reissuedAt": "2026-02-14 10:37"
+      },
+      {
+        "orderId": "O-89577",
+        "cancelType": "노쇼",
+        "responsibility": "귀책",
+        "issuedAt": "2026-02-14 10:37",
+        "canceledAt": "2026-02-15 04:37",
+        "reissuedAt": "2026-02-15 05:37"
+      },
+      {
+        "orderId": "O-89578",
+        "cancelType": "노쇼",
+        "responsibility": "귀책",
+        "issuedAt": "2026-02-15 05:37",
+        "canceledAt": "2026-02-16 08:37",
+        "reissuedAt": "2026-02-16 10:37"
+      }
+    ]
   },
   "O-90070": {
     "leadTimeHours": 88,
     "exemptionHours": 0,
     "accountabilityHours": 88,
     "isDelayed": true,
-    "referenceChain": []
+    "referenceChain": [
+      {
+        "orderId": "O-89579",
+        "cancelType": "개인 사유",
+        "responsibility": "귀책",
+        "issuedAt": "2026-01-27 13:51",
+        "canceledAt": "2026-01-28 13:51",
+        "reissuedAt": "2026-01-28 15:51"
+      },
+      {
+        "orderId": "O-89580",
+        "cancelType": "개인 사유",
+        "responsibility": "귀책",
+        "issuedAt": "2026-01-28 15:51",
+        "canceledAt": "2026-01-29 23:51",
+        "reissuedAt": "2026-01-30 01:51"
+      }
+    ]
   },
   "O-90071": {
     "leadTimeHours": 78,
@@ -727,7 +1179,32 @@
     "exemptionHours": 7,
     "accountabilityHours": 101,
     "isDelayed": true,
-    "referenceChain": []
+    "referenceChain": [
+      {
+        "orderId": "O-89581",
+        "cancelType": "개인 사유",
+        "responsibility": "귀책",
+        "issuedAt": "2026-02-05 09:00",
+        "canceledAt": "2026-02-06 21:00",
+        "reissuedAt": "2026-02-06 21:00"
+      },
+      {
+        "orderId": "O-89582",
+        "cancelType": "차량 없음",
+        "responsibility": "면책",
+        "issuedAt": "2026-02-06 21:00",
+        "canceledAt": "2026-02-07 09:00",
+        "reissuedAt": "2026-02-07 10:00"
+      },
+      {
+        "orderId": "O-89583",
+        "cancelType": "미예약",
+        "responsibility": "귀책",
+        "issuedAt": "2026-02-07 10:00",
+        "canceledAt": "2026-02-08 10:00",
+        "reissuedAt": "2026-02-08 12:00"
+      }
+    ]
   },
   "O-90073": {
     "leadTimeHours": 64,
@@ -741,18 +1218,7 @@
     "exemptionHours": 4,
     "accountabilityHours": 37,
     "isDelayed": false,
-    "referenceChain": [
-      {
-        "orderId": "O-89886",
-        "cancelType": "차량 없음",
-        "responsibility": "면책"
-      },
-      {
-        "orderId": "O-89749",
-        "cancelType": "미예약",
-        "responsibility": "면책"
-      }
-    ]
+    "referenceChain": []
   },
   "O-90075": {
     "leadTimeHours": 58,
@@ -773,28 +1239,112 @@
     "exemptionHours": 17,
     "accountabilityHours": 87,
     "isDelayed": true,
-    "referenceChain": []
+    "referenceChain": [
+      {
+        "orderId": "O-89584",
+        "cancelType": "우천",
+        "responsibility": "면책",
+        "issuedAt": "2026-02-17 09:09",
+        "canceledAt": "2026-02-18 01:09",
+        "reissuedAt": "2026-02-18 02:09"
+      },
+      {
+        "orderId": "O-89585",
+        "cancelType": "개인 사유",
+        "responsibility": "귀책",
+        "issuedAt": "2026-02-18 02:09",
+        "canceledAt": "2026-02-19 14:09",
+        "reissuedAt": "2026-02-19 14:09"
+      },
+      {
+        "orderId": "O-89586",
+        "cancelType": "미예약",
+        "responsibility": "귀책",
+        "issuedAt": "2026-02-19 14:09",
+        "canceledAt": "2026-02-20 11:09",
+        "reissuedAt": "2026-02-20 12:09"
+      }
+    ]
   },
   "O-90078": {
     "leadTimeHours": 80,
     "exemptionHours": 0,
     "accountabilityHours": 80,
     "isDelayed": true,
-    "referenceChain": []
+    "referenceChain": [
+      {
+        "orderId": "O-89587",
+        "cancelType": "개인 사유",
+        "responsibility": "귀책",
+        "issuedAt": "2026-02-11 19:48",
+        "canceledAt": "2026-02-13 07:48",
+        "reissuedAt": "2026-02-13 07:48"
+      },
+      {
+        "orderId": "O-89588",
+        "cancelType": "미예약",
+        "responsibility": "귀책",
+        "issuedAt": "2026-02-13 07:48",
+        "canceledAt": "2026-02-13 20:48",
+        "reissuedAt": "2026-02-13 22:48"
+      }
+    ]
   },
   "O-90079": {
     "leadTimeHours": 117,
     "exemptionHours": 3,
     "accountabilityHours": 114,
     "isDelayed": true,
-    "referenceChain": []
+    "referenceChain": [
+      {
+        "orderId": "O-89589",
+        "cancelType": "예약 불가",
+        "responsibility": "면책",
+        "issuedAt": "2026-01-19 02:25",
+        "canceledAt": "2026-01-20 02:25",
+        "reissuedAt": "2026-01-20 02:25"
+      },
+      {
+        "orderId": "O-89590",
+        "cancelType": "개인 사유",
+        "responsibility": "귀책",
+        "issuedAt": "2026-01-20 02:25",
+        "canceledAt": "2026-01-21 14:25",
+        "reissuedAt": "2026-01-21 16:25"
+      },
+      {
+        "orderId": "O-89591",
+        "cancelType": "개인 사유",
+        "responsibility": "귀책",
+        "issuedAt": "2026-01-21 16:25",
+        "canceledAt": "2026-01-22 04:25",
+        "reissuedAt": "2026-01-22 05:25"
+      }
+    ]
   },
   "O-90080": {
     "leadTimeHours": 91,
     "exemptionHours": 0,
     "accountabilityHours": 91,
     "isDelayed": true,
-    "referenceChain": []
+    "referenceChain": [
+      {
+        "orderId": "O-89592",
+        "cancelType": "개인 사유",
+        "responsibility": "귀책",
+        "issuedAt": "2026-02-01 16:23",
+        "canceledAt": "2026-02-02 16:23",
+        "reissuedAt": "2026-02-02 16:23"
+      },
+      {
+        "orderId": "O-89593",
+        "cancelType": "노쇼",
+        "responsibility": "귀책",
+        "issuedAt": "2026-02-02 16:23",
+        "canceledAt": "2026-02-03 22:23",
+        "reissuedAt": "2026-02-03 22:23"
+      }
+    ]
   },
   "O-90081": {
     "leadTimeHours": 47,
@@ -808,23 +1358,7 @@
     "exemptionHours": 14,
     "accountabilityHours": 27,
     "isDelayed": false,
-    "referenceChain": [
-      {
-        "orderId": "O-89828",
-        "cancelType": "예약 불가",
-        "responsibility": "귀책"
-      },
-      {
-        "orderId": "O-89815",
-        "cancelType": "우천",
-        "responsibility": "귀책"
-      },
-      {
-        "orderId": "O-89733",
-        "cancelType": "주차장 문제",
-        "responsibility": "면책"
-      }
-    ]
+    "referenceChain": []
   },
   "O-90083": {
     "leadTimeHours": 28,
@@ -854,14 +1388,28 @@
     "isDelayed": true,
     "referenceChain": [
       {
-        "orderId": "O-89818",
-        "cancelType": "예약 불가",
-        "responsibility": "귀책"
+        "orderId": "O-89594",
+        "cancelType": "노쇼",
+        "responsibility": "귀책",
+        "issuedAt": "2026-02-07 14:04",
+        "canceledAt": "2026-02-08 20:04",
+        "reissuedAt": "2026-02-08 20:04"
       },
       {
-        "orderId": "O-89878",
+        "orderId": "O-89595",
+        "cancelType": "노쇼",
+        "responsibility": "귀책",
+        "issuedAt": "2026-02-08 20:04",
+        "canceledAt": "2026-02-10 14:04",
+        "reissuedAt": "2026-02-10 16:04"
+      },
+      {
+        "orderId": "O-89596",
         "cancelType": "미예약",
-        "responsibility": "면책"
+        "responsibility": "귀책",
+        "issuedAt": "2026-02-10 16:04",
+        "canceledAt": "2026-02-11 07:04",
+        "reissuedAt": "2026-02-11 08:04"
       }
     ]
   },
@@ -870,7 +1418,32 @@
     "exemptionHours": 0,
     "accountabilityHours": 96,
     "isDelayed": true,
-    "referenceChain": []
+    "referenceChain": [
+      {
+        "orderId": "O-89597",
+        "cancelType": "노쇼",
+        "responsibility": "귀책",
+        "issuedAt": "2026-01-29 05:10",
+        "canceledAt": "2026-01-29 23:10",
+        "reissuedAt": "2026-01-30 00:10"
+      },
+      {
+        "orderId": "O-89598",
+        "cancelType": "미예약",
+        "responsibility": "귀책",
+        "issuedAt": "2026-01-30 00:10",
+        "canceledAt": "2026-01-31 00:10",
+        "reissuedAt": "2026-01-31 01:10"
+      },
+      {
+        "orderId": "O-89599",
+        "cancelType": "미예약",
+        "responsibility": "귀책",
+        "issuedAt": "2026-01-31 01:10",
+        "canceledAt": "2026-01-31 22:10",
+        "reissuedAt": "2026-01-31 22:10"
+      }
+    ]
   },
   "O-90088": {
     "leadTimeHours": 37,
@@ -891,20 +1464,31 @@
     "exemptionHours": 0,
     "accountabilityHours": 74,
     "isDelayed": true,
-    "referenceChain": []
+    "referenceChain": [
+      {
+        "orderId": "O-89600",
+        "cancelType": "개인 사유",
+        "responsibility": "귀책",
+        "issuedAt": "2026-02-21 10:42",
+        "canceledAt": "2026-02-21 22:42",
+        "reissuedAt": "2026-02-21 23:42"
+      },
+      {
+        "orderId": "O-89601",
+        "cancelType": "미예약",
+        "responsibility": "귀책",
+        "issuedAt": "2026-02-21 23:42",
+        "canceledAt": "2026-02-22 23:42",
+        "reissuedAt": "2026-02-23 01:42"
+      }
+    ]
   },
   "O-90091": {
     "leadTimeHours": 49,
     "exemptionHours": 18,
     "accountabilityHours": 31,
     "isDelayed": false,
-    "referenceChain": [
-      {
-        "orderId": "O-89807",
-        "cancelType": "예약 불가",
-        "responsibility": "면책"
-      }
-    ]
+    "referenceChain": []
   },
   "O-90092": {
     "leadTimeHours": 43,
@@ -918,31 +1502,14 @@
     "exemptionHours": 0,
     "accountabilityHours": 30,
     "isDelayed": false,
-    "referenceChain": [
-      {
-        "orderId": "O-89766",
-        "cancelType": "예약 불가",
-        "responsibility": "귀책"
-      },
-      {
-        "orderId": "O-89821",
-        "cancelType": "우천",
-        "responsibility": "면책"
-      }
-    ]
+    "referenceChain": []
   },
   "O-90094": {
     "leadTimeHours": 36,
     "exemptionHours": 7,
     "accountabilityHours": 29,
     "isDelayed": false,
-    "referenceChain": [
-      {
-        "orderId": "O-89893",
-        "cancelType": "우천",
-        "responsibility": "면책"
-      }
-    ]
+    "referenceChain": []
   },
   "O-90095": {
     "leadTimeHours": 40,
@@ -956,32 +1523,71 @@
     "exemptionHours": 10,
     "accountabilityHours": 79,
     "isDelayed": true,
-    "referenceChain": []
+    "referenceChain": [
+      {
+        "orderId": "O-89602",
+        "cancelType": "미예약",
+        "responsibility": "귀책",
+        "issuedAt": "2026-02-03 19:52",
+        "canceledAt": "2026-02-04 19:52",
+        "reissuedAt": "2026-02-04 21:52"
+      },
+      {
+        "orderId": "O-89603",
+        "cancelType": "노쇼",
+        "responsibility": "귀책",
+        "issuedAt": "2026-02-04 21:52",
+        "canceledAt": "2026-02-05 15:52",
+        "reissuedAt": "2026-02-05 16:52"
+      },
+      {
+        "orderId": "O-89604",
+        "cancelType": "예약 불가",
+        "responsibility": "면책",
+        "issuedAt": "2026-02-05 16:52",
+        "canceledAt": "2026-02-06 05:52",
+        "reissuedAt": "2026-02-06 06:52"
+      }
+    ]
   },
   "O-90097": {
     "leadTimeHours": 32,
     "exemptionHours": 12,
     "accountabilityHours": 20,
     "isDelayed": false,
-    "referenceChain": [
-      {
-        "orderId": "O-89822",
-        "cancelType": "주차장 문제",
-        "responsibility": "귀책"
-      },
-      {
-        "orderId": "O-89834",
-        "cancelType": "차량 없음",
-        "responsibility": "귀책"
-      }
-    ]
+    "referenceChain": []
   },
   "O-90098": {
     "leadTimeHours": 116,
     "exemptionHours": 16,
     "accountabilityHours": 100,
     "isDelayed": true,
-    "referenceChain": []
+    "referenceChain": [
+      {
+        "orderId": "O-89605",
+        "cancelType": "예약 불가",
+        "responsibility": "면책",
+        "issuedAt": "2026-01-22 10:44",
+        "canceledAt": "2026-01-23 10:44",
+        "reissuedAt": "2026-01-23 12:44"
+      },
+      {
+        "orderId": "O-89606",
+        "cancelType": "노쇼",
+        "responsibility": "귀책",
+        "issuedAt": "2026-01-23 12:44",
+        "canceledAt": "2026-01-25 06:44",
+        "reissuedAt": "2026-01-25 08:44"
+      },
+      {
+        "orderId": "O-89607",
+        "cancelType": "미예약",
+        "responsibility": "귀책",
+        "issuedAt": "2026-01-25 08:44",
+        "canceledAt": "2026-01-25 23:44",
+        "reissuedAt": "2026-01-26 01:44"
+      }
+    ]
   },
   "O-90099": {
     "leadTimeHours": 82,
@@ -990,9 +1596,20 @@
     "isDelayed": true,
     "referenceChain": [
       {
-        "orderId": "O-89754",
-        "cancelType": "주차장 문제",
-        "responsibility": "귀책"
+        "orderId": "O-89608",
+        "cancelType": "노쇼",
+        "responsibility": "귀책",
+        "issuedAt": "2026-01-26 16:38",
+        "canceledAt": "2026-01-27 22:38",
+        "reissuedAt": "2026-01-28 00:38"
+      },
+      {
+        "orderId": "O-89609",
+        "cancelType": "미예약",
+        "responsibility": "귀책",
+        "issuedAt": "2026-01-28 00:38",
+        "canceledAt": "2026-01-28 19:38",
+        "reissuedAt": "2026-01-28 20:38"
       }
     ]
   },
@@ -1001,22 +1618,6 @@
     "exemptionHours": 0,
     "accountabilityHours": 72,
     "isDelayed": false,
-    "referenceChain": [
-      {
-        "orderId": "O-89868",
-        "cancelType": "노쇼",
-        "responsibility": "면책"
-      },
-      {
-        "orderId": "O-89740",
-        "cancelType": "주차장 문제",
-        "responsibility": "면책"
-      },
-      {
-        "orderId": "O-89736",
-        "cancelType": "미예약",
-        "responsibility": "면책"
-      }
-    ]
+    "referenceChain": []
   }
 }
