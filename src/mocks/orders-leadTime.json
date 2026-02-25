@@ -1619,5 +1619,145 @@
     "accountabilityHours": 72,
     "isDelayed": false,
     "referenceChain": []
+  },
+  "O-90216": {
+    "leadTimeHours": 4.5,
+    "exemptionHours": 2.6,
+    "accountabilityHours": 15.9,
+    "isDelayed": false,
+    "referenceChain": []
+  },
+  "O-90220": {
+    "leadTimeHours": 24.3,
+    "exemptionHours": 0.9,
+    "accountabilityHours": 10.2,
+    "isDelayed": true,
+    "referenceChain": []
+  },
+  "O-90221": {
+    "leadTimeHours": 34.0,
+    "exemptionHours": 2.9,
+    "accountabilityHours": 19.0,
+    "isDelayed": false,
+    "referenceChain": []
+  },
+  "O-90222": {
+    "leadTimeHours": 16.4,
+    "exemptionHours": 0.2,
+    "accountabilityHours": 12.0,
+    "isDelayed": true,
+    "referenceChain": []
+  },
+  "O-90227": {
+    "leadTimeHours": 36.6,
+    "exemptionHours": 0.3,
+    "accountabilityHours": 11.5,
+    "isDelayed": false,
+    "referenceChain": []
+  },
+  "O-90228": {
+    "leadTimeHours": 19.0,
+    "exemptionHours": 0.6,
+    "accountabilityHours": 20.2,
+    "isDelayed": false,
+    "referenceChain": []
+  },
+  "O-90229": {
+    "leadTimeHours": 42.9,
+    "exemptionHours": 3.0,
+    "accountabilityHours": 4.6,
+    "isDelayed": false,
+    "referenceChain": []
+  },
+  "O-90235": {
+    "leadTimeHours": 38.6,
+    "exemptionHours": 3.4,
+    "accountabilityHours": 21.7,
+    "isDelayed": false,
+    "referenceChain": []
+  },
+  "O-90242": {
+    "leadTimeHours": 47.1,
+    "exemptionHours": 2.1,
+    "accountabilityHours": 22.6,
+    "isDelayed": false,
+    "referenceChain": []
+  },
+  "O-90243": {
+    "leadTimeHours": 38.2,
+    "exemptionHours": 1.7,
+    "accountabilityHours": 23.6,
+    "isDelayed": false,
+    "referenceChain": []
+  },
+  "O-90244": {
+    "leadTimeHours": 26.8,
+    "exemptionHours": 2.9,
+    "accountabilityHours": 18.1,
+    "isDelayed": false,
+    "referenceChain": []
+  },
+  "O-90246": {
+    "leadTimeHours": 34.1,
+    "exemptionHours": 2.2,
+    "accountabilityHours": 5.4,
+    "isDelayed": false,
+    "referenceChain": []
+  },
+  "O-90247": {
+    "leadTimeHours": 11.7,
+    "exemptionHours": 3.1,
+    "accountabilityHours": 15.0,
+    "isDelayed": false,
+    "referenceChain": []
+  },
+  "O-90248": {
+    "leadTimeHours": 5.9,
+    "exemptionHours": 2.1,
+    "accountabilityHours": 15.6,
+    "isDelayed": true,
+    "referenceChain": []
+  },
+  "O-90249": {
+    "leadTimeHours": 13.3,
+    "exemptionHours": 1.9,
+    "accountabilityHours": 20.5,
+    "isDelayed": true,
+    "referenceChain": []
+  },
+  "O-90255": {
+    "leadTimeHours": 43.7,
+    "exemptionHours": 1.8,
+    "accountabilityHours": 4.7,
+    "isDelayed": false,
+    "referenceChain": []
+  },
+  "O-90256": {
+    "leadTimeHours": 13.0,
+    "exemptionHours": 1.8,
+    "accountabilityHours": 17.4,
+    "isDelayed": false,
+    "referenceChain": []
+  },
+  "O-90258": {
+    "leadTimeHours": 27.0,
+    "exemptionHours": 1.7,
+    "accountabilityHours": 5.8,
+    "isDelayed": false,
+    "referenceChain": []
+  },
+  "O-90262": {
+    "leadTimeHours": 35.3,
+    "exemptionHours": 3.4,
+    "accountabilityHours": 22.1,
+    "isDelayed": false,
+    "referenceChain": []
+  },
+  "O-90263": {
+    "leadTimeHours": 10.4,
+    "exemptionHours": 1.0,
+    "accountabilityHours": 8.5,
+    "isDelayed": false,
+    "referenceChain": []
   }
 }

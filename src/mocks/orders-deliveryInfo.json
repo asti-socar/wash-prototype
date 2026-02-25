@@ -482,5 +482,89 @@
   "O-90199": {
     "pickupReservationId": "DR-2095",
     "pickupStatus": "END"
+  },
+  "O-90002": {
+    "pickupReservationId": "DR-3001",
+    "pickupStatus": "END",
+    "deliveryReservationId": "DR-3101",
+    "deliveryStatus": "END"
+  },
+  "O-90003": {
+    "pickupReservationId": "DR-3002",
+    "pickupStatus": "END",
+    "deliveryReservationId": "DR-3102",
+    "deliveryStatus": "END"
+  },
+  "O-90004": {
+    "pickupReservationId": "DR-3003",
+    "pickupStatus": "END",
+    "deliveryReservationId": "DR-3103",
+    "deliveryStatus": "END"
+  },
+  "O-90005": {
+    "pickupReservationId": "DR-3004",
+    "pickupStatus": "END",
+    "deliveryReservationId": "DR-3104",
+    "deliveryStatus": "END"
+  },
+  "O-90007": {
+    "pickupReservationId": "DR-3005",
+    "pickupStatus": "END",
+    "deliveryReservationId": "DR-3105",
+    "deliveryStatus": "END"
+  },
+  "O-90008": {
+    "pickupReservationId": "DR-3006",
+    "pickupStatus": "END",
+    "deliveryReservationId": "DR-3106",
+    "deliveryStatus": "END"
+  },
+  "O-90012": {
+    "pickupReservationId": "DR-3007",
+    "pickupStatus": "END",
+    "deliveryReservationId": "DR-3107",
+    "deliveryStatus": "END"
+  },
+  "O-90013": {
+    "pickupReservationId": "DR-3008",
+    "pickupStatus": "END",
+    "deliveryReservationId": "DR-3108",
+    "deliveryStatus": "END"
+  },
+  "O-90017": {
+    "pickupReservationId": "DR-3009",
+    "pickupStatus": "END",
+    "deliveryReservationId": "DR-3109",
+    "deliveryStatus": "END"
+  },
+  "O-90021": {
+    "pickupReservationId": "DR-3010",
+    "pickupStatus": "END",
+    "deliveryReservationId": "DR-3110",
+    "deliveryStatus": "END"
+  },
+  "O-90151": {
+    "pickupReservationId": "DR-3011",
+    "pickupStatus": "END",
+    "deliveryReservationId": "DR-3111",
+    "deliveryStatus": "RUN"
+  },
+  "O-90154": {
+    "pickupReservationId": "DR-3012",
+    "pickupStatus": "END",
+    "deliveryReservationId": "DR-3112",
+    "deliveryStatus": "ASSIGN"
+  },
+  "O-90155": {
+    "pickupReservationId": "DR-3013",
+    "pickupStatus": "END"
+  },
+  "O-90101": {
+    "pickupReservationId": "DR-3014",
+    "pickupStatus": "ASSIGN"
+  },
+  "O-90104": {
+    "pickupReservationId": "DR-3015",
+    "pickupStatus": "ASSIGN"
   }
 }
