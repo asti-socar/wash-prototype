@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect, useCallback } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Pencil } from 'lucide-react';
 import {
   toYmd, Card, CardHeader, CardTitle, CardContent,
   Button, Input, Select, Badge, Chip, FilterPanel,
@@ -52,6 +52,10 @@ export default function LostItemsPage({ setActiveKey }) {
   // Draft states for inline Input editing
   const [drafts, setDrafts] = useState({});
   const setDraft = (key, val) => setDrafts(p => ({ ...p, [key]: val }));
+
+  // Save confirmation popup
+  const [isSaveConfirming, setIsSaveConfirming] = useState(false);
+  const [pendingChanges, setPendingChanges] = useState([]);
 
   // Address states
   const [draftAddr1, setDraftAddr1] = useState('');
@@ -109,6 +113,22 @@ export default function LostItemsPage({ setActiveKey }) {
     setDrawerVisible(true);
   };
 
+  const showDrawerInEditMode = (item) => {
+    setSelectedItem(item);
+    setDrafts({
+      itemCategory: item.itemCategory,
+      status: item.status,
+      itemDetails: item.itemDetails || '',
+      recipientName: item.recipientName || '',
+      recipientPhone: item.recipientPhone || '',
+      isDisposed: item.isDisposed || false,
+    });
+    setDraftAddr1(item.deliveryAddress1 || '');
+    setDraftAddr2(item.deliveryAddress2 || '');
+    setIsEditMode(true);
+    setDrawerVisible(true);
+  };
+
   const closeDrawer = useCallback(() => {
     setDrawerVisible(false);
     setIsEditMode(false);
@@ -122,6 +142,7 @@ export default function LostItemsPage({ setActiveKey }) {
     if (!selectedItem) return;
     setDrafts({
       itemCategory: selectedItem.itemCategory,
+      status: selectedItem.status,
       itemDetails: selectedItem.itemDetails || '',
       recipientName: selectedItem.recipientName || '',
       recipientPhone: selectedItem.recipientPhone || '',
@@ -139,39 +160,73 @@ export default function LostItemsPage({ setActiveKey }) {
     setIsEditMode(false);
   };
 
-  const handleSaveAll = () => {
-    if (!selectedItem) return;
+  const buildUpdates = () => {
+    if (!selectedItem) return {};
     const updates = {};
 
-    // Category change
     if (drafts.itemCategory && drafts.itemCategory !== selectedItem.itemCategory) {
       updates.itemCategory = drafts.itemCategory;
-      const validStatuses = STATUS_BY_CATEGORY[drafts.itemCategory];
-      if (!validStatuses.includes(selectedItem.status)) {
-        updates.status = '배송지 미입력';
-      }
     }
-
+    if (drafts.status && drafts.status !== selectedItem.status) {
+      updates.status = drafts.status;
+    }
     if (drafts.itemDetails !== undefined) updates.itemDetails = drafts.itemDetails;
     if (drafts.recipientName !== undefined) updates.recipientName = drafts.recipientName;
     if (drafts.recipientPhone !== undefined) updates.recipientPhone = drafts.recipientPhone;
     if (drafts.isDisposed !== undefined) updates.isDisposed = drafts.isDisposed;
-
-    // Address
     updates.deliveryAddress1 = draftAddr1;
     updates.deliveryAddress2 = draftAddr2;
 
-    // Auto status transition on address fill
-    const currentStatus = updates.status || selectedItem.status;
-    if (currentStatus === '배송지 미입력' && draftAddr1.trim()) {
-      const category = updates.itemCategory || selectedItem.itemCategory;
-      if (category === '일반') updates.status = '발송 대기';
-      else if (category === '귀중품') updates.status = '경찰서 인계';
-    }
+    return updates;
+  };
 
+  const buildChangeList = (updates) => {
+    if (!selectedItem) return [];
+    const changes = [];
+    const labelMap = {
+      itemCategory: '분실물 구분',
+      status: '처리 상태',
+      itemDetails: '상세 정보',
+      recipientName: '수령인 이름',
+      recipientPhone: '휴대폰 번호',
+      isDisposed: '보관 30일 경과 폐기',
+      deliveryAddress1: '배송 주소',
+      deliveryAddress2: '배송 상세 주소',
+    };
+    for (const [key, newVal] of Object.entries(updates)) {
+      const oldVal = selectedItem[key];
+      if (key === 'isDisposed') {
+        if (!!newVal !== !!oldVal) {
+          changes.push({ label: labelMap[key], from: oldVal ? 'Y' : 'N', to: newVal ? 'Y' : 'N' });
+        }
+      } else if (String(newVal ?? '') !== String(oldVal ?? '')) {
+        changes.push({ label: labelMap[key] || key, from: oldVal || '-', to: newVal || '-' });
+      }
+    }
+    return changes;
+  };
+
+  const handleSaveAll = () => {
+    if (!selectedItem) return;
+    const updates = buildUpdates();
+    const changes = buildChangeList(updates);
+    if (changes.length === 0) {
+      setIsEditMode(false);
+      setDrafts({});
+      return;
+    }
+    setPendingChanges(changes);
+    setIsSaveConfirming(true);
+  };
+
+  const confirmSave = () => {
+    if (!selectedItem) return;
+    const updates = buildUpdates();
     updateItemField(selectedItem.id, updates);
     setIsEditMode(false);
     setDrafts({});
+    setIsSaveConfirming(false);
+    setPendingChanges([]);
   };
 
   const updateItemField = (id, updates) => {
@@ -217,6 +272,18 @@ export default function LostItemsPage({ setActiveKey }) {
       key: 'status', header: '처리 상태',
       render: (row) => <Badge tone={statusBadgeMap[row.status]}>{row.status}</Badge>,
     },
+    {
+      key: '_edit', header: '',
+      render: (row) => !TERMINAL_STATUSES.includes(row.status) ? (
+        <button
+          onClick={(e) => { e.stopPropagation(); showDrawerInEditMode(row); }}
+          className="p-1 rounded hover:bg-slate-100"
+          title="수정"
+        >
+          <Pencil className="h-4 w-4 text-[#6B778C]" />
+        </button>
+      ) : null,
+    },
   ];
 
   const renderDrawerContent = () => {
@@ -245,7 +312,14 @@ export default function LostItemsPage({ setActiveKey }) {
             <Field label="처리 상태" value={
               isEditMode ? (
                 <div className="space-y-2">
-                  <Badge tone={statusBadgeMap[data.status]}>{data.status}</Badge>
+                  <Select
+                    value={drafts.status || data.status}
+                    onChange={(e) => setDraft('status', e.target.value)}
+                  >
+                    {STATUS_BY_CATEGORY[drafts.itemCategory || data.itemCategory].map(s => (
+                      <option key={s} value={s}>{s}</option>
+                    ))}
+                  </Select>
                   <label className="flex items-center gap-2 cursor-pointer">
                     <input
                       type="checkbox"
@@ -380,19 +454,18 @@ export default function LostItemsPage({ setActiveKey }) {
           {searchText ? <Chip onRemove={() => setSearchText('')}>{searchFieldLabel}: {searchText}</Chip> : null}
           {fPartner ? <Chip onRemove={() => setFPartner('')}>파트너: {fPartner}</Chip> : null}
           {fStatus ? <Chip onRemove={() => setFStatus('')}>상태: {fStatus}</Chip> : null}
-          {periodFrom ? <Chip onRemove={() => setPeriodFrom('')}>시작일: {periodFrom}</Chip> : null}
-          {periodTo ? <Chip onRemove={() => setPeriodTo('')}>종료일: {periodTo}</Chip> : null}
+          {(periodFrom || periodTo) ? <Chip onRemove={() => { setPeriodFrom(''); setPeriodTo(''); }}>접수일: {periodFrom || '-'} ~ {periodTo || '-'}</Chip> : null}
         </>}
         onReset={handleResetFilters}
       >
-        <div className="md:col-span-2">
+        <div className="md:col-span-1">
           <label htmlFor="searchField" className="block text-xs font-semibold text-[#6B778C] mb-1.5">검색 항목</label>
           <Select id="searchField" value={searchField} onChange={(e) => setSearchField(e.target.value)}>
             <option value="carNumber">차량 번호</option>
             <option value="lostItemCardReceiptNumber">분실물 카드</option>
           </Select>
         </div>
-        <div className="md:col-span-2">
+        <div className="md:col-span-3">
           <label htmlFor="searchText" className="block text-xs font-semibold text-[#6B778C] mb-1.5">검색어</label>
           <Input id="searchText" value={searchText} onChange={(e) => setSearchText(e.target.value)} placeholder="검색어 입력" />
         </div>
@@ -410,15 +483,21 @@ export default function LostItemsPage({ setActiveKey }) {
             {allStatusOptions.map(s => <option key={s} value={s}>{s}</option>)}
           </Select>
         </div>
-        <div className="md:col-span-2">
-          <label htmlFor="periodFrom" className="block text-xs font-semibold text-[#6B778C] mb-1.5">접수일 시작</label>
-          <Input id="periodFrom" type="date" value={periodFrom} onChange={(e) => setPeriodFrom(e.target.value)} />
-        </div>
-        <div className="md:col-span-2">
-          <label htmlFor="periodTo" className="block text-xs font-semibold text-[#6B778C] mb-1.5">접수일 종료</label>
-          <Input id="periodTo" type="date" value={periodTo} onChange={(e) => setPeriodTo(e.target.value)} />
+        <div className="md:col-span-4">
+          <label className="block text-xs font-semibold text-[#6B778C] mb-1.5">접수 일시</label>
+          <div className="flex items-center gap-2">
+            <Input id="periodFrom" type="date" value={periodFrom} onChange={(e) => setPeriodFrom(e.target.value)} />
+            <span className="text-sm text-[#6B778C] shrink-0">~</span>
+            <Input id="periodTo" type="date" value={periodTo} onChange={(e) => setPeriodTo(e.target.value)} />
+          </div>
         </div>
       </FilterPanel>
+
+      <div className="flex items-center justify-between">
+        <div className="text-sm text-[#6B778C]">
+          필터된 결과 <span className="font-semibold text-[#172B4D]">{filteredData.length}</span>건 / 전체 <span className="font-semibold text-[#172B4D]">{items.length}</span>건
+        </div>
+      </div>
 
       <Card>
         <DataTable
@@ -458,6 +537,31 @@ export default function LostItemsPage({ setActiveKey }) {
       >
         {renderDrawerContent()}
       </Drawer>
+
+      {isSaveConfirming && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+          <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl">
+            <div className="mb-4 text-base font-bold text-[#172B4D]">수정 내용 확인</div>
+            <div className="space-y-2 rounded-lg bg-[#F4F5F7] p-4 text-sm">
+              {pendingChanges.map((c, i) => (
+                <div key={i} className="flex justify-between gap-4">
+                  <span className="text-[#6B778C] shrink-0">{c.label}</span>
+                  <span className="text-right">
+                    <span className="text-[#6B778C] line-through">{c.from}</span>
+                    <span className="mx-1 text-[#6B778C]">&rarr;</span>
+                    <span className="font-medium text-[#172B4D]">{c.to}</span>
+                  </span>
+                </div>
+              ))}
+            </div>
+            <div className="mt-3 text-xs text-[#6B778C]">위 내용으로 수정하시겠습니까?</div>
+            <div className="mt-4 flex justify-end gap-2">
+              <Button variant="secondary" onClick={() => setIsSaveConfirming(false)}>취소</Button>
+              <Button onClick={confirmSave}>저장</Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

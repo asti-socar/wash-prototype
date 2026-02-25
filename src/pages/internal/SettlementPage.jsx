@@ -21,6 +21,7 @@ export default function SettlementPage() {
   const [approvalTypeFilter, setApprovalTypeFilter] = useState("전체");
   const [rejectReason, setRejectReason] = useState("");
   const [isRejecting, setIsRejecting] = useState(false);
+  const [isRejectConfirming, setIsRejectConfirming] = useState(false);
   const [fPartner, setFPartner] = useState("전체");
   const [fRequestType, setFRequestType] = useState("전체");
   const [periodFrom, setPeriodFrom] = useState(defaultFrom);
@@ -72,6 +73,7 @@ export default function SettlementPage() {
     const processedAt = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
     // 프로토타입에서는 내부 관리자(brown)로 고정
     const adminName = "brown";
+    let updatedItem = null;
     setItems((prev) =>
       prev.map((it) => {
         if (it.id !== selected.id) return it;
@@ -82,11 +84,17 @@ export default function SettlementPage() {
         } else {
           updates.processor = adminName;
         }
+        updatedItem = updates;
         return updates;
       })
     );
-    setSelected(null);
+    if (newStatus === "반려" && updatedItem) {
+      setSelected(updatedItem);
+    } else {
+      setSelected(null);
+    }
     setIsRejecting(false);
+    setIsRejectConfirming(false);
     setRejectReason("");
   };
 
@@ -231,7 +239,10 @@ export default function SettlementPage() {
           selected?.status === "요청" ? (
             <>
               <Button variant="secondary" onClick={() => setIsRejecting(true)}>반려</Button>
-              <Button onClick={() => handleUpdateStatus("승인")}>승인</Button>
+              <Button onClick={() => {
+                if (!window.confirm("승인 후 청구금액 수정이 불가능합니다. 승인하시겠습니까?")) return;
+                handleUpdateStatus("승인");
+              }}>승인</Button>
             </>
           ) : (
             <Button variant="secondary" onClick={() => setSelected(null)}>닫기</Button>
@@ -294,23 +305,52 @@ export default function SettlementPage() {
               </CardContent>
             </Card>
 
-            {isRejecting && (
-              <Card className="ring-rose-200">
-                <CardHeader>
-                  <CardTitle className="text-rose-700">반려 사유 입력</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3">
+            {isRejecting && !isRejectConfirming && (
+              <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+                <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl">
+                  <div className="mb-4 text-base font-bold text-[#172B4D]">반려 사유 입력</div>
                   <Input
                     value={rejectReason}
                     onChange={(e) => setRejectReason(e.target.value)}
-                    placeholder="반려 사유를 입력하세요"
+                    placeholder="반려 사유를 입력하세요 (필수)"
+                    autoFocus
                   />
-                  <div className="flex justify-end gap-2">
-                    <Button variant="secondary" onClick={() => setIsRejecting(false)}>취소</Button>
-                    <Button variant="danger" onClick={() => handleUpdateStatus("반려", rejectReason)}>반려 확정</Button>
+                  {!rejectReason.trim() && (
+                    <div className="mt-1.5 text-xs text-rose-500">반려 사유는 필수 입력입니다.</div>
+                  )}
+                  <div className="mt-4 flex justify-end gap-2">
+                    <Button variant="secondary" onClick={() => { setIsRejecting(false); setRejectReason(""); }}>취소</Button>
+                    <Button variant="danger" disabled={!rejectReason.trim()} onClick={() => setIsRejectConfirming(true)}>반려 확정</Button>
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
+            )}
+            {isRejectConfirming && (
+              <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+                <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl">
+                  <div className="mb-4 text-base font-bold text-[#172B4D]">반려 최종 확인</div>
+                  <div className="space-y-2.5 rounded-lg bg-[#F4F5F7] p-4 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-[#6B778C]">요청 유형</span>
+                      <span className="font-medium text-[#172B4D]">{selected?.requestType}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-[#6B778C]">청구 금액</span>
+                      <span className="font-medium text-[#172B4D]">{Number(selected?.cost).toLocaleString()}원</span>
+                    </div>
+                    <div className="border-t border-[#DFE1E6] my-1" />
+                    <div>
+                      <span className="text-[#6B778C]">반려 사유</span>
+                      <div className="mt-1 font-medium text-rose-600">{rejectReason}</div>
+                    </div>
+                  </div>
+                  <div className="mt-3 text-xs text-[#6B778C]">위 내용으로 반려 처리합니다. 계속하시겠습니까?</div>
+                  <div className="mt-4 flex justify-end gap-2">
+                    <Button variant="secondary" onClick={() => setIsRejectConfirming(false)}>이전</Button>
+                    <Button variant="danger" onClick={() => handleUpdateStatus("반려", rejectReason)}>반려 처리</Button>
+                  </div>
+                </div>
+              </div>
             )}
           </div>
         )}

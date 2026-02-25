@@ -151,8 +151,8 @@ function DataTable({ columns, rows, onRowClick, rowKey, sortConfig, onSort }) {
 
 export default function BillingPage() {
   const today = new Date();
-  const defaultFrom = toYmd(new Date(today.getFullYear(), today.getMonth() - 1, today.getDate()));
-  const defaultTo = toYmd(today);
+  const defaultFrom = toYmd(new Date(today.getFullYear(), today.getMonth(), 1));
+  const defaultTo = toYmd(new Date(today.getFullYear(), today.getMonth() + 1, 0));
   const [searchOrderId, setSearchOrderId] = useState("");
   const [fPartner, setFPartner] = useState("전체");
   const [periodFrom, setPeriodFrom] = useState(defaultFrom);
@@ -242,13 +242,13 @@ export default function BillingPage() {
             {partnerOptions.map(p => <option key={p} value={p}>{p}</option>)}
           </select>
         </div>
-        <div className="md:col-span-2">
-          <label htmlFor="periodFrom" className="block text-xs font-semibold text-[#6B778C] mb-1.5">청구 일시 시작</label>
-          <Input id="periodFrom" type="date" value={periodFrom} onChange={(e) => setPeriodFrom(e.target.value)} />
-        </div>
-        <div className="md:col-span-2">
-          <label htmlFor="periodTo" className="block text-xs font-semibold text-[#6B778C] mb-1.5">청구 일시 종료</label>
-          <Input id="periodTo" type="date" value={periodTo} onChange={(e) => setPeriodTo(e.target.value)} />
+        <div className="md:col-span-4">
+          <label className="block text-xs font-semibold text-[#6B778C] mb-1.5">청구 일시</label>
+          <div className="flex items-center gap-2">
+            <Input id="periodFrom" type="date" value={periodFrom} onChange={(e) => setPeriodFrom(e.target.value)} />
+            <span className="text-sm text-[#6B778C] shrink-0">~</span>
+            <Input id="periodTo" type="date" value={periodTo} onChange={(e) => setPeriodTo(e.target.value)} />
+          </div>
         </div>
         <div className="md:col-span-2">
           <label htmlFor="fExcludeSettlement" className="block text-xs font-semibold text-[#6B778C] mb-1.5">정산 제외</label>

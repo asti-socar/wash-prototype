@@ -50,14 +50,13 @@
 
 ### 2.4 상태 전이
 
-**자동 전이 (저장 시 주소가 입력되어 있으면):**
-- 일반: `배송지 미입력` → `발송 대기`
-- 귀중품: `배송지 미입력` → `경찰서 인계`
+> **자동 전이 없음**: 모든 상태 변경은 수기(수동)로만 가능합니다. 파트너 어드민, 파트너 에이전트와의 상태 동기화를 위해 자동 전이 로직을 사용하지 않습니다.
+
+**수동 전이:**
+- 수정 모드에서 처리 상태 Select를 통해 구분별 유효 상태 목록 내에서 직접 변경
 
 **액션 버튼:**
 - [발송 완료]: `일반` + `발송 대기` 상태에서만 Footer에 표시. `confirm()` 확인 후 상태 변경.
-
-**구분 변경 시**: 현재 상태가 새 구분의 유효 상태에 없으면 `배송지 미입력`으로 리셋
 
 **종결 상태** (`발송 완료`, `경찰서 인계`, `폐기 완료`):
 - Drawer Footer에서 [수정하기] 버튼 숨김 (편집 불가)
@@ -100,6 +99,7 @@
 | 접수 일시 | createdAt | | |
 | 분실물 카드 번호 | lostItemCardReceiptNumber | | |
 | 처리 상태 | status | | Badge (tone: statusBadgeMap) |
+| (수정 아이콘) | _edit | | 종결 상태가 아닌 행에만 `Pencil` 아이콘 표시. 클릭 시 수정 모드로 Drawer 열림 (`e.stopPropagation()` 처리) |
 
 - **기본 정렬**: 분실물 ID 내림차순 (`sortConfig: { key: 'id', direction: 'desc' }`)
 
@@ -113,9 +113,10 @@
 ### 3.2 상세 (Drawer)
 
 - **타이틀**: "분실물 상세 정보" / 부제: "분실물 상세 및 처리 상태 관리"
-- **읽기/수정 모드**: 기본 읽기 모드로 열림. [수정하기] 클릭 시 편집 모드 전환.
+- **읽기/수정 모드**: 행 클릭 시 읽기 모드로 열림. 수정 아이콘 클릭 또는 Footer [수정하기] 클릭 시 수정 모드로 전환.
 
 #### 3.2.1 읽기 모드 → 수정 모드 전환
+- **테이블 수정 아이콘 클릭** → `showDrawerInEditMode()`: 현재 데이터를 drafts로 복사하여 수정 모드로 Drawer 열림
 - **[수정하기]** 클릭 → `enterEditMode()`: 현재 데이터를 drafts로 복사하여 편집 모드 진입
 - **[저장하기]** 클릭 → `handleSaveAll()`: 모든 변경사항 일괄 저장 후 읽기 모드 복귀
 - **[취소]** 클릭 → `handleCancelEdit()`: 변경사항 파기, drafts 초기화 후 읽기 모드 복귀
@@ -135,7 +136,7 @@
 | 분실물 ID | 텍스트 | 텍스트 (읽기 전용) | |
 | 접수 일시 | 텍스트 | 텍스트 (읽기 전용) | |
 | 분실물 구분 | 텍스트 | Select (`일반`/`귀중품`) | 변경 시 저장할 때 상태 검증 |
-| 처리 상태 | Badge | Badge + "보관 30일 경과 폐기" 체크박스 | 읽기 모드에서 `isDisposed=true`이면 Badge 옆에 `<Badge tone="danger">폐기완료</Badge>` 표시 |
+| 처리 상태 | Badge | Select (구분별 유효 상태 목록) + "보관 30일 경과 폐기" 체크박스 | 수정 모드에서 구분(일반/귀중품)에 따른 유효 상태만 선택 가능. 읽기 모드에서 `isDisposed=true`이면 Badge 옆에 `<Badge tone="danger">폐기완료</Badge>` 표시 |
 | 상세 정보 | 텍스트 (pre-wrap) | Textarea (3행) | |
 | 습득물 사진 | 사진 목록 | 사진 목록 | 항상 조회 전용 (추가/삭제 불가) |
 
@@ -182,12 +183,14 @@ items (전체 11건)
   → isEditMode = true → 수정 가능 필드가 Input/Select/Textarea로 전환
 
 [저장하기] 클릭 → handleSaveAll()
-  → 구분 변경 확인: 새 구분의 유효 상태에 없으면 status → '배송지 미입력'
-  → 필드 업데이트: itemDetails, recipientName, recipientPhone, isDisposed
-  → 주소 업데이트: deliveryAddress1, deliveryAddress2
-  → 자동 상태 전이: status='배송지 미입력' + 주소 입력됨 → 일반은 '발송 대기', 귀중품은 '경찰서 인계'
-  → updateItemField(id, updates) → items 상태 업데이트
-  → isEditMode = false → 읽기 모드 복귀
+  → 변경 내역 비교 (buildChangeList): 변경 없으면 읽기 모드 복귀
+  → 변경 있으면 수정 내용 확인 팝업 표시 (이전값 → 변경값)
+  → [저장] 클릭 → confirmSave()
+    → 필드 업데이트: itemCategory, status, itemDetails, recipientName, recipientPhone, isDisposed
+    → 주소 업데이트: deliveryAddress1, deliveryAddress2
+    → updateItemField(id, updates) → items 상태 업데이트
+    → isEditMode = false → 읽기 모드 복귀
+  ※ 자동 상태 전이 없음 — 모든 상태 변경은 수기로만 가능
 
 [취소] 클릭 → handleCancelEdit()
   → drafts 초기화, 주소 drafts를 selectedItem 값으로 복원
