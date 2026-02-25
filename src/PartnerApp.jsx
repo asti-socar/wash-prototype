@@ -121,7 +121,7 @@ export default function PartnerApp({ onSwitchAdmin }) {
   // Mock partner context
   const [currentPartner] = useState({
     partnerId: "P-001",
-    partnerName: "A파트너",
+    partnerName: "강남모빌리티",
   });
 
   // Drawer open detection
@@ -164,12 +164,24 @@ export default function PartnerApp({ onSwitchAdmin }) {
     }
   };
 
+  // 대시보드 → 오더 조회 네비게이션
+  const [orderFilter, setOrderFilter] = useState(null);
+  const goOrdersWithFilter = useCallback((filter) => {
+    setOrderFilter(filter);
+    setActiveKey("partner-orders");
+  }, []);
+
+  // 페이지 전환 시 필터 초기화
+  useEffect(() => {
+    if (activeKey !== "partner-orders") setOrderFilter(null);
+  }, [activeKey]);
+
   const renderPage = () => {
     switch (activeKey) {
       case "partner-dashboard":
-        return <PartnerDashboard currentPartner={currentPartner} />;
+        return <PartnerDashboard currentPartner={currentPartner} goOrdersWithFilter={goOrdersWithFilter} />;
       case "partner-orders":
-        return <PartnerOrdersPage currentPartner={currentPartner} />;
+        return <PartnerOrdersPage currentPartner={currentPartner} initialFilter={orderFilter} />;
       case "partner-zones":
         return <PartnerZoneManagementPage currentPartner={currentPartner} />;
       case "partner-settlement":
