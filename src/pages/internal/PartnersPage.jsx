@@ -333,7 +333,7 @@ const MOCK_PARTNERS_V2 = [
     partnerId: 'P-001',
     partnerName: '강남모빌리티',
     partnerCategory: '세차 파트너',
-    partnerSubCategory: '현장 세차장',
+    partnerSubCategory: '현장 파트너',
     address: '서울시 강남구 테헤란로 123',
     addressDetail: '4층 401호',
     contactName: '김담당',
@@ -365,7 +365,7 @@ const MOCK_PARTNERS_V2 = [
     partnerId: 'P-002',
     partnerName: '수원카케어',
     partnerCategory: '세차 파트너',
-    partnerSubCategory: '입고 세차장',
+    partnerSubCategory: '입고 파트너',
     address: '경기도 수원시 팔달구 인계로 456',
     addressDetail: '2층',
     contactName: '박매니저',
@@ -393,7 +393,7 @@ const MOCK_PARTNERS_V2 = [
     partnerId: 'P-003',
     partnerName: '미션핸들코리아',
     partnerCategory: '세차 파트너',
-    partnerSubCategory: '현장 세차장',
+    partnerSubCategory: '현장 파트너',
     address: '서울시 성동구 성수이로 77',
     addressDetail: '3층',
     contactName: '정운영',
@@ -446,8 +446,7 @@ export default function PartnersPage() {
 
   const columns = [
     { key: 'partnerId', header: '파트너 ID' },
-    { key: 'partnerCategory', header: '구분' },
-    { key: 'partnerSubCategory', header: '하위 구분' },
+    { key: 'partnerSubCategory', header: '파트너 유형' },
     { key: 'partnerName', header: '파트너 이름' },
     { key: 'address', header: '주소', render: r => [r.address, r.addressDetail].filter(Boolean).join(' ') },
     { key: 'corpName', header: '법인명' },
@@ -474,7 +473,7 @@ export default function PartnersPage() {
       partnerId: `P-${Date.now()}`,
       partnerName: '',
       partnerCategory: '세차 파트너',
-      partnerSubCategory: '현장 세차장',
+      partnerSubCategory: '현장 파트너',
       address: '',
       addressDetail: '',
       contactName: '',
@@ -697,14 +696,11 @@ function PartnerDetailDrawer({ partner, onClose, onSave, onDelete }) {
               <CardHeader><CardTitle>기본 정보</CardTitle></CardHeader>
               <CardContent>
                 <div className="space-y-2">
-                  <Field label="파트너 구분">
-                    <div className="text-sm pt-2.5">세차 파트너</div>
-                  </Field>
-                  <Field label={isEditMode ? <>파트너 하위 구분<span className="text-rose-500 ml-1">*</span></> : "파트너 하위 구분"}>
+                  <Field label={isEditMode ? <>파트너 유형<span className="text-rose-500 ml-1">*</span></> : "파트너 유형"}>
                     {isEditMode ? (
-                      <Select name="partnerSubCategory" value={formData.partnerSubCategory || '현장 세차장'} onChange={handleInputChange}>
-                        <option value="입고 세차장">입고 세차장</option>
-                        <option value="현장 세차장">현장 세차장</option>
+                      <Select name="partnerSubCategory" value={formData.partnerSubCategory || '현장 파트너'} onChange={handleInputChange}>
+                        <option value="입고 파트너">입고 파트너</option>
+                        <option value="현장 파트너">현장 파트너</option>
                       </Select>
                     ) : <div className="text-sm pt-2.5">{formData.partnerSubCategory || '-'}</div>}
                   </Field>
