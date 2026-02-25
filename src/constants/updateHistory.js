@@ -108,6 +108,13 @@ export const PARTNER_HISTORY = [
 ];
 
 export const ASTI_HISTORY = [
+  { id: 36, date: "2026-02-25 10:16", content: "존 배정 관리: 수행원 목업 데이터 확장(10→14명) — 모든 존에 현장/입고 수행원 최소 1명씩 배정되도록 zoneIds 전수 커버", isPolicyChange: false, links: [{ label: "존 배정 관리", page: "zone-assignment" }] },
+  { id: 35, date: "2026-02-25 09:59", content: "수행원 조회: 파트너 이름을 파트너 관리 기준으로 변경(강남모빌리티/미션핸들코리아/수원카케어), 파트너 유형 컬럼 및 상세 필드 추가", isPolicyChange: false, links: [{ label: "수행원 조회", page: "workers" }] },
+  { id: 34, date: "2026-02-25 09:43", content: "존 배정 관리: 필드명 변경 — '현장세차 파트너'→'현장 파트너', '입고세차 파트너'→'입고 파트너' (리스트/필터/드로워/해제 팝업/대량 배정 전체 반영)", isPolicyChange: false, links: [{ label: "존 배정 관리", page: "zone-assignment" }] },
+  { id: 33, date: "2026-02-25 09:38", content: "존 배정 관리: 목업 파트너 데이터를 파트너 관리 기준으로 변경 — 현장세차(강남모빌리티/미션핸들코리아), 입고세차(수원카케어)", isPolicyChange: false, links: [{ label: "존 배정 관리", page: "zone-assignment" }, { label: "파트너 관리", page: "partners" }] },
+  { id: 32, date: "2026-02-25 09:35", content: "존 배정 관리: 상세 드로워 '파트너 배정' 섹션 이름을 '배정된 파트너'로 변경", isPolicyChange: false, links: [{ label: "존 배정 관리", page: "zone-assignment" }] },
+  { id: 31, date: "2026-02-25 09:33", content: "파트너 관리: '구분' 컬럼 삭제, 상세 기본 정보에서 '파트너 구분' 필드 제거", isPolicyChange: false, links: [{ label: "파트너 관리", page: "partners" }] },
+  { id: 30, date: "2026-02-25 09:30", content: "파트너 관리: '하위 구분'→'파트너 유형', '현장 세차장'→'현장 파트너', '입고 세차장'→'입고 파트너'로 용어 변경", isPolicyChange: false, links: [{ label: "파트너 관리", page: "partners" }] },
   { id: 29, date: "2026-02-25 08:55", content: "분실물 관리: 수정 모드에서 처리 상태 Select 추가 — 구분(일반/귀중품)별 유효 상태 목록에서 직접 변경 가능", isPolicyChange: false, links: [{ label: "분실물 관리", page: "lostfound" }] },
   { id: 28, date: "2026-02-25 08:50", content: "분실물 관리: 테이블에 수정 아이콘(Pencil) 컬럼 추가 — 종결 상태가 아닌 행에 수정 아이콘 표시, 클릭 시 수정 모드로 Drawer 열림", isPolicyChange: false, links: [{ label: "분실물 관리", page: "lostfound" }] },
   { id: 27, date: "2026-02-25 08:24", content: "차량 관리: 지역2 필터를 검색+필터 조합(SearchableSelect)으로 변경 — 텍스트 입력으로 옵션 검색 후 드롭다운에서 선택 가능", isPolicyChange: false, links: [{ label: "차량 관리", page: "cars" }] },

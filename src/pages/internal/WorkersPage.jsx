@@ -19,7 +19,7 @@ import {
 export default function WorkersPage() {
   const [workers] = useState([
     {
-      id: 'W-001', name: '최수행', partner: 'A파트너', penalty: 1,
+      id: 'W-001', name: '최수행', partner: '강남모빌리티', partnerType: '현장 파트너', penalty: 1,
       penaltyHistory: [
         { orderId: 'O-90028', reason: '미예약', date: '2026-01-28' },
       ],
@@ -29,7 +29,7 @@ export default function WorkersPage() {
       ],
     },
     {
-      id: 'W-002', name: '강수행', partner: 'B파트너', penalty: 4,
+      id: 'W-002', name: '강수행', partner: '미션핸들코리아', partnerType: '현장 파트너', penalty: 4,
       penaltyHistory: [
         { orderId: 'O-90015', reason: '미예약', date: '2026-01-15' },
         { orderId: 'O-90019', reason: '미예약', date: '2026-01-19' },
@@ -43,14 +43,14 @@ export default function WorkersPage() {
       ],
     },
     {
-      id: 'W-003', name: '한수행', partner: 'C파트너', penalty: 0,
+      id: 'W-003', name: '한수행', partner: '수원카케어', partnerType: '입고 파트너', penalty: 0,
       penaltyHistory: [],
       zones: [
         { zoneName: '판교 1번존', zoneId: 'Z-2001', region1: '경기', region2: '성남' },
       ],
     },
     {
-      id: 'W-004', name: '오수행', partner: 'D파트너', penalty: 1,
+      id: 'W-004', name: '오수행', partner: '수원카케어', partnerType: '입고 파트너', penalty: 1,
       penaltyHistory: [
         { orderId: 'O-90038', reason: '미예약', date: '2026-02-03' },
       ],
@@ -62,14 +62,14 @@ export default function WorkersPage() {
       ],
     },
     {
-      id: 'W-005', name: '박수행', partner: 'A파트너', penalty: 1,
+      id: 'W-005', name: '박수행', partner: '강남모빌리티', partnerType: '현장 파트너', penalty: 1,
       penaltyHistory: [
         { orderId: 'O-90028', reason: '미예약', date: '2026-01-28' },
       ],
       zones: [],
     },
     {
-      id: 'W-006', name: '이수행', partner: 'B파트너', penalty: 5,
+      id: 'W-006', name: '이수행', partner: '미션핸들코리아', partnerType: '현장 파트너', penalty: 5,
       penaltyHistory: [
         { orderId: 'O-90008', reason: '노쇼', date: '2026-01-08' },
         { orderId: 'O-90015', reason: '미예약', date: '2026-01-15' },
@@ -86,7 +86,7 @@ export default function WorkersPage() {
       ],
     },
     {
-      id: 'W-007', name: '김수행', partner: 'C파트너', penalty: 0,
+      id: 'W-007', name: '김수행', partner: '수원카케어', partnerType: '입고 파트너', penalty: 0,
       penaltyHistory: [],
       zones: [
         { zoneName: '수원역 1번존', zoneId: 'Z-2002', region1: '경기', region2: '수원' },
@@ -95,7 +95,7 @@ export default function WorkersPage() {
       ],
     },
     {
-      id: 'W-008', name: '정수행', partner: 'A파트너', penalty: 1,
+      id: 'W-008', name: '정수행', partner: '강남모빌리티', partnerType: '현장 파트너', penalty: 1,
       penaltyHistory: [
         { orderId: 'O-90028', reason: '미예약', date: '2026-01-28' },
       ],
@@ -104,7 +104,7 @@ export default function WorkersPage() {
       ],
     },
     {
-      id: 'W-009', name: '조수행', partner: 'D파트너', penalty: 1,
+      id: 'W-009', name: '조수행', partner: '수원카케어', partnerType: '입고 파트너', penalty: 1,
       penaltyHistory: [
         { orderId: 'O-90038', reason: '미예약', date: '2026-02-03' },
       ],
@@ -114,7 +114,7 @@ export default function WorkersPage() {
       ],
     },
     {
-      id: 'W-010', name: '윤수행', partner: 'B파트너', penalty: 5,
+      id: 'W-010', name: '윤수행', partner: '미션핸들코리아', partnerType: '현장 파트너', penalty: 5,
       penaltyHistory: [
         { orderId: 'O-90012', reason: '노쇼', date: '2026-01-12' },
         { orderId: 'O-90015', reason: '미예약', date: '2026-01-15' },
@@ -172,6 +172,7 @@ export default function WorkersPage() {
     { key: 'id', header: '수행원 ID' },
     { key: 'name', header: '이름' },
     { key: 'partner', header: '파트너 이름' },
+    { key: 'partnerType', header: '파트너 유형' },
     { key: 'zoneCount', header: '배정 존 개수', render: (r) => r.zones.length },
     { key: 'penalty', header: '벌점', sortable: true, render: (r) => {
       if (r.penalty === 0) return <span className="text-[#94A3B8]">0</span>;
@@ -245,6 +246,7 @@ export default function WorkersPage() {
                 <Field label="수행원 ID" value={selected.id} />
                 <Field label="이름" value={selected.name} />
                 <Field label="파트너 이름" value={selected.partner} />
+                <Field label="파트너 유형" value={selected.partnerType} />
               </CardContent>
             </Card>
             <Card>

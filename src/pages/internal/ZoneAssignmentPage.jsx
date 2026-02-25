@@ -8,12 +8,12 @@ import zoneAssignmentsData from '../../mocks/zoneAssignments.json';
 
 // ============== MOCK PARTNERS ==============
 const ONSITE_PARTNERS = [
-  { partnerId: 'P-001', partnerName: 'A파트너' },
-  { partnerId: 'P-002', partnerName: 'B파트너' },
+  { partnerId: 'P-001', partnerName: '강남모빌리티' },
+  { partnerId: 'P-003', partnerName: '미션핸들코리아' },
 ];
 
 const INSHOP_PARTNERS = [
-  { partnerId: 'P-003', partnerName: 'C파트너' },
+  { partnerId: 'P-002', partnerName: '수원카케어' },
 ];
 
 const ALL_PARTNERS = [...ONSITE_PARTNERS, ...INSHOP_PARTNERS];
@@ -22,17 +22,24 @@ const onsitePartnerIdSet = new Set(ONSITE_PARTNERS.map(p => p.partnerId));
 const inshopPartnerIdSet = new Set(INSHOP_PARTNERS.map(p => p.partnerId));
 
 // ============== MOCK WORKERS (수행원 조회 참고) ==============
+// 현장 파트너 P-001(강남모빌리티) 소속 수행원 — P-001 배정 존 전체 커버
 const MOCK_WORKERS = [
-  { id: 'W-001', name: '최수행', partnerId: 'P-001', penalty: 0, zoneIds: ['Z-1001', 'Z-1003', 'Z-1048'] },
-  { id: 'W-002', name: '강수행', partnerId: 'P-002', penalty: 2, zoneIds: ['Z-1006', 'Z-1007', 'Z-1050'] },
-  { id: 'W-003', name: '한수행', partnerId: 'P-003', penalty: 0, zoneIds: ['Z-1008', 'Z-1032', 'Z-1044'] },
-  { id: 'W-004', name: '오수행', partnerId: 'P-002', penalty: 1, zoneIds: ['Z-1035', 'Z-1037', 'Z-1046'] },
-  { id: 'W-005', name: '박수행', partnerId: 'P-001', penalty: 0, zoneIds: ['Z-1012', 'Z-1040'] },
-  { id: 'W-006', name: '이수행', partnerId: 'P-002', penalty: 3, zoneIds: ['Z-1014', 'Z-1042', 'Z-1050'] },
-  { id: 'W-007', name: '김수행', partnerId: 'P-003', penalty: 0, zoneIds: ['Z-1010', 'Z-1034', 'Z-1044'] },
-  { id: 'W-008', name: '정수행', partnerId: 'P-001', penalty: 1, zoneIds: ['Z-1019', 'Z-1048'] },
-  { id: 'W-009', name: '조수행', partnerId: 'P-002', penalty: 0, zoneIds: ['Z-1021', 'Z-1035', 'Z-1046'] },
-  { id: 'W-010', name: '윤수행', partnerId: 'P-002', penalty: 2, zoneIds: ['Z-1029', 'Z-1042'] },
+  { id: 'W-001', name: '최수행', partnerId: 'P-001', penalty: 1, zoneIds: ['Z-1001', 'Z-1002', 'Z-1003', 'Z-1004', 'Z-1005', 'Z-1008'] },
+  { id: 'W-002', name: '강수행', partnerId: 'P-001', penalty: 0, zoneIds: ['Z-1009', 'Z-1012', 'Z-1013', 'Z-1018', 'Z-1019', 'Z-1020'] },
+  { id: 'W-003', name: '한수행', partnerId: 'P-001', penalty: 0, zoneIds: ['Z-1024', 'Z-1025', 'Z-1026', 'Z-1031', 'Z-1032'] },
+  { id: 'W-004', name: '오수행', partnerId: 'P-001', penalty: 2, zoneIds: ['Z-1033', 'Z-1034', 'Z-1038', 'Z-1039', 'Z-1040', 'Z-1041'] },
+  { id: 'W-005', name: '박수행', partnerId: 'P-001', penalty: 1, zoneIds: ['Z-1044', 'Z-1045', 'Z-1048', 'Z-1049'] },
+  // 현장 파트너 P-003(미션핸들코리아) 소속 수행원 — P-003 배정 존 전체 커버
+  { id: 'W-006', name: '이수행', partnerId: 'P-003', penalty: 5, zoneIds: ['Z-1006', 'Z-1007', 'Z-1010', 'Z-1011', 'Z-1014', 'Z-1015'] },
+  { id: 'W-007', name: '김수행', partnerId: 'P-003', penalty: 0, zoneIds: ['Z-1016', 'Z-1017', 'Z-1021', 'Z-1022', 'Z-1023'] },
+  { id: 'W-008', name: '정수행', partnerId: 'P-003', penalty: 1, zoneIds: ['Z-1027', 'Z-1028', 'Z-1029', 'Z-1030', 'Z-1035', 'Z-1036'] },
+  { id: 'W-009', name: '조수행', partnerId: 'P-003', penalty: 0, zoneIds: ['Z-1037', 'Z-1042', 'Z-1043', 'Z-1046', 'Z-1047', 'Z-1050'] },
+  // 입고 파트너 P-002(수원카케어) 소속 수행원 — 전체 존 커버
+  { id: 'W-010', name: '윤수행', partnerId: 'P-002', penalty: 2, zoneIds: ['Z-1001', 'Z-1002', 'Z-1003', 'Z-1004', 'Z-1005', 'Z-1006', 'Z-1007', 'Z-1008', 'Z-1009', 'Z-1010'] },
+  { id: 'W-011', name: '송수행', partnerId: 'P-002', penalty: 0, zoneIds: ['Z-1011', 'Z-1012', 'Z-1013', 'Z-1014', 'Z-1015', 'Z-1016', 'Z-1017', 'Z-1018', 'Z-1019', 'Z-1020'] },
+  { id: 'W-012', name: '임수행', partnerId: 'P-002', penalty: 1, zoneIds: ['Z-1021', 'Z-1022', 'Z-1023', 'Z-1024', 'Z-1025', 'Z-1026', 'Z-1027', 'Z-1028', 'Z-1029', 'Z-1030'] },
+  { id: 'W-013', name: '양수행', partnerId: 'P-002', penalty: 0, zoneIds: ['Z-1031', 'Z-1032', 'Z-1033', 'Z-1034', 'Z-1035', 'Z-1036', 'Z-1037', 'Z-1038', 'Z-1039', 'Z-1040'] },
+  { id: 'W-014', name: '배수행', partnerId: 'P-002', penalty: 3, zoneIds: ['Z-1041', 'Z-1042', 'Z-1043', 'Z-1044', 'Z-1045', 'Z-1046', 'Z-1047', 'Z-1048', 'Z-1049', 'Z-1050'] },
 ];
 
 function ZASaveConfirmModal({ open, onClose, onConfirm, title, changes }) {
@@ -88,9 +95,9 @@ function ZADeleteConfirmModal({ open, onClose, onConfirm, zone }) {
               <label className="block text-xs font-semibold text-[#6B778C]">해제 범위</label>
               <div className="space-y-1.5">
                 {[
-                  { value: 'all', label: '전체 해제', desc: '현장세차 + 입고세차 파트너 모두 해제' },
-                  { value: 'onsite', label: '현장세차 파트너만 해제', desc: partnerMap.get(zone.assignedOnsitePartnerId) },
-                  { value: 'inshop', label: '입고세차 파트너만 해제', desc: partnerMap.get(zone.assignedInshopPartnerId) },
+                  { value: 'all', label: '전체 해제', desc: '현장 + 입고 파트너 모두 해제' },
+                  { value: 'onsite', label: '현장 파트너만 해제', desc: partnerMap.get(zone.assignedOnsitePartnerId) },
+                  { value: 'inshop', label: '입고 파트너만 해제', desc: partnerMap.get(zone.assignedInshopPartnerId) },
                 ].map(opt => (
                   <label key={opt.value} className={cn("flex items-start gap-2 rounded-lg border p-2.5 cursor-pointer transition-colors", deleteType === opt.value ? "border-[#0052CC] bg-blue-50" : "border-[#E2E8F0] hover:bg-slate-50")}>
                     <input type="radio" name="deleteType" value={opt.value} checked={deleteType === opt.value} onChange={() => setDeleteType(opt.value)} className="mt-0.5 accent-blue-600" />
@@ -105,7 +112,7 @@ function ZADeleteConfirmModal({ open, onClose, onConfirm, zone }) {
           )}
           {!hasBoth && (
             <p className="text-xs text-[#6B778C]">
-              {hasOnsite ? `현장세차 파트너 (${partnerMap.get(zone.assignedOnsitePartnerId)})` : `입고세차 파트너 (${partnerMap.get(zone.assignedInshopPartnerId)})`} 배정이 해제됩니다.
+              {hasOnsite ? `현장 파트너 (${partnerMap.get(zone.assignedOnsitePartnerId)})` : `입고 파트너 (${partnerMap.get(zone.assignedInshopPartnerId)})`} 배정이 해제됩니다.
             </p>
           )}
         </CardContent>
@@ -121,6 +128,7 @@ function ZADeleteConfirmModal({ open, onClose, onConfirm, zone }) {
 // ============== MAIN PAGE COMPONENT ==============
 export default function ZoneAssignmentPage() {
   const [zones, setZones] = useState(zoneAssignmentsData);
+  const [workers, setWorkers] = useState(() => MOCK_WORKERS.map(w => ({ ...w })));
   const [selectedZone, setSelectedZone] = useState(null);
   const [drawerMode, setDrawerMode] = useState('view');
   const [deleteTarget, setDeleteTarget] = useState(null);
@@ -163,13 +171,13 @@ export default function ZoneAssignmentPage() {
       }
       if (region1Filter && z.region1 !== region1Filter) return false;
       if (region2Filter && z.region2 !== region2Filter) return false;
-      // 현장세차 파트너 필터
+      // 현장 파트너 필터
       if (fOnsitePartner === "미배정" && z.assignedOnsitePartnerId) return false;
       if (fOnsitePartner && fOnsitePartner !== "미배정") {
         const name = z.assignedOnsitePartnerId ? partnerMap.get(z.assignedOnsitePartnerId) : null;
         if (name !== fOnsitePartner) return false;
       }
-      // 입고세차 파트너 필터
+      // 입고 파트너 필터
       if (fInshopPartner === "미배정" && z.assignedInshopPartnerId) return false;
       if (fInshopPartner && fInshopPartner !== "미배정") {
         const name = z.assignedInshopPartnerId ? partnerMap.get(z.assignedInshopPartnerId) : null;
@@ -209,14 +217,38 @@ export default function ZoneAssignmentPage() {
   };
 
   const handlePartnerChange = (zoneId, { onsitePartnerId, inshopPartnerId }) => {
+    const curZone = zones.find(z => z.zoneId === zoneId);
+    const oldOnsite = curZone?.assignedOnsitePartnerId;
+    const oldInshop = curZone?.assignedInshopPartnerId;
+
+    // 파트너 변경 시 이전 파트너 소속 수행원에서 해당 존 제거
+    setWorkers(prev => prev.map(w => {
+      const removeZone = (oldOnsite && w.partnerId === oldOnsite && onsitePartnerId !== oldOnsite)
+        || (oldInshop && w.partnerId === oldInshop && inshopPartnerId !== oldInshop);
+      if (!removeZone) return w;
+      return { ...w, zoneIds: w.zoneIds.filter(id => id !== zoneId) };
+    }));
+
     setZones(prev => prev.map(z => z.zoneId === zoneId ? { ...z, assignedOnsitePartnerId: onsitePartnerId, assignedInshopPartnerId: inshopPartnerId } : z));
     setSelectedZone(null);
   };
 
   const handleDeleteAssignment = (type) => {
     if (!deleteTarget) return;
+    const zid = deleteTarget.zoneId;
+    const oldOnsite = deleteTarget.assignedOnsitePartnerId;
+    const oldInshop = deleteTarget.assignedInshopPartnerId;
+
+    // 해제된 파트너 소속 수행원에서 해당 존 제거
+    setWorkers(prev => prev.map(w => {
+      const removeZone = (type === 'all' || type === 'onsite') && oldOnsite && w.partnerId === oldOnsite
+        || (type === 'all' || type === 'inshop') && oldInshop && w.partnerId === oldInshop;
+      if (!removeZone) return w;
+      return { ...w, zoneIds: w.zoneIds.filter(id => id !== zid) };
+    }));
+
     setZones(prev => prev.map(z => {
-      if (z.zoneId !== deleteTarget.zoneId) return z;
+      if (z.zoneId !== zid) return z;
       if (type === 'all') return { ...z, assignedOnsitePartnerId: null, assignedInshopPartnerId: null };
       if (type === 'onsite') return { ...z, assignedOnsitePartnerId: null };
       if (type === 'inshop') return { ...z, assignedInshopPartnerId: null };
@@ -242,14 +274,6 @@ export default function ZoneAssignmentPage() {
     });
   };
 
-  // Stats
-  const stats = useMemo(() => {
-    const total = zones.length;
-    const onsiteAssigned = zones.filter(z => z.assignedOnsitePartnerId).length;
-    const inshopAssigned = zones.filter(z => z.assignedInshopPartnerId).length;
-    return { total, onsiteAssigned, inshopAssigned };
-  }, [zones]);
-
   const columns = [
     { key: 'zoneId', header: '존 ID' },
     { key: 'region1', header: '지역1' },
@@ -257,12 +281,12 @@ export default function ZoneAssignmentPage() {
     { key: 'zoneName', header: '존 이름' },
     { key: 'zoneType', header: '존 유형' },
     { key: 'vehicleCount', header: '차량 대수', align: 'center', sortable: true, render: r => `${r.vehicleCount}대` },
-    { key: 'assignedOnsitePartnerId', header: '현장세차 파트너', render: r =>
+    { key: 'assignedOnsitePartnerId', header: '현장 파트너', render: r =>
       r.assignedOnsitePartnerId
         ? <span className="text-[#172B4D]">{partnerMap.get(r.assignedOnsitePartnerId)}</span>
         : <Badge tone="warn">미배정</Badge>
     },
-    { key: 'assignedInshopPartnerId', header: '입고세차 파트너', render: r =>
+    { key: 'assignedInshopPartnerId', header: '입고 파트너', render: r =>
       r.assignedInshopPartnerId
         ? <span className="text-[#172B4D]">{partnerMap.get(r.assignedInshopPartnerId)}</span>
         : <Badge tone="warn">미배정</Badge>
@@ -291,26 +315,10 @@ export default function ZoneAssignmentPage() {
           <div className="text-base font-bold text-[#172B4D]">존 배정 관리</div>
           <div className="mt-1 text-sm text-[#6B778C]">존별 파트너 배정 현황을 관리합니다.</div>
         </div>
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-4 text-sm">
-            <div className="flex items-center gap-2">
-              <span className="text-[#6B778C]">전체</span>
-              <span className="font-semibold text-[#172B4D]">{stats.total}개</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-[#6B778C]">현장 배정</span>
-              <span className="font-semibold text-emerald-600">{stats.onsiteAssigned}개</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-[#6B778C]">입고 배정</span>
-              <span className="font-semibold text-emerald-600">{stats.inshopAssigned}개</span>
-            </div>
-          </div>
-          <Button onClick={() => setBulkAssignmentOpen(true)}>
-            <Upload className="mr-2 h-4 w-4" />
-            대량 존 배정
-          </Button>
-        </div>
+        <Button onClick={() => setBulkAssignmentOpen(true)}>
+          <Upload className="mr-2 h-4 w-4" />
+          대량 존 배정
+        </Button>
       </div>
 
       {/* Filters */}
@@ -319,8 +327,8 @@ export default function ZoneAssignmentPage() {
           {searchQuery ? <Chip onRemove={() => setSearchQuery("")}>{searchField === "zoneId" ? "존 ID" : "존 이름"}: {searchQuery}</Chip> : null}
           {region1Filter ? <Chip onRemove={() => { setRegion1Filter(""); setRegion2Filter(""); }}>지역1: {region1Filter}</Chip> : null}
           {region2Filter ? <Chip onRemove={() => setRegion2Filter("")}>지역2: {region2Filter}</Chip> : null}
-          {fOnsitePartner ? <Chip onRemove={() => setFOnsitePartner("")}>현장세차 파트너: {fOnsitePartner}</Chip> : null}
-          {fInshopPartner ? <Chip onRemove={() => setFInshopPartner("")}>입고세차 파트너: {fInshopPartner}</Chip> : null}
+          {fOnsitePartner ? <Chip onRemove={() => setFOnsitePartner("")}>현장 파트너: {fOnsitePartner}</Chip> : null}
+          {fInshopPartner ? <Chip onRemove={() => setFInshopPartner("")}>입고 파트너: {fInshopPartner}</Chip> : null}
         </>}
         onReset={resetFilters}
       >
@@ -353,7 +361,7 @@ export default function ZoneAssignmentPage() {
           </Select>
         </div>
         <div className="md:col-span-2">
-          <label htmlFor="fOnsitePartner" className="block text-xs font-semibold text-[#6B778C] mb-1.5">현장세차 파트너</label>
+          <label htmlFor="fOnsitePartner" className="block text-xs font-semibold text-[#6B778C] mb-1.5">현장 파트너</label>
           <Select id="fOnsitePartner" value={fOnsitePartner} onChange={(e) => setFOnsitePartner(e.target.value)}>
             <option value="">전체</option>
             <option value="미배정">미배정</option>
@@ -361,7 +369,7 @@ export default function ZoneAssignmentPage() {
           </Select>
         </div>
         <div className="md:col-span-2">
-          <label htmlFor="fInshopPartner" className="block text-xs font-semibold text-[#6B778C] mb-1.5">입고세차 파트너</label>
+          <label htmlFor="fInshopPartner" className="block text-xs font-semibold text-[#6B778C] mb-1.5">입고 파트너</label>
           <Select id="fInshopPartner" value={fInshopPartner} onChange={(e) => setFInshopPartner(e.target.value)}>
             <option value="">전체</option>
             <option value="미배정">미배정</option>
@@ -369,6 +377,10 @@ export default function ZoneAssignmentPage() {
           </Select>
         </div>
       </FilterPanel>
+
+      <div className="text-sm text-[#6B778C]">
+        필터된 결과 <span className="font-semibold text-[#172B4D]">{filteredData.length}</span>건 / 전체 <span className="font-semibold text-[#172B4D]">{zones.length}</span>건
+      </div>
 
       <DataTable
         columns={columns}
@@ -399,6 +411,7 @@ export default function ZoneAssignmentPage() {
           onPartnerChange={handlePartnerChange}
           onDelete={(z) => { setSelectedZone(null); setDeleteTarget(z); }}
           mode={drawerMode}
+          workers={workers}
         />
       )}
       <ZADeleteConfirmModal
@@ -420,7 +433,7 @@ export default function ZoneAssignmentPage() {
   );
 }
 
-function ZoneDetailDrawer({ zone, onClose, onPartnerChange, onDelete, mode }) {
+function ZoneDetailDrawer({ zone, onClose, onPartnerChange, onDelete, mode, workers }) {
   const [isEditing, setIsEditing] = useState(mode === 'edit');
   const [editOnsitePartnerId, setEditOnsitePartnerId] = useState(zone.assignedOnsitePartnerId || '');
   const [editInshopPartnerId, setEditInshopPartnerId] = useState(zone.assignedInshopPartnerId || '');
@@ -435,13 +448,13 @@ function ZoneDetailDrawer({ zone, onClose, onPartnerChange, onDelete, mode }) {
 
   const onsiteWorkers = useMemo(() => {
     if (!zone.assignedOnsitePartnerId) return [];
-    return MOCK_WORKERS.filter(w => w.partnerId === zone.assignedOnsitePartnerId && w.zoneIds.includes(zone.zoneId));
-  }, [zone.assignedOnsitePartnerId, zone.zoneId]);
+    return workers.filter(w => w.partnerId === zone.assignedOnsitePartnerId && w.zoneIds.includes(zone.zoneId));
+  }, [workers, zone.assignedOnsitePartnerId, zone.zoneId]);
 
   const inshopWorkers = useMemo(() => {
     if (!zone.assignedInshopPartnerId) return [];
-    return MOCK_WORKERS.filter(w => w.partnerId === zone.assignedInshopPartnerId && w.zoneIds.includes(zone.zoneId));
-  }, [zone.assignedInshopPartnerId, zone.zoneId]);
+    return workers.filter(w => w.partnerId === zone.assignedInshopPartnerId && w.zoneIds.includes(zone.zoneId));
+  }, [workers, zone.assignedInshopPartnerId, zone.zoneId]);
 
   const handleSave = () => {
     const newOnsite = editOnsitePartnerId || null;
@@ -456,13 +469,13 @@ function ZoneDetailDrawer({ zone, onClose, onPartnerChange, onDelete, mode }) {
 
     const changes = {};
     if (newOnsite !== curOnsite) {
-      changes['현장세차 파트너'] = {
+      changes['현장 파트너'] = {
         from: curOnsite ? partnerMap.get(curOnsite) : '미배정',
         to: newOnsite ? partnerMap.get(newOnsite) : '미배정',
       };
     }
     if (newInshop !== curInshop) {
-      changes['입고세차 파트너'] = {
+      changes['입고 파트너'] = {
         from: curInshop ? partnerMap.get(curInshop) : '미배정',
         to: newInshop ? partnerMap.get(newInshop) : '미배정',
       };
@@ -561,10 +574,9 @@ function ZoneDetailDrawer({ zone, onClose, onPartnerChange, onDelete, mode }) {
           </Card>
 
           <Card>
-            <CardHeader><CardTitle>파트너 배정</CardTitle></CardHeader>
+            <CardHeader><CardTitle>배정된 파트너</CardTitle></CardHeader>
             <CardContent className="space-y-3">
-              <Field label="현장세차 파트너" isEditing={isEditing}>
-                {isEditing ? (
+              <Field label="현장 파트너" value={isEditing ? (
                   <Select value={editOnsitePartnerId} onChange={(e) => setEditOnsitePartnerId(e.target.value)}>
                     <option value="">미배정</option>
                     {ONSITE_PARTNERS.map(p => (
@@ -573,12 +585,10 @@ function ZoneDetailDrawer({ zone, onClose, onPartnerChange, onDelete, mode }) {
                   </Select>
                 ) : (
                   zone.assignedOnsitePartnerId
-                    ? <span className="text-[#172B4D]">{partnerMap.get(zone.assignedOnsitePartnerId)}</span>
+                    ? partnerMap.get(zone.assignedOnsitePartnerId)
                     : <Badge tone="warn">미배정</Badge>
-                )}
-              </Field>
-              <Field label="입고세차 파트너" isEditing={isEditing}>
-                {isEditing ? (
+                )} />
+              <Field label="입고 파트너" value={isEditing ? (
                   <Select value={editInshopPartnerId} onChange={(e) => setEditInshopPartnerId(e.target.value)}>
                     <option value="">미배정</option>
                     {INSHOP_PARTNERS.map(p => (
@@ -587,10 +597,9 @@ function ZoneDetailDrawer({ zone, onClose, onPartnerChange, onDelete, mode }) {
                   </Select>
                 ) : (
                   zone.assignedInshopPartnerId
-                    ? <span className="text-[#172B4D]">{partnerMap.get(zone.assignedInshopPartnerId)}</span>
+                    ? partnerMap.get(zone.assignedInshopPartnerId)
                     : <Badge tone="warn">미배정</Badge>
-                )}
-              </Field>
+                )} />
             </CardContent>
           </Card>
 
@@ -598,7 +607,7 @@ function ZoneDetailDrawer({ zone, onClose, onPartnerChange, onDelete, mode }) {
             <CardHeader><CardTitle>현장세차 수행원</CardTitle></CardHeader>
             <CardContent>
               {!zone.assignedOnsitePartnerId ? (
-                <div className="text-sm text-[#94A3B8] py-2">현장세차 파트너가 배정되지 않은 존입니다.</div>
+                <div className="text-sm text-[#94A3B8] py-2">현장 파트너가 배정되지 않은 존입니다.</div>
               ) : (
                 <WorkerTable workers={onsiteWorkers} emptyMessage="배정된 수행원이 없습니다." />
               )}
@@ -609,7 +618,7 @@ function ZoneDetailDrawer({ zone, onClose, onPartnerChange, onDelete, mode }) {
             <CardHeader><CardTitle>입고세차 수행원</CardTitle></CardHeader>
             <CardContent>
               {!zone.assignedInshopPartnerId ? (
-                <div className="text-sm text-[#94A3B8] py-2">입고세차 파트너가 배정되지 않은 존입니다.</div>
+                <div className="text-sm text-[#94A3B8] py-2">입고 파트너가 배정되지 않은 존입니다.</div>
               ) : (
                 <WorkerTable workers={inshopWorkers} emptyMessage="배정된 수행원이 없습니다." />
               )}
@@ -697,12 +706,12 @@ function BulkAssignmentDrawer({ zones, onClose, onApply }) {
       }
 
       if (onsitePartnerId && !onsitePartnerIdSet.has(onsitePartnerId)) {
-        errors.push({ row: rowNum, zoneId, message: `현장세차 파트너 ID(${onsitePartnerId})가 유효하지 않습니다.` });
+        errors.push({ row: rowNum, zoneId, message: `현장 파트너 ID(${onsitePartnerId})가 유효하지 않습니다.` });
         continue;
       }
 
       if (inshopPartnerId && !inshopPartnerIdSet.has(inshopPartnerId)) {
-        errors.push({ row: rowNum, zoneId, message: `입고세차 파트너 ID(${inshopPartnerId})가 유효하지 않습니다.` });
+        errors.push({ row: rowNum, zoneId, message: `입고 파트너 ID(${inshopPartnerId})가 유효하지 않습니다.` });
         continue;
       }
 
@@ -793,8 +802,8 @@ function BulkAssignmentDrawer({ zones, onClose, onApply }) {
             <ul className="list-disc list-inside space-y-1">
               <li>파일 형식: CSV (쉼표 구분) 또는 Excel (.xlsx)</li>
               <li>필수 컬럼: zoneId, onsitePartnerId, inshopPartnerId</li>
-              <li>현장세차 파트너: {ONSITE_PARTNERS.map(p => `${p.partnerId}(${p.partnerName})`).join(', ')}</li>
-              <li>입고세차 파트너: {INSHOP_PARTNERS.map(p => `${p.partnerId}(${p.partnerName})`).join(', ')}</li>
+              <li>현장 파트너: {ONSITE_PARTNERS.map(p => `${p.partnerId}(${p.partnerName})`).join(', ')}</li>
+              <li>입고 파트너: {INSHOP_PARTNERS.map(p => `${p.partnerId}(${p.partnerName})`).join(', ')}</li>
               <li>파트너 ID를 비워두면 미배정 처리됩니다.</li>
             </ul>
             <Button variant="secondary" size="sm" onClick={handleDownloadTemplate}>
@@ -870,8 +879,8 @@ function BulkAssignmentDrawer({ zones, onClose, onApply }) {
                   <thead className="bg-[#F8FAFC] sticky top-0">
                     <tr>
                       <th className="px-3 py-2 text-left font-semibold text-[#475569]">존 ID</th>
-                      <th className="px-3 py-2 text-left font-semibold text-[#475569]">현장세차 파트너</th>
-                      <th className="px-3 py-2 text-left font-semibold text-[#475569]">입고세차 파트너</th>
+                      <th className="px-3 py-2 text-left font-semibold text-[#475569]">현장 파트너</th>
+                      <th className="px-3 py-2 text-left font-semibold text-[#475569]">입고 파트너</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-[#E2E8F0]">
