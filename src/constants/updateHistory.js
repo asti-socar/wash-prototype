@@ -108,6 +108,9 @@ export const PARTNER_HISTORY = [
 ];
 
 export const ASTI_HISTORY = [
+  { id: 29, date: "2026-02-25 08:55", content: "분실물 관리: 수정 모드에서 처리 상태 Select 추가 — 구분(일반/귀중품)별 유효 상태 목록에서 직접 변경 가능", isPolicyChange: false, links: [{ label: "분실물 관리", page: "lostfound" }] },
+  { id: 28, date: "2026-02-25 08:50", content: "분실물 관리: 테이블에 수정 아이콘(Pencil) 컬럼 추가 — 종결 상태가 아닌 행에 수정 아이콘 표시, 클릭 시 수정 모드로 Drawer 열림", isPolicyChange: false, links: [{ label: "분실물 관리", page: "lostfound" }] },
+  { id: 27, date: "2026-02-25 08:24", content: "차량 관리: 지역2 필터를 검색+필터 조합(SearchableSelect)으로 변경 — 텍스트 입력으로 옵션 검색 후 드롭다운에서 선택 가능", isPolicyChange: false, links: [{ label: "차량 관리", page: "cars" }] },
   { id: 26, date: "2026-02-24 18:50", content: "합의 요청 관리: 목업 데이터 전면 교체 — 오더 관리의 시스템(변경 취소) 오더 5건 기반 + 추가 데이터로 8가지 요청 유형 전수 커버(12건), 파트너 이름 실데이터 연동(강남모빌리티/수원카케어)", isPolicyChange: false, links: [{ label: "합의 요청 관리", page: "settlement" }] },
   { id: 25, date: "2026-02-24 18:25", content: "미션 정책 관리, 합의 요청 관리: 날짜 필터 UI 통일 — 개별 시작/종료 필드를 '일시' 한 행(시작 ~ 종료) 형식으로 변경, 미션 정책 관리에 미션 제목 검색 추가", isPolicyChange: false, links: [{ label: "미션 정책 관리", page: "missions" }, { label: "합의 요청 관리", page: "settlement" }] },
   { id: 24, date: "2026-02-24 18:00", content: "오더 관리: 필터 UI 개선 — 기본 필터 4개(차량번호/세차유형/진행상태/발행일시) 1줄 노출 + 상세 필터 10개 '필터 추가' 버튼으로 온디맨드 추가, 적용 필터 칩 표시, 진행상태 연동 자동 필터 추가(취소→취소유형, 완료→지연여부)", isPolicyChange: false, links: [{ label: "오더 관리", page: "orders" }] },
