@@ -1030,6 +1030,10 @@ function OrdersPage({ quickFilter, onClearQuickFilter, initialOrderId, orders, s
                     <div className="font-medium">{selected.washType}</div>
                   </div>
                   <div className="space-y-1">
+                    <div className="text-xs text-[#6B778C]">파트너 이름</div>
+                    <div className="font-medium">{selected.partner}</div>
+                  </div>
+                  <div className="space-y-1">
                     <div className="text-xs text-[#6B778C]">파트너 유형</div>
                     <div>{selected.partnerType}</div>
                   </div>

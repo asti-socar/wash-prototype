@@ -108,6 +108,7 @@ export const PARTNER_HISTORY = [
 ];
 
 export const ASTI_HISTORY = [
+  { id: 40, date: "2026-02-26 13:47", content: "파트너 대시보드·오더 조회: 기능명세(MD) 작성 — 인터널 대비 차이점 표, 영역/필터/컬럼/Drawer 구성 상세 기술", isPolicyChange: false, links: [{ label: "파트너 대시보드", page: "partner-dashboard" }, { label: "파트너 오더 조회", page: "partner-orders" }] },
   { id: 39, date: "2026-02-25 17:07", content: "파트너 오더 조회: 인터널 오더관리 기반 읽기전용 페이지 구축 (파트너 이름/유형 컬럼·필터 제외, 발행·완료·취소 버튼 제거, 대시보드 연동 필터)", isPolicyChange: false, links: [{ label: "파트너 오더 조회", page: "partner-orders" }] },
   { id: 38, date: "2026-02-25 16:54", content: "목업데이터: 강남모빌리티(P-001) 데이터 보강 — 차량(3→8), 청구(7→15), 합의요청(7→10), 분실물(0→10, 파트너명 실명 전환), 배송정보(0→15), 수행원정보(0→12)", isPolicyChange: false, links: [] },
   { id: 37, date: "2026-02-25 16:36", content: "파트너 대시보드: 인터널 대시보드 기반 구축 (오더 현황, 리스크 관리, 시계열 차트), 강남모빌리티 데이터 필터링, 파트너 수행관리 섹션 제거", isPolicyChange: false, links: [{ label: "파트너 대시보드", page: "partner-dashboard" }] },
