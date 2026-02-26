@@ -118,60 +118,76 @@ function generateVehicleAvailability(plate) {
   return scenarios[seed % scenarios.length];
 }
 
-// 가능한 예약 시간대 생성 (1시간 30분 단위)
-function generateTimeSlots(workerSchedule, vehicleAvailability) {
-  const allSlots = [];
-  for (let h = 8; h <= 20; h++) {
-    for (const m of [0, 30]) {
-      if (h === 20 && m === 30) continue;
-      const startH = String(h).padStart(2, '0');
-      const startM = String(m).padStart(2, '0');
-      const endMinTotal = h * 60 + m + 90;
-      const endH = String(Math.floor(endMinTotal / 60)).padStart(2, '0');
-      const endM = String(endMinTotal % 60).padStart(2, '0');
-      if (endMinTotal > 22 * 60) continue;
-      allSlots.push({
-        start: `${startH}:${startM}`,
-        end: `${endH}:${endM}`,
-        label: `${startH}:${startM} ~ ${endH}:${endM}`,
-      });
-    }
+// 시간 문자열("HH:MM")을 분 단위로 변환
+function parseTimeToMin(timeStr) {
+  const [h, m] = timeStr.split(':').map(Number);
+  return h * 60 + m;
+}
+
+// 타임라인 상수
+const TIMELINE_START_HOUR = 8;
+const TIMELINE_END_HOUR = 22;
+const SLOT_MINUTES = 10;
+const SLOTS_PER_HOUR = 60 / SLOT_MINUTES;
+const TOTAL_SLOTS = (TIMELINE_END_HOUR - TIMELINE_START_HOUR) * SLOTS_PER_HOUR; // 84
+const BLOCK_SLOT_COUNT = 7; // 70분 = 수행 50분 + 쿠션 20분
+const SLOT_W = 14; // 슬롯 너비(px)
+const LABEL_W = 56; // 행 라벨 너비(px)
+const TIMELINE_HOURS = Array.from({ length: TIMELINE_END_HOUR - TIMELINE_START_HOUR }, (_, i) => TIMELINE_START_HOUR + i);
+
+// 타임라인 데이터 생성 (10분 단위 슬롯)
+function generateTimelineData(workerSchedule, vehicleAvailability) {
+  const slots = [];
+  for (let i = 0; i < TOTAL_SLOTS; i++) {
+    const totalMin = TIMELINE_START_HOUR * 60 + i * SLOT_MINUTES;
+    const h = Math.floor(totalMin / 60);
+    const m = totalMin % 60;
+    slots.push({
+      index: i,
+      time: `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`,
+      totalMin,
+      workerBusy: false,
+      vehicleBlocked: false,
+      workerInfo: null,
+    });
   }
-
-  return allSlots.map(slot => {
-    const slotStart = parseInt(slot.start.replace(':', ''));
-    const slotEnd = parseInt(slot.end.replace(':', ''));
-
-    // 수행원 스케줄 충돌 확인
-    const workerConflict = (workerSchedule || []).some(s => {
-      const [sStart, sEnd] = s.time.split('~');
-      const sS = parseInt(sStart.replace(':', ''));
-      const sE = parseInt(sEnd.replace(':', ''));
-      return slotStart < sE && slotEnd > sS;
+  // 수행원 일정 표시
+  (workerSchedule || []).forEach(s => {
+    const [sStart, sEnd] = s.time.split('~');
+    const startMin = parseTimeToMin(sStart);
+    const endMin = parseTimeToMin(sEnd);
+    slots.forEach(slot => {
+      if (slot.totalMin >= startMin && slot.totalMin < endMin) {
+        slot.workerBusy = true;
+        slot.workerInfo = s;
+      }
     });
-
-    // 차량 가용 시간 확인
-    const vehicleAvail = (vehicleAvailability?.windows || []).some(w => {
-      const wS = parseInt(w.from.replace(':', ''));
-      const wE = parseInt(w.to.replace(':', ''));
-      return slotStart >= wS && slotEnd <= wE;
-    });
-
-    let status = 'available';
-    let reason = '';
-    if (workerConflict && !vehicleAvail) {
-      status = 'unavailable';
-      reason = '수행원 일정 충돌 + 차량 불가';
-    } else if (workerConflict) {
-      status = 'unavailable';
-      reason = '수행원 일정 충돌';
-    } else if (!vehicleAvail) {
-      status = 'unavailable';
-      reason = '차량 이용 불가';
-    }
-
-    return { ...slot, status, reason };
   });
+  // 차량 예약 불가 시간 표시
+  const windows = vehicleAvailability?.windows || [];
+  slots.forEach(slot => {
+    const slotEnd = slot.totalMin + SLOT_MINUTES;
+    const isAvailable = windows.some(w =>
+      slot.totalMin >= parseTimeToMin(w.from) && slotEnd <= parseTimeToMin(w.to)
+    );
+    slot.vehicleBlocked = !isAvailable;
+  });
+  return slots;
+}
+
+// 블록(70분) 시작 가능 여부
+function isBlockAvailable(timelineSlots, startIndex) {
+  if (startIndex + BLOCK_SLOT_COUNT > timelineSlots.length) return false;
+  for (let i = startIndex; i < startIndex + BLOCK_SLOT_COUNT; i++) {
+    if (timelineSlots[i].workerBusy || timelineSlots[i].vehicleBlocked) return false;
+  }
+  return true;
+}
+
+// 슬롯 시작 시각 기준 블록 종료 시각 포맷
+function formatSlotEndTime(totalMin) {
+  const endMin = totalMin + BLOCK_SLOT_COUNT * SLOT_MINUTES;
+  return `${String(Math.floor(endMin / 60)).padStart(2, '0')}:${String(endMin % 60).padStart(2, '0')}`;
 }
 
 const ORDER_GROUPS = ["긴급", "정규", "변경", "수시", "특별"];
@@ -224,7 +240,6 @@ const SECONDARY_FILTER_DEFS = [
   { key: 'model', label: '차종' },
   { key: 'zone', label: '존 이름' },
   { key: 'orderGroup', label: '오더 구분' },
-  { key: 'orderType', label: '발행 유형' },
   { key: 'region1', label: '지역1' },
   { key: 'region2', label: '지역2' },
   { key: 'cancelType', label: '취소 유형' },
@@ -306,10 +321,9 @@ function SearchableSelect({ value, onChange, options, placeholder = "검색" }) 
 function PartnerOrdersPage({ currentPartner, initialFilter }) {
   const today = new Date();
 
-  // 파트너 데이터만 필터
-  const partnerOrders = useMemo(
-    () => ALL_ORDERS.filter((o) => o.partner === currentPartner.partnerName),
-    [currentPartner.partnerName]
+  // 파트너 데이터 (상태 변경 가능하도록 useState)
+  const [partnerOrders, setPartnerOrders] = useState(() =>
+    ALL_ORDERS.filter((o) => o.partner === currentPartner.partnerName).map(o => ({ ...o }))
   );
 
   const [q, setQ] = useState("");
@@ -369,6 +383,7 @@ function PartnerOrdersPage({ currentPartner, initialFilter }) {
   const [assignStep, setAssignStep] = useState(null); // null | 'selectWorker' | 'selectTime' | 'confirm' | 'done'
   const [assignWorker, setAssignWorker] = useState(null);
   const [assignTimeSlot, setAssignTimeSlot] = useState(null);
+  const [hoverSlotIndex, setHoverSlotIndex] = useState(null);
 
   const partnerWorkers = useMemo(
     () => PARTNER_WORKERS[currentPartner.partnerId] || [],
@@ -394,11 +409,20 @@ function PartnerOrdersPage({ currentPartner, initialFilter }) {
     return generateVehicleAvailability(selected.plate);
   }, [selected]);
 
-  // 예약 가능 시간대
-  const availableTimeSlots = useMemo(() => {
+  // 타임라인 데이터
+  const timelineData = useMemo(() => {
     if (!assignWorker || !vehicleAvailability) return [];
-    return generateTimeSlots(selectedWorkerSchedule, vehicleAvailability);
+    return generateTimelineData(selectedWorkerSchedule, vehicleAvailability);
   }, [assignWorker, selectedWorkerSchedule, vehicleAvailability]);
+
+  // 선택 가능한 블록 시작 인덱스
+  const availableStartSet = useMemo(() => {
+    const set = new Set();
+    for (let i = 0; i <= timelineData.length - BLOCK_SLOT_COUNT; i++) {
+      if (isBlockAvailable(timelineData, i)) set.add(i);
+    }
+    return set;
+  }, [timelineData]);
 
   // 수행원별 오늘 배정 오더 수 (목록에서 표시용)
   const workerOrderCounts = useMemo(() => {
@@ -413,17 +437,22 @@ function PartnerOrdersPage({ currentPartner, initialFilter }) {
     setAssignStep(null);
     setAssignWorker(null);
     setAssignTimeSlot(null);
+    setHoverSlotIndex(null);
   }, []);
 
   const handleAssignConfirm = useCallback(() => {
     if (!selected || !assignWorker || !assignTimeSlot) return;
-    // 목업: 오더 상태를 '예약'으로 변경
-    setSelected(prev => ({
-      ...prev,
+    const updates = {
       status: '예약',
       worker: assignWorker.name,
       reservedAt: `2026-02-26 ${assignTimeSlot.start}`,
-    }));
+    };
+    // 상세 뷰 업데이트
+    setSelected(prev => ({ ...prev, ...updates }));
+    // 목록 데이터 업데이트
+    setPartnerOrders(prev =>
+      prev.map(o => o.orderId === selected.orderId ? { ...o, ...updates } : o)
+    );
     setAssignStep('done');
   }, [selected, assignWorker, assignTimeSlot]);
 
@@ -690,7 +719,6 @@ function PartnerOrdersPage({ currentPartner, initialFilter }) {
   const columns = [
     { key: "orderId", header: "오더 ID" },
     { key: "orderGroup", header: "오더 구분" },
-    { key: "orderType", header: "발행 유형" },
     {
       key: "washType",
       header: "세차 유형",
@@ -754,7 +782,6 @@ function PartnerOrdersPage({ currentPartner, initialFilter }) {
     if (fModel) chips.push({ key: 'model', label: '차종', value: fModel, onRemove: () => setFModel("") });
     if (fZone) chips.push({ key: 'zone', label: '존 이름', value: fZone, onRemove: () => setFZone("") });
     if (fOrderGroup) chips.push({ key: 'orderGroup', label: '오더 구분', value: fOrderGroup, onRemove: () => setFOrderGroup("") });
-    if (fOrderType && !initialFilter?.orderType) chips.push({ key: 'orderType', label: '발행 유형', value: fOrderType, onRemove: () => setFOrderType("") });
     if (fRegion1) chips.push({ key: 'region1', label: '지역1', value: fRegion1, onRemove: () => { setFRegion1(""); setFRegion2(""); } });
     if (fRegion2) chips.push({ key: 'region2', label: '지역2', value: fRegion2, onRemove: () => setFRegion2("") });
     if (fCancelType && !initialFilter?.cancelType) chips.push({ key: 'cancelType', label: '취소 유형', value: fCancelType, onRemove: () => setFCancelType("") });
@@ -1050,7 +1077,10 @@ function PartnerOrdersPage({ currentPartner, initialFilter }) {
             workerOrderCounts={workerOrderCounts}
             selectedWorkerSchedule={selectedWorkerSchedule}
             vehicleAvailability={vehicleAvailability}
-            availableTimeSlots={availableTimeSlots}
+            timelineData={timelineData}
+            availableStartSet={availableStartSet}
+            hoverSlotIndex={hoverSlotIndex}
+            setHoverSlotIndex={setHoverSlotIndex}
           />
         ) : selected ? (
           <div className="space-y-4">
@@ -1098,10 +1128,6 @@ function PartnerOrdersPage({ currentPartner, initialFilter }) {
                   <div className="space-y-1">
                     <div className="text-xs text-[#6B778C]">오더 구분</div>
                     <div><Badge tone={selected.orderGroup === "긴급" ? "danger" : "default"}>{selected.orderGroup}</Badge></div>
-                  </div>
-                  <div className="space-y-1">
-                    <div className="text-xs text-[#6B778C]">발행 유형</div>
-                    <div>{selected.orderType}</div>
                   </div>
                   <div className="space-y-1">
                     <div className="text-xs text-[#6B778C]">세차 유형</div>
@@ -1605,7 +1631,8 @@ function OrderAssignmentFlow({
   assignWorker, setAssignWorker,
   assignTimeSlot, setAssignTimeSlot,
   zoneWorkers, workerOrderCounts,
-  selectedWorkerSchedule, vehicleAvailability, availableTimeSlots,
+  selectedWorkerSchedule, vehicleAvailability,
+  timelineData, availableStartSet, hoverSlotIndex, setHoverSlotIndex,
 }) {
   const zoneName = selected.zone || '-';
 
@@ -1676,7 +1703,7 @@ function OrderAssignmentFlow({
                         </div>
                       </div>
                       <div className="text-right">
-                        <div className="text-xs text-[#6B778C]">오늘 배정</div>
+                        <div className="text-xs text-[#6B778C]">오늘 수행 예정</div>
                         <div className={cn("text-sm font-bold", orderCount >= 4 ? "text-rose-500" : orderCount >= 2 ? "text-amber-500" : "text-[#36B37E]")}>
                           {orderCount}건
                         </div>
@@ -1698,9 +1725,9 @@ function OrderAssignmentFlow({
     );
   }
 
-  // Step 2: 시간 선택
+  // Step 2: 시간 선택 (타임라인)
   if (assignStep === 'selectTime') {
-    const availCount = availableTimeSlots.filter(s => s.status === 'available').length;
+    const availCount = availableStartSet.size;
     return (
       <div className="space-y-4">
         {/* 진행 단계 */}
@@ -1724,13 +1751,138 @@ function OrderAssignmentFlow({
               </div>
               <div>
                 <div className="text-sm font-bold text-[#172B4D]">{assignWorker.name} ({assignWorker.id})</div>
-                <div className="text-xs text-[#6B778C]">오늘 배정 {workerOrderCounts[assignWorker.id] || 0}건 · 패널티 {assignWorker.penalty}회</div>
+                <div className="text-xs text-[#6B778C]">오늘 수행 예정 {workerOrderCounts[assignWorker.id] || 0}건 · 패널티 {assignWorker.penalty}회</div>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* 수행원 오늘 스케줄 */}
+        {/* 타임라인 */}
+        <div>
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-2">
+              <CalendarDays className="h-4 w-4 text-[#6B778C]" />
+              <span className="text-sm font-semibold text-[#172B4D]">예약 시간 선택</span>
+            </div>
+            <span className="text-xs text-[#6B778C]">선택 가능 {availCount}개 · 수행 50분 + 쿠션 20분</span>
+          </div>
+
+          {/* 범례 */}
+          <div className="flex items-center gap-3 mb-2 text-[10px] text-[#6B778C]">
+            <span className="flex items-center gap-1"><span className="inline-block w-3 h-3 rounded-sm bg-[#4C9AFF]" /> 수행원 일정</span>
+            <span className="flex items-center gap-1"><span className="inline-block w-3 h-3 rounded-sm bg-[#FF8B00]" /> 차량 불가</span>
+            <span className="flex items-center gap-1"><span className="inline-block w-3 h-3 rounded-sm bg-[#ABF5D1]" /> 선택 가능</span>
+          </div>
+
+          {/* 타임라인 스크롤 영역 */}
+          <div className="overflow-x-auto rounded-lg border border-[#DFE1E6] bg-white">
+            <div style={{ minWidth: `${TOTAL_SLOTS * SLOT_W + LABEL_W}px` }} className="p-2">
+              {/* 시간 라벨 */}
+              <div className="flex" style={{ marginLeft: `${LABEL_W}px` }}>
+                {TIMELINE_HOURS.map(h => (
+                  <div key={h} className="text-[10px] text-[#6B778C] font-mono border-l border-[#E2E8F0]" style={{ width: `${SLOTS_PER_HOUR * SLOT_W}px`, paddingLeft: '2px' }}>
+                    {String(h).padStart(2, '0')}
+                  </div>
+                ))}
+              </div>
+
+              {/* 수행원 일정 행 */}
+              <div className="flex items-center mt-1">
+                <div className="text-[10px] text-[#6B778C] font-medium shrink-0 text-right pr-2" style={{ width: `${LABEL_W}px` }}>수행원</div>
+                <div className="flex">
+                  {timelineData.map((slot, i) => (
+                    <div
+                      key={i}
+                      className={cn(
+                        "h-7",
+                        slot.workerBusy ? "bg-[#4C9AFF]" : "bg-[#F4F5F7]",
+                        i % SLOTS_PER_HOUR === 0 && "border-l border-l-[#E2E8F0]"
+                      )}
+                      style={{ width: `${SLOT_W}px` }}
+                      title={slot.workerBusy ? `${slot.workerInfo?.time} ${slot.workerInfo?.zone} (${slot.workerInfo?.plate})` : slot.time}
+                    />
+                  ))}
+                </div>
+              </div>
+
+              {/* 차량 가용 행 */}
+              <div className="flex items-center mt-0.5">
+                <div className="text-[10px] text-[#6B778C] font-medium shrink-0 text-right pr-2" style={{ width: `${LABEL_W}px` }}>차량</div>
+                <div className="flex">
+                  {timelineData.map((slot, i) => (
+                    <div
+                      key={i}
+                      className={cn(
+                        "h-7",
+                        slot.vehicleBlocked ? "bg-[#FF8B00]" : "bg-[#F4F5F7]",
+                        i % SLOTS_PER_HOUR === 0 && "border-l border-l-[#E2E8F0]"
+                      )}
+                      style={{ width: `${SLOT_W}px` }}
+                      title={slot.vehicleBlocked ? `${slot.time} 차량 이용 불가` : `${slot.time} 이용 가능`}
+                    />
+                  ))}
+                </div>
+              </div>
+
+              {/* 선택 행 */}
+              <div className="flex items-center mt-1 pt-1 border-t border-dashed border-[#DFE1E6]">
+                <div className="text-[10px] text-[#6B778C] font-medium shrink-0 text-right pr-2" style={{ width: `${LABEL_W}px` }}>선택</div>
+                <div className="flex" onMouseLeave={() => setHoverSlotIndex(null)}>
+                  {timelineData.map((slot, i) => {
+                    const canStart = availableStartSet.has(i);
+                    const isInHover = hoverSlotIndex !== null && i >= hoverSlotIndex && i < hoverSlotIndex + BLOCK_SLOT_COUNT;
+                    const isFree = !slot.workerBusy && !slot.vehicleBlocked;
+                    return (
+                      <div
+                        key={i}
+                        className={cn(
+                          "h-8 transition-colors",
+                          isInHover
+                            ? "bg-[#36B37E]"
+                            : canStart
+                              ? "bg-[#ABF5D1] cursor-pointer"
+                              : isFree ? "bg-[#F0FFF4]" : "bg-[#FFEBE6]",
+                          i % SLOTS_PER_HOUR === 0 && "border-l border-l-[#E2E8F0]"
+                        )}
+                        style={{ width: `${SLOT_W}px` }}
+                        onMouseEnter={() => {
+                          if (canStart) setHoverSlotIndex(i);
+                          else if (!(hoverSlotIndex !== null && i >= hoverSlotIndex && i < hoverSlotIndex + BLOCK_SLOT_COUNT)) setHoverSlotIndex(null);
+                        }}
+                        onClick={() => {
+                          if (canStart) {
+                            const endTime = formatSlotEndTime(slot.totalMin);
+                            setAssignTimeSlot({ start: slot.time, end: endTime, label: `${slot.time} ~ ${endTime}` });
+                            setHoverSlotIndex(null);
+                            setAssignStep('confirm');
+                          }
+                        }}
+                      />
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* 호버 시 선택 시간 표시 */}
+          {hoverSlotIndex !== null && (
+            <div className="mt-2 text-center">
+              <span className="inline-flex items-center gap-2 rounded-full bg-[#36B37E] px-3 py-1.5 text-xs text-white font-medium">
+                <Clock className="h-3 w-3" />
+                {timelineData[hoverSlotIndex]?.time} ~ {formatSlotEndTime(timelineData[hoverSlotIndex]?.totalMin)} (70분)
+              </span>
+            </div>
+          )}
+
+          {availCount === 0 && (
+            <div className="mt-2 rounded-lg bg-[#FFEBE6] p-3 text-sm text-[#BF2600] text-center">
+              선택 가능한 시간이 없습니다. 수행원 일정과 차량 가용 시간이 겹치지 않습니다.
+            </div>
+          )}
+        </div>
+
+        {/* 수행원 오늘 스케줄 상세 */}
         <div>
           <div className="flex items-center gap-2 mb-2">
             <Clock className="h-4 w-4 text-[#6B778C]" />
@@ -1753,7 +1905,7 @@ function OrderAssignmentFlow({
           )}
         </div>
 
-        {/* 차량 예약 가용 시간 */}
+        {/* 차량 정보 */}
         <div>
           <div className="flex items-center gap-2 mb-2">
             <Car className="h-4 w-4 text-[#6B778C]" />
@@ -1774,44 +1926,6 @@ function OrderAssignmentFlow({
                 </div>
               </div>
             )}
-          </div>
-        </div>
-
-        {/* 예약 가능 시간대 선택 */}
-        <div>
-          <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center gap-2">
-              <CalendarDays className="h-4 w-4 text-[#6B778C]" />
-              <span className="text-sm font-semibold text-[#172B4D]">예약 시간 선택</span>
-            </div>
-            <span className="text-xs text-[#6B778C]">예약 가능 {availCount}개</span>
-          </div>
-          <div className="grid grid-cols-2 gap-1.5 max-h-[300px] overflow-y-auto">
-            {availableTimeSlots.map((slot, i) => (
-              <button
-                key={i}
-                disabled={slot.status === 'unavailable'}
-                className={cn(
-                  "rounded-lg border px-3 py-2 text-xs text-left transition-all",
-                  slot.status === 'unavailable'
-                    ? "border-[#E2E8F0] bg-[#F8FAFC] text-[#94A3B8] cursor-not-allowed"
-                    : assignTimeSlot?.start === slot.start
-                      ? "border-[#0052CC] bg-[#E9F2FF] text-[#0052CC] font-semibold ring-1 ring-[#0052CC]"
-                      : "border-[#DFE1E6] bg-white text-[#172B4D] hover:border-[#0052CC] hover:bg-[#F0F7FF]"
-                )}
-                onClick={() => {
-                  if (slot.status === 'available') {
-                    setAssignTimeSlot(slot);
-                    setAssignStep('confirm');
-                  }
-                }}
-              >
-                <div className="font-mono font-medium">{slot.label}</div>
-                {slot.status === 'unavailable' && (
-                  <div className="text-[10px] text-rose-400 mt-0.5">{slot.reason}</div>
-                )}
-              </button>
-            ))}
           </div>
         </div>
       </div>
