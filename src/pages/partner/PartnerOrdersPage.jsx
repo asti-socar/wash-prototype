@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect, useRef } from "react";
+import React, { useMemo, useState, useEffect, useRef, useCallback } from "react";
 import {
   Search,
   X,
@@ -12,6 +12,14 @@ import {
   ChevronDown,
   Plus,
   RotateCcw,
+  UserPlus,
+  ArrowLeft,
+  Clock,
+  CalendarDays,
+  User,
+  CheckCircle2,
+  AlertTriangle,
+  Car,
 } from "lucide-react";
 import {
   cn,
@@ -39,6 +47,132 @@ import MOCK_LOST_ITEMS from "../../mocks/orders-lostItems.json";
 import MOCK_LEAD_TIME_DATA from "../../mocks/orders-leadTime.json";
 import MOCK_DELIVERY_INFO_DATA from "../../mocks/orders-deliveryInfo.json";
 import MOCK_HANDLER_INFO_DATA from "../../mocks/orders-handlerInfo.json";
+// ============== 수행원 데이터 (파트너별) ==============
+const PARTNER_WORKERS = {
+  "P-001": [
+    { id: 'W-001', name: '최수행', penalty: 1, zoneIds: ['Z-1001', 'Z-1002', 'Z-1003', 'Z-1004', 'Z-1005', 'Z-1008'] },
+    { id: 'W-002', name: '강수행', penalty: 0, zoneIds: ['Z-1009', 'Z-1012', 'Z-1013', 'Z-1018', 'Z-1019', 'Z-1020'] },
+    { id: 'W-003', name: '한수행', penalty: 0, zoneIds: ['Z-1024', 'Z-1025', 'Z-1026', 'Z-1031', 'Z-1032'] },
+    { id: 'W-004', name: '오수행', penalty: 2, zoneIds: ['Z-1033', 'Z-1034', 'Z-1038', 'Z-1039', 'Z-1040', 'Z-1041'] },
+    { id: 'W-005', name: '박수행', penalty: 1, zoneIds: ['Z-1044', 'Z-1045', 'Z-1048', 'Z-1049'] },
+  ],
+  "P-003": [
+    { id: 'W-006', name: '이수행', penalty: 5, zoneIds: ['Z-1006', 'Z-1007', 'Z-1010', 'Z-1011', 'Z-1014', 'Z-1015'] },
+    { id: 'W-007', name: '김수행', penalty: 0, zoneIds: ['Z-1016', 'Z-1017', 'Z-1021', 'Z-1022', 'Z-1023'] },
+    { id: 'W-008', name: '정수행', penalty: 1, zoneIds: ['Z-1027', 'Z-1028', 'Z-1029', 'Z-1030', 'Z-1035', 'Z-1036'] },
+    { id: 'W-009', name: '조수행', penalty: 0, zoneIds: ['Z-1037', 'Z-1042', 'Z-1043', 'Z-1046', 'Z-1047', 'Z-1050'] },
+  ],
+};
+
+// ============== 목업: 수행원 스케줄 생성 ==============
+const MOCK_WORKER_SCHEDULES = {
+  'W-001': [
+    { orderId: 'O-90201', zone: '강남역 1번존', time: '08:00~09:30', washType: '내외부', plate: '12가3456' },
+    { orderId: 'O-90202', zone: '강남역 2번존', time: '10:00~11:00', washType: '외부', plate: '34나5678' },
+    { orderId: 'O-90203', zone: '역삼역 1번존', time: '14:00~15:30', washType: '내외부', plate: '56다7890' },
+  ],
+  'W-002': [
+    { orderId: 'O-90204', zone: '잠실역 2번존', time: '09:00~10:30', washType: '내외부', plate: '78라1234' },
+    { orderId: 'O-90205', zone: '서울역 1번존', time: '13:00~14:00', washType: '외부', plate: '90마5678' },
+  ],
+  'W-003': [
+    { orderId: 'O-90206', zone: '수원역 1번존', time: '08:30~10:00', washType: '내외부', plate: '11바9012' },
+    { orderId: 'O-90207', zone: '광교역 1번존', time: '11:00~12:00', washType: '외부', plate: '22사3456' },
+    { orderId: 'O-90208', zone: '인천공항 T1', time: '14:00~15:30', washType: '내외부', plate: '33아7890' },
+    { orderId: 'O-90209', zone: '인천공항 T2', time: '16:00~17:00', washType: '외부', plate: '44자1234' },
+  ],
+  'W-004': [
+    { orderId: 'O-90210', zone: '송도센트럴파크', time: '10:00~11:30', washType: '내외부', plate: '55차5678' },
+  ],
+  'W-005': [
+    { orderId: 'O-90211', zone: '상무지구 1번존', time: '09:00~10:30', washType: '내외부', plate: '66카9012' },
+    { orderId: 'O-90212', zone: '광주송정역 1번존', time: '11:00~12:00', washType: '외부', plate: '77타3456' },
+    { orderId: 'O-90213', zone: '제주공항 1번존', time: '15:00~16:30', washType: '내외부', plate: '88파7890' },
+  ],
+  'W-006': [
+    { orderId: 'O-90214', zone: '서초역 1번존', time: '08:00~09:30', washType: '내외부', plate: '99하1234' },
+    { orderId: 'O-90215', zone: '양재역 1번존', time: '10:00~11:00', washType: '외부', plate: '10가5678' },
+    { orderId: 'O-90216', zone: '여의도역 1번존', time: '13:00~14:30', washType: '내외부', plate: '20나9012' },
+  ],
+  'W-007': [],
+  'W-008': [
+    { orderId: 'O-90217', zone: '용인역 1번존', time: '09:00~10:00', washType: '외부', plate: '30다3456' },
+    { orderId: 'O-90218', zone: '일산킨텍스 1번존', time: '14:00~15:30', washType: '내외부', plate: '40라7890' },
+  ],
+  'W-009': [
+    { orderId: 'O-90219', zone: '대전시청역 1번존', time: '08:00~09:30', washType: '내외부', plate: '50마1234' },
+  ],
+};
+
+// 목업: 차량 예약 가능 시간대 생성
+function generateVehicleAvailability(plate) {
+  // 차량 번호 기반 시드로 다양한 시나리오 생성
+  const seed = plate ? plate.charCodeAt(0) + plate.charCodeAt(1) : 0;
+  const scenarios = [
+    { available: true, windows: [{ from: '08:00', to: '22:00' }], note: '종일 이용 가능' },
+    { available: true, windows: [{ from: '08:00', to: '12:00' }, { from: '16:00', to: '22:00' }], note: '12:00~16:00 고객 예약' },
+    { available: true, windows: [{ from: '10:00', to: '22:00' }], note: '10:00 이후 이용 가능 (고객 반납 후)' },
+    { available: true, windows: [{ from: '08:00', to: '14:00' }], note: '14:00 이후 고객 예약' },
+    { available: true, windows: [{ from: '08:00', to: '22:00' }], note: '종일 이용 가능' },
+  ];
+  return scenarios[seed % scenarios.length];
+}
+
+// 가능한 예약 시간대 생성 (1시간 30분 단위)
+function generateTimeSlots(workerSchedule, vehicleAvailability) {
+  const allSlots = [];
+  for (let h = 8; h <= 20; h++) {
+    for (const m of [0, 30]) {
+      if (h === 20 && m === 30) continue;
+      const startH = String(h).padStart(2, '0');
+      const startM = String(m).padStart(2, '0');
+      const endMinTotal = h * 60 + m + 90;
+      const endH = String(Math.floor(endMinTotal / 60)).padStart(2, '0');
+      const endM = String(endMinTotal % 60).padStart(2, '0');
+      if (endMinTotal > 22 * 60) continue;
+      allSlots.push({
+        start: `${startH}:${startM}`,
+        end: `${endH}:${endM}`,
+        label: `${startH}:${startM} ~ ${endH}:${endM}`,
+      });
+    }
+  }
+
+  return allSlots.map(slot => {
+    const slotStart = parseInt(slot.start.replace(':', ''));
+    const slotEnd = parseInt(slot.end.replace(':', ''));
+
+    // 수행원 스케줄 충돌 확인
+    const workerConflict = (workerSchedule || []).some(s => {
+      const [sStart, sEnd] = s.time.split('~');
+      const sS = parseInt(sStart.replace(':', ''));
+      const sE = parseInt(sEnd.replace(':', ''));
+      return slotStart < sE && slotEnd > sS;
+    });
+
+    // 차량 가용 시간 확인
+    const vehicleAvail = (vehicleAvailability?.windows || []).some(w => {
+      const wS = parseInt(w.from.replace(':', ''));
+      const wE = parseInt(w.to.replace(':', ''));
+      return slotStart >= wS && slotEnd <= wE;
+    });
+
+    let status = 'available';
+    let reason = '';
+    if (workerConflict && !vehicleAvail) {
+      status = 'unavailable';
+      reason = '수행원 일정 충돌 + 차량 불가';
+    } else if (workerConflict) {
+      status = 'unavailable';
+      reason = '수행원 일정 충돌';
+    } else if (!vehicleAvail) {
+      status = 'unavailable';
+      reason = '차량 이용 불가';
+    }
+
+    return { ...slot, status, reason };
+  });
+}
 
 const ORDER_GROUPS = ["긴급", "정규", "변경", "수시", "특별"];
 const ORDER_TYPES = [
@@ -200,7 +334,7 @@ function PartnerOrdersPage({ currentPartner, initialFilter }) {
   const [showSecondaryFilters, setShowSecondaryFilters] = useState(true);
   const [filterDropdownOpen, setFilterDropdownOpen] = useState(false);
 
-  // initialFilter (대시보드 → 오더 조회 연동)
+  // initialFilter (대시보드 → 오더 관리 연동)
   useEffect(() => {
     if (initialFilter) {
       if (initialFilter.status) {
@@ -230,6 +364,68 @@ function PartnerOrdersPage({ currentPartner, initialFilter }) {
   const [selected, setSelected] = useState(null);
   const [drawerTab, setDrawerTab] = useState("info");
   const [previewImage, setPreviewImage] = useState(null);
+
+  // ============== 오더 할당 상태 ==============
+  const [assignStep, setAssignStep] = useState(null); // null | 'selectWorker' | 'selectTime' | 'confirm' | 'done'
+  const [assignWorker, setAssignWorker] = useState(null);
+  const [assignTimeSlot, setAssignTimeSlot] = useState(null);
+
+  const partnerWorkers = useMemo(
+    () => PARTNER_WORKERS[currentPartner.partnerId] || [],
+    [currentPartner.partnerId]
+  );
+
+  // 선택된 오더의 zoneId로 해당 존 담당 수행원 필터
+  const zoneWorkers = useMemo(() => {
+    if (!selected) return [];
+    const zoneId = selected.zoneId;
+    return partnerWorkers.filter(w => w.zoneIds.includes(zoneId));
+  }, [selected, partnerWorkers]);
+
+  // 선택된 수행원의 오늘 스케줄
+  const selectedWorkerSchedule = useMemo(() => {
+    if (!assignWorker) return [];
+    return MOCK_WORKER_SCHEDULES[assignWorker.id] || [];
+  }, [assignWorker]);
+
+  // 차량 예약 가능 시간
+  const vehicleAvailability = useMemo(() => {
+    if (!selected) return null;
+    return generateVehicleAvailability(selected.plate);
+  }, [selected]);
+
+  // 예약 가능 시간대
+  const availableTimeSlots = useMemo(() => {
+    if (!assignWorker || !vehicleAvailability) return [];
+    return generateTimeSlots(selectedWorkerSchedule, vehicleAvailability);
+  }, [assignWorker, selectedWorkerSchedule, vehicleAvailability]);
+
+  // 수행원별 오늘 배정 오더 수 (목록에서 표시용)
+  const workerOrderCounts = useMemo(() => {
+    const counts = {};
+    partnerWorkers.forEach(w => {
+      counts[w.id] = (MOCK_WORKER_SCHEDULES[w.id] || []).length;
+    });
+    return counts;
+  }, [partnerWorkers]);
+
+  const resetAssignment = useCallback(() => {
+    setAssignStep(null);
+    setAssignWorker(null);
+    setAssignTimeSlot(null);
+  }, []);
+
+  const handleAssignConfirm = useCallback(() => {
+    if (!selected || !assignWorker || !assignTimeSlot) return;
+    // 목업: 오더 상태를 '예약'으로 변경
+    setSelected(prev => ({
+      ...prev,
+      status: '예약',
+      worker: assignWorker.name,
+      reservedAt: `2026-02-26 ${assignTimeSlot.start}`,
+    }));
+    setAssignStep('done');
+  }, [selected, assignWorker, assignTimeSlot]);
 
   const formatCreatedAt = (order) => {
     if (!order.createdAt) return "-";
@@ -592,8 +788,8 @@ function PartnerOrdersPage({ currentPartner, initialFilter }) {
     <div className="space-y-4">
       <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
         <div>
-          <div className="text-base font-bold text-[#172B4D]">오더 조회</div>
-          <div className="mt-1 text-sm text-[#6B778C]">{currentPartner.partnerName}에 배정된 오더를 조회합니다.</div>
+          <div className="text-base font-bold text-[#172B4D]">오더 관리</div>
+          <div className="mt-1 text-sm text-[#6B778C]">{currentPartner.partnerName}에 배정된 오더를 조회하고 관리합니다.</div>
         </div>
         <div className="flex items-center gap-2">
           <Button variant="secondary">
@@ -793,16 +989,70 @@ function PartnerOrdersPage({ currentPartner, initialFilter }) {
         </div>
       </div>
 
-      {/* 오더 상세 Drawer (읽기 전용 — 수행 완료/취소 버튼 없음) */}
+      {/* 오더 상세 Drawer */}
       <Drawer
         open={!!selected}
-        title={selected ? `오더 상세 - ${selected.orderId}` : "오더 상세"}
-        onClose={() => { setSelected(null); setDrawerTab("info"); }}
+        title={
+          assignStep
+            ? assignStep === 'done'
+              ? "오더 할당 완료"
+              : `오더 할당 — ${assignStep === 'selectWorker' ? '수행원 선택' : assignStep === 'selectTime' ? '시간 선택' : '할당 확인'}`
+            : selected ? `오더 상세 - ${selected.orderId}` : "오더 상세"
+        }
+        onClose={() => { setSelected(null); setDrawerTab("info"); resetAssignment(); }}
         footer={
-          <Button variant="secondary" onClick={() => setSelected(null)} className="w-full sm:w-auto">닫기</Button>
+          assignStep ? (
+            <div className="flex w-full items-center gap-2">
+              {assignStep === 'done' ? (
+                <Button variant="secondary" onClick={() => { setSelected(null); resetAssignment(); }} className="w-full">닫기</Button>
+              ) : (
+                <>
+                  <Button variant="secondary" onClick={() => {
+                    if (assignStep === 'selectWorker') resetAssignment();
+                    else if (assignStep === 'selectTime') { setAssignStep('selectWorker'); setAssignWorker(null); setAssignTimeSlot(null); }
+                    else if (assignStep === 'confirm') { setAssignStep('selectTime'); setAssignTimeSlot(null); }
+                  }} className="flex-1">
+                    <ArrowLeft className="mr-1.5 h-4 w-4" />
+                    {assignStep === 'selectWorker' ? '취소' : '이전'}
+                  </Button>
+                  {assignStep === 'confirm' && (
+                    <Button onClick={handleAssignConfirm} className="flex-1 bg-[#0052CC] hover:bg-[#0747A6] text-white">
+                      <CheckCircle2 className="mr-1.5 h-4 w-4" />
+                      할당 확정
+                    </Button>
+                  )}
+                </>
+              )}
+            </div>
+          ) : (
+            <div className="flex w-full items-center gap-2">
+              <Button variant="secondary" onClick={() => { setSelected(null); resetAssignment(); }} className="flex-1">닫기</Button>
+              {selected && selected.status === '발행' && (
+                <Button onClick={() => setAssignStep('selectWorker')} className="flex-1 bg-[#0052CC] hover:bg-[#0747A6] text-white">
+                  <UserPlus className="mr-1.5 h-4 w-4" />
+                  오더 할당
+                </Button>
+              )}
+            </div>
+          )
         }
       >
-        {selected ? (
+        {selected && assignStep ? (
+          <OrderAssignmentFlow
+            selected={selected}
+            assignStep={assignStep}
+            setAssignStep={setAssignStep}
+            assignWorker={assignWorker}
+            setAssignWorker={setAssignWorker}
+            assignTimeSlot={assignTimeSlot}
+            setAssignTimeSlot={setAssignTimeSlot}
+            zoneWorkers={zoneWorkers}
+            workerOrderCounts={workerOrderCounts}
+            selectedWorkerSchedule={selectedWorkerSchedule}
+            vehicleAvailability={vehicleAvailability}
+            availableTimeSlots={availableTimeSlots}
+          />
+        ) : selected ? (
           <div className="space-y-4">
             <Tabs value={drawerTab}>
             <TabsList>
@@ -1332,6 +1582,8 @@ function PartnerOrdersPage({ currentPartner, initialFilter }) {
         ) : null}
       </Drawer>
 
+      {/* 오더 할당 성공 시 리스트 상태 동기화 (목업) */}
+
       {/* Image Preview Modal */}
       {previewImage && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/80 p-4" onClick={() => setPreviewImage(null)}>
@@ -1345,6 +1597,334 @@ function PartnerOrdersPage({ currentPartner, initialFilter }) {
       )}
     </div>
   );
+}
+
+// ============== 오더 할당 플로우 컴포넌트 ==============
+function OrderAssignmentFlow({
+  selected, assignStep, setAssignStep,
+  assignWorker, setAssignWorker,
+  assignTimeSlot, setAssignTimeSlot,
+  zoneWorkers, workerOrderCounts,
+  selectedWorkerSchedule, vehicleAvailability, availableTimeSlots,
+}) {
+  const zoneName = selected.zone || '-';
+
+  // Step 1: 수행원 선택
+  if (assignStep === 'selectWorker') {
+    return (
+      <div className="space-y-4">
+        {/* 진행 단계 */}
+        <div className="flex items-center gap-2 text-xs text-[#6B778C]">
+          <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#0052CC] text-white text-[10px] font-bold">1</span>
+          <span className="font-semibold text-[#0052CC]">수행원 선택</span>
+          <ChevronRight className="h-3 w-3" />
+          <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#DFE1E6] text-[#6B778C] text-[10px] font-bold">2</span>
+          <span>시간 선택</span>
+          <ChevronRight className="h-3 w-3" />
+          <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#DFE1E6] text-[#6B778C] text-[10px] font-bold">3</span>
+          <span>할당 확인</span>
+        </div>
+
+        {/* 오더 요약 */}
+        <Card>
+          <CardContent className="py-3">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-sm font-bold text-[#172B4D]">{selected.plate} ({selected.model})</div>
+                <div className="text-xs text-[#6B778C] mt-0.5">{selected.orderId} · {selected.washType} · {selected.orderGroup}</div>
+              </div>
+              <Badge tone="warn">발행</Badge>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* 존 정보 & 수행원 목록 */}
+        <div>
+          <div className="flex items-center gap-2 mb-3">
+            <CalendarDays className="h-4 w-4 text-[#6B778C]" />
+            <span className="text-sm font-semibold text-[#172B4D]">{zoneName} 담당 수행원</span>
+            <Badge tone="info">{zoneWorkers.length}명</Badge>
+          </div>
+
+          {zoneWorkers.length === 0 ? (
+            <Card>
+              <CardContent className="py-6 text-center">
+                <AlertTriangle className="mx-auto h-8 w-8 text-amber-400 mb-2" />
+                <div className="text-sm text-[#6B778C]">해당 존에 배정된 수행원이 없습니다.</div>
+                <div className="text-xs text-[#94A3B8] mt-1">존 배정 관리에서 수행원을 배정해 주세요.</div>
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="space-y-2">
+              {zoneWorkers.map(worker => {
+                const orderCount = workerOrderCounts[worker.id] || 0;
+                const zoneCount = worker.zoneIds.length;
+                return (
+                  <button
+                    key={worker.id}
+                    className="w-full rounded-lg border border-[#DFE1E6] p-3 text-left hover:border-[#0052CC] hover:bg-[#F0F7FF] transition-all group"
+                    onClick={() => { setAssignWorker(worker); setAssignStep('selectTime'); }}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#E9F2FF] text-[#0052CC] font-bold text-sm group-hover:bg-[#0052CC] group-hover:text-white transition-colors">
+                          <User className="h-4 w-4" />
+                        </div>
+                        <div>
+                          <div className="text-sm font-semibold text-[#172B4D]">{worker.name}</div>
+                          <div className="text-xs text-[#6B778C]">{worker.id} · 담당존 {zoneCount}개</div>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-xs text-[#6B778C]">오늘 배정</div>
+                        <div className={cn("text-sm font-bold", orderCount >= 4 ? "text-rose-500" : orderCount >= 2 ? "text-amber-500" : "text-[#36B37E]")}>
+                          {orderCount}건
+                        </div>
+                      </div>
+                    </div>
+                    {worker.penalty > 0 && (
+                      <div className="mt-2 flex items-center gap-1.5 text-xs text-rose-500">
+                        <AlertTriangle className="h-3 w-3" />
+                        <span>패널티 {worker.penalty}회</span>
+                      </div>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // Step 2: 시간 선택
+  if (assignStep === 'selectTime') {
+    const availCount = availableTimeSlots.filter(s => s.status === 'available').length;
+    return (
+      <div className="space-y-4">
+        {/* 진행 단계 */}
+        <div className="flex items-center gap-2 text-xs text-[#6B778C]">
+          <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#36B37E] text-white text-[10px] font-bold">✓</span>
+          <span className="text-[#36B37E] font-semibold">수행원 선택</span>
+          <ChevronRight className="h-3 w-3" />
+          <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#0052CC] text-white text-[10px] font-bold">2</span>
+          <span className="font-semibold text-[#0052CC]">시간 선택</span>
+          <ChevronRight className="h-3 w-3" />
+          <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#DFE1E6] text-[#6B778C] text-[10px] font-bold">3</span>
+          <span>할당 확인</span>
+        </div>
+
+        {/* 선택된 수행원 정보 */}
+        <Card>
+          <CardContent className="py-3">
+            <div className="flex items-center gap-3">
+              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#E9F2FF] text-[#0052CC] font-bold text-sm">
+                <User className="h-4 w-4" />
+              </div>
+              <div>
+                <div className="text-sm font-bold text-[#172B4D]">{assignWorker.name} ({assignWorker.id})</div>
+                <div className="text-xs text-[#6B778C]">오늘 배정 {workerOrderCounts[assignWorker.id] || 0}건 · 패널티 {assignWorker.penalty}회</div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* 수행원 오늘 스케줄 */}
+        <div>
+          <div className="flex items-center gap-2 mb-2">
+            <Clock className="h-4 w-4 text-[#6B778C]" />
+            <span className="text-sm font-semibold text-[#172B4D]">수행원 오늘 스케줄</span>
+          </div>
+          {selectedWorkerSchedule.length === 0 ? (
+            <div className="rounded-lg bg-[#F4F5F7] p-3 text-sm text-[#6B778C] text-center">오늘 배정된 오더가 없습니다.</div>
+          ) : (
+            <div className="space-y-1.5">
+              {selectedWorkerSchedule.map((s, i) => (
+                <div key={i} className="flex items-center gap-3 rounded-lg bg-[#F4F5F7] px-3 py-2 text-xs">
+                  <span className="font-mono font-semibold text-[#172B4D] min-w-[100px]">{s.time}</span>
+                  <span className="text-[#6B778C]">{s.zone}</span>
+                  <span className="text-[#6B778C]">·</span>
+                  <span className="text-[#6B778C]">{s.plate}</span>
+                  <Badge tone="default">{s.washType}</Badge>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* 차량 예약 가용 시간 */}
+        <div>
+          <div className="flex items-center gap-2 mb-2">
+            <Car className="h-4 w-4 text-[#6B778C]" />
+            <span className="text-sm font-semibold text-[#172B4D]">차량 예약 가능 시간</span>
+          </div>
+          <div className="rounded-lg bg-[#F4F5F7] p-3 text-sm">
+            <div className="flex items-center gap-2">
+              <span className="text-[#172B4D] font-medium">{selected.plate}</span>
+              <span className="text-[#6B778C]">({selected.model})</span>
+            </div>
+            {vehicleAvailability && (
+              <div className="mt-1.5 space-y-1">
+                <div className="text-xs text-[#6B778C]">{vehicleAvailability.note}</div>
+                <div className="flex flex-wrap gap-1.5">
+                  {vehicleAvailability.windows.map((w, i) => (
+                    <Badge key={i} tone="ok">{w.from} ~ {w.to}</Badge>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* 예약 가능 시간대 선택 */}
+        <div>
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-2">
+              <CalendarDays className="h-4 w-4 text-[#6B778C]" />
+              <span className="text-sm font-semibold text-[#172B4D]">예약 시간 선택</span>
+            </div>
+            <span className="text-xs text-[#6B778C]">예약 가능 {availCount}개</span>
+          </div>
+          <div className="grid grid-cols-2 gap-1.5 max-h-[300px] overflow-y-auto">
+            {availableTimeSlots.map((slot, i) => (
+              <button
+                key={i}
+                disabled={slot.status === 'unavailable'}
+                className={cn(
+                  "rounded-lg border px-3 py-2 text-xs text-left transition-all",
+                  slot.status === 'unavailable'
+                    ? "border-[#E2E8F0] bg-[#F8FAFC] text-[#94A3B8] cursor-not-allowed"
+                    : assignTimeSlot?.start === slot.start
+                      ? "border-[#0052CC] bg-[#E9F2FF] text-[#0052CC] font-semibold ring-1 ring-[#0052CC]"
+                      : "border-[#DFE1E6] bg-white text-[#172B4D] hover:border-[#0052CC] hover:bg-[#F0F7FF]"
+                )}
+                onClick={() => {
+                  if (slot.status === 'available') {
+                    setAssignTimeSlot(slot);
+                    setAssignStep('confirm');
+                  }
+                }}
+              >
+                <div className="font-mono font-medium">{slot.label}</div>
+                {slot.status === 'unavailable' && (
+                  <div className="text-[10px] text-rose-400 mt-0.5">{slot.reason}</div>
+                )}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Step 3: 할당 확인
+  if (assignStep === 'confirm') {
+    return (
+      <div className="space-y-4">
+        {/* 진행 단계 */}
+        <div className="flex items-center gap-2 text-xs text-[#6B778C]">
+          <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#36B37E] text-white text-[10px] font-bold">✓</span>
+          <span className="text-[#36B37E] font-semibold">수행원 선택</span>
+          <ChevronRight className="h-3 w-3" />
+          <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#36B37E] text-white text-[10px] font-bold">✓</span>
+          <span className="text-[#36B37E] font-semibold">시간 선택</span>
+          <ChevronRight className="h-3 w-3" />
+          <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#0052CC] text-white text-[10px] font-bold">3</span>
+          <span className="font-semibold text-[#0052CC]">할당 확인</span>
+        </div>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>할당 정보 확인</CardTitle>
+            <CardDescription>아래 내용으로 오더를 할당합니다. 확인 후 "할당 확정" 버튼을 눌러주세요.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {/* 오더 정보 */}
+            <div className="rounded-lg bg-[#F4F5F7] p-4 space-y-3">
+              <div className="text-xs font-semibold text-[#6B778C] uppercase tracking-wider">오더 정보</div>
+              <div className="grid grid-cols-2 gap-3 text-sm">
+                <div>
+                  <div className="text-xs text-[#6B778C]">오더 ID</div>
+                  <div className="font-medium text-[#0052CC]">{selected.orderId}</div>
+                </div>
+                <div>
+                  <div className="text-xs text-[#6B778C]">차량</div>
+                  <div className="font-medium">{selected.plate} ({selected.model})</div>
+                </div>
+                <div>
+                  <div className="text-xs text-[#6B778C]">존</div>
+                  <div className="font-medium">{selected.zone}</div>
+                </div>
+                <div>
+                  <div className="text-xs text-[#6B778C]">세차 유형</div>
+                  <div className="font-medium">{selected.washType}</div>
+                </div>
+              </div>
+            </div>
+
+            {/* 할당 내용 */}
+            <div className="rounded-lg border-2 border-[#0052CC] bg-[#F0F7FF] p-4 space-y-3">
+              <div className="text-xs font-semibold text-[#0052CC] uppercase tracking-wider">할당 내용</div>
+              <div className="grid grid-cols-2 gap-3 text-sm">
+                <div>
+                  <div className="text-xs text-[#6B778C]">수행원</div>
+                  <div className="font-bold text-[#172B4D]">{assignWorker.name} ({assignWorker.id})</div>
+                </div>
+                <div>
+                  <div className="text-xs text-[#6B778C]">예약 시간</div>
+                  <div className="font-bold text-[#172B4D]">{assignTimeSlot.label}</div>
+                </div>
+              </div>
+              <div className="flex items-center gap-2 pt-2 border-t border-[#0052CC]/20">
+                <CheckCircle2 className="h-4 w-4 text-[#0052CC]" />
+                <span className="text-xs text-[#0052CC]">할당 후 오더 상태가 "발행" → "예약"으로 변경됩니다.</span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  // Step: 완료
+  if (assignStep === 'done') {
+    return (
+      <div className="flex flex-col items-center justify-center py-12 space-y-4">
+        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#36B37E]/10">
+          <CheckCircle2 className="h-8 w-8 text-[#36B37E]" />
+        </div>
+        <div className="text-center">
+          <div className="text-lg font-bold text-[#172B4D]">오더 할당 완료</div>
+          <div className="text-sm text-[#6B778C] mt-1">수행원에게 성공적으로 할당되었습니다.</div>
+        </div>
+        <Card className="w-full">
+          <CardContent className="py-4">
+            <div className="grid grid-cols-2 gap-3 text-sm">
+              <div>
+                <div className="text-xs text-[#6B778C]">오더 ID</div>
+                <div className="font-medium text-[#0052CC]">{selected.orderId}</div>
+              </div>
+              <div>
+                <div className="text-xs text-[#6B778C]">변경 상태</div>
+                <div><Badge tone="ok">예약</Badge></div>
+              </div>
+              <div>
+                <div className="text-xs text-[#6B778C]">수행원</div>
+                <div className="font-medium">{assignWorker?.name}</div>
+              </div>
+              <div>
+                <div className="text-xs text-[#6B778C]">예약 시간</div>
+                <div className="font-medium">{assignTimeSlot?.label}</div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  return null;
 }
 
 export default PartnerOrdersPage;

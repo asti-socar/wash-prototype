@@ -59,7 +59,7 @@ const PARTNER_NAV = [
     label: "업무 관리",
     icon: ClipboardList,
     items: [
-      { key: "partner-orders", label: "오더 조회", icon: ClipboardList, parentKey: "partner-work" },
+      { key: "partner-orders", label: "오더 관리", icon: ClipboardList, parentKey: "partner-work" },
       { key: "partner-zones", label: "존 관리", icon: MapPinned, parentKey: "partner-work" },
       { key: "partner-settlement", label: "합의 요청 관리", icon: Handshake, parentKey: "partner-work" },
       { key: "partner-billing", label: "청구 관리", icon: Receipt, parentKey: "partner-work" },
@@ -88,7 +88,7 @@ const PARTNER_NAV = [
 
 const PARTNER_PAGE_TITLES = {
   "partner-dashboard": "대시보드",
-  "partner-orders": "오더 조회",
+  "partner-orders": "오더 관리",
   "partner-zones": "존 관리",
   "partner-settlement": "합의 요청 관리",
   "partner-billing": "청구 관리",
