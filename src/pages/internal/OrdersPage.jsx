@@ -988,23 +988,89 @@ function OrdersPage({ quickFilter, onClearQuickFilter, initialOrderId, orders, s
             </TabsList>
 
             <TabsContent value="info" currentValue={drawerTab} className="space-y-4 pt-4">
-              {/* 1. 기본 정보 섹션 */}
+              {/* 헤더: 차량 번호(차종) + 진행 상태 */}
+              <div className="flex items-center gap-2">
+                <span className="text-lg font-bold text-[#172B4D]">{selected.plate} ({selected.model})</span>
+                <Badge tone={getStatusBadgeTone(selected.status)}>{selected.status}</Badge>
+              </div>
+
+              {/* 1-A. 오더 정보 */}
               <Card>
                 <CardHeader>
-                  <CardTitle>기본 정보</CardTitle>
-                  <CardDescription>오더 및 차량 주요 정보</CardDescription>
+                  <CardTitle>오더 정보</CardTitle>
                 </CardHeader>
                 <CardContent className="grid grid-cols-2 gap-x-4 gap-y-4 text-sm text-[#172B4D]">
-                  <div className="col-span-2 flex items-center gap-2">
-                    <span className="font-bold text-[#0052CC]">{selected.orderId}</span>
-                    <Badge tone={selected.orderGroup === "긴급" ? "danger" : "default"}>
-                      {selected.orderGroup}
-                    </Badge>
-                     <Badge tone="info">{selected.inspectionType}유형</Badge>
+                  <div className="space-y-1">
+                    <div className="text-xs text-[#6B778C]">오더 ID</div>
+                    <div className="font-medium text-[#0052CC]">{selected.orderId}</div>
                   </div>
-                  
+                  <div className="space-y-1">
+                    <div className="text-xs text-[#6B778C]">발행 일시</div>
+                    <div className="font-medium">{formatCreatedAt(selected)}</div>
+                  </div>
+                  <div className="space-y-1">
+                    <div className="text-xs text-[#6B778C]">수행 일시</div>
+                    <div className="font-medium">{(['수행 중', '완료'].includes(selected.status) && selected.completedAt) ? selected.completedAt : "-"}</div>
+                  </div>
+                  <div className="space-y-1">
+                    <div className="text-xs text-[#6B778C]">취소 일시</div>
+                    <div className="font-medium">{selected.status === '취소' && selected.canceledAt ? selected.canceledAt : "-"}</div>
+                  </div>
+
                   <div className="col-span-2 border-t border-[#DFE1E6] my-1"></div>
 
+                  <div className="space-y-1">
+                    <div className="text-xs text-[#6B778C]">오더 구분</div>
+                    <div><Badge tone={selected.orderGroup === "긴급" ? "danger" : "default"}>{selected.orderGroup}</Badge></div>
+                  </div>
+                  <div className="space-y-1">
+                    <div className="text-xs text-[#6B778C]">발행 유형</div>
+                    <div>{selected.orderType}</div>
+                  </div>
+                  <div className="space-y-1">
+                    <div className="text-xs text-[#6B778C]">세차 유형</div>
+                    <div className="font-medium">{selected.washType}</div>
+                  </div>
+                  <div className="space-y-1">
+                    <div className="text-xs text-[#6B778C]">파트너 유형</div>
+                    <div>{selected.partnerType}</div>
+                  </div>
+
+                  <div className="col-span-2 border-t border-[#DFE1E6] my-1"></div>
+
+                  <div className="space-y-1">
+                    <div className="text-xs text-[#6B778C]">담당 수행원</div>
+                    <div className="font-medium">{selected.partnerType === '핸들러' ? '-' : selected.worker}</div>
+                  </div>
+                  <div className="space-y-1">
+                    <div className="text-xs text-[#6B778C]">담당 파트너 이름</div>
+                    <div className="font-medium">{selected.partner}</div>
+                  </div>
+
+                  <div className="col-span-2 border-t border-[#DFE1E6] my-1"></div>
+
+                  <div className="space-y-1">
+                    <div className="text-xs text-[#6B778C]">진행 상태</div>
+                    <Badge tone={getStatusBadgeTone(selected.status)}>{selected.status}</Badge>
+                  </div>
+                  <div className="space-y-1">
+                    <div className="text-xs text-[#6B778C]">취소 유형</div>
+                    <div>{selected.status === "취소" && selected.cancelType ? <Badge tone="default">{selected.cancelType}</Badge> : <span className="text-[#94A3B8]">-</span>}</div>
+                  </div>
+
+                  <div className="col-span-2 space-y-1">
+                    <div className="text-xs text-[#6B778C]">메모</div>
+                    <div className="bg-[#F4F5F7] p-2 rounded-lg text-xs">{selected.comment}</div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* 1-B. 차량 정보 */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>차량 정보</CardTitle>
+                </CardHeader>
+                <CardContent className="grid grid-cols-2 gap-x-4 gap-y-4 text-sm text-[#172B4D]">
                   <div className="space-y-1">
                     <div className="text-xs text-[#6B778C]">차량 ID</div>
                     <div className="font-medium">{selected.carId}</div>
@@ -1020,47 +1086,6 @@ function OrdersPage({ quickFilter, onClearQuickFilter, initialOrderId, orders, s
                   <div className="space-y-1">
                     <div className="text-xs text-[#6B778C]">지역</div>
                     <div className="font-medium">{selected.region1} / {selected.region2}</div>
-                  </div>
-                  <div className="space-y-1">
-                    <div className="text-xs text-[#6B778C]">발행 유형</div>
-                    <div>{selected.orderType}</div>
-                  </div>
-                  <div className="space-y-1">
-                    <div className="text-xs text-[#6B778C]">세차 유형</div>
-                    <div className="font-medium">{selected.washType}</div>
-                  </div>
-                  <div className="space-y-1">
-                    <div className="text-xs text-[#6B778C]">파트너 이름</div>
-                    <div className="font-medium">{selected.partner}</div>
-                  </div>
-                  <div className="space-y-1">
-                    <div className="text-xs text-[#6B778C]">파트너 유형</div>
-                    <div>{selected.partnerType}</div>
-                  </div>
-                  <div className="space-y-1">
-                    <div className="text-xs text-[#6B778C]">수행원</div>
-                    <div>{selected.partnerType === '핸들러' ? '-' : selected.worker}</div>
-                  </div>
-                  <div className="space-y-1">
-                    <div className="text-xs text-[#6B778C]">진행 상태</div>
-                    <Badge tone={getStatusBadgeTone(selected.status)}>{selected.status}</Badge>
-                  </div>
-                  <div className="space-y-1">
-                    <div className="text-xs text-[#6B778C]">취소 유형</div>
-                    <div>{selected.status === "취소" && selected.cancelType ? <Badge tone="default">{selected.cancelType}</Badge> : <span className="text-[#94A3B8]">-</span>}</div>
-                  </div>
-                  <div className="col-span-2 border-t border-[#DFE1E6] my-1"></div>
-                  <div className="space-y-1">
-                    <div className="text-xs text-[#6B778C]">발행 일시</div>
-                    <div className="font-medium">{formatCreatedAt(selected)}</div>
-                  </div>
-                  <div className="space-y-1">
-                    <div className="text-xs text-[#6B778C]">수행 일시</div>
-                    <div className="font-medium">{(['수행 중', '완료'].includes(selected.status) && selected.completedAt) ? selected.completedAt : "-"}</div>
-                  </div>
-                  <div className="col-span-2 space-y-1">
-                    <div className="text-xs text-[#6B778C]">메모</div>
-                    <div className="bg-[#F4F5F7] p-2 rounded-lg text-xs">{selected.comment}</div>
                   </div>
                 </CardContent>
               </Card>
