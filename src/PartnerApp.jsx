@@ -41,6 +41,7 @@ import PartnerZoneManagementPage from "./pages/partner/PartnerZoneManagementPage
 import PartnerSettlementPage from "./pages/partner/PartnerSettlementPage";
 import PartnerBillingPage from "./pages/partner/PartnerBillingPage";
 import PartnerLostItemsPage from "./pages/partner/PartnerLostItemsPage";
+import PartnerMissionsPage from "./pages/partner/PartnerMissionsPage";
 import PartnerNoticesPage from "./pages/partner/PartnerNoticesPage";
 import PartnerUpdateHistoryPage from "./pages/partner/PartnerUpdateHistoryPage";
 
@@ -59,9 +60,10 @@ const PARTNER_NAV = [
     label: "업무 관리",
     icon: ClipboardList,
     items: [
-      { key: "partner-orders", label: "오더 조회", icon: ClipboardList, parentKey: "partner-work" },
-      { key: "partner-zones", label: "존 관리", icon: MapPinned, parentKey: "partner-work" },
+      { key: "partner-orders", label: "오더 관리", icon: ClipboardList, parentKey: "partner-work" },
       { key: "partner-settlement", label: "합의 요청 관리", icon: Handshake, parentKey: "partner-work" },
+      { key: "partner-missions", label: "미션 조회", icon: ClipboardList, parentKey: "partner-work" },
+      { key: "partner-zones", label: "수행원 배정", icon: MapPinned, parentKey: "partner-work" },
       { key: "partner-billing", label: "청구 관리", icon: Receipt, parentKey: "partner-work" },
       { key: "partner-lostfound", label: "분실물 관리", icon: PackageSearch, parentKey: "partner-work" },
       { key: "partner-notices", label: "공지사항", icon: Megaphone, parentKey: "partner-work" },
@@ -88,8 +90,9 @@ const PARTNER_NAV = [
 
 const PARTNER_PAGE_TITLES = {
   "partner-dashboard": "대시보드",
-  "partner-orders": "오더 조회",
-  "partner-zones": "존 관리",
+  "partner-orders": "오더 관리",
+  "partner-zones": "수행원 배정",
+  "partner-missions": "미션 조회",
   "partner-settlement": "합의 요청 관리",
   "partner-billing": "청구 관리",
   "partner-lostfound": "분실물 관리",
@@ -192,6 +195,8 @@ export default function PartnerApp({ onSwitchAdmin }) {
         return <PartnerLostItemsPage currentPartner={currentPartner} />;
       case "partner-notices":
         return <PartnerNoticesPage currentPartner={currentPartner} />;
+      case "partner-missions":
+        return <PartnerMissionsPage currentPartner={currentPartner} />;
       case "partner-update-history":
         return <PartnerUpdateHistoryPage />;
       case "partner-managers":
