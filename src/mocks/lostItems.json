@@ -19,7 +19,10 @@
     "deliveryAddress1": "",
     "deliveryAddress2": "",
     "recipientName": "",
-    "recipientPhone": ""
+    "recipientPhone": "",
+    "statusHistory": [
+      { "fromStatus": null, "toStatus": "배송지 미입력", "changedBy": "system@socar.kr", "changedAt": "2026-02-05 10:30:00" }
+    ]
   },
   {
     "id": "LI0002",
@@ -41,7 +44,10 @@
     "deliveryAddress1": "",
     "deliveryAddress2": "",
     "recipientName": "",
-    "recipientPhone": ""
+    "recipientPhone": "",
+    "statusHistory": [
+      { "fromStatus": null, "toStatus": "배송지 미입력", "changedBy": "system@socar.kr", "changedAt": "2026-01-28 15:00:00" }
+    ]
   },
   {
     "id": "LI0003",
@@ -63,7 +69,11 @@
     "deliveryAddress1": "서울 강남구 테헤란로 123",
     "deliveryAddress2": "4층 401호",
     "recipientName": "김고객",
-    "recipientPhone": "010-1234-5678"
+    "recipientPhone": "010-1234-5678",
+    "statusHistory": [
+      { "fromStatus": null, "toStatus": "배송지 미입력", "changedBy": "system@socar.kr", "changedAt": "2026-01-20 09:15:00" },
+      { "fromStatus": "배송지 미입력", "toStatus": "발송 대기", "changedBy": "admin@socar.kr", "changedAt": "2026-01-22 14:30:00" }
+    ]
   },
   {
     "id": "LI0004",
@@ -85,7 +95,11 @@
     "deliveryAddress1": "서울 강남구 논현로 571 강남경찰서",
     "deliveryAddress2": "습득물 보관소",
     "recipientName": "강남경찰서",
-    "recipientPhone": "02-3461-0691"
+    "recipientPhone": "02-3461-0691",
+    "statusHistory": [
+      { "fromStatus": null, "toStatus": "배송지 미입력", "changedBy": "system@socar.kr", "changedAt": "2026-01-10 14:20:00" },
+      { "fromStatus": "배송지 미입력", "toStatus": "경찰서 인계", "changedBy": "ops_manager@socar.kr", "changedAt": "2026-01-15 11:00:00" }
+    ]
   },
   {
     "id": "LI0005",
@@ -107,7 +121,12 @@
     "deliveryAddress1": "서울 마포구 월드컵북로 21",
     "deliveryAddress2": "2층",
     "recipientName": "이고객",
-    "recipientPhone": "010-9876-5432"
+    "recipientPhone": "010-9876-5432",
+    "statusHistory": [
+      { "fromStatus": null, "toStatus": "배송지 미입력", "changedBy": "system@socar.kr", "changedAt": "2025-12-25 11:45:00" },
+      { "fromStatus": "배송지 미입력", "toStatus": "발송 대기", "changedBy": "admin@socar.kr", "changedAt": "2025-12-27 10:20:00" },
+      { "fromStatus": "발송 대기", "toStatus": "발송 완료", "changedBy": "admin@socar.kr", "changedAt": "2025-12-30 16:00:00" }
+    ]
   },
   {
     "id": "LI0006",
@@ -129,7 +148,11 @@
     "deliveryAddress1": "",
     "deliveryAddress2": "",
     "recipientName": "",
-    "recipientPhone": ""
+    "recipientPhone": "",
+    "statusHistory": [
+      { "fromStatus": null, "toStatus": "배송지 미입력", "changedBy": "system@socar.kr", "changedAt": "2025-12-15 16:30:00" },
+      { "fromStatus": "배송지 미입력", "toStatus": "폐기 완료", "changedBy": "ops_manager@socar.kr", "changedAt": "2026-01-15 09:00:00" }
+    ]
   },
   {
     "id": "LI0007",
@@ -151,7 +174,10 @@
     "deliveryAddress1": "",
     "deliveryAddress2": "",
     "recipientName": "",
-    "recipientPhone": ""
+    "recipientPhone": "",
+    "statusHistory": [
+      { "fromStatus": null, "toStatus": "배송지 미입력", "changedBy": "system@socar.kr", "changedAt": "2026-02-08 09:20:00" }
+    ]
   },
   {
     "id": "LI0008",
@@ -173,7 +199,10 @@
     "deliveryAddress1": "",
     "deliveryAddress2": "",
     "recipientName": "",
-    "recipientPhone": ""
+    "recipientPhone": "",
+    "statusHistory": [
+      { "fromStatus": null, "toStatus": "배송지 미입력", "changedBy": "system@socar.kr", "changedAt": "2026-02-06 14:10:00" }
+    ]
   },
   {
     "id": "LI0009",
@@ -195,7 +224,10 @@
     "deliveryAddress1": "",
     "deliveryAddress2": "",
     "recipientName": "",
-    "recipientPhone": ""
+    "recipientPhone": "",
+    "statusHistory": [
+      { "fromStatus": null, "toStatus": "배송지 미입력", "changedBy": "system@socar.kr", "changedAt": "2026-02-03 11:05:00" }
+    ]
   },
   {
     "id": "LI0010",
@@ -217,7 +249,10 @@
     "deliveryAddress1": "",
     "deliveryAddress2": "",
     "recipientName": "",
-    "recipientPhone": ""
+    "recipientPhone": "",
+    "statusHistory": [
+      { "fromStatus": null, "toStatus": "배송지 미입력", "changedBy": "system@socar.kr", "changedAt": "2026-01-30 16:45:00" }
+    ]
   },
   {
     "id": "LI0011",
@@ -239,7 +274,10 @@
     "deliveryAddress1": "",
     "deliveryAddress2": "",
     "recipientName": "",
-    "recipientPhone": ""
+    "recipientPhone": "",
+    "statusHistory": [
+      { "fromStatus": null, "toStatus": "배송지 미입력", "changedBy": "system@socar.kr", "changedAt": "2026-01-25 08:30:00" }
+    ]
   },
   {
     "id": "LI0012",
@@ -261,7 +299,11 @@
     "deliveryAddress1": "서울 서초구 반포대로 235",
     "deliveryAddress2": "아파트 1203호",
     "recipientName": "박고객",
-    "recipientPhone": "010-5555-1234"
+    "recipientPhone": "010-5555-1234",
+    "statusHistory": [
+      { "fromStatus": null, "toStatus": "배송지 미입력", "changedBy": "system@socar.kr", "changedAt": "2026-02-12 13:40:00" },
+      { "fromStatus": "배송지 미입력", "toStatus": "발송 대기", "changedBy": "admin@socar.kr", "changedAt": "2026-02-14 09:15:00" }
+    ]
   },
   {
     "id": "LI0013",
@@ -283,7 +325,12 @@
     "deliveryAddress1": "인천 연수구 컨벤시아대로 165",
     "deliveryAddress2": "5층",
     "recipientName": "최고객",
-    "recipientPhone": "010-3333-9876"
+    "recipientPhone": "010-3333-9876",
+    "statusHistory": [
+      { "fromStatus": null, "toStatus": "배송지 미입력", "changedBy": "system@socar.kr", "changedAt": "2026-02-15 10:15:00" },
+      { "fromStatus": "배송지 미입력", "toStatus": "발송 대기", "changedBy": "admin@socar.kr", "changedAt": "2026-02-16 11:30:00" },
+      { "fromStatus": "발송 대기", "toStatus": "발송 완료", "changedBy": "ops_manager@socar.kr", "changedAt": "2026-02-18 15:45:00" }
+    ]
   },
   {
     "id": "LI0014",
@@ -305,7 +352,10 @@
     "deliveryAddress1": "",
     "deliveryAddress2": "",
     "recipientName": "",
-    "recipientPhone": ""
+    "recipientPhone": "",
+    "statusHistory": [
+      { "fromStatus": null, "toStatus": "배송지 미입력", "changedBy": "system@socar.kr", "changedAt": "2026-02-18 16:20:00" }
+    ]
   },
   {
     "id": "LI0015",
@@ -327,7 +377,11 @@
     "deliveryAddress1": "서울 송파구 올림픽로 114 송파경찰서",
     "deliveryAddress2": "습득물 보관소",
     "recipientName": "송파경찰서",
-    "recipientPhone": "02-2203-0691"
+    "recipientPhone": "02-2203-0691",
+    "statusHistory": [
+      { "fromStatus": null, "toStatus": "배송지 미입력", "changedBy": "system@socar.kr", "changedAt": "2026-02-20 09:50:00" },
+      { "fromStatus": "배송지 미입력", "toStatus": "경찰서 인계", "changedBy": "ops_manager@socar.kr", "changedAt": "2026-02-21 14:30:00" }
+    ]
   },
   {
     "id": "LI0016",
@@ -349,6 +403,9 @@
     "deliveryAddress1": "",
     "deliveryAddress2": "",
     "recipientName": "",
-    "recipientPhone": ""
+    "recipientPhone": "",
+    "statusHistory": [
+      { "fromStatus": null, "toStatus": "배송지 미입력", "changedBy": "system@socar.kr", "changedAt": "2026-02-22 11:30:00" }
+    ]
   }
 ]

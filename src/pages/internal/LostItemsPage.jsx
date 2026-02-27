@@ -3,7 +3,7 @@ import { ChevronLeft, ChevronRight, Pencil } from 'lucide-react';
 import {
   toYmd, Card, CardHeader, CardTitle, CardContent,
   Button, Input, Select, Badge, Chip, FilterPanel,
-  Drawer, Field, DataTable, usePagination,
+  Drawer, Field, DataTable, usePagination, PillTabs,
 } from '../../components/ui';
 import initialMockLostItems from '../../mocks/lostItems.json';
 
@@ -52,6 +52,9 @@ export default function LostItemsPage({ setActiveKey }) {
   // Draft states for inline Input editing
   const [drafts, setDrafts] = useState({});
   const setDraft = (key, val) => setDrafts(p => ({ ...p, [key]: val }));
+
+  // Drawer tab
+  const [drawerTab, setDrawerTab] = useState('detail');
 
   // Save confirmation popup
   const [isSaveConfirming, setIsSaveConfirming] = useState(false);
@@ -110,6 +113,7 @@ export default function LostItemsPage({ setActiveKey }) {
     setDraftAddr1(item.deliveryAddress1 || '');
     setDraftAddr2(item.deliveryAddress2 || '');
     setIsEditMode(false);
+    setDrawerTab('detail');
     setDrawerVisible(true);
   };
 
@@ -126,6 +130,7 @@ export default function LostItemsPage({ setActiveKey }) {
     setDraftAddr1(item.deliveryAddress1 || '');
     setDraftAddr2(item.deliveryAddress2 || '');
     setIsEditMode(true);
+    setDrawerTab('detail');
     setDrawerVisible(true);
   };
 
@@ -150,6 +155,7 @@ export default function LostItemsPage({ setActiveKey }) {
     });
     setDraftAddr1(selectedItem.deliveryAddress1 || '');
     setDraftAddr2(selectedItem.deliveryAddress2 || '');
+    setDrawerTab('detail');
     setIsEditMode(true);
   };
 
@@ -222,6 +228,21 @@ export default function LostItemsPage({ setActiveKey }) {
   const confirmSave = () => {
     if (!selectedItem) return;
     const updates = buildUpdates();
+
+    // 상태 변경 시 이력 추가
+    if (updates.status && updates.status !== selectedItem.status) {
+      const now = new Date();
+      const pad = (n) => String(n).padStart(2, '0');
+      const changedAt = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+      const historyEntry = {
+        fromStatus: selectedItem.status,
+        toStatus: updates.status,
+        changedBy: 'admin@socar.kr',
+        changedAt,
+      };
+      updates.statusHistory = [...(selectedItem.statusHistory || []), historyEntry];
+    }
+
     updateItemField(selectedItem.id, updates);
     setIsEditMode(false);
     setDrafts({});
@@ -237,7 +258,19 @@ export default function LostItemsPage({ setActiveKey }) {
   const handleShipComplete = () => {
     if (!selectedItem || selectedItem.status !== '발송 대기') return;
     if (!confirm('발송 완료 처리하시겠습니까?')) return;
-    updateItemField(selectedItem.id, { status: '발송 완료' });
+    const now = new Date();
+    const pad = (n) => String(n).padStart(2, '0');
+    const changedAt = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+    const historyEntry = {
+      fromStatus: '발송 대기',
+      toStatus: '발송 완료',
+      changedBy: 'admin@socar.kr',
+      changedAt,
+    };
+    updateItemField(selectedItem.id, {
+      status: '발송 완료',
+      statusHistory: [...(selectedItem.statusHistory || []), historyEntry],
+    });
   };
 
 
@@ -286,7 +319,7 @@ export default function LostItemsPage({ setActiveKey }) {
     },
   ];
 
-  const renderDrawerContent = () => {
+  const renderDetailTab = () => {
     if (!selectedItem) return null;
     const data = selectedItem;
     const isValuable = (isEditMode ? drafts.itemCategory : data.itemCategory) === '귀중품';
@@ -404,6 +437,67 @@ export default function LostItemsPage({ setActiveKey }) {
             <Field label="휴대폰 번호" value={data.recipientPhone || '-'} />
           </CardContent>
         </Card>
+      </div>
+    );
+  };
+
+  const renderStatusHistoryTab = () => {
+    if (!selectedItem) return null;
+    const history = selectedItem.statusHistory || [];
+
+    if (history.length === 0) {
+      return (
+        <div className="py-12 text-center text-sm text-[#6B778C]">변경 이력이 없습니다.</div>
+      );
+    }
+
+    return (
+      <Card>
+        <CardContent className="p-0">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-[#E2E8F0] bg-[#F8F9FA]">
+                <th className="px-4 py-2.5 text-left text-xs font-semibold text-[#6B778C]">변경 일시</th>
+                <th className="px-4 py-2.5 text-left text-xs font-semibold text-[#6B778C]">이전 상태</th>
+                <th className="px-4 py-2.5 text-left text-xs font-semibold text-[#6B778C]">변경 상태</th>
+                <th className="px-4 py-2.5 text-left text-xs font-semibold text-[#6B778C]">변경 계정</th>
+              </tr>
+            </thead>
+            <tbody>
+              {[...history].reverse().map((h, i) => (
+                <tr key={i} className="border-b border-[#F0F0F0] last:border-b-0">
+                  <td className="px-4 py-2.5 text-[#172B4D]">{h.changedAt}</td>
+                  <td className="px-4 py-2.5">
+                    {h.fromStatus ? <Badge tone={statusBadgeMap[h.fromStatus]}>{h.fromStatus}</Badge> : <span className="text-[#6B778C]">-</span>}
+                  </td>
+                  <td className="px-4 py-2.5">
+                    <Badge tone={statusBadgeMap[h.toStatus]}>{h.toStatus}</Badge>
+                  </td>
+                  <td className="px-4 py-2.5 text-[#6B778C]">{h.changedBy}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </CardContent>
+      </Card>
+    );
+  };
+
+  const renderDrawerContent = () => {
+    if (!selectedItem) return null;
+
+    return (
+      <div className="space-y-4">
+        <PillTabs
+          value={drawerTab}
+          onChange={setDrawerTab}
+          items={[
+            { value: 'detail', label: '상세 정보' },
+            { value: 'statusHistory', label: '처리상태 변경이력' },
+          ]}
+        />
+        {drawerTab === 'detail' && renderDetailTab()}
+        {drawerTab === 'statusHistory' && renderStatusHistoryTab()}
       </div>
     );
   };

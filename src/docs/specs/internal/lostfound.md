@@ -35,8 +35,17 @@
 | deliveryAddress2 | string | 배송 상세 주소 | "" |
 | recipientName | string | 수령인 이름 | "" |
 | recipientPhone | string | 수령인 휴대폰 번호 | "" |
+| statusHistory | array | 처리 상태 변경 이력 | `[{ fromStatus, toStatus, changedBy, changedAt }]` |
 
 > `isDisposed` (boolean)는 Mock 데이터에 없으며, 런타임에서 동적으로 추가됨.
+
+#### statusHistory 항목 구조
+| 필드명 | 타입 | 설명 | 예시 |
+| :--- | :---: | :--- | :--- |
+| fromStatus | string\|null | 이전 상태 (최초 생성 시 `null`) | "배송지 미입력" |
+| toStatus | string | 변경 후 상태 | "발송 대기" |
+| changedBy | string | 변경한 계정 (이메일) | "admin@socar.kr" |
+| changedAt | string | 변경 일시 (`YYYY-MM-DD HH:mm:ss`) | "2026-02-14 09:15:00" |
 
 ### 2.3 처리 상태 정의
 
@@ -114,6 +123,10 @@
 
 - **타이틀**: "분실물 상세 정보" / 부제: "분실물 상세 및 처리 상태 관리"
 - **읽기/수정 모드**: 행 클릭 시 읽기 모드로 열림. 수정 아이콘 클릭 또는 Footer [수정하기] 클릭 시 수정 모드로 전환.
+- **탭 구성**: PillTabs로 2개 탭 제공
+  - `상세 정보` (기본 탭): 기존 4개 카드 (분실물 정보, 차량 정보, 세차 오더 정보, 분실물 카드 정보)
+  - `처리상태 변경이력`: 처리 상태 변경 이력 테이블
+- **수정 모드 진입 시**: 탭이 `상세 정보`로 강제 전환됨
 
 #### 3.2.1 읽기 모드 → 수정 모드 전환
 - **테이블 수정 아이콘 클릭** → `showDrawerInEditMode()`: 현재 데이터를 drafts로 복사하여 수정 모드로 Drawer 열림
@@ -156,6 +169,24 @@
 | 휴대폰 번호 | 텍스트 (읽기 전용) | 텍스트 (읽기 전용) | 항상 조회만 가능 |
 
 > 분실물 카드 정보는 옥스트라의 분실물 카드 정보를 연동하여 조회하는 역할이며, 모든 필드는 수정 모드에서도 항상 읽기 전용입니다.
+
+#### 3.2.7 탭 2: 처리상태 변경이력
+- 처리 상태가 변경될 때마다 이력이 기록됨 (수정 저장 시 + 발송 완료 버튼 클릭 시)
+- **테이블 컬럼**:
+
+| 헤더명 | 필드 | 설명 |
+| :--- | :--- | :--- |
+| 변경 일시 | changedAt | 상태 변경 시각 |
+| 이전 상태 | fromStatus | 변경 전 상태 (최초 생성 시 `-`) |
+| 변경 상태 | toStatus | 변경 후 상태 (Badge 표시) |
+| 변경 계정 | changedBy | 변경한 계정 이메일 |
+
+- **정렬**: 최신순 (역순 표시)
+- **이력 없음**: "변경 이력이 없습니다." 안내 문구 표시
+- **이력 기록 시점**:
+  - `confirmSave()`: 수정 모드에서 저장 시 status 필드가 변경된 경우 자동 기록
+  - `handleShipComplete()`: 발송 완료 버튼 클릭 시 자동 기록
+- **기록 데이터**: `{ fromStatus, toStatus, changedBy: 'admin@socar.kr', changedAt: 현재시각 }`
 
 ---
 
@@ -210,6 +241,7 @@ items (전체 11건)
 | Chip | FilterPanel 활성 필터 표시 |
 | FilterPanel | 조회 조건 설정 패널 |
 | Drawer / Field | 상세 정보 오버레이 |
+| PillTabs | Drawer 내 탭 전환 (상세 정보 / 처리상태 변경이력) |
 | DataTable | 목록 테이블 렌더링 |
 | usePagination | 40건 단위 페이지네이션 |
 
@@ -231,6 +263,7 @@ fPartner / fStatus: 파트너/상태 필터
 periodFrom / periodTo: 접수일 기간 필터
 sortConfig: { key, direction } — 현재 정렬 상태
 drawerVisible / selectedItem: Drawer 표시 여부 및 선택 항목
+drawerTab: Drawer 내 활성 탭 ('detail' | 'statusHistory')
 isEditMode: 읽기/수정 모드 여부
 drafts: { itemCategory, itemDetails, recipientName, recipientPhone, isDisposed } — 수정 중 임시 데이터
 draftAddr1 / draftAddr2: 주소 수정 임시 데이터
