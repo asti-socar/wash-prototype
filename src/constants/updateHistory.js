@@ -112,6 +112,9 @@ export const PARTNER_HISTORY = [
 ];
 
 export const ASTI_HISTORY = [
+  { id: 45, date: "2026-02-27 14:19", content: "차량 관리: 차량 상세 Drawer에 존 유형 필드 추가", isPolicyChange: false, links: [{ label: "차량 관리", page: "cars" }] },
+  { id: 44, date: "2026-02-27 14:17", content: "차량 관리: 존 유형 필드 추가 (목업 데이터, 리스트 컬럼, 조회 조건 필터)", isPolicyChange: false, links: [{ label: "차량 관리", page: "cars" }] },
+  { id: 43, date: "2026-02-27 12:10", content: "차량 관리: 파트너 이름을 현장 파트너/입고 파트너로 분리 (필터, Drawer, 목업 데이터)", isPolicyChange: false, links: [{ label: "차량 관리", page: "cars" }] },
   { id: 42, date: "2026-02-26 15:18", content: "오더 상세 Drawer 개편: 헤더를 차량번호(차종)+진행상태로 변경, 기본정보 카드를 오더정보·차량정보 2개 카드로 분리, 파트너 이름 필드 추가 (인터널+파트너 어드민 동시 적용)", isPolicyChange: false, links: [{ label: "오더 관리", page: "orders" }, { label: "파트너 오더 조회", page: "partner-orders" }] },
   { id: 38, date: "2026-02-25 16:54", content: "목업데이터: 강남모빌리티(P-001) 데이터 보강 — 차량(3→8), 청구(7→15), 합의요청(7→10), 분실물(0→10, 파트너명 실명 전환), 배송정보(0→15), 수행원정보(0→12)", isPolicyChange: false, links: [] },
   { id: 36, date: "2026-02-25 10:16", content: "존 배정 관리: 수행원 목업 데이터 확장(10→14명) — 모든 존에 현장/입고 수행원 최소 1명씩 배정되도록 zoneIds 전수 커버", isPolicyChange: false, links: [{ label: "존 배정 관리", page: "zone-assignment" }] },
