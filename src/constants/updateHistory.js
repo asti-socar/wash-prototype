@@ -105,15 +105,15 @@ export const BROWN_HISTORY = [
 ];
 
 export const PARTNER_HISTORY = [
+  { id: 4, date: "2026-02-26 17:07", content: "파트너 오더 관리: '오더 조회'→'오더 관리' 명칭 변경, 오더 할당 기능 추가 — 발행 상태 오더에 존 담당 수행원 배정 및 예약 (3단계 플로우: 수행원 선택→스케줄/차량 확인→시간 선택→할당 확정)", isPolicyChange: false, links: [{ label: "파트너 오더 관리", page: "partner-orders" }] },
+  { id: 3, date: "2026-02-26 13:47", content: "파트너 대시보드·오더 조회: 기능명세(MD) 작성 — 인터널 대비 차이점 표, 영역/필터/컬럼/Drawer 구성 상세 기술", isPolicyChange: false, links: [{ label: "파트너 대시보드", page: "partner-dashboard" }, { label: "파트너 오더 조회", page: "partner-orders" }] },
+  { id: 2, date: "2026-02-25 17:07", content: "파트너 오더 조회: 인터널 오더관리 기반 읽기전용 페이지 구축 (파트너 이름/유형 컬럼·필터 제외, 발행·완료·취소 버튼 제거, 대시보드 연동 필터)", isPolicyChange: false, links: [{ label: "파트너 오더 조회", page: "partner-orders" }] },
+  { id: 1, date: "2026-02-25 16:36", content: "파트너 대시보드: 인터널 대시보드 기반 구축 (오더 현황, 리스크 관리, 시계열 차트), 강남모빌리티 데이터 필터링, 파트너 수행관리 섹션 제거", isPolicyChange: false, links: [{ label: "파트너 대시보드", page: "partner-dashboard" }] },
 ];
 
 export const ASTI_HISTORY = [
-  { id: 42, date: "2026-02-26 17:07", content: "파트너 오더 관리: '오더 조회'→'오더 관리' 명칭 변경, 오더 할당 기능 추가 — 발행 상태 오더에 존 담당 수행원 배정 및 예약 (3단계 플로우: 수행원 선택→스케줄/차량 확인→시간 선택→할당 확정)", isPolicyChange: false, links: [{ label: "파트너 오더 관리", page: "partner-orders" }] },
-  { id: 41, date: "2026-02-26 15:18", content: "오더 상세 Drawer 개편: 헤더를 차량번호(차종)+진행상태로 변경, 기본정보 카드를 오더정보·차량정보 2개 카드로 분리, 파트너 이름 필드 추가 (인터널+파트너 어드민 동시 적용)", isPolicyChange: false, links: [{ label: "오더 관리", page: "orders" }, { label: "파트너 오더 조회", page: "partner-orders" }] },
-  { id: 40, date: "2026-02-26 13:47", content: "파트너 대시보드·오더 조회: 기능명세(MD) 작성 — 인터널 대비 차이점 표, 영역/필터/컬럼/Drawer 구성 상세 기술", isPolicyChange: false, links: [{ label: "파트너 대시보드", page: "partner-dashboard" }, { label: "파트너 오더 조회", page: "partner-orders" }] },
-  { id: 39, date: "2026-02-25 17:07", content: "파트너 오더 조회: 인터널 오더관리 기반 읽기전용 페이지 구축 (파트너 이름/유형 컬럼·필터 제외, 발행·완료·취소 버튼 제거, 대시보드 연동 필터)", isPolicyChange: false, links: [{ label: "파트너 오더 조회", page: "partner-orders" }] },
+  { id: 42, date: "2026-02-26 15:18", content: "오더 상세 Drawer 개편: 헤더를 차량번호(차종)+진행상태로 변경, 기본정보 카드를 오더정보·차량정보 2개 카드로 분리, 파트너 이름 필드 추가 (인터널+파트너 어드민 동시 적용)", isPolicyChange: false, links: [{ label: "오더 관리", page: "orders" }, { label: "파트너 오더 조회", page: "partner-orders" }] },
   { id: 38, date: "2026-02-25 16:54", content: "목업데이터: 강남모빌리티(P-001) 데이터 보강 — 차량(3→8), 청구(7→15), 합의요청(7→10), 분실물(0→10, 파트너명 실명 전환), 배송정보(0→15), 수행원정보(0→12)", isPolicyChange: false, links: [] },
-  { id: 37, date: "2026-02-25 16:36", content: "파트너 대시보드: 인터널 대시보드 기반 구축 (오더 현황, 리스크 관리, 시계열 차트), 강남모빌리티 데이터 필터링, 파트너 수행관리 섹션 제거", isPolicyChange: false, links: [{ label: "파트너 대시보드", page: "partner-dashboard" }] },
   { id: 36, date: "2026-02-25 10:16", content: "존 배정 관리: 수행원 목업 데이터 확장(10→14명) — 모든 존에 현장/입고 수행원 최소 1명씩 배정되도록 zoneIds 전수 커버", isPolicyChange: false, links: [{ label: "존 배정 관리", page: "zone-assignment" }] },
   { id: 35, date: "2026-02-25 09:59", content: "수행원 조회: 파트너 이름을 파트너 관리 기준으로 변경(강남모빌리티/미션핸들코리아/수원카케어), 파트너 유형 컬럼 및 상세 필드 추가", isPolicyChange: false, links: [{ label: "수행원 조회", page: "workers" }] },
   { id: 34, date: "2026-02-25 09:43", content: "존 배정 관리: 필드명 변경 — '현장세차 파트너'→'현장 파트너', '입고세차 파트너'→'입고 파트너' (리스트/필터/드로워/해제 팝업/대량 배정 전체 반영)", isPolicyChange: false, links: [{ label: "존 배정 관리", page: "zone-assignment" }] },
