@@ -112,6 +112,7 @@ export const PARTNER_HISTORY = [
 ];
 
 export const ASTI_HISTORY = [
+  { id: 46, date: "2026-02-27 15:54", content: "분실물 관리: 처리상태 변경이력 탭 추가 (변경 계정, 변경 일시 기록)", isPolicyChange: false, links: [{ label: "분실물 관리", page: "lostfound" }] },
   { id: 45, date: "2026-02-27 14:19", content: "차량 관리: 차량 상세 Drawer에 존 유형 필드 추가", isPolicyChange: false, links: [{ label: "차량 관리", page: "cars" }] },
   { id: 44, date: "2026-02-27 14:17", content: "차량 관리: 존 유형 필드 추가 (목업 데이터, 리스트 컬럼, 조회 조건 필터)", isPolicyChange: false, links: [{ label: "차량 관리", page: "cars" }] },
   { id: 43, date: "2026-02-27 12:10", content: "차량 관리: 파트너 이름을 현장 파트너/입고 파트너로 분리 (필터, Drawer, 목업 데이터)", isPolicyChange: false, links: [{ label: "차량 관리", page: "cars" }] },
