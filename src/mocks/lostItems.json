@@ -2,7 +2,7 @@
   {
     "id": "LI0001",
     "createdAt": "2026-02-05 10:30:00",
-    "itemCategory": "일반",
+
     "status": "배송지 미입력",
     "itemDetails": "검은색 스마트폰, 최신 모델",
     "itemPhotos": ["https://placehold.co/20x20?text=Hello\nWorld"],
@@ -27,7 +27,7 @@
   {
     "id": "LI0002",
     "createdAt": "2026-01-28 15:00:00",
-    "itemCategory": "귀중품",
+
     "status": "배송지 미입력",
     "itemDetails": "갈색 가죽 지갑, 신분증 포함",
     "itemPhotos": [],
@@ -52,7 +52,7 @@
   {
     "id": "LI0003",
     "createdAt": "2026-01-20 09:15:00",
-    "itemCategory": "일반",
+
     "status": "발송 대기",
     "itemDetails": "검은색 우산",
     "itemPhotos": [],
@@ -78,7 +78,7 @@
   {
     "id": "LI0004",
     "createdAt": "2026-01-10 14:20:00",
-    "itemCategory": "귀중품",
+
     "status": "경찰서 인계",
     "itemDetails": "노트북 가방 (노트북 포함)",
     "itemPhotos": ["https://placehold.co/20x20?text=Bag"],
@@ -104,7 +104,7 @@
   {
     "id": "LI0005",
     "createdAt": "2025-12-25 11:45:00",
-    "itemCategory": "일반",
+
     "status": "발송 완료",
     "itemDetails": "파란색 텀블러",
     "itemPhotos": [],
@@ -131,7 +131,7 @@
   {
     "id": "LI0006",
     "createdAt": "2025-12-15 16:30:00",
-    "itemCategory": "귀중품",
+
     "status": "폐기 완료",
     "itemDetails": "고급 선글라스 케이스",
     "itemPhotos": [],
@@ -157,7 +157,7 @@
   {
     "id": "LI0007",
     "createdAt": "2026-02-08 09:20:00",
-    "itemCategory": "일반",
+
     "status": "배송지 미입력",
     "itemDetails": "흰색 에어팟 프로 케이스",
     "itemPhotos": [],
@@ -182,7 +182,7 @@
   {
     "id": "LI0008",
     "createdAt": "2026-02-06 14:10:00",
-    "itemCategory": "귀중품",
+
     "status": "배송지 미입력",
     "itemDetails": "금색 시계 (브랜드 미확인)",
     "itemPhotos": ["https://placehold.co/20x20?text=Watch"],
@@ -207,7 +207,7 @@
   {
     "id": "LI0009",
     "createdAt": "2026-02-03 11:05:00",
-    "itemCategory": "일반",
+
     "status": "배송지 미입력",
     "itemDetails": "빨간색 보조배터리",
     "itemPhotos": [],
@@ -232,7 +232,7 @@
   {
     "id": "LI0010",
     "createdAt": "2026-01-30 16:45:00",
-    "itemCategory": "귀중품",
+
     "status": "배송지 미입력",
     "itemDetails": "명품 카드지갑, 카드 3장 포함",
     "itemPhotos": [],
@@ -257,7 +257,7 @@
   {
     "id": "LI0011",
     "createdAt": "2026-01-25 08:30:00",
-    "itemCategory": "일반",
+
     "status": "배송지 미입력",
     "itemDetails": "차량용 블루투스 이어셋",
     "itemPhotos": [],
@@ -282,7 +282,7 @@
   {
     "id": "LI0012",
     "createdAt": "2026-02-12 13:40:00",
-    "itemCategory": "귀중품",
+
     "status": "발송 대기",
     "itemDetails": "여성용 명품 핸드백 (소형)",
     "itemPhotos": ["https://placehold.co/20x20?text=Bag"],
@@ -308,7 +308,7 @@
   {
     "id": "LI0013",
     "createdAt": "2026-02-15 10:15:00",
-    "itemCategory": "일반",
+
     "status": "발송 완료",
     "itemDetails": "어린이 장난감 (인형)",
     "itemPhotos": [],
@@ -335,7 +335,7 @@
   {
     "id": "LI0014",
     "createdAt": "2026-02-18 16:20:00",
-    "itemCategory": "일반",
+
     "status": "배송지 미입력",
     "itemDetails": "검은색 접이식 우산",
     "itemPhotos": [],
@@ -360,7 +360,7 @@
   {
     "id": "LI0015",
     "createdAt": "2026-02-20 09:50:00",
-    "itemCategory": "귀중품",
+
     "status": "경찰서 인계",
     "itemDetails": "고급 만년필 (몽블랑)",
     "itemPhotos": ["https://placehold.co/20x20?text=Pen"],
@@ -386,7 +386,7 @@
   {
     "id": "LI0016",
     "createdAt": "2026-02-22 11:30:00",
-    "itemCategory": "일반",
+
     "status": "배송지 미입력",
     "itemDetails": "무선 충전기 (삼성)",
     "itemPhotos": [],

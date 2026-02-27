@@ -715,6 +715,21 @@ function PartnerOrdersPage({ currentPartner, initialFilter }) {
     return "default";
   };
 
+  /* ── 엑셀 다운로드 ── */
+  const handleExcelDownload = () => {
+    const header = ['오더 ID', '오더 구분', '세차 유형', '차량 ID', '차량 번호', '차종', '지역1', '지역2', '존 이름', '진행 상태', '취소 유형', '발행 일시'];
+    const rows = sortedData.map(r => [r.orderId, r.orderGroup, r.washType, r.carId, r.plate, r.model, r.region1, r.region2, r.zone, r.status, r.cancelType || '', r.createdAt || '']);
+    const bom = '\uFEFF';
+    const csv = bom + [header, ...rows].map(row => row.map(v => `"${v}"`).join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `오더목록_${currentPartner.partnerName}_${toYmd(new Date())}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   // 파트너 이름, 파트너 유형 컬럼 제외
   const columns = [
     { key: "orderId", header: "오더 ID" },
@@ -817,12 +832,6 @@ function PartnerOrdersPage({ currentPartner, initialFilter }) {
         <div>
           <div className="text-base font-bold text-[#172B4D]">오더 관리</div>
           <div className="mt-1 text-sm text-[#6B778C]">{currentPartner.partnerName}에 배정된 오더를 조회하고 관리합니다.</div>
-        </div>
-        <div className="flex items-center gap-2">
-          <Button variant="secondary">
-            <Download className="mr-2 h-4 w-4" />
-            목록 다운로드
-          </Button>
         </div>
       </div>
 
@@ -968,11 +977,15 @@ function PartnerOrdersPage({ currentPartner, initialFilter }) {
         </CardContent>
       </Card>
 
-      <div className="flex items-center mb-2">
+      <div className="flex items-center justify-between mb-2">
         <div className="text-sm text-[#6B778C]">
           {filtered.length !== partnerOrders.length ? `필터된 결과 ${filtered.length.toLocaleString()}건 / ` : ''}
           전체 <b className="text-[#172B4D]">{partnerOrders.length.toLocaleString()}</b>건
         </div>
+        <Button variant="outline" size="sm" onClick={handleExcelDownload}>
+          <Download className="mr-1.5 h-3.5 w-3.5 text-green-600" />
+          엑셀 다운로드
+        </Button>
       </div>
 
       <DataTable

@@ -112,6 +112,12 @@ export const PARTNER_HISTORY = [
 ];
 
 export const ASTI_HISTORY = [
+  { id: 52, date: "2026-02-27 18:20", content: "합의 요청 관리: 파트너 어드민 합의 요청 관리 페이지 구축", isPolicyChange: false, links: [{ label: "합의 요청 관리", page: "settlement" }] },
+  { id: 51, date: "2026-02-27 18:04", content: "청구 관리: 파트너 어드민 청구 관리 페이지 구축", isPolicyChange: false, links: [{ label: "청구 관리", page: "billing" }] },
+  { id: 50, date: "2026-02-27 17:51", content: "분실물 관리: 분실물 구분(일반/귀중품) 필드 삭제 — 목업 데이터, 인터널/파트너 어드민 화면, 기능명세 일괄 반영", isPolicyChange: false, links: [{ label: "분실물 관리", page: "lostfound" }] },
+  { id: 49, date: "2026-02-27 16:16", content: "파트너 분실물 관리: 등록 모달 개선 — 차량 번호→세차 오더 번호 검색/선택 방식 변경, 처리 상태 선택 추가", isPolicyChange: false, links: [{ label: "파트너 분실물 관리", page: "partner-lostfound" }] },
+  { id: 48, date: "2026-02-27 16:12", content: "파트너 분실물 관리: 분실물 등록 기능 추가 (차량 선택, 존 정보 자동 표시, 분실물 구분/상세 입력)", isPolicyChange: false, links: [{ label: "파트너 분실물 관리", page: "partner-lostfound" }] },
+  { id: 47, date: "2026-02-27 16:03", content: "파트너 분실물 관리: 페이지 구축 (인터널 기반, 파트너 이름 필터/컬럼/Drawer 필드 제거, 자사 데이터만 표시)", isPolicyChange: false, links: [{ label: "파트너 분실물 관리", page: "partner-lostfound" }] },
   { id: 46, date: "2026-02-27 15:54", content: "분실물 관리: 처리상태 변경이력 탭 추가 (변경 계정, 변경 일시 기록)", isPolicyChange: false, links: [{ label: "분실물 관리", page: "lostfound" }] },
   { id: 45, date: "2026-02-27 14:19", content: "차량 관리: 차량 상세 Drawer에 존 유형 필드 추가", isPolicyChange: false, links: [{ label: "차량 관리", page: "cars" }] },
   { id: 44, date: "2026-02-27 14:17", content: "차량 관리: 존 유형 필드 추가 (목업 데이터, 리스트 컬럼, 조회 조건 필터)", isPolicyChange: false, links: [{ label: "차량 관리", page: "cars" }] },
