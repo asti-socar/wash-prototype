@@ -190,7 +190,7 @@ export default function PartnerApp({ onSwitchAdmin }) {
       case "partner-billing":
         return <PartnerBillingPage currentPartner={currentPartner} />;
       case "partner-lostfound":
-        return <PartnerLostItemsPage currentPartner={currentPartner} />;
+        return <PartnerLostItemsPage currentPartner={currentPartner} setActiveKey={setActiveKey} />;
       case "partner-notices":
         return <PartnerNoticesPage currentPartner={currentPartner} />;
       case "partner-missions":

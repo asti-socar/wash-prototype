@@ -8,11 +8,6 @@ import {
 import initialMockLostItems from '../../mocks/lostItems.json';
 
 // --- CONSTANTS ---
-const STATUS_BY_CATEGORY = {
-  '일반': ['배송지 미입력', '발송 대기', '발송 완료', '폐기 완료'],
-  '귀중품': ['배송지 미입력', '경찰서 인계', '폐기 완료'],
-};
-
 const TERMINAL_STATUSES = ['발송 완료', '경찰서 인계', '폐기 완료'];
 
 const statusBadgeMap = {
@@ -23,7 +18,6 @@ const statusBadgeMap = {
   '경찰서 인계': 'default',
 };
 
-const itemClassificationOptions = ['일반', '귀중품'];
 const allStatusOptions = ['배송지 미입력', '발송 대기', '발송 완료', '경찰서 인계', '폐기 완료'];
 
 
@@ -120,7 +114,6 @@ export default function LostItemsPage({ setActiveKey }) {
   const showDrawerInEditMode = (item) => {
     setSelectedItem(item);
     setDrafts({
-      itemCategory: item.itemCategory,
       status: item.status,
       itemDetails: item.itemDetails || '',
       recipientName: item.recipientName || '',
@@ -146,7 +139,6 @@ export default function LostItemsPage({ setActiveKey }) {
   const enterEditMode = () => {
     if (!selectedItem) return;
     setDrafts({
-      itemCategory: selectedItem.itemCategory,
       status: selectedItem.status,
       itemDetails: selectedItem.itemDetails || '',
       recipientName: selectedItem.recipientName || '',
@@ -170,9 +162,6 @@ export default function LostItemsPage({ setActiveKey }) {
     if (!selectedItem) return {};
     const updates = {};
 
-    if (drafts.itemCategory && drafts.itemCategory !== selectedItem.itemCategory) {
-      updates.itemCategory = drafts.itemCategory;
-    }
     if (drafts.status && drafts.status !== selectedItem.status) {
       updates.status = drafts.status;
     }
@@ -190,7 +179,6 @@ export default function LostItemsPage({ setActiveKey }) {
     if (!selectedItem) return [];
     const changes = [];
     const labelMap = {
-      itemCategory: '분실물 구분',
       status: '처리 상태',
       itemDetails: '상세 정보',
       recipientName: '수령인 이름',
@@ -322,9 +310,6 @@ export default function LostItemsPage({ setActiveKey }) {
   const renderDetailTab = () => {
     if (!selectedItem) return null;
     const data = selectedItem;
-    const isValuable = (isEditMode ? drafts.itemCategory : data.itemCategory) === '귀중품';
-    const addressLabel = isValuable ? '경찰서 주소' : '배송 주소';
-
     return (
       <div className="space-y-6">
         {/* 분실물 정보 */}
@@ -334,14 +319,6 @@ export default function LostItemsPage({ setActiveKey }) {
             <Field label="분실물 ID" value={data.id} />
             <Field label="접수 일시" value={data.createdAt} />
 
-            <Field label="분실물 구분" value={
-              isEditMode ? (
-                <Select value={drafts.itemCategory || data.itemCategory} onChange={(e) => setDraft('itemCategory', e.target.value)}>
-                  {itemClassificationOptions.map(opt => <option key={opt} value={opt}>{opt}</option>)}
-                </Select>
-              ) : data.itemCategory
-            } />
-
             <Field label="처리 상태" value={
               isEditMode ? (
                 <div className="space-y-2">
@@ -349,7 +326,7 @@ export default function LostItemsPage({ setActiveKey }) {
                     value={drafts.status || data.status}
                     onChange={(e) => setDraft('status', e.target.value)}
                   >
-                    {STATUS_BY_CATEGORY[drafts.itemCategory || data.itemCategory].map(s => (
+                    {allStatusOptions.map(s => (
                       <option key={s} value={s}>{s}</option>
                     ))}
                   </Select>
@@ -425,7 +402,7 @@ export default function LostItemsPage({ setActiveKey }) {
               <div className="text-sm whitespace-pre-wrap">{data.itemDetails || '-'}</div>
             } />
 
-            <Field label={addressLabel} value={
+            <Field label="배송 주소" value={
               <div>
                 <div className="text-sm">{data.deliveryAddress1 || '-'}</div>
                 {data.deliveryAddress2 && <div className="text-sm text-[#6B778C]">{data.deliveryAddress2}</div>}
@@ -517,7 +494,7 @@ export default function LostItemsPage({ setActiveKey }) {
       );
     }
 
-    const showShipComplete = data.itemCategory === '일반' && data.status === '발송 대기';
+    const showShipComplete = data.status === '발송 대기';
 
     return (
       <div className="flex justify-between">
