@@ -7,7 +7,6 @@ import {
   Receipt,
   PackageSearch,
   Megaphone,
-  Users,
   UserCog,
   History,
   Menu,
@@ -44,6 +43,7 @@ import PartnerLostItemsPage from "./pages/partner/PartnerLostItemsPage";
 import PartnerMissionsPage from "./pages/partner/PartnerMissionsPage";
 import PartnerNoticesPage from "./pages/partner/PartnerNoticesPage";
 import PartnerUpdateHistoryPage from "./pages/partner/PartnerUpdateHistoryPage";
+import PartnerWorkersPage from "./pages/partner/PartnerWorkersPage";
 
 // ============== Navigation ==============
 const PARTNER_NAV = [
@@ -76,7 +76,6 @@ const PARTNER_NAV = [
     label: "정보 관리",
     icon: Folder,
     items: [
-      { key: "partner-managers", label: "파트너 담당자 관리", icon: Users, parentKey: "partner-info" },
       { key: "partner-workers", label: "수행원 관리", icon: UserCog, parentKey: "partner-info" },
     ],
   },
@@ -97,7 +96,6 @@ const PARTNER_PAGE_TITLES = {
   "partner-billing": "청구 관리",
   "partner-lostfound": "분실물 관리",
   "partner-notices": "공지사항",
-  "partner-managers": "파트너 담당자 관리",
   "partner-workers": "수행원 관리",
   "partner-update-history": "업데이트 이력",
 };
@@ -199,10 +197,8 @@ export default function PartnerApp({ onSwitchAdmin }) {
         return <PartnerMissionsPage currentPartner={currentPartner} />;
       case "partner-update-history":
         return <PartnerUpdateHistoryPage />;
-      case "partner-managers":
-        return <PlaceholderPage title="파트너 담당자 관리" description={`${currentPartner.partnerName}의 담당자 정보를 관리합니다.`} />;
       case "partner-workers":
-        return <PlaceholderPage title="수행원 관리" description={`${currentPartner.partnerName} 소속 수행원을 관리합니다.`} />;
+        return <PartnerWorkersPage currentPartner={currentPartner} />;
       default:
         return <PlaceholderPage title="파트너 어드민" description="준비 중인 화면입니다." />;
     }
