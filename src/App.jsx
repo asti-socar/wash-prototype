@@ -219,6 +219,19 @@ export default function App() {
     window.history.pushState({}, "", url.toString());
   };
 
+  // 브라우저 뒤로가기/앞으로가기 시 adminType 동기화
+  useEffect(() => {
+    const handlePopState = () => {
+      const params = new URLSearchParams(window.location.search);
+      const admin = params.get("admin");
+      if (admin === "partner") setAdminType("partner");
+      else if (admin === "internal") setAdminType("internal");
+      else setAdminType(null);
+    };
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, []);
+
   if (!adminType) return <AdminSelector onSelect={handleSelectAdmin} />;
   if (adminType === "partner") return <PartnerApp onSwitchAdmin={handleSwitchAdmin} />;
   return <InternalApp onSwitchAdmin={handleSwitchAdmin} />;
@@ -276,6 +289,19 @@ function InternalApp({ onSwitchAdmin }) {
   const [openAccordion, setOpenAccordion] = useState(() => NAV.find(g => g.items?.some(it => it.key === activeKey))?.key || "");
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+
+  // 브라우저 뒤로가기/앞으로가기 시 activeKey 동기화
+  useEffect(() => {
+    const handlePopState = () => {
+      const params = new URLSearchParams(window.location.search);
+      const page = params.get("page");
+      if (page && Object.keys(PAGE_TITLES).includes(page)) {
+        setActiveKey(page);
+      }
+    };
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, []);
 
   useEffect(() => {
     const observer = new MutationObserver((mutationsList) => {

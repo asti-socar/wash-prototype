@@ -125,6 +125,19 @@ export default function PartnerApp({ onSwitchAdmin }) {
     partnerName: "강남모빌리티",
   });
 
+  // 브라우저 뒤로가기/앞으로가기 시 activeKey 동기화
+  useEffect(() => {
+    const handlePopState = () => {
+      const params = new URLSearchParams(window.location.search);
+      const page = params.get("page");
+      if (page && Object.keys(PARTNER_PAGE_TITLES).includes(page)) {
+        setActiveKey(page);
+      }
+    };
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, []);
+
   // Drawer open detection
   useEffect(() => {
     const observer = new MutationObserver(() => {
