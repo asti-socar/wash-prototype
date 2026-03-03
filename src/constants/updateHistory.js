@@ -112,6 +112,7 @@ export const PARTNER_HISTORY = [
 ];
 
 export const ASTI_HISTORY = [
+  { id: 53, date: "2026-03-03 17:00", content: "오더 관리: 수동 발행 시 오더 구분(수시)/발행유형(수시세차) 고정 — Select 비활성화 처리, PRD 반영", isPolicyChange: false, links: [{ label: "오더 관리", page: "orders" }] },
   { id: 52, date: "2026-02-27 18:20", content: "합의 요청 관리: 파트너 어드민 합의 요청 관리 페이지 구축", isPolicyChange: false, links: [{ label: "합의 요청 관리", page: "settlement" }] },
   { id: 51, date: "2026-02-27 18:04", content: "청구 관리: 파트너 어드민 청구 관리 페이지 구축", isPolicyChange: false, links: [{ label: "청구 관리", page: "billing" }] },
   { id: 50, date: "2026-02-27 17:51", content: "분실물 관리: 분실물 구분(일반/귀중품) 필드 삭제 — 목업 데이터, 인터널/파트너 어드민 화면, 기능명세 일괄 반영", isPolicyChange: false, links: [{ label: "분실물 관리", page: "lostfound" }] },

@@ -1639,18 +1639,14 @@ function OrdersPage({ quickFilter, onClearQuickFilter, initialOrderId, orders, s
 
               <div className="space-y-1">
                 <label className="text-xs font-semibold text-[#6B778C]">오더 구분</label>
-                <Select value={newOrderForm.orderGroup} onChange={e => setNewOrderForm({...newOrderForm, orderGroup: e.target.value})}>
-                  {orderGroups.map((g) => (
-                    <option key={g} value={g}>{g}</option>
-                  ))}
+                <Select value={newOrderForm.orderGroup} disabled>
+                  <option value="수시">수시</option>
                 </Select>
               </div>
               <div className="space-y-1">
                 <label className="text-xs font-semibold text-[#6B778C]">발행 유형</label>
-                <Select value={newOrderForm.orderType} onChange={e => setNewOrderForm({...newOrderForm, orderType: e.target.value})}>
-                  {orderTypes.map((t) => (
-                    <option key={t} value={t}>{t}</option>
-                  ))}
+                <Select value={newOrderForm.orderType} disabled>
+                  <option value="수시세차">수시세차</option>
                 </Select>
               </div>
               <div className="space-y-1">
