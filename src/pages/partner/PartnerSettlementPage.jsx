@@ -25,6 +25,7 @@ export default function PartnerSettlementPage({ currentPartner }) {
   const defaultFrom = toYmd(oneMonthAgo);
   const defaultTo = toYmd(today);
 
+  const [fSearch, setFSearch] = useState("");
   const [fRequestType, setFRequestType] = useState("전체");
   const [periodFrom, setPeriodFrom] = useState(defaultFrom);
   const [periodTo, setPeriodTo] = useState(defaultTo);
@@ -32,6 +33,7 @@ export default function PartnerSettlementPage({ currentPartner }) {
   const [statusFilter, setStatusFilter] = useState("전체");
 
   const resetFilters = () => {
+    setFSearch("");
     setFRequestType("전체");
     setPeriodFrom(defaultFrom);
     setPeriodTo(defaultTo);
@@ -47,6 +49,7 @@ export default function PartnerSettlementPage({ currentPartner }) {
   /* ── 처리 주체 판별 ── */
   const getProcessorType = (processor) => {
     if (!processor) return null;
+    if (processor === "시스템") return "시스템";
     return /[가-힣]/.test(processor) ? "파트너" : "인터널";
   };
 
@@ -58,6 +61,10 @@ export default function PartnerSettlementPage({ currentPartner }) {
 
   const filteredAndSortedData = useMemo(() => {
     let filtered = items;
+    if (fSearch.trim()) {
+      const q = fSearch.trim().toLowerCase();
+      filtered = filtered.filter(i => i.orderId.toLowerCase().includes(q) || i.plate.toLowerCase().includes(q));
+    }
     if (fRequestType !== "전체") filtered = filtered.filter(i => i.requestType === fRequestType);
     if (periodFrom) filtered = filtered.filter(i => i.requestedAt.slice(0, 10) >= periodFrom);
     if (periodTo) filtered = filtered.filter(i => i.requestedAt.slice(0, 10) <= periodTo);
@@ -71,7 +78,7 @@ export default function PartnerSettlementPage({ currentPartner }) {
       if (aVal > bVal) return sortConfig.direction === 'asc' ? 1 : -1;
       return 0;
     });
-  }, [items, fRequestType, periodFrom, periodTo, approvalTypeFilter, statusFilter, sortConfig]);
+  }, [items, fSearch, fRequestType, periodFrom, periodTo, approvalTypeFilter, statusFilter, sortConfig]);
 
   const { currentData, currentPage, totalPages, setCurrentPage, totalItems } = usePagination(filteredAndSortedData, 40);
 
@@ -129,7 +136,8 @@ export default function PartnerSettlementPage({ currentPartner }) {
     { key: 'model', header: '차종' },
     { key: 'zoneName', header: '존 이름' },
     { key: 'requestType', header: '요청 유형' },
-    { key: 'requestedAt', header: '요청 일시' },
+    { key: 'washBefore', header: '변경 전', render: r => r.washBefore === '-' ? <span className="text-[#94A3B8]">-</span> : r.washBefore },
+    { key: 'washAfter', header: '변경 후', render: r => r.washAfter === '-' ? <span className="text-[#94A3B8]">-</span> : r.washAfter },
     { key: 'approvalType', header: '합의 유형' },
     {
       key: 'status', header: '상태',
@@ -139,9 +147,10 @@ export default function PartnerSettlementPage({ currentPartner }) {
       key: 'processorType', header: '처리 주체',
       render: r => {
         const type = getProcessorType(r.processor);
-        return type ? <Badge tone={type === '인터널' ? 'ok' : 'default'}>{type}</Badge> : <span className="text-[#94A3B8]">-</span>;
+        return type || <span className="text-[#94A3B8]">-</span>;
       },
     },
+    { key: 'requestedAt', header: '요청 일시' },
     { key: 'processedAt', header: '처리 일시', render: r => r.processedAt || <span className="text-[#94A3B8]">-</span> },
   ];
 
@@ -172,6 +181,7 @@ export default function PartnerSettlementPage({ currentPartner }) {
       {/* ── 필터 ── */}
       <FilterPanel
         chips={<>
+          {fSearch.trim() && <Chip onRemove={() => setFSearch("")}>검색: {fSearch}</Chip>}
           {fRequestType !== "전체" && <Chip onRemove={() => setFRequestType("전체")}>요청 유형: {fRequestType}</Chip>}
           {(periodFrom || periodTo) && <Chip onRemove={() => { setPeriodFrom(defaultFrom); setPeriodTo(defaultTo); }}>요청 일시: {periodFrom || '-'} ~ {periodTo || '-'}</Chip>}
           {approvalTypeFilter !== "전체" && <Chip onRemove={() => setApprovalTypeFilter("전체")}>합의 유형: {approvalTypeFilter}</Chip>}
@@ -179,12 +189,9 @@ export default function PartnerSettlementPage({ currentPartner }) {
         </>}
         onReset={resetFilters}
       >
-        <div className="md:col-span-2">
-          <label className="block text-xs font-semibold text-[#6B778C] mb-1.5">요청 유형</label>
-          <Select value={fRequestType} onChange={e => setFRequestType(e.target.value)}>
-            <option value="전체">전체</option>
-            {[...new Set(items.map(i => i.requestType))].sort().map(t => <option key={t} value={t}>{t}</option>)}
-          </Select>
+        <div className="md:col-span-3">
+          <label className="block text-xs font-semibold text-[#6B778C] mb-1.5">오더 ID / 차량 번호</label>
+          <Input type="text" placeholder="오더 ID 또는 차량 번호 검색" value={fSearch} onChange={e => setFSearch(e.target.value)} />
         </div>
         <div className="md:col-span-5">
           <label className="block text-xs font-semibold text-[#6B778C] mb-1.5">요청 일시</label>
@@ -195,9 +202,20 @@ export default function PartnerSettlementPage({ currentPartner }) {
           </div>
         </div>
         <div className="md:col-span-2">
+          <label className="block text-xs font-semibold text-[#6B778C] mb-1.5">요청 유형</label>
+          <Select value={fRequestType} onChange={e => setFRequestType(e.target.value)}>
+            <option value="전체">전체</option>
+            <option value="현장 변경">현장 변경</option>
+            <option value="전환">전환</option>
+            <option value="입고 변경">입고 변경</option>
+            <option value="추가 미션">추가 미션</option>
+          </Select>
+        </div>
+        <div className="md:col-span-2">
           <label className="block text-xs font-semibold text-[#6B778C] mb-1.5">합의 유형</label>
           <Select value={approvalTypeFilter} onChange={e => setApprovalTypeFilter(e.target.value)}>
             <option value="전체">전체</option>
+            <option value="자동 승인">자동 승인</option>
             <option value="1단계 승인">1단계 승인</option>
             <option value="2단계 승인">2단계 승인</option>
           </Select>
@@ -253,25 +271,29 @@ export default function PartnerSettlementPage({ currentPartner }) {
                 <Field label="차종" value={selected.model} />
                 <Field label="존 이름" value={selected.zoneName} />
                 <Field label="요청 유형" value={selected.requestType} />
+                <Field label="변경 전" value={selected.washBefore === '-' ? <span className="text-[#94A3B8]">-</span> : selected.washBefore} />
+                <Field label="변경 후" value={selected.washAfter === '-' ? <span className="text-[#94A3B8]">-</span> : selected.washAfter} />
                 <Field label="요청 일시" value={selected.requestedAt} />
-                <Field label="합의 유형" value={<Badge tone={selected.approvalType === '1단계 승인' ? 'ok' : 'warn'}>{selected.approvalType}</Badge>} />
+                <Field label="합의 유형" value={selected.approvalType} />
                 <Field label="상태" value={<Badge tone={STATUS_TONE[selected.status] || 'default'}>{selected.status}</Badge>} />
-                {selected.approvalType === '2단계 승인' ? (
+                {selected.approvalType === '자동 승인' ? (
+                  <>
+                    <Field label="처리 주체" value="시스템" />
+                    <Field label="처리 일시" value={selected.processedAt || <span className="text-[#94A3B8]">-</span>} />
+                  </>
+                ) : selected.approvalType === '2단계 승인' ? (
                   <>
                     <Field label="1차 처리자" value={selected.primaryProcessor || <span className="text-[#94A3B8]">-</span>} />
                     <Field label="2차 처리자" value={selected.secondaryProcessor || <span className="text-[#94A3B8]">-</span>} />
+                    <Field label="처리 일시" value={selected.processedAt || <span className="text-[#94A3B8]">-</span>} />
                   </>
                 ) : (
                   <>
-                    <Field label="처리 주체" value={
-                      getProcessorType(selected.processor)
-                        ? <Badge tone={getProcessorType(selected.processor) === '인터널' ? 'ok' : 'default'}>{getProcessorType(selected.processor)}</Badge>
-                        : <span className="text-[#94A3B8]">-</span>
-                    } />
+                    <Field label="처리 주체" value={getProcessorType(selected.processor) || <span className="text-[#94A3B8]">-</span>} />
                     <Field label="처리자" value={selected.processor || <span className="text-[#94A3B8]">-</span>} />
+                    <Field label="처리 일시" value={selected.processedAt || <span className="text-[#94A3B8]">-</span>} />
                   </>
                 )}
-                <Field label="처리 일시" value={selected.processedAt || <span className="text-[#94A3B8]">-</span>} />
                 <div className="border-t border-[#E2E8F0] my-3" />
                 <div className="flex items-center justify-between gap-3">
                   <div className="w-36 shrink-0 text-xs font-semibold text-[#6B778C]">청구 금액</div>
@@ -320,6 +342,12 @@ export default function PartnerSettlementPage({ currentPartner }) {
                       <span className="text-[#6B778C]">요청 유형</span>
                       <span className="font-medium text-[#172B4D]">{selected?.requestType}</span>
                     </div>
+                    {selected?.washBefore !== '-' && (
+                      <div className="flex justify-between">
+                        <span className="text-[#6B778C]">변경</span>
+                        <span className="font-medium text-[#172B4D]">{selected?.washBefore} → {selected?.washAfter}</span>
+                      </div>
+                    )}
                     <div className="flex justify-between">
                       <span className="text-[#6B778C]">청구 금액</span>
                       <span className="font-medium text-[#172B4D]">{Number(selected?.cost).toLocaleString()}원</span>
