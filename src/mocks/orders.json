@@ -30119,7 +30119,7 @@
     "inspectionType": "A",
     "rootCreatedAt": "2026-01-15",
     "rootOrderId": null,
-    "cancelType": "시스템(변경 취소)",
+    "cancelType": "변경",
     "canceledAt": "2026-01-18 10:40",
     "preWashPhotos": [
       {
@@ -30329,7 +30329,7 @@
     "inspectionType": "A",
     "rootCreatedAt": "2026-02-12",
     "rootOrderId": null,
-    "cancelType": "시스템(변경 취소)",
+    "cancelType": "변경",
     "canceledAt": "2026-02-14 14:43",
     "preWashPhotos": [
       {
@@ -30518,7 +30518,7 @@
     "inspectionType": "A",
     "rootCreatedAt": "2026-02-11",
     "rootOrderId": null,
-    "cancelType": "시스템(노쇼 취소)",
+    "cancelType": "노쇼",
     "canceledAt": "2026-02-11 21:06",
     "preWashPhotos": [
       {
@@ -30715,7 +30715,7 @@
     "inspectionType": "A",
     "rootCreatedAt": "2026-02-18",
     "rootOrderId": null,
-    "cancelType": "시스템(변경 취소)",
+    "cancelType": "변경",
     "canceledAt": "2026-02-21 03:25",
     "preWashPhotos": [
       {
@@ -30912,7 +30912,7 @@
     "inspectionType": "None",
     "rootCreatedAt": "2026-02-18",
     "rootOrderId": null,
-    "cancelType": "시스템(미예약 취소)",
+    "cancelType": "미예약",
     "canceledAt": "2026-02-19 17:40",
     "issuedAt": "2026-02-18 16:40",
     "handlerPreWashPhotos": [
@@ -30979,7 +30979,7 @@
     "inspectionType": "A",
     "rootCreatedAt": "2026-02-16",
     "rootOrderId": null,
-    "cancelType": "수행원(주차장 문제)",
+    "cancelType": "주차장 문제",
     "canceledAt": "2026-02-18 04:48",
     "preWashPhotos": [
       {
@@ -31172,7 +31172,7 @@
     "inspectionType": "D",
     "rootCreatedAt": "2026-02-20",
     "rootOrderId": null,
-    "cancelType": "수행원(차량 없음)",
+    "cancelType": "차량 없음",
     "canceledAt": "2026-02-20 17:33",
     "preWashPhotos": [],
     "postWashPhotos": [
@@ -31302,7 +31302,7 @@
     "inspectionType": "C",
     "rootCreatedAt": "2026-02-04",
     "rootOrderId": null,
-    "cancelType": "시스템(우천 취소)",
+    "cancelType": "우천",
     "canceledAt": "2026-02-05 09:01",
     "preWashPhotos": [
       {
@@ -31495,7 +31495,7 @@
     "inspectionType": "B",
     "rootCreatedAt": "2026-01-28",
     "rootOrderId": null,
-    "cancelType": "수행원(기타)",
+    "cancelType": "기타",
     "canceledAt": "2026-01-28 22:40",
     "preWashPhotos": [
       {
@@ -31692,7 +31692,7 @@
     "inspectionType": "C",
     "rootCreatedAt": "2026-02-05",
     "rootOrderId": null,
-    "cancelType": "시스템(예약 불가)",
+    "cancelType": "예약 불가",
     "canceledAt": "2026-02-06 15:55",
     "preWashPhotos": [
       {
@@ -31894,7 +31894,7 @@
     "inspectionType": "B",
     "rootCreatedAt": "2026-01-25",
     "rootOrderId": null,
-    "cancelType": "수행원(기타)",
+    "cancelType": "기타",
     "canceledAt": "2026-01-25 18:15",
     "preWashPhotos": [
       {
@@ -32071,7 +32071,7 @@
     "inspectionType": "C",
     "rootCreatedAt": "2026-02-11",
     "rootOrderId": null,
-    "cancelType": "수행원(개인 사유)",
+    "cancelType": "개인 사유",
     "canceledAt": "2026-02-13 11:19",
     "preWashPhotos": [
       {
@@ -32261,7 +32261,7 @@
     "inspectionType": "D",
     "rootCreatedAt": "2026-01-21",
     "rootOrderId": null,
-    "cancelType": "시스템(미예약 취소)",
+    "cancelType": "미예약",
     "canceledAt": "2026-01-22 20:00",
     "preWashPhotos": [],
     "postWashPhotos": [
@@ -32388,7 +32388,7 @@
     "inspectionType": "C",
     "rootCreatedAt": "2026-01-15",
     "rootOrderId": null,
-    "cancelType": "수행원(기타)",
+    "cancelType": "기타",
     "canceledAt": "2026-01-18 03:07",
     "preWashPhotos": [
       {
@@ -32590,7 +32590,7 @@
     "inspectionType": "C",
     "rootCreatedAt": "2026-02-14",
     "rootOrderId": null,
-    "cancelType": "시스템(예약 불가)",
+    "cancelType": "예약 불가",
     "canceledAt": "2026-02-14 08:51",
     "preWashPhotos": [
       {
@@ -32796,7 +32796,7 @@
     "inspectionType": "C",
     "rootCreatedAt": "2026-02-10",
     "rootOrderId": null,
-    "cancelType": "수행원(개인 사유)",
+    "cancelType": "개인 사유",
     "canceledAt": "2026-02-11 21:05",
     "preWashPhotos": [
       {
@@ -32969,7 +32969,7 @@
     "inspectionType": "None",
     "rootCreatedAt": "2026-02-06",
     "rootOrderId": null,
-    "cancelType": "시스템(예약 불가)",
+    "cancelType": "예약 불가",
     "canceledAt": "2026-02-07 17:13",
     "issuedAt": "2026-02-06 11:13",
     "handlerPreWashPhotos": [
@@ -33036,7 +33036,7 @@
     "inspectionType": "C",
     "rootCreatedAt": "2026-02-05",
     "rootOrderId": null,
-    "cancelType": "수행원(주차장 문제)",
+    "cancelType": "주차장 문제",
     "canceledAt": "2026-02-06 20:27",
     "preWashPhotos": [
       {
@@ -33209,7 +33209,7 @@
     "inspectionType": "A",
     "rootCreatedAt": "2026-02-14",
     "rootOrderId": null,
-    "cancelType": "시스템(미예약 취소)",
+    "cancelType": "미예약",
     "canceledAt": "2026-02-16 02:09",
     "preWashPhotos": [
       {
@@ -33410,7 +33410,7 @@
     "inspectionType": "B",
     "rootCreatedAt": "2026-02-17",
     "rootOrderId": null,
-    "cancelType": "시스템(노쇼 취소)",
+    "cancelType": "노쇼",
     "canceledAt": "2026-02-18 12:11",
     "preWashPhotos": [
       {
@@ -33592,7 +33592,7 @@
     "inspectionType": "C",
     "rootCreatedAt": "2026-02-20",
     "rootOrderId": null,
-    "cancelType": "수행원(주차장 문제)",
+    "cancelType": "주차장 문제",
     "canceledAt": "2026-02-20 15:22",
     "preWashPhotos": [
       {
@@ -33769,7 +33769,7 @@
     "inspectionType": "C",
     "rootCreatedAt": "2026-02-05",
     "rootOrderId": null,
-    "cancelType": "수행원(주차장 문제)",
+    "cancelType": "주차장 문제",
     "canceledAt": "2026-02-06 02:22",
     "preWashPhotos": [
       {
@@ -33954,7 +33954,7 @@
     "inspectionType": "B",
     "rootCreatedAt": "2026-02-05",
     "rootOrderId": null,
-    "cancelType": "시스템(변경 취소)",
+    "cancelType": "변경",
     "canceledAt": "2026-02-07 01:40",
     "preWashPhotos": [
       {
@@ -34140,7 +34140,7 @@
     "inspectionType": "A",
     "rootCreatedAt": "2026-02-20",
     "rootOrderId": null,
-    "cancelType": "수행원(기타)",
+    "cancelType": "기타",
     "canceledAt": "2026-02-20 09:35",
     "preWashPhotos": [
       {
@@ -34325,7 +34325,7 @@
     "inspectionType": "B",
     "rootCreatedAt": "2026-02-20",
     "rootOrderId": null,
-    "cancelType": "시스템(노쇼 취소)",
+    "cancelType": "노쇼",
     "canceledAt": "2026-02-22 10:36",
     "preWashPhotos": [
       {
@@ -34502,7 +34502,7 @@
     "inspectionType": "A",
     "rootCreatedAt": "2026-02-11",
     "rootOrderId": null,
-    "cancelType": "시스템(노쇼 취소)",
+    "cancelType": "노쇼",
     "canceledAt": "2026-02-12 06:00",
     "preWashPhotos": [
       {
@@ -34704,7 +34704,7 @@
     "inspectionType": "C",
     "rootCreatedAt": "2026-02-08",
     "rootOrderId": null,
-    "cancelType": "시스템(변경 취소)",
+    "cancelType": "변경",
     "canceledAt": "2026-02-09 16:28",
     "preWashPhotos": [
       {
@@ -34889,7 +34889,7 @@
     "inspectionType": "None",
     "rootCreatedAt": "2026-01-18",
     "rootOrderId": null,
-    "cancelType": "수행원(기타)",
+    "cancelType": "기타",
     "canceledAt": "2026-01-20 15:41",
     "issuedAt": "2026-01-18 14:41",
     "handlerPreWashPhotos": [
@@ -34948,7 +34948,7 @@
     "inspectionType": "C",
     "rootCreatedAt": "2026-01-17",
     "rootOrderId": null,
-    "cancelType": "시스템(미예약 취소)",
+    "cancelType": "미예약",
     "canceledAt": "2026-01-19 09:50",
     "preWashPhotos": [
       {
@@ -35146,7 +35146,7 @@
     "inspectionType": "C",
     "rootCreatedAt": "2026-01-21",
     "rootOrderId": null,
-    "cancelType": "수행원(기타)",
+    "cancelType": "기타",
     "canceledAt": "2026-01-21 19:25",
     "preWashPhotos": [
       {
@@ -35938,7 +35938,7 @@
     "postWashPhotos": [],
     "additionalPhotos": [],
     "inspectionResults": {},
-    "cancelType": "수행원(차량 없음)"
+    "cancelType": "차량 없음"
   },
   {
     "orderId": "O-90220",
@@ -36624,7 +36624,7 @@
     "postWashPhotos": [],
     "additionalPhotos": [],
     "inspectionResults": {},
-    "cancelType": "수행원(차량 없음)"
+    "cancelType": "차량 없음"
   },
   {
     "orderId": "O-90231",
@@ -37013,7 +37013,7 @@
     "postWashPhotos": [],
     "additionalPhotos": [],
     "inspectionResults": {},
-    "cancelType": "수행원(차량 없음)"
+    "cancelType": "차량 없음"
   },
   {
     "orderId": "O-90238",
@@ -37120,7 +37120,7 @@
     "postWashPhotos": [],
     "additionalPhotos": [],
     "inspectionResults": {},
-    "cancelType": "수행원(차량 없음)"
+    "cancelType": "차량 없음"
   },
   {
     "orderId": "O-90240",
@@ -37174,7 +37174,7 @@
     "postWashPhotos": [],
     "additionalPhotos": [],
     "inspectionResults": {},
-    "cancelType": "수행원(차량 없음)"
+    "cancelType": "차량 없음"
   },
   {
     "orderId": "O-90241",
@@ -37228,7 +37228,7 @@
     "postWashPhotos": [],
     "additionalPhotos": [],
     "inspectionResults": {},
-    "cancelType": "수행원(차량 없음)"
+    "cancelType": "차량 없음"
   },
   {
     "orderId": "O-90242",
@@ -37492,7 +37492,7 @@
     "postWashPhotos": [],
     "additionalPhotos": [],
     "inspectionResults": {},
-    "cancelType": "수행원(차량 없음)"
+    "cancelType": "차량 없음"
   },
   {
     "orderId": "O-90246",
@@ -37879,7 +37879,7 @@
     "postWashPhotos": [],
     "additionalPhotos": [],
     "inspectionResults": {},
-    "cancelType": "수행원(차량 없음)"
+    "cancelType": "차량 없음"
   },
   {
     "orderId": "O-90252",

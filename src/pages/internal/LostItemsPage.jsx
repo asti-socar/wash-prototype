@@ -430,31 +430,24 @@ export default function LostItemsPage({ setActiveKey }) {
 
     return (
       <Card>
-        <CardContent className="p-0">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-[#E2E8F0] bg-[#F8F9FA]">
-                <th className="px-4 py-2.5 text-left text-xs font-semibold text-[#6B778C]">변경 일시</th>
-                <th className="px-4 py-2.5 text-left text-xs font-semibold text-[#6B778C]">이전 상태</th>
-                <th className="px-4 py-2.5 text-left text-xs font-semibold text-[#6B778C]">변경 상태</th>
-                <th className="px-4 py-2.5 text-left text-xs font-semibold text-[#6B778C]">변경 계정</th>
-              </tr>
-            </thead>
-            <tbody>
-              {[...history].reverse().map((h, i) => (
-                <tr key={i} className="border-b border-[#F0F0F0] last:border-b-0">
-                  <td className="px-4 py-2.5 text-[#172B4D]">{h.changedAt}</td>
-                  <td className="px-4 py-2.5">
-                    {h.fromStatus ? <Badge tone={statusBadgeMap[h.fromStatus]}>{h.fromStatus}</Badge> : <span className="text-[#6B778C]">-</span>}
-                  </td>
-                  <td className="px-4 py-2.5">
-                    <Badge tone={statusBadgeMap[h.toStatus]}>{h.toStatus}</Badge>
-                  </td>
-                  <td className="px-4 py-2.5 text-[#6B778C]">{h.changedBy}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <CardContent>
+          <div className="space-y-3">
+            {[...history].reverse().map((h, i) => (
+              <div key={i} className="border-l-4 border-blue-500 pl-4 py-2 bg-slate-50 rounded-r-lg">
+                <div className="font-semibold text-sm text-slate-800">
+                  {h.changedAt} · {h.changedBy}
+                </div>
+                <div className="mt-1 text-xs text-slate-600">
+                  <span className="font-semibold">처리 상태</span>:{" "}
+                  {h.fromStatus
+                    ? <><Badge tone={statusBadgeMap[h.fromStatus]}>{h.fromStatus}</Badge>{" → "}</>
+                    : ""
+                  }
+                  <Badge tone={statusBadgeMap[h.toStatus]}>{h.toStatus}</Badge>
+                </div>
+              </div>
+            ))}
+          </div>
         </CardContent>
       </Card>
     );

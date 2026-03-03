@@ -94,7 +94,7 @@ const formatLeadTimeHours = (h) => {
   return `${h}h (${days}일 ${rem}시간)`;
 };
 
-const CANCEL_TYPES = ["시스템(변경 취소)", "시스템(미예약 취소)", "시스템(노쇼 취소)", "시스템(예약 불가)", "시스템(우천 취소)", "수행원(차량 없음)", "수행원(주차장 문제)", "수행원(기타)", "수행원(개인 사유)"];
+const CANCEL_TYPES = ["변경", "미예약", "노쇼", "예약 불가", "우천", "차량 없음", "주차장 문제", "기타", "개인 사유"];
 
 const SECONDARY_FILTER_DEFS = [
   { key: 'model', label: '차종' },
@@ -240,6 +240,7 @@ function OrdersPage({ quickFilter, onClearQuickFilter, initialOrderId, orders, s
   const [selected, setSelected] = useState(null);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [deleteReason, setDeleteReason] = useState("");
+  const [deleteCancelType, setDeleteCancelType] = useState("");
   const [drawerTab, setDrawerTab] = useState("info");
   const [previewImage, setPreviewImage] = useState(null);
   
@@ -1521,43 +1522,59 @@ function OrdersPage({ quickFilter, onClearQuickFilter, initialOrderId, orders, s
             </TabsContent>
           </Tabs>
 
-            {deleteModalOpen ? (
-              <Card className="ring-rose-200">
-                <CardHeader>
-                  <CardTitle className="text-[#6B778C]">오더 취소</CardTitle>
-                  <CardDescription>취소 사유 기록(프로토타입). 실제로는 권한 및 감사 로그가 필요합니다.</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <Input
-                    value={deleteReason}
-                    onChange={(e) => setDeleteReason(e.target.value)}
-                    placeholder="취소 사유를 입력하세요"
-                  />
-                  <div className="flex justify-end gap-2">
-                    <Button variant="secondary" onClick={() => { setDeleteModalOpen(false); setDeleteReason(""); }}>
-                      닫기
-                    </Button>
-                    <Button
-                      variant="primary"
-                      disabled={!deleteReason.trim()}
-                      onClick={() => {
-                        // 실제 취소는 미구현. 프로토타입용 alert 처리.
-                        alert(`(프로토타입) 취소 처리: ${selected.orderId}\n사유: ${deleteReason}`);
-                        setOrders(orders.map(o => o.orderId === selected.orderId ? { ...o, status: "취소" } : o));
-                        setDeleteModalOpen(false);
-                        setDeleteReason("");
-                        setSelected(null);
-                      }}
-                    >
-                      취소 확정
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ) : null}
           </div>
         ) : null}
       </Drawer>
+
+      {/* 오더 취소 모달 */}
+      {deleteModalOpen && (
+        <div className="fixed inset-0 z-[1100] flex items-center justify-center">
+          <div className="absolute inset-0 bg-black/30" onClick={() => { setDeleteModalOpen(false); setDeleteReason(""); setDeleteCancelType(""); }} />
+          <Card className="relative z-[1101] w-full max-w-sm ring-rose-200">
+            <CardHeader>
+              <CardTitle>오더 취소</CardTitle>
+              <CardDescription>취소 유형을 선택하고 사유를 입력하세요.</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <div>
+                <label className="block text-xs font-semibold text-[#6B778C] mb-1.5">취소 유형</label>
+                <Select value={deleteCancelType} onChange={(e) => setDeleteCancelType(e.target.value)}>
+                  <option value="">취소 유형을 선택하세요</option>
+                  {CANCEL_TYPES.map(ct => <option key={ct} value={ct}>{ct}</option>)}
+                </Select>
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-[#6B778C] mb-1.5">상세 사유 <span className="font-normal text-[#94A3B8]">(선택)</span></label>
+                <Input
+                  value={deleteReason}
+                  onChange={(e) => setDeleteReason(e.target.value)}
+                  placeholder="상세 사유를 입력하세요"
+                />
+              </div>
+            </CardContent>
+            <div className="flex items-center justify-end gap-2 border-t px-5 py-4">
+              <Button variant="secondary" onClick={() => { setDeleteModalOpen(false); setDeleteReason(""); setDeleteCancelType(""); }}>
+                닫기
+              </Button>
+              <Button
+                variant="danger"
+                disabled={!deleteCancelType}
+                onClick={() => {
+                  const now = new Date();
+                  const canceledAt = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+                  setOrders(orders.map(o => o.orderId === selected.orderId ? { ...o, status: "취소", cancelType: deleteCancelType, canceledAt } : o));
+                  setDeleteModalOpen(false);
+                  setDeleteReason("");
+                  setDeleteCancelType("");
+                  setSelected(null);
+                }}
+              >
+                취소 확정
+              </Button>
+            </div>
+          </Card>
+        </div>
+      )}
 
       {/* Image Preview Modal */}
       {previewImage && (
