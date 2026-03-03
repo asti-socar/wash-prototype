@@ -1637,17 +1637,15 @@ function OrdersPage({ quickFilter, onClearQuickFilter, initialOrderId, orders, s
                  </div>
               ) : null}
 
-              <div className="space-y-1">
-                <label className="text-xs font-semibold text-[#6B778C]">오더 구분</label>
-                <Select value={newOrderForm.orderGroup} disabled>
-                  <option value="수시">수시</option>
-                </Select>
-              </div>
-              <div className="space-y-1">
-                <label className="text-xs font-semibold text-[#6B778C]">발행 유형</label>
-                <Select value={newOrderForm.orderType} disabled>
-                  <option value="수시세차">수시세차</option>
-                </Select>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <label className="text-xs font-semibold text-[#6B778C]">오더 구분</label>
+                  <div className="h-10 flex items-center px-3 rounded-lg bg-[#F4F5F7] text-sm font-medium text-[#172B4D]">수시</div>
+                </div>
+                <div className="space-y-1">
+                  <label className="text-xs font-semibold text-[#6B778C]">발행 유형</label>
+                  <div className="h-10 flex items-center px-3 rounded-lg bg-[#F4F5F7] text-sm font-medium text-[#172B4D]">수시세차</div>
+                </div>
               </div>
               <div className="space-y-1">
                 <label className="text-xs font-semibold text-[#6B778C]">세차 유형</label>

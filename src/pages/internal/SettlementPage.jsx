@@ -22,12 +22,14 @@ export default function SettlementPage() {
   const [rejectReason, setRejectReason] = useState("");
   const [isRejecting, setIsRejecting] = useState(false);
   const [isRejectConfirming, setIsRejectConfirming] = useState(false);
+  const [fSearch, setFSearch] = useState("");
   const [fPartner, setFPartner] = useState("전체");
   const [fRequestType, setFRequestType] = useState("전체");
   const [periodFrom, setPeriodFrom] = useState(defaultFrom);
   const [periodTo, setPeriodTo] = useState(defaultTo);
 
   const resetFilters = () => {
+    setFSearch("");
     setFPartner("전체");
     setFRequestType("전체");
     setPeriodFrom(defaultFrom);
@@ -36,9 +38,10 @@ export default function SettlementPage() {
     setStatusFilter("전체");
   };
 
-  // 처리 주체 판별 (영문 닉네임 = 인터널, 한글 이름 = 파트너)
+  // 처리 주체 판별 (시스템 = 자동승인, 영문 닉네임 = 인터널, 한글 이름 = 파트너)
   const getProcessorType = (processor) => {
     if (!processor) return null;
+    if (processor === "시스템") return "시스템";
     const isKorean = /[가-힣]/.test(processor);
     return isKorean ? "파트너" : "인터널";
   };
@@ -50,7 +53,8 @@ export default function SettlementPage() {
     { key: "zoneName", header: "존 이름" },
     { key: "partner", header: "파트너 이름" },
     { key: "requestType", header: "요청 유형" },
-    { key: "requestedAt", header: "요청 일시" },
+    { key: "washBefore", header: "변경 전", render: (r) => r.washBefore === "-" ? <span className="text-[#94A3B8]">-</span> : r.washBefore },
+    { key: "washAfter", header: "변경 후", render: (r) => r.washAfter === "-" ? <span className="text-[#94A3B8]">-</span> : r.washAfter },
     { key: "approvalType", header: "합의 유형" },
     {
       key: "status",
@@ -62,8 +66,9 @@ export default function SettlementPage() {
     },
     { key: "processorType", header: "처리 주체", render: (r) => {
       const type = getProcessorType(r.processor);
-      return type ? <Badge tone={type === "인터널" ? "ok" : "default"}>{type}</Badge> : <span className="text-[#94A3B8]">-</span>;
+      return type || <span className="text-[#94A3B8]">-</span>;
     }},
+    { key: "requestedAt", header: "요청 일시" },
     { key: "processedAt", header: "처리 일시", render: (r) => r.processedAt || <span className="text-[#94A3B8]">-</span> },
   ];
 
@@ -100,6 +105,10 @@ export default function SettlementPage() {
 
   const filteredAndSortedData = useMemo(() => {
     let filtered = items;
+    if (fSearch.trim()) {
+      const q = fSearch.trim().toLowerCase();
+      filtered = filtered.filter(item => item.orderId.toLowerCase().includes(q) || item.plate.toLowerCase().includes(q));
+    }
     if (fPartner !== "전체") {
       filtered = filtered.filter(item => item.partner === fPartner);
     }
@@ -126,7 +135,7 @@ export default function SettlementPage() {
       if (aVal > bVal) return sortConfig.direction === 'asc' ? 1 : -1;
       return 0;
     });
-  }, [items, sortConfig, statusFilter, approvalTypeFilter, fPartner, fRequestType, periodFrom, periodTo]);
+  }, [items, sortConfig, fSearch, statusFilter, approvalTypeFilter, fPartner, fRequestType, periodFrom, periodTo]);
 
   const handleSort = (key) => {
     setSortConfig(prev => ({
@@ -136,6 +145,12 @@ export default function SettlementPage() {
   };
 
   const { currentData, currentPage, totalPages, setCurrentPage, totalItems } = usePagination(filteredAndSortedData, 40);
+
+  // 현장 변경(자동 승인) 사후 반려 가능 여부
+  const canPostReject = selected?.requestType === "현장 변경" && selected?.approvalType === "자동 승인" && selected?.status === "승인";
+
+  // Footer 버튼: 요청 상태이거나, 현장 변경 사후 반려 가능 시 액션 버튼 노출
+  const showActions = selected?.status === "요청" || canPostReject;
 
   return (
     <div className="space-y-4">
@@ -148,6 +163,7 @@ export default function SettlementPage() {
 
       <FilterPanel
         chips={<>
+          {fSearch.trim() && <Chip onRemove={() => setFSearch("")}>검색: {fSearch}</Chip>}
           {fPartner !== "전체" && <Chip onRemove={() => setFPartner("전체")}>파트너: {fPartner}</Chip>}
           {fRequestType !== "전체" && <Chip onRemove={() => setFRequestType("전체")}>요청 유형: {fRequestType}</Chip>}
           {(periodFrom || periodTo) && <Chip onRemove={() => { setPeriodFrom(defaultFrom); setPeriodTo(defaultTo); }}>요청 일시: {periodFrom || "-"} ~ {periodTo || "-"}</Chip>}
@@ -156,18 +172,15 @@ export default function SettlementPage() {
         </>}
         onReset={resetFilters}
       >
+        <div className="md:col-span-3">
+          <label htmlFor="fSearch" className="block text-xs font-semibold text-[#6B778C] mb-1.5">오더 ID / 차량 번호</label>
+          <Input id="fSearch" type="text" placeholder="오더 ID 또는 차량 번호 검색" value={fSearch} onChange={e => setFSearch(e.target.value)} />
+        </div>
         <div className="md:col-span-2">
           <label htmlFor="fPartner" className="block text-xs font-semibold text-[#6B778C] mb-1.5">파트너 이름</label>
           <Select id="fPartner" value={fPartner} onChange={e => setFPartner(e.target.value)}>
             <option value="전체">전체</option>
             {[...new Set(items.map(i => i.partner))].sort().map(p => <option key={p} value={p}>{p}</option>)}
-          </Select>
-        </div>
-        <div className="md:col-span-2">
-          <label htmlFor="fRequestType" className="block text-xs font-semibold text-[#6B778C] mb-1.5">요청 유형</label>
-          <Select id="fRequestType" value={fRequestType} onChange={e => setFRequestType(e.target.value)}>
-            <option value="전체">전체</option>
-            {[...new Set(items.map(i => i.requestType))].sort().map(t => <option key={t} value={t}>{t}</option>)}
           </Select>
         </div>
         <div className="md:col-span-5">
@@ -179,9 +192,20 @@ export default function SettlementPage() {
           </div>
         </div>
         <div className="md:col-span-2">
+          <label htmlFor="fRequestType" className="block text-xs font-semibold text-[#6B778C] mb-1.5">요청 유형</label>
+          <Select id="fRequestType" value={fRequestType} onChange={e => setFRequestType(e.target.value)}>
+            <option value="전체">전체</option>
+            <option value="현장 변경">현장 변경</option>
+            <option value="전환">전환</option>
+            <option value="입고 변경">입고 변경</option>
+            <option value="추가 미션">추가 미션</option>
+          </Select>
+        </div>
+        <div className="md:col-span-2">
           <label htmlFor="approvalTypeFilter" className="block text-xs font-semibold text-[#6B778C] mb-1.5">합의 유형</label>
           <Select id="approvalTypeFilter" value={approvalTypeFilter} onChange={e => setApprovalTypeFilter(e.target.value)}>
             <option value="전체">전체</option>
+            <option value="자동 승인">자동 승인</option>
             <option value="1단계 승인">1단계 승인</option>
             <option value="2단계 승인">2단계 승인</option>
           </Select>
@@ -236,13 +260,19 @@ export default function SettlementPage() {
         title={selected ? `합의 요청 상세 - ${selected.id}` : ""}
         onClose={() => { setSelected(null); setIsRejecting(false); }}
         footer={
-          selected?.status === "요청" ? (
+          showActions ? (
             <>
-              <Button variant="secondary" onClick={() => setIsRejecting(true)}>반려</Button>
-              <Button onClick={() => {
-                if (!window.confirm("승인 후 청구금액 수정이 불가능합니다. 승인하시겠습니까?")) return;
-                handleUpdateStatus("승인");
-              }}>승인</Button>
+              {canPostReject ? (
+                <Button variant="danger" onClick={() => setIsRejecting(true)}>사후 반려</Button>
+              ) : (
+                <>
+                  <Button variant="secondary" onClick={() => setIsRejecting(true)}>반려</Button>
+                  <Button onClick={() => {
+                    if (!window.confirm("승인 후 청구금액 수정이 불가능합니다. 승인하시겠습니까?")) return;
+                    handleUpdateStatus("승인");
+                  }}>승인</Button>
+                </>
+              )}
             </>
           ) : (
             <Button variant="secondary" onClick={() => setSelected(null)}>닫기</Button>
@@ -262,21 +292,29 @@ export default function SettlementPage() {
                 <Field label="존 이름" value={selected.zoneName} />
                 <Field label="파트너 이름" value={selected.partner} />
                 <Field label="요청 유형" value={selected.requestType} />
+                <Field label="변경 전" value={selected.washBefore === "-" ? <span className="text-[#94A3B8]">-</span> : selected.washBefore} />
+                <Field label="변경 후" value={selected.washAfter === "-" ? <span className="text-[#94A3B8]">-</span> : selected.washAfter} />
                 <Field label="요청 일시" value={selected.requestedAt} />
-                <Field label="합의 유형" value={<Badge tone={selected.approvalType === "1단계 승인" ? "ok" : "warn"}>{selected.approvalType}</Badge>} />
+                <Field label="합의 유형" value={selected.approvalType} />
                 <Field label="상태" value={<Badge tone={selected.status === "요청" ? "warn" : selected.status === "승인" ? "ok" : selected.status === "반려" ? "danger" : "default"}>{selected.status}</Badge>} />
-                {selected.approvalType === "2단계 승인" ? (
+                {selected.approvalType === "자동 승인" ? (
+                  <>
+                    <Field label="처리 주체" value="시스템" />
+                    <Field label="처리 일시" value={selected.processedAt || <span className="text-[#94A3B8]">-</span>} />
+                  </>
+                ) : selected.approvalType === "2단계 승인" ? (
                   <>
                     <Field label="1차 처리자" value={selected.primaryProcessor || <span className="text-[#94A3B8]">-</span>} />
                     <Field label="2차 처리자" value={selected.secondaryProcessor || <span className="text-[#94A3B8]">-</span>} />
+                    <Field label="처리 일시" value={selected.processedAt || <span className="text-[#94A3B8]">-</span>} />
                   </>
                 ) : (
                   <>
-                    <Field label="처리 주체" value={getProcessorType(selected.processor) ? <Badge tone={getProcessorType(selected.processor) === "인터널" ? "ok" : "default"}>{getProcessorType(selected.processor)}</Badge> : <span className="text-[#94A3B8]">-</span>} />
+                    <Field label="처리 주체" value={getProcessorType(selected.processor) || <span className="text-[#94A3B8]">-</span>} />
                     <Field label="처리자" value={selected.processor || <span className="text-[#94A3B8]">-</span>} />
+                    <Field label="처리 일시" value={selected.processedAt || <span className="text-[#94A3B8]">-</span>} />
                   </>
                 )}
-                <Field label="처리 일시" value={selected.processedAt || <span className="text-[#94A3B8]">-</span>} />
                 <div className="border-t border-[#E2E8F0] my-3" />
                 <div className="flex items-center justify-between gap-3">
                   <div className="w-36 shrink-0 text-xs font-semibold text-[#6B778C]">청구 금액</div>
@@ -284,7 +322,7 @@ export default function SettlementPage() {
                     type="number"
                     className="h-8 w-32 text-right"
                     defaultValue={selected.cost}
-                    disabled={selected.status !== "요청"}
+                    disabled
                   />
                 </div>
                 <Field label="요청 코멘트" value={selected.requestComment || '-'} />
@@ -308,7 +346,14 @@ export default function SettlementPage() {
             {isRejecting && !isRejectConfirming && (
               <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
                 <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl">
-                  <div className="mb-4 text-base font-bold text-[#172B4D]">반려 사유 입력</div>
+                  <div className="mb-4 text-base font-bold text-[#172B4D]">
+                    {canPostReject ? "사후 반려 사유 입력" : "반려 사유 입력"}
+                  </div>
+                  {canPostReject && (
+                    <div className="mb-3 rounded-lg bg-amber-50 border border-amber-200 p-3 text-xs text-amber-800">
+                      자동 승인된 건을 사후 반려합니다. 반려 시 청구 관리에서 미지불 건으로 처리됩니다.
+                    </div>
+                  )}
                   <Input
                     value={rejectReason}
                     onChange={(e) => setRejectReason(e.target.value)}
@@ -334,6 +379,12 @@ export default function SettlementPage() {
                       <span className="text-[#6B778C]">요청 유형</span>
                       <span className="font-medium text-[#172B4D]">{selected?.requestType}</span>
                     </div>
+                    {selected?.washBefore !== "-" && (
+                      <div className="flex justify-between">
+                        <span className="text-[#6B778C]">변경</span>
+                        <span className="font-medium text-[#172B4D]">{selected?.washBefore} → {selected?.washAfter}</span>
+                      </div>
+                    )}
                     <div className="flex justify-between">
                       <span className="text-[#6B778C]">청구 금액</span>
                       <span className="font-medium text-[#172B4D]">{Number(selected?.cost).toLocaleString()}원</span>
